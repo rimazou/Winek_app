@@ -1,0 +1,72 @@
+ Text('Selected Image'),
+                _image != null
+                    ? Image.asset(
+                  _image.path,
+                  height: 150,
+                )
+                    : Container(height: 150),
+                _image == null
+                    ? RaisedButton(
+                  child: Text('Choose File'),
+                  onPressed: chooseFile,
+                  color: Colors.cyan,
+                )
+                    : Container(),
+                _image != null
+                    ? RaisedButton(
+                  child: Text('Upload File'),
+                  onPressed: uploadFile,
+                  color: Colors.cyan,
+                )
+                    : Container(),
+                _image != null
+                    ? RaisedButton(
+                  child: Text('Clear Selection'),
+                  onPressed: clearSelection,
+                )
+                    : Container(),
+                Text('Uploaded Image'),
+                _uploadedFileURL != null
+                    ? Image.network(
+                  _uploadedFileURL,
+                  height: 150,
+                )
+                    : Container(),
+
+
+
+
+                SizedBox(
+                  child: Text('en haut le truc ggogl'),
+                  height: 48.0,
+                ),
+                Row(
+                  children: <Widget>[
+                    Align(
+                       alignment: Alignment.center,
+                    child :CircleAvatar(
+                      radius: 120,
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 180.0,
+                          height: 180.0,
+                          child:(_image!=null) ? Image.file(_image,fit: BoxFit.fill,)
+                            : Image.network(
+                              "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                     ),
+                    ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 60.0),
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.camera_alt,
+                        size: 30.0,),
+                        onPressed: chooseFile,
+                        ),
+                  )
+                  ],
+                ),
