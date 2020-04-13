@@ -16,6 +16,7 @@ class Utilisateur {
   List groupes ;
   List invitationGroupe ;
   List invitation ;
+  List alertLIST ;
 
 
   Utilisateur({this.pseudo, this.tel, this.mail, this.photo, this.mdp,
@@ -65,7 +66,7 @@ class Utilisateur {
    'groupes': groupes ,
     'invitationGroupe': invitationGroupe ,
    'invitation ':  invitation ,
-
+      'alertLIST':  alertLIST ,
 
 
   };
