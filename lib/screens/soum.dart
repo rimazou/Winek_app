@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0.0),
           child: SingleChildScrollView(
-            
+
             child: Stack(
               children : <Widget>[
                 Positioned(
@@ -42,10 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      SizedBox(
+                      SizedBox(// this one cetait mon truc de photo
                         height: 48.0,
                       ),
-                     /* Container(
+                      /* Container(
                         child: ClipOval(
                           child: Image.network(_imgNet(),
                             fit: BoxFit.fill,
@@ -77,13 +77,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                       ),
-                      Wrap(
-                        children: <Widget>[
+
                           Container (
                             padding: const EdgeInsets.only(left: 40.0,right:30.0),
-                             color: Colors.blue,
+                            color: Colors.blue,
                             child: Text(
-                                'Utilisateur:',
+                              'Utilisateur:',
                               style: TextStyle(
                                 fontFamily: 'Monsterrat',
                                 fontSize:20.0,
@@ -93,31 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
 
 
-                      Container(
-                        width:130.0,
-                        height: 23.0,
-                        color: Colors.red,
-                        padding: EdgeInsets.only(top: 6.0),
-                        child: TextField(
 
-                          enabled: true,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            color: Colors.blue,
-
-                          ),
-                          decoration: InputDecoration(
-                            hintText: authService.loggedIn.displayName,
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                        ],
-                      ),
                       SizedBox(
                         height: 50.0,
                       ),
@@ -133,8 +108,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                       ),
-                      Wrap(
-                        children: <Widget>[
                           Container (
                             padding: const EdgeInsets.only(left: 40.0,right:30.0),
                             color: Colors.blue,
@@ -149,35 +122,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
 
 
-                          Container(
-                            width:130.0,
-                            height: 23.0,
-                            color: Colors.red,
-                            padding: EdgeInsets.only(top: 6.0),
-                            child: TextField(
 
-                              enabled: true,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                color: Colors.blue,
-
-                              ),
-                              decoration: InputDecoration(
-                                hintText: authService.loggedIn.phoneNumber,
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                       SizedBox(
                         height: 48.0,
                       ),
-                      Padding(
+                      Padding(//ce padding c les traites entre les trucs
+
                         padding: const EdgeInsets.only(left: 40.0,right: 40.0),
                         child: Container(
                           //  child: Image.network(),
@@ -189,8 +139,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                       ),
-                      Wrap(
-                        children: <Widget>[
+
+
+
+
                           Container (
                             padding: const EdgeInsets.only(left: 30.0,right:20.0),
                             color: Colors.blue,
@@ -204,33 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
 
-
-                          Container(
-                            width:130.0,
-                            height: 23.0,
-                            color: Colors.red,
-                            padding: EdgeInsets.only(top: 6.0),
-                            child: TextField(
-                              obscureText: true,
-                              enabled: true,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                color: Colors.blue,
-
-                              ),
-                              decoration: InputDecoration(
-                                hintText: authService.loggedIn.displayName,
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Material(
+                      Material(//bedli le bouton dont ta besoin
                         color: Colors.grey,
                         shadowColor: Colors.blueGrey,
                         child: IconButton(
