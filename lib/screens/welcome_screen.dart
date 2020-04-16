@@ -31,10 +31,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   Text(
                     'Winek',
+
                     style: TextStyle(
                       fontFamily: 'Montserrat',
+                      color:Color(0XFF3B466B),
 
-                      fontSize: 45.0,
+                      fontSize: 40.0,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -46,34 +48,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               Align(
                 alignment : Alignment.bottomCenter,
                 child: Wrap(
-                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  alignment: WrapAlignment.spaceEvenly,
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
                       child: Material(
                         elevation: 5.0,
-                        color: Colors.lightBlueAccent,
+                        color:Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
                         child: MaterialButton(
                           onPressed: () {
                             //Go to login screen.
                             Navigator.pushNamed(context, LoginScreen.id);
                           },
-                          minWidth: 130.0,
+                          minWidth: 140.0,
                           height: 42.0,
-                          child: Text(
-                            'Log In',
-                           style: TextStyle(
-                             fontFamily: 'Montserrat',
-                           ),
+                           child: Text(
+                          'Se connecter',
+
+                          style: TextStyle(
+                            color: Colors.white ,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold ,
+
                           ),
+                        ),
                         ),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
                       child: Material(
-                        color: Colors.blueAccent,
+                        color:Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
@@ -81,12 +87,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             //Go to registration screen.
                             Navigator.pushNamed(context, RegistrationScreen.id);
                           },
-                          minWidth: 130.0,
+                          minWidth: 140.0,
                           height: 42.0,
                           child: Text(
-                            'Register',
+                            "S'inscrire",
+
                             style: TextStyle(
+                              color: Colors.white ,
                               fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold ,
+
                             ),
                           ),
                         ),
@@ -95,7 +105,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
                       child: Material(
-                        color: Colors.blueAccent,
+                        color:Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
@@ -103,12 +113,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             //Go to registration screen.
                             Navigator.pushNamed(context,ProfileScreen.id);
                           },
-                          minWidth: 130.0,
+                          minWidth: 140.0,
                           height: 42.0,
                           child: Text(
-                            'profile',
+                            'Profile',
+
                             style: TextStyle(
+                              color: Colors.white ,
                               fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold ,
+
                             ),
                           ),
                         ),
@@ -117,19 +131,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
                       child: Material(
-                        color: Colors.blueAccent,
+                        color:Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
                             _signOut() ;
                           },
-                          minWidth: 130.0,
+                          minWidth: 140.0,
+
                           height: 42.0,
                           child: Text(
-                            'Sign out',
+                            'Se deconnecter',
+
                             style: TextStyle(
+                              color: Colors.white ,
                               fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold ,
+
                             ),
                           ),
                         ),

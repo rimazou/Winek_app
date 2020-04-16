@@ -21,29 +21,11 @@ class Utilisateur {
 
   Utilisateur({this.pseudo, this.tel, this.mail, this.photo, this.mdp,
       this.vitesse, this.posLatitude, this.posLongitude, this.batterie,
-      this.connecte, this.amis, this.favoris, this.groupes,
+      this.connecte, this.amis, this.favoris, this.groupes,this.alertLIST,
       this.invitationGroupe,
       this.invitation});
-  //---------- les fonctions--------------//
-/*
 
 
- void ajouter_amis() ; //envoyer une invitation a un amis
- void supprimer_amis() ; // l'enlever de sa liste d'amis
- void accepter_invitation() ;//devenir amis des deux cotes ,
-                             //les deux vont s'ajouter ds la liste d'amis de l'autre
- void refuser_invitation() ; //l'enlever de la liste des invitations
- void ajouter_favoris() ; //ajouter des lieux favoris
- void supprimer_favoris() ; // supprimer des lieux de la liste
-
- void creer_groupe() ;
- void quitter_groupe() ;
- void afficher_groupe() ;
-
-
- */
-  void connecter(){}
-  void deconnecter(){}
 
 
 

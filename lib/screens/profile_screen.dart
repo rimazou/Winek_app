@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Stack(
               children : <Widget>[
                 Positioned(
-                  top: 80.0,
+                  top: 0.0,
                   right: 0,
                   left: 0,
                   bottom: 0.0,
@@ -45,24 +46,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(
                         height: 48.0,
                       ),
-                     /* Container(
+                      Container(
                         child: ClipOval(
-                          child: Image.network(_imgNet(),
+                          child: Image.network("https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
                             fit: BoxFit.fill,
                           ),
                         ),
                         height: 100.0,
                         width: 100.0,
                         decoration: BoxDecoration(
-                          color: Colors.brown,
 
                           border: Border.all(
                             color: Colors.blueGrey,
                             width: 3,
                           ),
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(60),
                         ),
-                      ),*/
+                      ),
                       SizedBox(
                         height: 48.0,
                       ),
@@ -81,7 +81,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: <Widget>[
                           Container (
                             padding: const EdgeInsets.only(left: 40.0,right:30.0),
-                             color: Colors.blue,
                             child: Text(
                                 'Utilisateur:',
                               style: TextStyle(
@@ -96,18 +95,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Container(
                         width:130.0,
                         height: 23.0,
-                        color: Colors.red,
                         padding: EdgeInsets.only(top: 6.0),
                         child: TextField(
 
                           enabled: true,
+
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             color: Colors.blue,
 
                           ),
                           decoration: InputDecoration(
-                            hintText: authService.loggedIn.displayName,
+                            hintText: 'testEvaluation',
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -137,7 +136,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: <Widget>[
                           Container (
                             padding: const EdgeInsets.only(left: 40.0,right:30.0),
-                            color: Colors.blue,
                             child: Text(
                               'Telephone:',
                               style: TextStyle(
@@ -152,18 +150,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             width:130.0,
                             height: 23.0,
-                            color: Colors.red,
                             padding: EdgeInsets.only(top: 6.0),
                             child: TextField(
 
                               enabled: true,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                color: Colors.blue,
+                                color: Colors.black,
 
                               ),
                               decoration: InputDecoration(
-                                hintText: authService.loggedIn.phoneNumber,
+                                hintText: '0123456789',
                                 border: InputBorder.none,
                                 focusedBorder: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -193,7 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: <Widget>[
                           Container (
                             padding: const EdgeInsets.only(left: 30.0,right:20.0),
-                            color: Colors.blue,
                             child: Text(
                               'Mot de passe :',
                               style: TextStyle(
@@ -208,14 +204,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             width:130.0,
                             height: 23.0,
-                            color: Colors.red,
                             padding: EdgeInsets.only(top: 6.0),
                             child: TextField(
                               obscureText: true,
                               enabled: true,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                color: Colors.blue,
+                                color: Colors.black87,
 
                               ),
                               decoration: InputDecoration(
@@ -372,7 +367,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future fireRef () async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('mail', isEqualTo: authService.loggedIn.email )
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents == 1) {
+      print("UserName Already Exits");
+    } else {
+      print("UserName is Available");
+    }
+  }
   String _imgNet() {
-    authService.loggedIn.photoUrl== null || authService.loggedIn.photoUrl.isEmpty ?  authService.loggedIn.photoUrl  :   'https://pic sum.photos/250' ;
+    authService.loggedIn.photoUrl== null || authService.loggedIn.photoUrl.isEmpty ?  authService.loggedIn.photoUrl  :"https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80"
+    ;
   }
 }

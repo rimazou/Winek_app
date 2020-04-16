@@ -27,22 +27,39 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                SizedBox(
+                  height: 30.0,
+                ),
 
                 Container(
 
-                  height: 130.0,
-                  child: Image.asset('images/logo.png'),
+                  height: 120.0,
+                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
                 ),
                 Text(
                   'Winek',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: 45.0,
+                    fontSize: 26.0,
                     fontWeight: FontWeight.w900,
-                  ),
+                    color:Color(0XFF3B466B),
+
+                ),
                 ),
                 SizedBox(
-                  height: 48.0,
+                  height: 50.0,
+                ),
+            Text(
+              'Connexion',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 20.0,
+                fontWeight: FontWeight.w900,
+                color: Color(0XFF389490),//vert
+              ),
+            ),
+                SizedBox(
+                  height: 40.0,
                 ),
                 TextField(
                   onChanged: (value) {
@@ -56,9 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    // backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
-                    //hintText: 'Enter your email',
                     labelText: 'Email/pseudo',
-                  //  counterText: 'email?',//le truc en bas a droite
                     contentPadding:
                     EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
@@ -66,12 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
+                      BorderSide(color: Colors.blueGrey, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
+                      BorderSide(color: Colors.blueGrey, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
@@ -94,7 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
-                   // hintText: 'Enter your password.',
                     labelText: 'Mot de passe',
                     contentPadding:
                     EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -103,12 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
+                      BorderSide(color: Colors.blueGrey, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
+                      BorderSide(color: Colors.blueGrey, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
@@ -117,7 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'mot de passe oublie ?',
                     style: TextStyle(
-                      color: Colors.black87 ,
+                      color:Color(0XFF389490),
+
                     ),
                   ),
                   onPressed: () {
@@ -134,20 +149,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
-                        color: Colors.lightBlueAccent,
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
+                        color:Color(0XFF3B466B),
+
                         child: MaterialButton(
+
                           onPressed: () => _testSignInWithGoogle() ,//_signInG(),
                           minWidth: 140.0,
                           height: 42.0,
-
                           child: Text(
 
-                            'SignInG',
+                            'Google',
+
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-
+                              color:Colors.white,
+                              fontWeight: FontWeight.bold,
 
                             ),
                           ),
@@ -157,7 +175,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
-                        color: Color(394669),
+                        color:Color(0XFF389490),
+
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
@@ -179,11 +198,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
-                            'Log In',
+                            'Se connecter',
                             
                             style: TextStyle(
                               color: Colors.white ,
                             fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold ,
 
                           ),
                           ),

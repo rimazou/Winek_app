@@ -25,7 +25,27 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
 
               children: <Widget>[
                 SizedBox(
+                  height: 30.0,
+                ),
+
+                Container(
+
                   height: 60.0,
+                  width: 60.0,
+                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
+                ),
+                Text(
+                  'Winek',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 26.0,
+                    fontWeight: FontWeight.w900,
+                    color:Color(0XFF3B466B),
+
+                  ),
+                ),
+                SizedBox(
+                  height: 50.0,
                 ),
                 Text(
                   'Mot de passe oublie',
@@ -33,6 +53,8 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
+                    color: Color(0XFF389490),//vert
+
                   ),
                 ),
                 SizedBox(
@@ -41,7 +63,7 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                 TextField(
                   onChanged: (value) {
                      email = value;
-                     !Validator.email(email) ? errMl=null :errMl='Veuillez entrer un mail' ;
+                     !Validator.email(email) ? errMl=null :errMl='Veuillez entrer une adresse valide' ;
 
                   },
                   textAlign: TextAlign.center,
@@ -84,7 +106,7 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: Material(
-                    color: Colors.lightBlueAccent,
+                    color: Color(0XFF389490),//vert
                     borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     elevation: 5.0,
                     child: MaterialButton(
@@ -98,8 +120,10 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                         'Envoyer code de confirmation',
 
                         style: TextStyle(
+                          color: Colors.white,
                           fontFamily: 'Montserrat',
-
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
@@ -122,7 +146,7 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                 SizedBox(
                   height: 20.0,
                 ),
-                Text(
+                /*Text(
                   'Introduisez le code de confirmation que vous venez de recevoir ...',
                   style: TextStyle(
                     color: Colors.black87,
@@ -176,7 +200,7 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                       ),
                     ),
                   ),
-                ),
+                ),*/
               ],
             ),
 

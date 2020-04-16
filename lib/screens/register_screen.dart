@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
 import 'package:winek/screens/profile_screen.dart';
@@ -34,19 +35,79 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               children: <Widget>[
 
                 SizedBox(
-                  height: 48.0,
+                  height: 30.0,
+                ),
+
+                Container(
+
+                  height: 60.0,
+                  width: 60.0,
+                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
+                ),
+                Text(
+                  'Winek',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 26.0,
+                    fontWeight: FontWeight.w900,
+                    color:Color(0XFF3B466B),
+
+                  ),
+                ),
+                SizedBox(
+                  height: 50.0,
+                ),
+                Text(
+                  'Inscription',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0XFF389490),//vert
+                  ),
+                ),
+                SizedBox(
+                  height: 40.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 42.0,
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child :CircleAvatar(
+                        radius: 40,
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 180.0,
+                            height: 180.0,
+                            child:(_image!=null) ? Image.file(_image,fit: BoxFit.fill,)
+                                : Image.network(
+                              "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 60.0),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.camera_alt,
+                          size: 30.0,),
+                        onPressed: (){chooseFile;
+                        uploadFile();},
+                      ),
+                    )
+                  ],
                 ),
                 TextField(
                   onChanged: (value) {
-                  //  setState(() {
                       pseudo= value;
-                    /*  streamQuery = authService.userRef
-                          .where('pseudo', isGreaterThanOrEqualTo: pseudo)
-                          .where('pseudo', isLessThan: pseudo +'z')
-                          .snapshots();
-                      streamQuery.isEmpty==true ? errPs='null' : errPs="errooor"  ;
-
-                    });*/
+                   pseudoExist();
                     },
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -57,7 +118,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Pseudonyme',
+                    labelText: 'Pseudo',
 
                     errorText: errPs,
                     errorStyle: TextStyle(
@@ -85,11 +146,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 8.0,
                 ),
                 TextField(
+                    keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
                     email = value;
                     setState(() {
 
-                    !Validator.email(email) ? errMl=null :errMl='Veuillez entrer un email';
+                    !Validator.email(email) ? errMl=null : errMl="Veuillez introduire une adresse valide";
+
                     });
 
                   },
@@ -103,7 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Adresse mail',
                     hoverColor: Colors.black87,
                     errorText: errMl,
                     errorStyle: TextStyle(
@@ -184,8 +247,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       pwd = value;
                  double strength = estimatePasswordStrength(pwd);
 
-                    if (strength < 0.3)
-                      errPwd='Password too weak' ;
+                    if (strength < 0.3) { errPwd='Mot de passe faible' ;}
+                    else {
+                      errPwd=null ;
+                    }
                     });
                   },
                   textAlign: TextAlign.center,
@@ -257,11 +322,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                        borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                        borderSide: BorderSide(color: Colors.blueGrey, width: 2.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                     )
@@ -271,16 +336,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
                   child: Material(
-                    color: Colors.grey,
+                    color: Color(0XFF389490),//vert
                     borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     elevation: 5.0,
                     child: MaterialButton(
+
                       onPressed: () => _createUser(),
                       minWidth: 200.0,
                       height: 42.0,
                       child: Text(
-                        'Register',
-                        style: TextStyle(color: Colors.white),
+                        "S'inscrire",
+                        style: TextStyle(
+                          color: Colors.white ,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold ,
+
+                        ),
                       ),
                     ),
                   ),
@@ -306,11 +377,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             mdp: pwd,
             tel: tel,
 
-          photo:"https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-//p.basename(_uploadedFileURL),
+          photo:_uploadedFileURL ,
           amis: <String>[] ,
           invitation: [],
           invitationGroupe: [],
+          alertLIST: [],
           connecte: true,
         );
         authService.db.collection('Utilisateur').add(myUser.map);
@@ -327,14 +398,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       if (signUpError is  PlatformException  ) {
         if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-          errMl='ERROR_EMAIL_ALREADY_IN_USE';
+          errMl='Cet email est deja utilise';
         }else{
           errMl=null ;
 
         }
           if (signUpError.code == 'ERROR_INVALID_EMAIL')
           {
-            errMl='ERROR_INVALID_EMAIL';
+            errMl="Veuillez introduire une adresse valide";
 
           }else {
             errMl=null ;
@@ -342,7 +413,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           }
             if (signUpError.code == 'ERROR_WEAK_PASSWORD')
             {
-              errPwd='ERROR_WEAK_PASSWORD';
+              errPwd='Mot de passe faible';
 
             }
         else {
@@ -364,9 +435,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() {
 
       if (pw != pwd) {
-         errPwd='Veuillez introduire le meme mot de passe ';
+         errPw='Veuillez introduire le meme mot de passe';
       } else {
-        errPwd=null;
+        errPw=null;
       }
     });
   }
@@ -393,10 +464,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
   }
 
-  void clearSelection() {
-    setState(() {
-      _image=null ;
-    });
+   pseudoExist() async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('pseudo', isEqualTo: pseudo)
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length == 1) {
+      print("UserName Already Exits");
+      setState(() {
+      errPs='Ce pseudo est deja pris';      });
+    } else {
+      print("UserName is Available");
+      setState(() {
+        errPs=null ;
+      });
+    }
+
   }
 Stream    streamQuery ;
 
