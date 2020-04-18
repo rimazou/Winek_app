@@ -5,7 +5,6 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
-import 'package:winek/screens/profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:path/path.dart' as p ;
+import 'package:winek/screensRima/profile_screen.dart';
 class RegistrationScreen extends StatefulWidget {
   static const String id='register';
   @override

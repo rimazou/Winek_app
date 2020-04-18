@@ -1,5 +1,7 @@
 import 'package:winek/auth.dart';
+import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
+import 'package:winek/screensRima/register_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
 import 'package:winek/screensRima/resetpwd_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +16,6 @@ import 'screensSoum/friendsListScreen.dart';
 import 'screensHiba/list_grp.dart';
 import 'screensHiba/list_inv_grp.dart';
 import 'screensHiba/nouveau_grp.dart';
-import 'screensRima/login_screen.dart';
-import 'screensRima/register_screen.dart';
 import 'screensRima/welcome_screen.dart';
 
 

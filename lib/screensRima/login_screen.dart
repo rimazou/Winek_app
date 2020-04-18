@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
-import 'package:winek/screens/profile_screen.dart';
-import 'package:winek/screens/resetmail.dart';
+import 'package:winek/screensRima/profile_screen.dart';
+import 'package:winek/screensRima/resetmail.dart';
 class LoginScreen extends StatefulWidget {
 
   static const String id='login';
