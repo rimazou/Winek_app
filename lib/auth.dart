@@ -1,12 +1,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'classes.dart';
 class AuthService{
   final FirebaseAuth _auth = FirebaseAuth.instance ;
   final Firestore _db =Firestore.instance ;
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']) ;
+
+  Geoflutterfire geo = Geoflutterfire();
 FirebaseUser _loggedIn ;
 get userRef => _db.collection('Utilisateur');
 
@@ -60,6 +63,19 @@ get userRef => _db.collection('Utilisateur');
   ) ;
 }
 
+  Future<String> connectedID() async {
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    if (uid.isEmpty) {
+      print('no user connected');
+    }
+    else {
+      print(uid);
+      print(user.email);
+    }
+
+    return uid; //returns the id of the connected/current user
+  }
 Future sendPwdResetEmail ( String email) async
 {
   try {
@@ -70,6 +86,16 @@ catch(e)
     print(e) ;
   }
 }
+
+  bool isFirst() {
+    var ui = connectedID();
+    if (ui == null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   Future<bool> isUserLogged() async {
     FirebaseUser firebaseUser = await getLoggedFirebaseUser();
     if (firebaseUser != null) {

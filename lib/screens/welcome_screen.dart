@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:winek/screens/login_screen.dart';
 import 'package:winek/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -63,16 +64,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           },
                           minWidth: 140.0,
                           height: 42.0,
-                           child: Text(
-                          'Se connecter',
+                          child: Text(
+                            'Se connecter',
 
-                          style: TextStyle(
-                            color: Colors.white ,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.bold ,
+                            style: TextStyle(
+                              color: Colors.white ,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold ,
 
+                            ),
                           ),
-                        ),
                         ),
                       ),
                     ),
@@ -154,6 +155,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 5.0),
+                      child: Material(
+                        color: Color(0XFF3B466B),
+                        borderRadius: BorderRadius.circular(30.0),
+                        elevation: 5.0,
+                        child: MaterialButton(
+                          onPressed: () {
+                            authService.connectedID();
+                            print(authService.isFirst());
+                          },
+                          minWidth: 140.0,
+                          height: 42.0,
+                          child: Text(
+                            "who's connectede",
+
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -177,6 +205,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       print ('got prob tjr connecte');
     }
   }
+
+
 /*_loggedOut (){
     authService.googleSignIn.signOut();
   } by  google */

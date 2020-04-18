@@ -1,6 +1,8 @@
 import 'dart:core';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
 import 'package:winek/screens/profile_screen.dart';
@@ -98,8 +100,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         icon: Icon(
                           Icons.camera_alt,
                           size: 30.0,),
-                        onPressed: (){chooseFile;
-                        uploadFile();},
+                        onPressed: () => chooseFile(),
+                        // uploadFile();
+
                       ),
                     )
                   ],
@@ -152,7 +155,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     setState(() {
 
                     !Validator.email(email) ? errMl=null : errMl="Veuillez introduire une adresse valide";
-
+                    mailExist();
                     });
 
                   },
@@ -367,6 +370,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Future _createUser() async {
     try {
       print('creaaation bdaaat ');
+      Geoflutterfire geo = Geoflutterfire();
+      LatLng lt = new LatLng(36.7525000, 3.0419700);
       final newUser = await authService.auth.createUserWithEmailAndPassword(
           email: email,
           password: pwd);
@@ -374,19 +379,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         Utilisateur myUser = Utilisateur(
             pseudo: pseudo,
             mail: email,
-            mdp: pwd,
             tel: tel,
 
           photo:_uploadedFileURL ,
           amis: <String>[] ,
           invitation: [],
-          invitationGroupe: [],
+          invitation_groupe: [],
           alertLIST: [],
           connecte: true,
+          // location: geo.point(latitude: lt.latitude ,longitude: lt.longitude) ,
         );
-        authService.db.collection('Utilisateur').add(myUser.map);
+        // authService.db.collection('Utilisateur').add(myUser.map);
          //authService..add(myUser.map);
+        authService.db.collection('Utilisateur').document('AAAAA').setData(
+            myUser.map);
          print('user CREAAAATEEEEED');
+        print(newUser.user.uid);
         Navigator.pushNamed(context, ProfileScreen.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
@@ -448,8 +456,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _image = image;
       });
     });
-  }
-  Future uploadFile() async {
     print('uploaaaaaaaaaadfile') ;
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
@@ -464,26 +470,47 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
   }
 
+
    pseudoExist() async {
+     final QuerySnapshot result = await Future.value(authService.db
+         .collection('Utilisateur')
+         .where('pseudo', isEqualTo: pseudo)
+         .limit(1)
+         .getDocuments());
+     final List<DocumentSnapshot> documents = result.documents;
+     if (documents.length == 1) {
+       print("UserName Already Exits");
+       setState(() {
+         errPs = 'Ce pseudo est deja pris';
+       });
+     } else {
+       print("UserName is Available");
+       setState(() {
+         errPs = null;
+       });
+     }
+   }
+
+  mailExist() async {
     final QuerySnapshot result = await Future.value(authService.db
         .collection('Utilisateur')
-        .where('pseudo', isEqualTo: pseudo)
+        .where('pseudo', isEqualTo: email)
         .limit(1)
         .getDocuments());
     final List<DocumentSnapshot> documents = result.documents;
     if (documents.length == 1) {
       print("UserName Already Exits");
       setState(() {
-      errPs='Ce pseudo est deja pris';      });
+        errMl = 'Ce pseudo est deja pris';
+      });
     } else {
       print("UserName is Available");
       setState(() {
-        errPs=null ;
+        errMl = null;
       });
     }
 
   }
-Stream    streamQuery ;
 
 
   }

@@ -3,6 +3,8 @@ import 'package:winek/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../classes.dart';
+
 class ProfileScreen extends StatefulWidget {
   static const String id='profile';
   @override
@@ -191,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container (
                             padding: const EdgeInsets.only(left: 30.0,right:20.0),
                             child: Text(
-                              'Mot de passe :',
+                              'Email',
                               style: TextStyle(
                                 fontFamily: 'Monsterrat',
                                 fontSize:20.0,
@@ -214,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                               ),
                               decoration: InputDecoration(
-                                hintText: authService.loggedIn.displayName,
+                                hintText: 'test',
                                 border: InputBorder.none,
                                 focusedBorder: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -367,21 +369,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+
   Future fireRef () async {
     final QuerySnapshot result = await Future.value(authService.db
         .collection('Utilisateur')
         .where('mail', isEqualTo: authService.loggedIn.email )
-        .limit(1)
         .getDocuments());
-    final List<DocumentSnapshot> documents = result.documents;
-    if (documents == 1) {
-      print("UserName Already Exits");
-    } else {
-      print("UserName is Available");
-    }
-  }
-  String _imgNet() {
-    authService.loggedIn.photoUrl== null || authService.loggedIn.photoUrl.isEmpty ?  authService.loggedIn.photoUrl  :"https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80"
-    ;
+    // Utilisateur.fromSnapshot(result.documents.first.data);
+
+    //  var user = Utilisateur.fromMap(result);
   }
 }
