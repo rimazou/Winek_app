@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
-import 'classes.dart';
-import 'dataBase.dart';
+import '../classes.dart';
+import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
 import 'list_grp.dart';
-import 'main.dart';
+import '../main.dart';
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();

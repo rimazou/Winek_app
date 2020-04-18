@@ -1,19 +1,22 @@
 import 'package:winek/auth.dart';
-import 'package:winek/screens/profile_screen.dart';
-import 'package:winek/screens/resetmail.dart';
-import 'package:winek/screens/resetpwd_screen.dart';
+import 'package:winek/screensRima/profile_screen.dart';
+import 'package:winek/screensRima/resetmail.dart';
+import 'package:winek/screensRima/resetpwd_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:winek/screensSoum/usersListScreen.dart';
 
 
-import 'MapPage.dart';
+import 'screensHiba/MapPage.dart';
 import 'classes.dart';
-import 'dataBase.dart';
-import 'list_grp.dart';
-import 'list_inv_grp.dart';
-import 'nouveau_grp.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/welcome_screen.dart';
+import 'dataBasehiba.dart';
+import 'screensSoum/friendRequestScreen.dart';
+import 'screensSoum/friendsListScreen.dart';
+import 'screensHiba/list_grp.dart';
+import 'screensHiba/list_inv_grp.dart';
+import 'screensHiba/nouveau_grp.dart';
+import 'screensRima/login_screen.dart';
+import 'screensRima/register_screen.dart';
+import 'screensRima/welcome_screen.dart';
 
 
 void main() => runApp(Authentication());
@@ -89,7 +92,9 @@ class Authentication extends StatelessWidget {
         NvVoyagePage.id: (context) => NvVoyagePage(),
         ListGrpPage.id: (context) => ListGrpPage(),
         InvitationGrpPage.id: (context) => InvitationGrpPage(),
-
+        FriendRequestListScreen.id: (context) => FriendRequestListScreen(),
+        UsersListScreen.id: (context) => UsersListScreen(),
+        FriendsListScreen.id: (context) => FriendsListScreen(),
 
       },
     );

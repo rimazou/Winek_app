@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'classes.dart';
-import 'main.dart';
+import '../classes.dart';
+import '../main.dart';
 import 'list_grp.dart';
 import 'nouveau_grp.dart';
 

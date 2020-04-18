@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'classes.dart';
-import 'dataBase.dart';
+import '../classes.dart';
+import '../dataBasehiba.dart';
 import 'log_out_icon_icons.dart';
 import 'nouveau_grp.dart';
-import 'main.dart';
+import '../main.dart';
 
 Database data = Database(pseudo: 'hiba');
 bool _loading = false;

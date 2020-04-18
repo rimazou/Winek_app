@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'classes.dart';
-import 'main.dart';
+import '../classes.dart';
+import '../main.dart';
 
 /*
 class FriendsList extends StatefulWidget {

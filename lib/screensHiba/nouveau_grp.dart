@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'main.dart';
-import 'classes.dart';
-import 'dataBase.dart';
+import '../main.dart';
+import '../classes.dart';
+import '../dataBasehiba.dart';
 import 'list_grp.dart';
 
 Database data = Database(pseudo: 'hiba');
