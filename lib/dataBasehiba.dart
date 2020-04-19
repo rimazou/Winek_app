@@ -320,4 +320,23 @@ class Database {
     });
     await updategroupemembers(ref, pseudo, id);
   }
+
+  Future<List<Map<dynamic, dynamic>>> getListInvitations() async {
+    Map user = {'pseudo': '', 'id': ''};
+    Database.getcurret(user['id'], user['pseudo']);
+
+    DocumentSnapshot querySnapshot = await Firestore.instance
+        .collection('UserGrp')
+        .document(
+            user['id']) // just for nom when sooum finish i'll change it to id
+        .get();
+    print(querySnapshot.data.toString());
+    if (querySnapshot.exists && querySnapshot.data.containsKey('invitations')) {
+      // Create a new List<String> from List<dynamic>
+
+      return List<Map<dynamic, dynamic>>.from(
+          querySnapshot.data['invitations']);
+    }
+    return [];
+  }
 }
