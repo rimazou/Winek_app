@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:winek/screens/login_screen.dart';
-import 'package:winek/screens/profile_screen.dart';
+import 'login_screen.dart';
+import 'profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../auth.dart';
@@ -24,7 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Column (
+              Column(
                 children: <Widget>[
                   Container(
                     height: 200.0,
@@ -32,11 +32,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   Text(
                     'Winek',
-
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      color:Color(0XFF3B466B),
-
+                      color: Color(0XFF3B466B),
                       fontSize: 40.0,
                       fontWeight: FontWeight.w900,
                     ),
@@ -47,15 +45,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 height: 48.0,
               ),
               Align(
-                alignment : Alignment.bottomCenter,
+                alignment: Alignment.bottomCenter,
                 child: Wrap(
                   alignment: WrapAlignment.spaceEvenly,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         elevation: 5.0,
-                        color:Color(0XFF389490),
+                        color: Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
                         child: MaterialButton(
                           onPressed: () {
@@ -66,21 +65,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           height: 42.0,
                           child: Text(
                             'Se connecter',
-
                             style: TextStyle(
-                              color: Colors.white ,
+                              color: Colors.white,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
-                        color:Color(0XFF3B466B),
+                        color: Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
@@ -92,72 +90,67 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           height: 42.0,
                           child: Text(
                             "S'inscrire",
-
                             style: TextStyle(
-                              color: Colors.white ,
+                              color: Colors.white,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
-                        color:Color(0XFF3B466B),
+                        color: Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
                             //Go to registration screen.
-                            Navigator.pushNamed(context,ProfileScreen.id);
+                            Navigator.pushNamed(context, ProfileScreen.id);
                           },
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
                             'Profile',
-
                             style: TextStyle(
-                              color: Colors.white ,
+                              color: Colors.white,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0,horizontal:5.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
-                        color:Color(0XFF389490),
+                        color: Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
-                            _signOut() ;
+                            _signOut();
                           },
                           minWidth: 140.0,
-
                           height: 42.0,
                           child: Text(
                             'Se deconnecter',
-
                             style: TextStyle(
-                              color: Colors.white ,
+                              color: Colors.white,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: 5.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
@@ -171,12 +164,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           height: 42.0,
                           child: Text(
                             "who's connectede",
-
                             style: TextStyle(
                               color: Colors.white,
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.bold,
-
                             ),
                           ),
                         ),
@@ -192,24 +183,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  _signOut (){
-    authService.isUserLogged()==true ? print('true') : print ('false') ;
+  _signOut() {
+    authService.isUserLogged() == true ? print('true') : print('false');
 
     authService.auth.signOut();
     authService.googleSignIn.signOut();
-    authService.isUserLogged()==true ? print('true') : print ('false') ;
-    if (authService.loggedIn== null) {
+    authService.isUserLogged() == true ? print('true') : print('false');
+    if (authService.loggedIn == null) {
       print('nuuulll ');
-    }
-    else{
-      print ('got prob tjr connecte');
+    } else {
+      print('got prob tjr connecte');
     }
   }
-
 
 /*_loggedOut (){
     authService.googleSignIn.signOut();
   } by  google */
-
 
 }

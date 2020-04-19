@@ -14,6 +14,16 @@ class Database {
 
   Database({@required this.pseudo, @required this.id});
 
+ static void getcurret(String id , String pseudo)async{
+   await authService.connectedID().then((String uid){
+     id = uid;
+   });
+  await Firestore.instance.document(id).get().then((DocumentSnapshot doc){
+    pseudo = doc.data['pseudo'];
+  });
+ }
+
+
   final CollectionReference friendsCollection =
       Firestore.instance.collection('Friends');
 

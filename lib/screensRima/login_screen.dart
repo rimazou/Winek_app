@@ -2,11 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
-import 'package:winek/screens/profile_screen.dart';
-import 'package:winek/screens/resetmail.dart';
-class LoginScreen extends StatefulWidget {
+import 'profile_screen.dart';
+import 'resetmail.dart';
 
-  static const String id='login';
+class LoginScreen extends StatefulWidget {
+  static const String id = 'login';
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -15,7 +15,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String pwd, mail;
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -23,18 +22,22 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: SingleChildScrollView(//tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
+          child: SingleChildScrollView(
+            //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
                   height: 30.0,
                 ),
-
                 Container(
-
                   height: 120.0,
-                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
+                  child: Image.asset(
+                    'images/logo.png',
+                    fit: BoxFit.fill,
+                    height: 120.0,
+                    width: 120.0,
+                  ),
                 ),
                 Text(
                   'Winek',
@@ -42,51 +45,50 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 26.0,
                     fontWeight: FontWeight.w900,
-                    color:Color(0XFF3B466B),
-
-                ),
+                    color: Color(0XFF3B466B),
+                  ),
                 ),
                 SizedBox(
                   height: 50.0,
                 ),
-            Text(
-              'Connexion',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 20.0,
-                fontWeight: FontWeight.w900,
-                color: Color(0XFF389490),//vert
-              ),
-            ),
+                Text(
+                  'Connexion',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0XFF389490), //vert
+                  ),
+                ),
                 SizedBox(
                   height: 40.0,
                 ),
                 TextField(
                   onChanged: (value) {
-                    mail=value ;
+                    mail = value;
                   },
                   style: TextStyle(
                     fontFamily: 'Montserrat',
 
                     color: Colors.black87,
                     //decorationColor: Color(0XFFFFCC00),//Font color change
-                   // backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                    // backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
                     labelText: 'Email/pseudo',
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 1.0),
+                          BorderSide(color: Colors.blueGrey, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 2.0),
+                          BorderSide(color: Colors.blueGrey, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
@@ -96,33 +98,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextField(
                   onChanged: (value) {
-                    pwd=value ;
+                    pwd = value;
                   },
                   obscureText: true,
                   autocorrect: false,
-
                   style: TextStyle(
                     fontFamily: 'Montserrat',
 
                     color: Colors.black87,
-                   // decorationColor: Color(0XFFFFCC00),//Font color change
-                  //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                    // decorationColor: Color(0XFFFFCC00),//Font color change
+                    //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 1.0),
+                          BorderSide(color: Colors.blueGrey, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 2.0),
+                          BorderSide(color: Colors.blueGrey, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
@@ -131,8 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'mot de passe oublie ?',
                     style: TextStyle(
-                      color:Color(0XFF389490),
-
+                      color: Color(0XFF389490),
                     ),
                   ),
                   onPressed: () {
@@ -142,31 +142,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 24.0,
                 ),
-
                 Row(
-                  mainAxisAlignment:MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
-                        color:Color(0XFF3B466B),
-
+                        color: Color(0XFF3B466B),
                         child: MaterialButton(
-
-                          onPressed: () => _testSignInWithGoogle() ,//_signInG(),
+                          onPressed: () =>
+                              _testSignInWithGoogle(), //_signInG(),
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
-
                             'Google',
-
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              color:Colors.white,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
-
                             ),
                           ),
                         ),
@@ -175,37 +170,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
-                        color:Color(0XFF389490),
-
+                        color: Color(0XFF389490),
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
-                          onPressed: () async{
-                           try{ final user = await authService.auth.signInWithEmailAndPassword(
-                                email: mail,
-                                password: pwd);
-                            if (user!=null)
-                              {
+                          onPressed: () async {
+                            try {
+                              final user = await authService.auth
+                                  .signInWithEmailAndPassword(
+                                      email: mail, password: pwd);
+                              if (user != null) {
                                 Navigator.pushNamed(context, ProfileScreen.id);
-
-                              }}
-                              catch(e)
-                            {
+                              }
+                            } catch (e) {
                               print(e);
                             }
                           },
-
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
                             'Se connecter',
-                            
                             style: TextStyle(
-                              color: Colors.white ,
-                            fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
-                          ),
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -214,12 +203,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
-
           ),
         ),
       ),
     );
   }
+
 /*  Future<FirebaseUser> _signInG() async {
     GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -232,14 +221,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return user;
   }*/
   Future<String> _testSignInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
+    final GoogleSignInAccount googleUser =
+        await authService.googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+        await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    final FirebaseUser user = (await authService.auth.signInWithCredential(credential)).user;
+    final FirebaseUser user =
+        (await authService.auth.signInWithCredential(credential)).user;
 
     assert(user.email != null);
     assert(user.displayName != null);
@@ -249,12 +240,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final FirebaseUser currentUser = await authService.auth.currentUser();
     assert(user.uid == currentUser.uid);
 
-    print(  currentUser.email);
-    if (user!=null)
-    {
+    print(currentUser.email);
+    if (user != null) {
       Navigator.pushNamed(context, ProfileScreen.id);
-
     }
   }
-
 }

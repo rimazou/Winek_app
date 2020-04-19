@@ -5,7 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
-import 'package:winek/screens/profile_screen.dart';
+import 'profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

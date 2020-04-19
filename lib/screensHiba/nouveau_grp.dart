@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:winek/auth.dart';
 import '../main.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'list_grp.dart';
 
-Database data = Database(pseudo: 'hiba');
+//Database data = Database(pseudo: 'hiba', id: id);
 bool _alerte_nom = false;
 bool _alerte_mbr = false;
 String nom_grp = "";
@@ -20,16 +21,19 @@ bool _loading = false;
 final _firestore = Firestore.instance;
 
 void createlongterme() async {
+  // get the current user info
+  Map user ={ 'pseudo': '' , 'id': ''};
+  await Database.getcurret(user['id'], user['pseudo']);
   // creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('LongTerme').add({
     'nom': nom_grp,
-    'admin': data.pseudo,
+    'admin': user['pseudo'],
     'membres': [
-      data.pseudo
+      user
     ], // since he's the admin, others have to accept the invitation first
   });
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
-  // adding that grp to member's invitations liste:
+  // adding that grp to member's invitations liste.
   for (String m in membres) {
     DocumentSnapshot doc =
         await Firestore.instance.collection('UserGrp').document(m).get();
@@ -50,13 +54,15 @@ void createlongterme() async {
       });
     }
   }
+  //adding the grp into the admin list of grp
   await Firestore.instance
       .collection('UserGrp')
-      .document(data.pseudo)
+      .document(user['id'])
       .updateData({
     'groupes': FieldValue.arrayUnion([grp])
   });
 }
+
 
 class NvLongTermePage extends StatefulWidget {
   @override
@@ -236,14 +242,18 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
 //----------------------------------------------------------------------------------//
 void createvoyage() async {
   // creationg the doc of the grp
+  Map user ={ 'pseudo': '' , 'id': ''};
+  await Database.getcurret(user['id'], user['pseudo']);
+  // creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('Voyage').add({
     'nom': nom_grp,
+    'admin': user['pseudo'],
     'destination': _destination,
-    'admin': data.pseudo,
     'membres': [
-      data.pseudo
+      user
     ], // since he's the admin, others have to accept the invitation first
   });
+
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   // adding that grp to member's invitations liste:
   for (String m in membres) {
@@ -266,9 +276,10 @@ void createvoyage() async {
       });
     }
   }
+  //adding it to admin list of grp
   await Firestore.instance
       .collection('UserGrp')
-      .document(data.pseudo)
+      .document(user['id'])
       .updateData({
     'groupes': FieldValue.arrayUnion([grp])
   });
