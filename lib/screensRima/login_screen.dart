@@ -4,9 +4,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
-class LoginScreen extends StatefulWidget {
+import 'profile_screen.dart';
+import 'resetmail.dart';
 
-  static const String id='login';
+class LoginScreen extends StatefulWidget {
+  static const String id = 'login';
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -23,7 +25,8 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: SingleChildScrollView(//tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
+          child: SingleChildScrollView(
+            //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -220,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 /*  Future<FirebaseUser> _signInG() async {
     GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;

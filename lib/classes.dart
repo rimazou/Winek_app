@@ -35,23 +35,23 @@ class Utilisateur {
   List alertLIST;
   GeoFirePoint location;
 
-  Utilisateur({this.pseudo,
-    this.tel,
-    this.mail,
-    this.photo,
-    this.vitesse,
-    this.posLatitude,
-    this.posLongitude,
-    this.batterie,
-    this.connecte,
-    this.amis,
-    this.favoris,
-    this.groupes,
-    this.alertLIST,
-    this.invitation_groupe,
-    this.invitation,
-    this.location
-  });
+  Utilisateur(
+      {this.pseudo,
+      this.tel,
+      this.mail,
+      this.photo,
+      this.vitesse,
+      this.posLatitude,
+      this.posLongitude,
+      this.batterie,
+      this.connecte,
+      this.amis,
+      this.favoris,
+      this.groupes,
+      this.alertLIST,
+      this.invitation_groupe,
+      this.invitation,
+      this.location});
 
   @override
   Map<String, dynamic> get map {
@@ -75,26 +75,25 @@ class Utilisateur {
     };
   }
 
-  Utilisateur.fromSnapshot (DataSnapshot data)
-      :this(
-    pseudo: data.value['pseudo'],
-    tel: data.value['tel'],
-    mail: data.value['mail'],
-    photo: data.value['photo'],
-    connecte: data.value ['connecte'],
-    vitesse: data.value['vitesse'],
-    posLatitude: data.value ['posLatitude'],
-    posLongitude: data.value['posLongitude'],
-    batterie: data.value['batterie'],
-    amis: data.value['amis'],
-    favoris: data.value['favoris'],
-    groupes: data.value['groupes'],
-    invitation_groupe: data.value['invitationGroupe'],
-    invitation: data.value['invitation'],
-    alertLIST: data.value ['alertLIST'],
-    location: data.value['location'],
-  );
-
+  Utilisateur.fromSnapshot(DataSnapshot data)
+      : this(
+          pseudo: data.value['pseudo'],
+          tel: data.value['tel'],
+          mail: data.value['mail'],
+          photo: data.value['photo'],
+          connecte: data.value['connecte'],
+          vitesse: data.value['vitesse'],
+          posLatitude: data.value['posLatitude'],
+          posLongitude: data.value['posLongitude'],
+          batterie: data.value['batterie'],
+          amis: data.value['amis'],
+          favoris: data.value['favoris'],
+          groupes: data.value['groupes'],
+          invitation_groupe: data.value['invitationGroupe'],
+          invitation: data.value['invitation'],
+          alertLIST: data.value['alertLIST'],
+          location: data.value['location'],
+        );
 
   void changerPhoto(String value) {
     photo = value;
@@ -144,17 +143,16 @@ class LongTerme extends Groupe {
 
   LongTerme.fromMap(Map<String, dynamic> data)
       : this(
-    nom: data['nom'],
-    admin: data['admin'],
-    membres: new List<String>.from(data['membres']),
-  );
+          nom: data['nom'],
+          admin: data['admin'],
+          membres: new List<String>.from(data['membres']),
+        );
 }
 
 class Voyage extends Groupe {
   double destination_altitude;
   double destination_longitude;
   String destination;
-  List<Membre> membre_info;
 
   //cette list contient les infos des membres a affiche sur la carte
   //a utiliser avec la barre d'info
@@ -162,23 +160,24 @@ class Voyage extends Groupe {
   // du groupe : voir membres, ajouter, creer grp... ect
   //pour pouvoir gerer les deux types de grp au memes temps
 
-  Voyage({String nom,
-    bool affiche,
-    List membres,
-    String admin,
-    this.destination_altitude,
-    this.destination_longitude,
-    this.destination,
-    this.membre_info})
+  Voyage(
+      {String nom,
+      bool affiche,
+      List membres,
+      String admin,
+      this.destination_altitude,
+      this.destination_longitude,
+      this.destination,
+      })
       : super(nom: nom, affiche: affiche, membres: membres, admin: admin);
 
   Voyage.fromMap(Map<String, dynamic> data)
       : this(
-    nom: data['nom'],
-    admin: data['admin'],
-    destination: data['destination'],
-    membres: new List.from(data['membres']),
-  );
+          nom: data['nom'],
+          admin: data['admin'],
+          destination: data['destination'],
+          membres: new List.from(data['membres']),
+        );
 }
 
 class Membre {

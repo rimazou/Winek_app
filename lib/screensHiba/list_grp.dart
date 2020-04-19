@@ -10,10 +10,9 @@ import 'list_inv_grp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import 'parametre_grp.dart';
 
-Database data = Database(pseudo: 'hiba');
+
 bool _loading = false;
 
 class ListGrpPage extends StatefulWidget {
@@ -177,10 +176,7 @@ class Groupeprovider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Map<dynamic, dynamic>>>.value(
-      value: getListGroupes().asStream().timeout(Duration(seconds: 10),
-          onTimeout: (EventSink) {
-        _loading = false;
-      }),
+      value: getListGroupes().asStream(),
       child: GroupesList(),
     );
   }
@@ -217,42 +213,15 @@ class _GroupesListState extends State<GroupesList> {
   }
 }
 
-/*
-Future<List<Groupe>> groupeslist() async {
-  DocumentSnapshot querySnapshot = await Firestore.instance
-      .collection('UserGrp')
-      .document(data.pseudo)
-      .get();
-  print(querySnapshot.data['pseudo']);
-  if (querySnapshot.exists &&
-      querySnapshot.data.containsKey('groupes') &&
-      querySnapshot.data['groupes'] is List) {
-    // Create a new List<String> of ref
-    List<String> grpref = List<String>.from(querySnapshot.data['groupes']);
-    print(grpref);
-    List<Groupe> g = List();
-    for (String ref in grpref) {
-      if (ref.startsWith('LongTerme')) {
-        _firestore.document(ref).get().then((DocumentSnapshot doc) {
-          g.add(LongTerme.fromMap(doc.data));
-          print(g.last.nom);
-        });
-      }
-      if (ref.startsWith('Voyage')) {
-        Firestore.instance.document(ref).get().then((DocumentSnapshot doc) {
-          g.add(Voyage.fromMap(doc.data));
-          print(g.last.nom);
-        });
-      }
-    }
-    return g;
-  }
-}
-*/
+
+
 Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
+  Map user ={ 'pseudo': '' , 'id': ''};
+   Database.getcurret(user['id'], user['pseudo']);
+
   DocumentSnapshot querySnapshot = await Firestore.instance
       .collection('UserGrp')
-      .document(data.pseudo)
+      .document(user['pseudo']) // just for nom when sooum finish i'll change it to id
       .get();
   print(querySnapshot.data.toString());
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
