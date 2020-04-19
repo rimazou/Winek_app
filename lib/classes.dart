@@ -145,7 +145,7 @@ class LongTerme extends Groupe {
       : this(
           nom: data['nom'],
           admin: data['admin'],
-          membres: new List<String>.from(data['membres']),
+          membres: new List<Map<String , dynamic>>.from(data['membres']),
         );
 }
 
@@ -176,7 +176,7 @@ class Voyage extends Groupe {
           nom: data['nom'],
           admin: data['admin'],
           destination: data['destination'],
-          membres: new List.from(data['membres']),
+          membres: new List<Map<String , dynamic>>.from(data['membres']),
         );
 }
 
