@@ -12,7 +12,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'parametre_grp.dart';
 
-
 bool _loading = false;
 
 class ListGrpPage extends StatefulWidget {
@@ -213,15 +212,14 @@ class _GroupesListState extends State<GroupesList> {
   }
 }
 
-
-
 Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
-  Map user ={ 'pseudo': '' , 'id': ''};
-   Database.getcurret(user['id'], user['pseudo']);
+  Map user = {'pseudo': '', 'id': ''};
+  Database.getcurret(user['id'], user['pseudo']);
 
   DocumentSnapshot querySnapshot = await Firestore.instance
       .collection('UserGrp')
-      .document(user['pseudo']) // just for nom when sooum finish i'll change it to id
+      .document(
+          user['id']) // just for nom when sooum finish i'll change it to id
       .get();
   print(querySnapshot.data.toString());
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {

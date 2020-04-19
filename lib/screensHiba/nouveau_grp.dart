@@ -9,7 +9,7 @@ import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'list_grp.dart';
 
-//Database data = Database(pseudo: 'hiba', id: id);
+Database data = Database(pseudo: 'hiba');
 bool _alerte_nom = false;
 bool _alerte_mbr = false;
 String nom_grp = "";
@@ -22,7 +22,7 @@ final _firestore = Firestore.instance;
 
 void createlongterme() async {
   // get the current user info
-  Map user ={ 'pseudo': '' , 'id': ''};
+  Map user = {'pseudo': '', 'id': ''};
   await Database.getcurret(user['id'], user['pseudo']);
   // creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('LongTerme').add({
@@ -62,7 +62,6 @@ void createlongterme() async {
     'groupes': FieldValue.arrayUnion([grp])
   });
 }
-
 
 class NvLongTermePage extends StatefulWidget {
   @override
@@ -242,7 +241,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
 //----------------------------------------------------------------------------------//
 void createvoyage() async {
   // creationg the doc of the grp
-  Map user ={ 'pseudo': '' , 'id': ''};
+  Map user = {'pseudo': '', 'id': ''};
   await Database.getcurret(user['id'], user['pseudo']);
   // creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('Voyage').add({

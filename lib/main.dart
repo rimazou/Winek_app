@@ -22,7 +22,8 @@ Color primarycolor = Color(0xff3B466B);
 Color secondarycolor = Color(0xff389490);
 //Database data = Database(pseudo: 'hiba');
 
-Utilisateur user = Utilisateur.fromSnapshot(authService.userRef.document(authService.connectedID()));
+Utilisateur user = Utilisateur.fromSnapshot(
+    authService.userRef.document(authService.connectedID()));
 
 class Authentication extends StatelessWidget {
   @override
