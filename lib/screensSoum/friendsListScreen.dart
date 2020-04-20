@@ -5,6 +5,7 @@ import 'package:winek/screensSoum/friendsList.dart';
 import '../dataBaseSoum.dart';
 import 'usersListScreen.dart';
 import 'friendRequestScreen.dart';
+import 'package:winek/auth.dart';
 
 var _controller = TextEditingController();
 
@@ -33,8 +34,9 @@ class FriendsListScreen extends StatelessWidget {
             ),
             actions: <Widget>[
               IconButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pushNamed(context, FriendRequestListScreen.id);
+                  //await AuthService().connectedID();
                 },
                 icon: Icon(Icons.group_add),
                 color: Color(0xFF5B5050),

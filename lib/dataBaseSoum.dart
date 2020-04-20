@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:core';
 import 'classes.dart';
+import 'package:winek/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Database {
-  final String pseudo;
-
-  Database({this.pseudo});
+  String id;
+  //static final  currentUser = AuthService().connectedID().toString() ;
+  static final currentUser = 'SckmOFjdeLDM3LTb4QK2';
+  Database({this.id});
 
   final CollectionReference userCollection =
       Firestore.instance.collection('Utilisateur');
@@ -13,50 +16,60 @@ class Database {
   Future userUpdateData(String current) async {
     // ajouter un amis a la liste de current
     return await userCollection.document(current).updateData({
-      "amis": FieldValue.arrayUnion([pseudo])
+      "amis": FieldValue.arrayUnion([id])
     });
   }
 
   Future userDeleteData(String current) async {
     // supprimer une invit de pseudo de la liste de current
     return await userCollection.document(current).updateData({
-      "invitation": FieldValue.arrayRemove([pseudo])
+      "invitation": FieldValue.arrayRemove([id])
     });
   }
 
   Future invitUpdateData(String current) async {
     // ajouter une invit de pseudo a la liste de current
     return await userCollection.document(current).updateData({
-      "invitation": FieldValue.arrayUnion([pseudo])
+      "invitation": FieldValue.arrayUnion([id])
     });
   }
 
   Future friendDeleteData(String current) async {
     // supprimer un lami pseudo de la liste de current
     return await userCollection.document(current).updateData({
-      "amis": FieldValue.arrayRemove([pseudo])
+      "amis": FieldValue.arrayRemove([id])
     });
   }
 
-  List<Utilisateur> _userListFromSnapshot(QuerySnapshot snapshot) {
+  List<String> _userListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      return Utilisateur(pseudo: doc.data['pseudo'] ?? '');
+      return doc.documentID;
     }).toList();
   }
 
-  Stream<List<Utilisateur>> get users {
+  Stream<List<String>> get users {
     return userCollection.snapshots().map(_userListFromSnapshot);
   }
 
   Stream<List<String>> get friends {
-    return userCollection.document('asma').snapshots().map((snap) {
+    return userCollection.document(id).snapshots().map((snap) {
       return snap.data['amis'].cast<String>();
     });
   }
 
   Stream<List<String>> get friendRequest {
-    return userCollection.document('asma').snapshots().map((snap) {
+    return userCollection.document(currentUser).snapshots().map((snap) {
       return snap.data['invitation'].cast<String>();
     });
+  }
+
+  String getPseudo(String id) {
+    String name = 'marche pas';
+    userCollection.document(id).snapshots().listen((docSnap) {
+      if (docSnap != null) {
+        name = docSnap.data['pseudo'];
+      }
+    });
+    return name;
   }
 }

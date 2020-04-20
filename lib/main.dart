@@ -22,17 +22,13 @@ Color primarycolor = Color(0xff3B466B);
 Color secondarycolor = Color(0xff389490);
 //Database data = Database(pseudo: 'hiba');
 
-Utilisateur user = Utilisateur.fromSnapshot(authService.userRef.document(authService.connectedID()));
+Utilisateur user = Utilisateur.fromSnapshot(
+    authService.userRef.document(authService.connectedID()));
 
 class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light().copyWith(
-        textTheme: TextTheme(
-          body1: TextStyle(color: Colors.black54),
-        ),
-      ),
       debugShowCheckedModeBanner: false,
       //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
       initialRoute: WelcomeScreen.id,

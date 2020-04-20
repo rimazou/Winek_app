@@ -104,7 +104,7 @@ class MsgPredefinis {
 abstract class Groupe {
   String nom;
   bool affiche;
-  List membres;
+  List<Map<dynamic, dynamic>> membres;
   String admin;
 
   //----------fonctions--------------//
@@ -130,7 +130,7 @@ class LongTerme extends Groupe {
       : this(
           nom: data['nom'],
           admin: data['admin'],
-          membres: new List<String>.from(data['membres']),
+          membres: new List<Map<dynamic, dynamic>>.from(data['membres']),
         );
 }
 
@@ -145,23 +145,22 @@ class Voyage extends Groupe {
   // du groupe : voir membres, ajouter, creer grp... ect
   //pour pouvoir gerer les deux types de grp au memes temps
 
-  Voyage(
-      {String nom,
-      bool affiche,
-      List membres,
-      String admin,
-      this.destination_altitude,
-      this.destination_longitude,
-      this.destination,
-      })
-      : super(nom: nom, affiche: affiche, membres: membres, admin: admin);
+  Voyage({
+    String nom,
+    bool affiche,
+    List membres,
+    String admin,
+    this.destination_altitude,
+    this.destination_longitude,
+    this.destination,
+  }) : super(nom: nom, affiche: affiche, membres: membres, admin: admin);
 
   Voyage.fromMap(Map<String, dynamic> data)
       : this(
           nom: data['nom'],
           admin: data['admin'],
           destination: data['destination'],
-          membres: new List.from(data['membres']),
+          membres: new List<Map<dynamic, dynamic>>.from(data['membres']),
         );
 }
 

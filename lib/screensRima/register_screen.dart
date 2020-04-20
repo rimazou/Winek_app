@@ -22,12 +22,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String email,
-      pw,
-      pwd,
-      pseudo,
-      tel,
-      pic = "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+  String email, pw, pwd, pseudo, tel;
   File _image;
   String _uploadedFileURL;
   @override
@@ -389,7 +384,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             tel: tel,
 
           photo: _uploadedFileURL,
-          amis: <String>[] ,
+          amis: <String>[],
           invitation: [],
           invitation_groupe: [],
           alertLIST: [],

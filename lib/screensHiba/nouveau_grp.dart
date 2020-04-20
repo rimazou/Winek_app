@@ -4,27 +4,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
-import 'package:winek/screensHiba/parametre_grp.dart';
+import 'MapPage.dart';
 import '../main.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
+import '../dataBaseSoum.dart';
 import 'list_grp.dart';
 
-//Database data = Database(pseudo: 'hiba', id: id);
+Databasegrp data = Databasegrp();
 bool _alerte_nom = false;
 bool _alerte_mbr = false;
 String nom_grp = "";
 var _controller;
 Groupe nv_grp;
 String _destination;
-List<String> membres;
+List<Map<dynamic, dynamic>> membres;
 bool _loading = false;
 final _firestore = Firestore.instance;
 
 void createlongterme() async {
   // get the current user info
-  Map user ={ 'pseudo': '' , 'id': ''};
-  await Database.getcurret(user['id'], user['pseudo']);
+  Map<String, String> user = {'pseudo': '', 'id': ''};
+  user['id'] = await authService.connectedID();
+  user['pseudo'] = await Firestore.instance
+      .collection('Utilisateur')
+      .document(user['id'])
+      .get()
+      .then((Doc) {
+    return Doc.data['pseudo'];
+  });
+  print("user:$user");
   // creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('LongTerme').add({
     'nom': nom_grp,
@@ -34,10 +43,11 @@ void createlongterme() async {
     ], // since he's the admin, others have to accept the invitation first
   });
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
+  print(grp);
   // adding that grp to member's invitations liste.
-  for (String m in membres) {
+  for (Map m in membres) {
     DocumentSnapshot doc =
-        await Firestore.instance.collection('UserGrp').document(m).get();
+        await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -49,21 +59,32 @@ void createlongterme() async {
         });
       }
     } else {
-      Firestore.instance.collection('UserGrp').document(m).setData({
-        'pseudo': m,
+      Firestore.instance.collection('UserGrp').document(m['id']).setData({
+        'pseudo': m['pseudo'],
         'invitations': [grp]
       });
     }
   }
   //adding the grp into the admin list of grp
-  await Firestore.instance
-      .collection('UserGrp')
-      .document(user['id'])
-      .updateData({
-    'groupes': FieldValue.arrayUnion([grp])
-  });
+  DocumentSnapshot userdoc =
+      await Firestore.instance.collection('UserGrp').document(user['id']).get();
+  if (userdoc.exists) {
+    if (userdoc.data.containsKey('groupes')) {
+      userdoc.reference.updateData({
+        'groupes': FieldValue.arrayUnion([grp])
+      });
+    } else {
+      userdoc.reference.updateData({
+        'groupes': [grp]
+      });
+    }
+  } else {
+    Firestore.instance.collection('UserGrp').document(user['id']).setData({
+      'pseudo': user['pseudo'],
+      'groupes': [grp]
+    });
+  }
 }
-
 
 class NvLongTermePage extends StatefulWidget {
   @override
@@ -76,7 +97,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
 
   @override
   void initState() {
-    membres = new List();
+    membres = List<Map>();
     _controller = TextEditingController();
   }
 
@@ -173,10 +194,10 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
                 borderRadius: BorderRadius.circular(10),
                 color: Color.fromRGBO(59, 70, 107, 0.3),
               ),
-              child: FriendList((String membername) {
-                membres.contains(membername)
-                    ? membres.remove(membername)
-                    : membres.add(membername);
+              child: FriendList((var member) {
+                membres.contains(member)
+                    ? membres.remove(member)
+                    : membres.add(member);
               }),
             ),
             Spacer(
@@ -213,7 +234,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
                       setState(() {
                         _loading = false;
                       });
-                      Navigator.pushNamed(context, ListGrpPage.id);
+                      Navigator.pushNamed(context, Home.id);
                     }
                   });
                 },
@@ -243,8 +264,15 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
 //----------------------------------------------------------------------------------//
 void createvoyage() async {
   // creationg the doc of the grp
-  Map user ={ 'pseudo': '' , 'id': ''};
-  await Database.getcurret(user['id'], user['pseudo']);
+  Map user = {'pseudo': '', 'id': ''};
+  user['id'] = await authService.connectedID();
+  user['pseudo'] = await Firestore.instance
+      .collection('Utilisateur')
+      .document(user['id'])
+      .get()
+      .then((Doc) {
+    return Doc.data['pseudo'];
+  });
   // creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('Voyage').add({
     'nom': nom_grp,
@@ -257,9 +285,9 @@ void createvoyage() async {
 
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   // adding that grp to member's invitations liste:
-  for (String m in membres) {
+  for (Map m in membres) {
     DocumentSnapshot doc =
-        await Firestore.instance.collection('UserGrp').document(m).get();
+        await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -271,19 +299,31 @@ void createvoyage() async {
         });
       }
     } else {
-      Firestore.instance.collection('UserGrp').document(m).setData({
-        'pseudo': m,
+      Firestore.instance.collection('UserGrp').document(m['id']).setData({
+        'pseudo': m['pseudo'],
         'invitations': [grp]
       });
     }
   }
   //adding it to admin list of grp
-  await Firestore.instance
-      .collection('UserGrp')
-      .document(user['id'])
-      .updateData({
-    'groupes': FieldValue.arrayUnion([grp])
-  });
+  DocumentSnapshot userdoc =
+      await Firestore.instance.collection('UserGrp').document(user['id']).get();
+  if (userdoc.exists) {
+    if (userdoc.data.containsKey('groupes')) {
+      userdoc.reference.updateData({
+        'groupes': FieldValue.arrayUnion([grp])
+      });
+    } else {
+      userdoc.reference.updateData({
+        'groupes': [grp]
+      });
+    }
+  } else {
+    Firestore.instance.collection('UserGrp').document(user['id']).setData({
+      'pseudo': user['pseudo'],
+      'groupes': [grp]
+    });
+  }
 }
 
 class NvVoyagePage extends StatefulWidget {
@@ -444,10 +484,10 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                 borderRadius: BorderRadius.circular(10),
                 color: Color.fromRGBO(59, 70, 107, 0.3),
               ),
-              child: FriendList((String membername) {
-                membres.contains(membername)
-                    ? membres.remove(membername)
-                    : membres.add(membername);
+              child: FriendList((var member) {
+                membres.contains(member)
+                    ? membres.remove(member)
+                    : membres.add(member);
                 print(membres.toString());
               }),
             ),
@@ -485,7 +525,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                       setState(() {
                         _loading = false;
                       });
-                      Navigator.pushNamed(context, ListGrpPage.id);
+                      Navigator.pushNamed(context, Home.id);
                     }
                   });
                 },
@@ -547,13 +587,12 @@ class _RecherchePageState extends State<RecherchePage> {
 
 class FriendList extends StatelessWidget {
   final Function _function;
-
   FriendList(this._function);
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<Utilisateur>>.value(
-        value: data.friends,
+    return StreamProvider<List<Map<dynamic, dynamic>>>.value(
+        value: getlistfreind().asStream(),
         child: GestureDetector(
           onTap: () {
             FocusScopeNode currentFocus = FocusScope.of(context);
@@ -583,7 +622,7 @@ class _FriendsListState extends State<FriendsList> {
 
   @override
   Widget build(BuildContext context) {
-    final friends = Provider.of<List<Utilisateur>>(context);
+    final friends = Provider.of<List<Map<dynamic, dynamic>>>(context);
     int count;
     if (friends != null) {
       count = friends.length;
@@ -598,11 +637,11 @@ class _FriendsListState extends State<FriendsList> {
           child: ListTile(
             onTap: () {
               setState(() {
-                _function(friends[index].pseudo);
+                _function(friends[index]);
               });
             },
             title: Text(
-              friends[index].pseudo,
+              friends[index]['pseudo'],
               style: TextStyle(
                 fontSize: 14,
                 fontFamily: 'Montserrat',
@@ -615,7 +654,7 @@ class _FriendsListState extends State<FriendsList> {
               color: primarycolor,
               size: 30,
             ),
-            trailing: membres.contains(friends[index].pseudo)
+            trailing: membres.contains(friends[index])
                 ? Icon(
                     Icons.done,
                     color: secondarycolor,
@@ -631,4 +670,34 @@ class _FriendsListState extends State<FriendsList> {
       },
     );
   }
+}
+
+Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
+  String id = await authService.connectedID();
+  print(id);
+  List<dynamic> friendsid = List();
+  await Firestore.instance
+      .collection('Utilisateur')
+      .document(id)
+      .get()
+      .then((DocumentSnapshot doc) {
+    friendsid = doc.data['amis'];
+  });
+  print(friendsid);
+  List<dynamic> pseudos = List();
+  for (String id in friendsid) {
+    await Firestore.instance
+        .collection('Utilisateur')
+        .document(id)
+        .get()
+        .then((DocumentSnapshot doc) {
+      pseudos.add(doc.data['pseudo']);
+    });
+  }
+  print(pseudos);
+  List<Map<dynamic, dynamic>> friendlist = List();
+  for (int index = 0; index < friendsid.length; index++) {
+    friendlist.add({'pseudo': pseudos[index], 'id': friendsid[index]});
+  }
+  return friendlist;
 }

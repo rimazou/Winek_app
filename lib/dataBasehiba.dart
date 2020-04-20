@@ -5,25 +5,30 @@ import 'dart:core';
 import 'classes.dart';
 import 'auth.dart';
 
-class Database {
-  final String pseudo;
-  final String id;
+class Databasegrp {
+  String pseudo;
+  String id;
 
-  var current = authService
-      .connectedID(); // il reste berk nchouf kifach yemchi bien le truc ta3 future des fois ca rend pas direct un string et tt
+  Databasegrp({this.pseudo, this.id});
+/*
+  static void getcurret(String id, String pseudo) async {
+    id = await authService.connectedID();
+    print('id: $id');
+    /* await authService.connectedID().then((String uid) {
+      id = uid;
+      print('id: $id');
+    });*/
 
-  Database({@required this.pseudo, @required this.id});
-
- static void getcurret(String id , String pseudo)async{
-   await authService.connectedID().then((String uid){
-     id = uid;
-   });
-  await Firestore.instance.document(id).get().then((DocumentSnapshot doc){
-    pseudo = doc.data['pseudo'];
-  });
- }
-
-
+    pseudo = await Firestore.instance
+        .collection('Utilisateur')
+        .document(id)
+        .get()
+        .then((DocumentSnapshot doc) {
+      return doc.data['pseudo'];
+    });
+    print('pseudo: $pseudo');
+  }
+*/
   final CollectionReference friendsCollection =
       Firestore.instance.collection('Friends');
 
@@ -35,71 +40,9 @@ class Database {
   final CollectionReference longtermeCollection =
       Firestore.instance.collection('LongTerme');
 
-  List<Utilisateur> _friendListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return Utilisateur(pseudo: doc.data['pseudo'] ?? '');
-    }).toList();
-  }
-
-  List<Utilisateur> _userListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return Utilisateur(pseudo: doc.data['pseudo'] ?? '');
-    }).toList();
-  }
-
-  Stream<List<Utilisateur>> get users {
-    return usersCollection.snapshots().map(_userListFromSnapshot);
-  }
-
-  Stream<List<Utilisateur>> get friends {
-    return friendsCollection.snapshots().map(_friendListFromSnapshot);
-  }
-
-  Future<List<Groupe>> groupeslist() async {
-    DocumentSnapshot querySnapshot =
-        await Firestore.instance.collection('UserGrp').document(pseudo).get();
-    // print(querySnapshot.data['pseudo']);
-    if (querySnapshot.exists &&
-        querySnapshot.data.containsKey('groupes') &&
-        querySnapshot.data['groupes'] is List) {
-      // Create a new List<String> of ref
-      List<String> grpref = List<String>.from(querySnapshot.data['groupes']);
-      List<Groupe> g = List();
-      for (String ref in grpref) {
-        if (ref.startsWith('LongTerme')) {
-          Firestore.instance.document(ref).get().then((DocumentSnapshot doc) {
-            LongTerme lt = LongTerme.fromMap(doc.data);
-            g.add(lt);
-          });
-        }
-        if (ref.startsWith('Voyage')) {
-          Firestore.instance.document(ref).get().then((DocumentSnapshot doc) {
-            g.add(Voyage.fromMap(doc.data));
-          });
-        }
-      }
-      return g;
-    }
-  }
-
-/*  List<Invitation> _friendRequestListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.documents.map((doc){
-
-      return Invitation(
-          pseudo : doc.data['pseudo'] ?? ''
-
-      );}).toList();
-  }
-
-  Stream<List<Invitation>> get friendRequest {
-    return friendRequestCollection.snapshots().map(_friendRequestListFromSnapshot);
-  }
-*/
-
-  Future<bool> updatelistinvitations(
-      String pseudo, String grpid, String grpname) {
+  Future<bool> updatelistinvitations(String id, String grpid, String grpname) {
     DocumentReference invitationsReference =
-        Firestore.instance.collection('UserGrp').document(pseudo);
+        Firestore.instance.collection('UserGrp').document(id);
     Map grp = {'chemin': grpid, 'nom': grpname};
     return Firestore.instance.runTransaction((Transaction tx) async {
       DocumentSnapshot postSnapshot = await tx.get(invitationsReference);
@@ -138,9 +81,9 @@ class Database {
     });
   }
 
-  Future<bool> updatelistgroupes(String pseudo, String grpid, String grpname) {
+  Future<bool> updatelistgroupes(String id, String grpid, String grpname) {
     DocumentReference groupesReference =
-        Firestore.instance.collection('UserGrp').document(pseudo);
+        Firestore.instance.collection('UserGrp').document(id);
     Map grp = {'chemin': grpid, 'nom': grpname};
     return Firestore.instance.runTransaction((Transaction tx) async {
       DocumentSnapshot postSnapshot = await tx.get(groupesReference);
@@ -178,7 +121,8 @@ class Database {
     });
   }
 
-  Future<bool> updategroupemembers(String ref, String membre) {
+  Future<bool> updategroupemembers(String ref, String mpseudo, String mid) {
+    Map membre = {'pseudo': mpseudo, 'id': mid};
     DocumentReference groupesReference = Firestore.instance.document(ref);
     return Firestore.instance.runTransaction((Transaction tx) async {
       DocumentSnapshot postSnapshot = await tx.get(groupesReference);
@@ -252,8 +196,10 @@ class Database {
           .where('groupes', arrayContains: [grp])
           .snapshots()
           .listen((data) => data.documents.forEach((doc) {
-                print(doc.data['pseudo']);
-                //updatelistgroupes(doc.data['pseudo'], ref, nom);
+                doc.reference.updateData({
+                  'groupes': FieldValue.arrayRemove([grp])
+                });
+                //updatelistgroupes(doc.documentID, ref, nom);
               }));
     } catch (e) {
       print(e.toString());
@@ -261,10 +207,13 @@ class Database {
     try {
       Firestore.instance
           .collection('UserGrp')
-          .where('invitations', arrayContains: grp)
+          .where('invitations', arrayContains: [grp])
           .snapshots()
           .listen((data) => data.documents.forEach((doc) {
-                updatelistinvitations(doc.data['pseudo'], ref, nom);
+                doc.reference.updateData({
+                  'invitations': FieldValue.arrayRemove([grp])
+                });
+                // updatelistinvitations(doc.data['pseudo'], ref, nom);
               }));
     } catch (e) {
       print(e.toString());
@@ -272,37 +221,53 @@ class Database {
   }
 
   void quittergroupe(String ref, String nom) async {
+    this.id = await authService.connectedID();
+    pseudo = await Firestore.instance
+        .collection('Utilisateur')
+        .document(id)
+        .get()
+        .then((Doc) {
+      return Doc.data['pseudo'];
+    });
     Map grp = {'chemin': ref, 'nom': nom};
     //update groupes liste
     try {
-      Firestore.instance.collection('UserGrp').document(pseudo).updateData({
+      Firestore.instance.collection('UserGrp').document(id).updateData({
         'groupes': FieldValue.arrayRemove([grp]),
       });
     } catch (e) {
       print(e.toString());
     }
     try {
-      updategroupemembers(ref, pseudo);
+      updategroupemembers(ref, pseudo, id);
     } catch (e) {
       print(e.toString());
     }
   }
 
-  void addmember(String ref, String nom, String member) async {
-    await updategroupemembers(ref, member);
-    await updatelistinvitations(member, ref, nom);
+  void invitemember(String ref, String nom, String memberid) async {
+    updatelistinvitations(memberid, ref, nom);
   }
 
-  void deletemember(String ref, String nom, String member) async {
-    await updatelistgroupes(member, ref, nom);
-    await updategroupemembers(ref, member);
+  void deletemember(
+      String ref, String nom, String memberid, String memberpseudo) async {
+    await updatelistgroupes(memberid, ref, nom);
+    await updategroupemembers(ref, memberpseudo, memberid);
   }
 
   void refuseinvitation(String ref, String nom) async {
+    this.id = await authService.connectedID();
+    pseudo = await Firestore.instance
+        .collection('Utilisateur')
+        .document(id)
+        .get()
+        .then((Doc) {
+      return Doc.data['pseudo'];
+    });
     Map grp = {'chemin': ref, 'nom': nom};
     // await updatelistinvitations(pseudo, ref, nom);
     try {
-      Firestore.instance.collection('UserGrp').document(pseudo).updateData({
+      Firestore.instance.collection('UserGrp').document(id).updateData({
         'invitations': FieldValue.arrayRemove([grp]),
       });
     } catch (e) {
@@ -311,12 +276,20 @@ class Database {
   }
 
   void acceptinvitation(String ref, String nom) async {
+    this.id = await authService.connectedID();
+    pseudo = await Firestore.instance
+        .collection('Utilisateur')
+        .document(id)
+        .get()
+        .then((Doc) {
+      return Doc.data['pseudo'];
+    });
     Map grp = {'chemin': ref, 'nom': nom};
     // await updatelistinvitations(pseudo, ref, nom);
     // await updatelistgroupes(pseudo, ref, nom);
     await Firestore.instance
         .collection('UserGrp')
-        .document(pseudo)
+        .document(id)
         .get()
         .then((DocumentSnapshot doc) {
       doc.reference.updateData({
@@ -325,8 +298,31 @@ class Database {
         'pseudo': pseudo
       });
     });
-    await updategroupemembers(ref, pseudo);
+    await updategroupemembers(ref, pseudo, id);
   }
 
+  Future<List<Map<dynamic, dynamic>>> getListInvitations() async {
+    Map user = {'pseudo': '', 'id': ''};
+    user['id'] = await authService.connectedID();
+    user['pseudo'] = await Firestore.instance
+        .collection('Utilisateur')
+        .document(user['id'])
+        .get()
+        .then((Doc) {
+      return Doc.data['pseudo'];
+    });
+    DocumentSnapshot querySnapshot = await Firestore.instance
+        .collection('UserGrp')
+        .document(
+            user['id']) // just for nom when sooum finish i'll change it to id
+        .get();
+    print(querySnapshot.data.toString());
+    if (querySnapshot.exists && querySnapshot.data.containsKey('invitations')) {
+      // Create a new List<String> from List<dynamic>
 
+      return List<Map<dynamic, dynamic>>.from(
+          querySnapshot.data['invitations']);
+    }
+    return [];
+  }
 }
