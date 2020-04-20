@@ -17,234 +17,165 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(28.0),
+          child: AppBar(
+            backgroundColor: Colors.white30,
+            elevation: 0.0,
+            iconTheme: IconThemeData(
+              color: Colors.black54,
+            ),
+          ),
+        ),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0.0),
+          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
           child: SingleChildScrollView(
-            
             child: Stack(
-              children : <Widget>[
-                Positioned(
-                  top: 0.0,
-                  right: 0,
-                  left: 0,
-                  bottom: 0.0,
-                  child: Container(//this one c le cadre
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blueGrey,
-                        width: 3,
+              children: <Widget>[
+                Center(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 140,
                       ),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                      Container(
+                        height: 500.0,
+                        width: 320.0,
+                      ),
+                    ],
                   ),
                 ),
                 Center(
                   child: Column(
-
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       SizedBox(
-                        height: 48.0,
+                        height: 140,
                       ),
                       Container(
-                        child: ClipOval(
-                          child: Image.network("https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-                            fit: BoxFit.fill,
-                          ),
+                        // carre principal
+                        height: 400.0,
+                        width: 320.0,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 70,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                'hello',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff707070),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 26,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                'pseudo',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff000000),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 23,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                'phone',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 23,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                'mail',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        height: 100.0,
-                        width: 100.0,
-                        decoration: BoxDecoration(
 
+                        decoration: BoxDecoration(
+                          color: Colors.white,
                           border: Border.all(
-                            color: Colors.blueGrey,
+                            color: Colors.grey[300],
                             width: 3,
                           ),
-                          borderRadius: BorderRadius.circular(60),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 48.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0,right: 40.0),
-                        child: Container(
-                          height: 1.0,
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                          ),
-
-                        ),
-
-                      ),
-                      Wrap(
-                        children: <Widget>[
-                          Container (
-                            padding: const EdgeInsets.only(left: 40.0,right:30.0),
-                            child: Text(
-                                'Utilisateur:',
-                              style: TextStyle(
-                                fontFamily: 'Monsterrat',
-                                fontSize:20.0,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          boxShadow: [
+                            new BoxShadow(
+                              color: Colors.grey[200],
+                              blurRadius: 20.0,
                             ),
-                          ),
-
-
-                      Container(
-                        width:130.0,
-                        height: 23.0,
-                        padding: EdgeInsets.only(top: 6.0),
-                        child: TextField(
-
-                          enabled: true,
-
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            color: Colors.blue,
-
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'testEvaluation',
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                          ),
+                          ],
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 50.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0,right: 40.0),
-                        child: Container(
-                          //  child: Image.network(),
-                          height: 1.0,
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                          ),
-
-                        ),
-
-                      ),
-                      Wrap(
-                        children: <Widget>[
-                          Container (
-                            padding: const EdgeInsets.only(left: 40.0,right:30.0),
-                            child: Text(
-                              'Telephone:',
-                              style: TextStyle(
-                                fontFamily: 'Monsterrat',
-                                fontSize:20.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-
-
-                          Container(
-                            width:130.0,
-                            height: 23.0,
-                            padding: EdgeInsets.only(top: 6.0),
-                            child: TextField(
-
-                              enabled: true,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                color: Colors.black,
-
-                              ),
-                              decoration: InputDecoration(
-                                hintText: '0123456789',
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 48.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40.0,right: 40.0),
-                        child: Container(
-                          //  child: Image.network(),
-                          height: 1.0,
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                          ),
-
-                        ),
-
-                      ),
-                      Wrap(
-                        children: <Widget>[
-                          Container (
-                            padding: const EdgeInsets.only(left: 30.0,right:20.0),
-                            child: Text(
-                              'Email',
-                              style: TextStyle(
-                                fontFamily: 'Monsterrat',
-                                fontSize:20.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-
-
-                          Container(
-                            width:130.0,
-                            height: 23.0,
-                            padding: EdgeInsets.only(top: 6.0),
-                            child: TextField(
-                              obscureText: true,
-                              enabled: true,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                color: Colors.black87,
-
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'test',
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Material(
-                        color: Colors.grey,
-                        shadowColor: Colors.blueGrey,
-                        child: IconButton(
-                          splashColor: Colors.yellowAccent,
-                          color: Colors.blueGrey,
-                          icon: Icon(Icons.edit),
-                          iconSize: 45.0,
-                          tooltip: 'Edit',
-
-                          onPressed: _edit() ,//_showDialog ,
-                        ),
-                      ),
-
                     ],
                   ),
                 ),
+                Positioned(
+                  top: 510,
+                  right: 120,
+                  left: 120,
+                  bottom: 80,
 
+                ),
+                Center(
+                  child: Column(
+                    //photos
+
+                    children: <Widget>[
+                      SizedBox(
+                        height: 90,
+                      ),
+                      Container(
+                        height: 110.0,
+                        width: 110.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey[300],
+                            width: 3,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

@@ -12,12 +12,6 @@ class Utilisateur {
 
   String photo;
 
-  double vitesse;
-
-  double posLatitude;
-
-  double posLongitude;
-
   int batterie;
 
   bool connecte;
@@ -33,16 +27,13 @@ class Utilisateur {
   List invitation;
 
   List alertLIST;
-  GeoFirePoint location;
+  Map <String, dynamic> location;
 
   Utilisateur(
       {this.pseudo,
       this.tel,
       this.mail,
       this.photo,
-      this.vitesse,
-      this.posLatitude,
-      this.posLongitude,
       this.batterie,
       this.connecte,
       this.amis,
@@ -61,9 +52,6 @@ class Utilisateur {
       'mail': mail,
       'photo': photo,
       'connecte': connecte,
-      'vitesse': vitesse,
-      'posLatitude': posLatitude,
-      'posLongitude': posLongitude,
       'batterie': batterie,
       'amis': amis,
       'favoris': favoris,
@@ -82,9 +70,6 @@ class Utilisateur {
           mail: data.value['mail'],
           photo: data.value['photo'],
           connecte: data.value['connecte'],
-          vitesse: data.value['vitesse'],
-          posLatitude: data.value['posLatitude'],
-          posLongitude: data.value['posLongitude'],
           batterie: data.value['batterie'],
           amis: data.value['amis'],
           favoris: data.value['favoris'],

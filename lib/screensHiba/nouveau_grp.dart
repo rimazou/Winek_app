@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/parametre_grp.dart';
 import '../main.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';

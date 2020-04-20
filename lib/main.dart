@@ -35,7 +35,7 @@ class Authentication extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-      initialRoute: Home.id,
+      initialRoute: WelcomeScreen.id,
       routes: {
         Home.id: (BuildContext context) => Home(), // la map
         WelcomeScreen.id: (context) => WelcomeScreen(),

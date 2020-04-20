@@ -22,7 +22,12 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String email, pw, pwd, pseudo, tel;
+  String email,
+      pw,
+      pwd,
+      pseudo,
+      tel,
+      pic = "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
   File _image;
   String _uploadedFileURL;
   @override
@@ -87,8 +92,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             width: 180.0,
                             height: 180.0,
                             child:(_image!=null) ? Image.file(_image,fit: BoxFit.fill,)
-                                : Image.network(
-                              "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                                : Image.network(pic,
                               fit: BoxFit.fill,
                             ),
                           ),
@@ -373,6 +377,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print('creaaation bdaaat ');
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
+      GeoFirePoint pt = geo.point(
+          latitude: lt.latitude, longitude: lt.longitude);
       final newUser = await authService.auth.createUserWithEmailAndPassword(
           email: email,
           password: pwd);
@@ -382,17 +388,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             mail: email,
             tel: tel,
 
-          photo:_uploadedFileURL ,
+          photo: _uploadedFileURL,
           amis: <String>[] ,
           invitation: [],
           invitation_groupe: [],
           alertLIST: [],
           connecte: true,
-          // location: geo.point(latitude: lt.latitude ,longitude: lt.longitude) ,
+          location: pt.data,
         );
         // authService.db.collection('Utilisateur').add(myUser.map);
          //authService..add(myUser.map);
-        authService.db.collection('Utilisateur').document('AAAAA').setData(
+        authService.db.collection('Utilisateur')
+            .document(newUser.user.uid)
+            .setData(
             myUser.map);
          print('user CREAAAATEEEEED');
         print(newUser.user.uid);
@@ -450,6 +458,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       }
     });
   }
+
   Future chooseFile() async {
     print('choooose file') ;
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
@@ -461,6 +470,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('photos/${p.basename(_image.path)}}');
+    _uploadedFileURL =
+    "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('File Uploaded');
