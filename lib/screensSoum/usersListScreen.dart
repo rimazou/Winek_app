@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../dataBasehiba.dart';
+import 'package:winek/dataBaseSoum.dart';
 import 'package:provider/provider.dart';
 import '../classes.dart';
 import 'friendsList.dart';
@@ -37,7 +37,7 @@ class _UsersListScreenState extends State<UsersListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<Utilisateur>>.value(
+    return StreamProvider<List<String>>.value(
       value: Database().users,
       child: GestureDetector(
         onTap: () {

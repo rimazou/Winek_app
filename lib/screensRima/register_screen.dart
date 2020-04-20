@@ -13,9 +13,10 @@ import 'package:flutter/services.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
-import 'package:path/path.dart' as p ;
+import 'package:path/path.dart' as p;
+
 class RegistrationScreen extends StatefulWidget {
-  static const String id='register';
+  static const String id = 'register';
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -35,16 +36,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-
                 SizedBox(
                   height: 30.0,
                 ),
-
                 Container(
-
                   height: 60.0,
                   width: 60.0,
-                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
+                  child: Image.asset(
+                    'images/logo.png',
+                    fit: BoxFit.fill,
+                    height: 120.0,
+                    width: 120.0,
+                  ),
                 ),
                 Text(
                   'Winek',
@@ -52,8 +55,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 26.0,
                     fontWeight: FontWeight.w900,
-                    color:Color(0XFF3B466B),
-
+                    color: Color(0XFF3B466B),
                   ),
                 ),
                 SizedBox(
@@ -65,7 +67,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 20.0,
                     fontWeight: FontWeight.w900,
-                    color: Color(0XFF389490),//vert
+                    color: Color(0XFF389490), //vert
                   ),
                 ),
                 SizedBox(
@@ -79,17 +81,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child :CircleAvatar(
+                      child: CircleAvatar(
                         radius: 40,
                         child: ClipOval(
                           child: SizedBox(
                             width: 180.0,
                             height: 180.0,
-                            child:(_image!=null) ? Image.file(_image,fit: BoxFit.fill,)
+                            child: (_image != null)
+                                ? Image.file(
+                                    _image,
+                                    fit: BoxFit.fill,
+                                  )
                                 : Image.network(
-                              "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-                              fit: BoxFit.fill,
-                            ),
+                                    "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                                    fit: BoxFit.fill,
+                                  ),
                           ),
                         ),
                       ),
@@ -99,19 +105,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.camera_alt,
-                          size: 30.0,),
+                          size: 30.0,
+                        ),
                         onPressed: () => chooseFile(),
                         // uploadFile();
-
                       ),
                     )
                   ],
                 ),
                 TextField(
                   onChanged: (value) {
-                      pseudo= value;
-                   pseudoExist();
-                    },
+                    pseudo = value;
+                    pseudoExist();
+                  },
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black87,
@@ -122,16 +128,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   decoration: InputDecoration(
                     labelText: 'Pseudo',
-
                     errorText: errPs,
                     errorStyle: TextStyle(
                         fontFamily: 'Montserrat',
-
-
                         color: Colors.red,
                         fontWeight: FontWeight.bold),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
@@ -149,17 +152,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 8.0,
                 ),
                 TextField(
-                    keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
                     email = value;
                     setState(() {
-
-                    !Validator.email(email) ? errMl=null : errMl="Veuillez introduire une adresse valide";
-                    mailExist();
+                      !Validator.email(email)
+                          ? errMl = null
+                          : errMl = "Veuillez introduire une adresse valide";
+                      mailExist();
                     });
-
                   },
-
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black87,
@@ -175,10 +177,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     errorStyle: TextStyle(
                         color: Colors.red,
                         fontFamily: 'Montserrat',
-
                         fontWeight: FontWeight.bold),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
@@ -199,16 +200,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   onChanged: (value) {
                     tel = value;
                     setState(() {
-
-                    !Validator.number(tel) ? errTel=null :  errTel='Veuillez entrer un numero';
-    });
-
-  },
+                      !Validator.number(tel)
+                          ? errTel = null
+                          : errTel = 'Veuillez entrer un numero';
+                    });
+                  },
                   textAlign: TextAlign.center,
-
-                  keyboardType: TextInputType.numberWithOptions(
-
-                  ),
+                  keyboardType: TextInputType.numberWithOptions(),
                   style: TextStyle(
                     color: Colors.black87,
                     fontFamily: 'Montserrat',
@@ -222,11 +220,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     errorText: errTel,
                     errorStyle: TextStyle(
                         fontFamily: 'Montserrat',
-
                         color: Colors.red,
                         fontWeight: FontWeight.bold),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
@@ -248,12 +245,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   onChanged: (value) {
                     setState(() {
                       pwd = value;
-                 double strength = estimatePasswordStrength(pwd);
+                      double strength = estimatePasswordStrength(pwd);
 
-                    if (strength < 0.3) { errPwd='Mot de passe faible' ;}
-                    else {
-                      errPwd=null ;
-                    }
+                      if (strength < 0.3) {
+                        errPwd = 'Mot de passe faible';
+                      } else {
+                        errPwd = null;
+                      }
                     });
                   },
                   textAlign: TextAlign.center,
@@ -268,16 +266,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
-
                     hoverColor: Colors.black87,
                     errorText: errPwd,
                     errorStyle: TextStyle(
                         fontFamily: 'Montserrat',
-
                         color: Colors.red,
                         fontWeight: FontWeight.bold),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
@@ -295,10 +291,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 8.0,
                 ),
                 TextField(
-                  // obscureText: true,
+                    // obscureText: true,
                     autocorrect: false,
                     textAlign: TextAlign.center,
-
                     onChanged: (value) {
                       pw = value;
                       match();
@@ -310,50 +305,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       // decorationColor: Color(0XFFFFCC00),//Font color change
                       //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                     ),
-                    decoration:
-                    InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Confirmer le mot de passe',
                       errorText: errPw,
                       errorStyle: TextStyle(
                           fontFamily: 'Montserrat',
-
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
-                      contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 20.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+                        borderSide:
+                            BorderSide(color: Colors.blueGrey, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueGrey, width: 2.0),
+                        borderSide:
+                            BorderSide(color: Colors.blueGrey, width: 2.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
-                    )
-
-
-                ),
+                    )),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
                   child: Material(
-                    color: Color(0XFF389490),//vert
+                    color: Color(0XFF389490), //vert
                     borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     elevation: 5.0,
                     child: MaterialButton(
-
                       onPressed: () => _createUser(),
                       minWidth: 200.0,
                       height: 42.0,
                       child: Text(
                         "S'inscrire",
                         style: TextStyle(
-                          color: Colors.white ,
+                          color: Colors.white,
                           fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.bold ,
-
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -372,17 +362,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print('creaaation bdaaat ');
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
-      final newUser = await authService.auth.createUserWithEmailAndPassword(
-          email: email,
-          password: pwd);
+      final newUser = await authService.auth
+          .createUserWithEmailAndPassword(email: email, password: pwd);
       if (newUser != null) {
         Utilisateur myUser = Utilisateur(
-            pseudo: pseudo,
-            mail: email,
-            tel: tel,
+          pseudo: pseudo,
+          mail: email,
+          tel: tel,
 
-          photo:_uploadedFileURL ,
-          amis: <String>[] ,
+          photo: _uploadedFileURL,
+          amis: <String>[],
           invitation: [],
           invitation_groupe: [],
           alertLIST: [],
@@ -390,73 +379,65 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           // location: geo.point(latitude: lt.latitude ,longitude: lt.longitude) ,
         );
         // authService.db.collection('Utilisateur').add(myUser.map);
-         //authService..add(myUser.map);
-        authService.db.collection('Utilisateur').document('AAAAA').setData(
-            myUser.map);
-         print('user CREAAAATEEEEED');
+        //authService..add(myUser.map);
+        authService.db
+            .collection('Utilisateur')
+            .document('AAAAA')
+            .setData(myUser.map);
+        print('user CREAAAATEEEEED');
         print(newUser.user.uid);
         Navigator.pushNamed(context, ProfileScreen.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
-      }else {
-        print ('pas de creaaaation');
+      } else {
+        print('pas de creaaaation');
       }
-    }
-    catch (signUpError) {setState(() {
-
-      if (signUpError is  PlatformException  ) {
-        if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-          errMl='Cet email est deja utilise';
-        }else{
-          errMl=null ;
-
-        }
-          if (signUpError.code == 'ERROR_INVALID_EMAIL')
-          {
-            errMl="Veuillez introduire une adresse valide";
-
-          }else {
-            errMl=null ;
-
+    } catch (signUpError) {
+      setState(() {
+        if (signUpError is PlatformException) {
+          if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+            errMl = 'Cet email est deja utilise';
+          } else {
+            errMl = null;
           }
-            if (signUpError.code == 'ERROR_WEAK_PASSWORD')
-            {
-              errPwd='Mot de passe faible';
-
-            }
-        else {
-          errPwd=null ;
+          if (signUpError.code == 'ERROR_INVALID_EMAIL') {
+            errMl = "Veuillez introduire une adresse valide";
+          } else {
+            errMl = null;
+          }
+          if (signUpError.code == 'ERROR_WEAK_PASSWORD') {
+            errPwd = 'Mot de passe faible';
+          } else {
+            errPwd = null;
+          }
         }
-      }
-    }   );
-    }
-    catch(e)
-    {
+      });
+    } catch (e) {
       print(e);
     }
+  }
 
-    }
   String errTel;
 
-  String errPwd, errMl ,errPs, errPw ;
+  String errPwd, errMl, errPs, errPw;
   void match() {
     setState(() {
-
       if (pw != pwd) {
-         errPw='Veuillez introduire le meme mot de passe';
+        errPw = 'Veuillez introduire le meme mot de passe';
       } else {
-        errPw=null;
+        errPw = null;
       }
     });
   }
+
   Future chooseFile() async {
-    print('choooose file') ;
+    print('choooose file');
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
       setState(() {
         _image = image;
       });
     });
-    print('uploaaaaaaaaaadfile') ;
+    print('uploaaaaaaaaaadfile');
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('photos/${p.basename(_image.path)}}');
@@ -470,26 +451,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
   }
 
-
-   pseudoExist() async {
-     final QuerySnapshot result = await Future.value(authService.db
-         .collection('Utilisateur')
-         .where('pseudo', isEqualTo: pseudo)
-         .limit(1)
-         .getDocuments());
-     final List<DocumentSnapshot> documents = result.documents;
-     if (documents.length == 1) {
-       print("UserName Already Exits");
-       setState(() {
-         errPs = 'Ce pseudo est deja pris';
-       });
-     } else {
-       print("UserName is Available");
-       setState(() {
-         errPs = null;
-       });
-     }
-   }
+  pseudoExist() async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('pseudo', isEqualTo: pseudo)
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length == 1) {
+      print("UserName Already Exits");
+      setState(() {
+        errPs = 'Ce pseudo est deja pris';
+      });
+    } else {
+      print("UserName is Available");
+      setState(() {
+        errPs = null;
+      });
+    }
+  }
 
   mailExist() async {
     final QuerySnapshot result = await Future.value(authService.db
@@ -509,10 +489,5 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         errMl = null;
       });
     }
-
   }
-
-
-  }
-
-
+}

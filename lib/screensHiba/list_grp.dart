@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:winek/auth.dart';
 import 'MapPage.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
@@ -107,9 +108,12 @@ class grpTile extends StatelessWidget {
                 .get()
                 .then((DocumentSnapshot doc) {
               g = Voyage.fromMap(doc.data);
+              print(g.membres);
             });
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MapVoyagePage(g)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MapVoyagePage(g, grp_chemin)));
           } else {
             await Firestore.instance
                 .document(grp_chemin)
@@ -117,8 +121,10 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = LongTerme.fromMap(doc.data);
             });
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MapLongTermePage(g)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MapLongTermePage(g, grp_chemin)));
           }
         },
         title: Text(
@@ -214,13 +220,18 @@ class _GroupesListState extends State<GroupesList> {
 
 Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
   Map user = {'pseudo': '', 'id': ''};
-  Database.getcurret(user['id'], user['pseudo']);
-
-  DocumentSnapshot querySnapshot = await Firestore.instance
-      .collection('UserGrp')
-      .document(
-          user['id']) // just for nom when sooum finish i'll change it to id
-      .get();
+  user['id'] = await authService.connectedID();
+  user['pseudo'] = await Firestore.instance
+      .collection('Utilisateur')
+      .document(user['id'])
+      .get()
+      .then((Doc) {
+    return Doc.data['pseudo'];
+  });
+  // await Databasegrp.getcurret(user['id'], user['pseudo']);
+  print("user : $user");
+  DocumentSnapshot querySnapshot =
+      await Firestore.instance.collection('UserGrp').document(user['id']).get();
   print(querySnapshot.data.toString());
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
     // Create a new List<String> from List<dynamic>

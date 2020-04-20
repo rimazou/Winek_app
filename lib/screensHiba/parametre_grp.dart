@@ -7,7 +7,7 @@ import 'log_out_icon_icons.dart';
 import 'nouveau_grp.dart';
 import '../main.dart';
 
-Database data = Database(pseudo: 'hiba');
+Databasegrp data = Databasegrp();
 bool _loading = false;
 
 class ParamVoyagePage extends StatefulWidget {
@@ -685,7 +685,7 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                 return Card(
                                   child: ListTile(
                                     title: Text(
-                                      groupe.membres[index],
+                                      groupe.membres[index]['pseudo'],
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Montserrat',

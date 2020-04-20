@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:winek/screensSoum/profile.dart';
-import '../dataBasehiba.dart';
 import 'package:provider/provider.dart';
 import '../classes.dart';
+import 'package:winek/dataBaseSoum.dart';
 
 class FriendsList extends StatefulWidget {
   @override
@@ -24,23 +24,23 @@ class _FriendsListState extends State<FriendsList> {
       shrinkWrap: true,
       itemCount: count,
       itemBuilder: (context, index) {
-        return FriendTile(user: friends[index]);
+        return FriendTile(id: friends[index]);
       },
     );
   }
 }
 
 class FriendTile extends StatelessWidget {
-  final String user;
+  final String id;
 
-  FriendTile({this.user});
+  FriendTile({this.id});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-          user,
+          Database().getPseudo(id),
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -59,7 +59,7 @@ class FriendTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(user, 'asma')),
+                  builder: (context) => ProfileScreen2(id, Database.currentUser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
@@ -84,7 +84,7 @@ class UsersList extends StatefulWidget {
 class _UsersListState extends State<UsersList> {
   @override
   Widget build(BuildContext context) {
-    final users = Provider.of<List<Utilisateur>>(context);
+    final users = Provider.of<List<String>>(context);
     int count;
     if (users != null) {
       count = users.length;
@@ -96,9 +96,9 @@ class _UsersListState extends State<UsersList> {
       itemCount: count,
       itemBuilder: (context, index) {
         return widget.filter == null || widget.filter == ""
-            ? new UserTile(user: users[index])
-            : users[index].pseudo.contains(widget.filter)
-                ? new UserTile(user: users[index])
+            ? new UserTile(id: users[index])
+            : Database().getPseudo(users[index]).contains(widget.filter)
+                ? new UserTile(id: users[index])
                 : new Container();
       },
     );
@@ -106,16 +106,16 @@ class _UsersListState extends State<UsersList> {
 }
 
 class UserTile extends StatelessWidget {
-  final Utilisateur user;
+  final String id;
 
-  UserTile({this.user});
+  UserTile({this.id});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-          user.pseudo,
+          Database().getPseudo(id),
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -133,7 +133,7 @@ class UserTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(user.pseudo, 'asma')),
+                  builder: (context) => ProfileScreen2(id, Database.currentUser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),

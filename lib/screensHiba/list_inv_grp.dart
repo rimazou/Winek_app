@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/dataBasehiba.dart';
 
-Database data = Database();
+Databasegrp data = Databasegrp();
 
 Stream invitation;
 bool waiting;
@@ -202,7 +202,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                     height: 49,
                                     child: Center(
                                       child: Text(
-                                        _voyage.membres[index],
+                                        _voyage.membres[index]['pseudo'],
                                       ),
                                     ),
                                   ),
@@ -347,7 +347,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                     color: Colors.white,
                                     child: Center(
                                       child: Text(
-                                        _longTerme.membres[index],
+                                        _longTerme.membres[index]['pseudo'],
                                         style: TextStyle(
                                           fontFamily: 'Montserrat',
                                           fontSize: 15,
