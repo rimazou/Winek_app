@@ -4,6 +4,7 @@ import 'package:winek/main.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/dataBasehiba.dart';
+import 'package:winek/auth.dart';
 
 Databasegrp data = Databasegrp();
 
@@ -24,8 +25,13 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
   int count;
   @override
   void initState() {
-    _voyage = Voyage(nom: ' ', membres: List(), admin: '', destination: " ");
-    _longTerme = LongTerme(nom: ' ', membres: List(), admin: '');
+    _voyage = Voyage(
+        nom: ' ',
+        membres: List<Map<dynamic, dynamic>>(),
+        admin: '',
+        destination: " ");
+    _longTerme =
+        LongTerme(nom: ' ', membres: List<Map<dynamic, dynamic>>(), admin: '');
     index = 0;
     setState(() {
       waiting = true;
@@ -221,6 +227,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               onPressed: () async {
                                 await data.acceptinvitation(ref, _voyage.nom);
                                 setState(() {
+                                  invitation =
+                                      data.getListInvitations().asStream();
                                   index = 0;
                                 });
                               },
@@ -235,7 +243,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               onPressed: () async {
                                 await data.refuseinvitation(ref, _voyage.nom);
                                 setState(() {
-                                  invitation = getListInvitations().asStream();
+                                  invitation =
+                                      data.getListInvitations().asStream();
                                   index = 0;
                                 });
                               },
@@ -373,6 +382,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 await data.acceptinvitation(
                                     ref, _longTerme.nom);
                                 setState(() {
+                                  invitation =
+                                      data.getListInvitations().asStream();
                                   index = 0;
                                 });
                               },
@@ -385,7 +396,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 await data.refuseinvitation(
                                     ref, _longTerme.nom);
                                 setState(() {
-                                  invitation = getListInvitations().asStream();
+                                  invitation =
+                                      data.getListInvitations().asStream();
                                   index = 0;
                                 });
                               },
@@ -495,17 +507,4 @@ class _InvitationsListState extends State<InvitationsList> {
       },
     );
   }
-}
-
-Future<List<Map<dynamic, dynamic>>> getListInvitations() async {
-  DocumentSnapshot querySnapshot = await Firestore.instance
-      .collection('UserGrp')
-      .document(data.pseudo)
-      .get();
-  if (querySnapshot.exists && querySnapshot.data.containsKey('invitations')) {
-    // Create a new List<String> from List<dynamic>
-
-    return List<Map<dynamic, dynamic>>.from(querySnapshot.data['invitations']);
-  }
-  return [];
 }

@@ -276,7 +276,7 @@ class Databasegrp {
   }
 
   void acceptinvitation(String ref, String nom) async {
-    this.id = await authService.connectedID();
+    id = await authService.connectedID();
     pseudo = await Firestore.instance
         .collection('Utilisateur')
         .document(id)
@@ -284,7 +284,9 @@ class Databasegrp {
         .then((Doc) {
       return Doc.data['pseudo'];
     });
+    print(id);
     Map grp = {'chemin': ref, 'nom': nom};
+    print(grp);
     // await updatelistinvitations(pseudo, ref, nom);
     // await updatelistgroupes(pseudo, ref, nom);
     await Firestore.instance
@@ -311,15 +313,13 @@ class Databasegrp {
         .then((Doc) {
       return Doc.data['pseudo'];
     });
+    print("user : $user");
     DocumentSnapshot querySnapshot = await Firestore.instance
         .collection('UserGrp')
-        .document(
-            user['id']) // just for nom when sooum finish i'll change it to id
+        .document(user['id'])
         .get();
     print(querySnapshot.data.toString());
     if (querySnapshot.exists && querySnapshot.data.containsKey('invitations')) {
-      // Create a new List<String> from List<dynamic>
-
       return List<Map<dynamic, dynamic>>.from(
           querySnapshot.data['invitations']);
     }
