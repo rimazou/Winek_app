@@ -209,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 email: mail,
                                 password: pwd);
                             if (user!=null)
-                              {
+                              { getUserLocation();
                                 Navigator.pushNamed(context, Home.id);
 
                               }}
