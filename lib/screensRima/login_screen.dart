@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
 import 'profile_screen.dart';
@@ -189,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 password: pwd);
                             if (user!=null)
                               {
-                                Navigator.pushNamed(context, ProfileScreen.id);
+                                Navigator.pushNamed(context, Home.id);
 
                               }}
                               catch(e)

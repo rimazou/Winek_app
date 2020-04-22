@@ -8,7 +8,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="winek"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/winek">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc"/>
         <activity

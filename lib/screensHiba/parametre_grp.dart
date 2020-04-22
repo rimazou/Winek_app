@@ -361,7 +361,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                       });
                                     },
                                     title: Text(
-                                      user.amis[index].pseudo,
+                                      'user.amis[index].pseudo',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Montserrat',
@@ -749,7 +749,7 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                       });
                                     },
                                     title: Text(
-                                      user.amis[index].pseudo,
+                                      'user.amis[index].pseudo',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Montserrat',

@@ -16,9 +16,9 @@ class Utilisateur {
 
   bool connecte;
 
-  List amis;
+  List<Map<String, dynamic>> amis;
 
-  List favoris;
+  List<Map<String, dynamic>> favoris;
 
   List groupes;
 
@@ -28,6 +28,7 @@ class Utilisateur {
 
   List alertLIST;
   Map <String, dynamic> location;
+
 
   Utilisateur(
       {this.pseudo,
@@ -57,7 +58,7 @@ class Utilisateur {
       'favoris': favoris,
       'groupes': groupes,
       'invitationGroupe': invitation_groupe,
-      'invitation ': invitation,
+      'invitation': invitation,
       'alertLIST': alertLIST,
       'location': location,
     };
@@ -80,6 +81,22 @@ class Utilisateur {
           location: data.value['location'],
         );
 
+  Utilisateur.fromMap(data)
+      : this(
+    pseudo: data['pseudo'],
+    tel: data['tel'],
+    mail: data['mail'],
+    photo: data['photo'],
+    connecte: data['connecte'],
+    batterie: data['batterie'],
+    amis: data['amis'],
+    favoris: data['favoris'],
+    groupes: data['groupes'],
+    invitation_groupe: data['invitationGroupe'],
+    invitation: data['invitation'],
+    alertLIST: data['alertLIST'],
+    location: data['location'],
+  );
   void changerPhoto(String value) {
     photo = value;
   }

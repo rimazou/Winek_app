@@ -63,16 +63,20 @@ class AuthService {
   }
 
   Future<String> connectedID() async {
+    print('stratConnectedid');
     final FirebaseUser user = await auth.currentUser();
-    final uid = user.uid;
+
+    final uid = user.uid.toString();
     if (uid.isEmpty) {
       print('no user connected');
     } else {
       print(uid);
       print(user.email);
     }
+    print('endConnectedid');
 
-    return uid; //returns the id of the connected/current user
+    return uid;
+
   }
 
   Future sendPwdResetEmail(String email) async {

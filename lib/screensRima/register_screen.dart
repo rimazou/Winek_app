@@ -5,7 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
-import 'profile_screen.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,6 @@ import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:path/path.dart' as p ;
-import 'package:winek/screensRima/profile_screen.dart';
 class RegistrationScreen extends StatefulWidget {
   static const String id='register';
   @override
@@ -385,12 +384,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             tel: tel,
 
           photo: _uploadedFileURL,
-          amis: <String>[],
+          amis: [],
           invitation: [],
           invitation_groupe: [],
           alertLIST: [],
           connecte: true,
           location: pt.data,
+          favoris: [],
         );
         // authService.db.collection('Utilisateur').add(myUser.map);
          //authService..add(myUser.map);
@@ -400,7 +400,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             myUser.map);
          print('user CREAAAATEEEEED');
         print(newUser.user.uid);
-        Navigator.pushNamed(context, ProfileScreen.id);
+        Navigator.pushNamed(context, Home.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
       }else {
