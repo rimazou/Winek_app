@@ -258,7 +258,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user!=null)
     {
       Navigator.pushNamed(context, ProfileScreen.id);
-
+    }
+    else {
+      print('failed google authetication');
     }
   }
 
