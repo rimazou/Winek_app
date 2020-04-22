@@ -7,6 +7,26 @@ import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
 import 'profile_screen.dart';
 import 'resetmail.dart';
+import '../auth.dart';
+import 'dart:async';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+
+
+Firestore _firestore=Firestore.instance;
+Geoflutterfire geo=Geoflutterfire();
+
+void getUserLocation()async{
+      String userID=await authService.connectedID();
+      var geolocator = Geolocator();
+     var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
+     (Position position) {
+        GeoFirePoint geoFirePoint = geo.point(latitude: position.latitude, longitude: position.longitude);
+           _firestore.collection('Utilisateur').document('2dE7ClNIkPMKWdZFiHcghx5dKzi1').setData({'location': geoFirePoint.data});
+     });
+}
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
