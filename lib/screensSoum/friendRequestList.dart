@@ -56,9 +56,11 @@ class FriendRequestTile extends StatelessWidget {
           children: <Widget>[
             IconButton(
               onPressed: () async {
-                await Database(id: invit).userUpdateData('testmap');
-                await Database(id: 'testmap').userUpdateData(invit);
-                await Database(id: invit).userDeleteData('testmap');
+                Database d= await Database().init(pseudo: invit , subipseudo: Database.currentName);
+                await d.userUpdateData();
+                Database c =await Database().init( pseudo:  Database.currentName , subipseudo: invit );
+                await c.userUpdateData();
+                await Database( pseudo: invit).userDeleteData(Database.currentUser);
               },
               icon: Icon(Icons.check),
               color: Color(0xFF389490),
@@ -66,7 +68,7 @@ class FriendRequestTile extends StatelessWidget {
             ),
             IconButton(
               onPressed: () async {
-                await Database(id: invit).userDeleteData('testmap');
+                await Database( pseudo: invit).userDeleteData(Database.currentUser);
               },
               icon: Icon(Icons.delete),
               color: Colors.red,

@@ -2,34 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
-import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
-import 'profile_screen.dart';
-import 'resetmail.dart';
-import '../auth.dart';
-import 'dart:async';
-import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
-
-
-Firestore _firestore=Firestore.instance;
-Geoflutterfire geo=Geoflutterfire();
-
-void getUserLocation()async{
-      String userID=await authService.connectedID();
-      var geolocator = Geolocator();
-     var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
-     (Position position) {
-        GeoFirePoint geoFirePoint = geo.point(latitude: position.latitude, longitude: position.longitude);
-           _firestore.collection('Utilisateur').document('2dE7ClNIkPMKWdZFiHcghx5dKzi1').setData({'location': geoFirePoint.data});
-     });
-}
-
 class LoginScreen extends StatefulWidget {
-  static const String id = 'login';
+
+  static const String id='login';
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -46,8 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: SingleChildScrollView(
-            //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
+          child: SingleChildScrollView(//tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -209,8 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 email: mail,
                                 password: pwd);
                             if (user!=null)
-                              { getUserLocation();
-                                Navigator.pushNamed(context, Home.id);
+                              {
+                                Navigator.pushNamed(context, ProfileScreen.id);
 
                               }}
                               catch(e)
@@ -244,7 +220,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
 /*  Future<FirebaseUser> _signInG() async {
     GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -278,9 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user!=null)
     {
       Navigator.pushNamed(context, ProfileScreen.id);
-    }
-    else {
-      print('failed google authetication');
+
     }
   }
 

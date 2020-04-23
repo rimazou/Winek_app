@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:winek/main.dart';
 
 import '../classes.dart';
 
@@ -14,67 +12,276 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  FirebaseUser loggedInUser;
-
+  FirebaseUser loggedInUser ;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(28.0),
-          child: AppBar(
-            backgroundColor: Colors.white30,
-            elevation: 0.0,
-            iconTheme: IconThemeData(
-              color: Colors.black54,
-            ),
-          ),
-        ),
-        body: Container(
-          child: FutureBuilder(
-            future: authService.userRef.document(authService.connectedID()),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Center(child: Text('not connected please retry'));
-                case ConnectionState.active:
-                  return Center(
-                    child: SpinKitChasingDots(
-                      // ignore: missing_return
-                      color: Color(0XFF389490), //vert
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 0.0,vertical: 0.0),
+          child: SingleChildScrollView(
+            
+            child: Stack(
+              children : <Widget>[
+                Positioned(
+                  top: 0.0,
+                  right: 0,
+                  left: 0,
+                  bottom: 0.0,
+                  child: Container(//this one c le cadre
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.blueGrey,
+                        width: 3,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                  );
-                  break;
-                case ConnectionState.done :
-                default:
-              }
-            },
+                  ),
+                ),
+                Center(
+                  child: Column(
+
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 48.0,
+                      ),
+                      Container(
+                        child: ClipOval(
+                          child: Image.network("https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        height: 100.0,
+                        width: 100.0,
+                        decoration: BoxDecoration(
+
+                          border: Border.all(
+                            color: Colors.blueGrey,
+                            width: 3,
+                          ),
+                          borderRadius: BorderRadius.circular(60),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 48.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 40.0,right: 40.0),
+                        child: Container(
+                          height: 1.0,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey,
+                          ),
+
+                        ),
+
+                      ),
+                      Wrap(
+                        children: <Widget>[
+                          Container (
+                            padding: const EdgeInsets.only(left: 40.0,right:30.0),
+                            child: Text(
+                                'Utilisateur:',
+                              style: TextStyle(
+                                fontFamily: 'Monsterrat',
+                                fontSize:20.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+
+
+                      Container(
+                        width:130.0,
+                        height: 23.0,
+                        padding: EdgeInsets.only(top: 6.0),
+                        child: TextField(
+
+                          enabled: true,
+
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            color: Colors.blue,
+
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'testEvaluation',
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 50.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 40.0,right: 40.0),
+                        child: Container(
+                          //  child: Image.network(),
+                          height: 1.0,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey,
+                          ),
+
+                        ),
+
+                      ),
+                      Wrap(
+                        children: <Widget>[
+                          Container (
+                            padding: const EdgeInsets.only(left: 40.0,right:30.0),
+                            child: Text(
+                              'Telephone:',
+                              style: TextStyle(
+                                fontFamily: 'Monsterrat',
+                                fontSize:20.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+
+
+                          Container(
+                            width:130.0,
+                            height: 23.0,
+                            padding: EdgeInsets.only(top: 6.0),
+                            child: TextField(
+
+                              enabled: true,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                color: Colors.black,
+
+                              ),
+                              decoration: InputDecoration(
+                                hintText: '0123456789',
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 48.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 40.0,right: 40.0),
+                        child: Container(
+                          //  child: Image.network(),
+                          height: 1.0,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey,
+                          ),
+
+                        ),
+
+                      ),
+                      Wrap(
+                        children: <Widget>[
+                          Container (
+                            padding: const EdgeInsets.only(left: 30.0,right:20.0),
+                            child: Text(
+                              'Email',
+                              style: TextStyle(
+                                fontFamily: 'Monsterrat',
+                                fontSize:20.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+
+
+                          Container(
+                            width:130.0,
+                            height: 23.0,
+                            padding: EdgeInsets.only(top: 6.0),
+                            child: TextField(
+                              obscureText: true,
+                              enabled: true,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                color: Colors.black87,
+
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'test',
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Material(
+                        color: Colors.grey,
+                        shadowColor: Colors.blueGrey,
+                        child: IconButton(
+                          splashColor: Colors.yellowAccent,
+                          color: Colors.blueGrey,
+                          icon: Icon(Icons.edit),
+                          iconSize: 45.0,
+                          tooltip: 'Edit',
+
+                          onPressed: _edit() ,//_showDialog ,
+                        ),
+                      ),
+
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-
-  bool isEditable = false;
-
+  bool isEditable =false ;
   _edit() {
     setState(() {
-      isEditable = true;
+      isEditable=true ;
       print(isEditable);
     });
   }
-
   String accountStatus = '******';
-  FirebaseUser result;
+  FirebaseUser mCurrentUser;
 
 
-  TextEditingController pseudoInputController;
 
+  Future <FirebaseUser>_getCurrentUser () async {
+    try{
+      mCurrentUser = await authService.auth.currentUser();
+      if (mCurrentUser!=null){
+        authService.loggedIn= mCurrentUser ;
+        print(loggedInUser.email);
+        return mCurrentUser ;
+      }}
+    catch(e)
+    {
+      print (e) ;
+    }
+  }
+
+
+  TextEditingController pseudoInputController ;
   TextEditingController telInputController;
   TextEditingController mdpInputController;
-
   @override
   initState() {
     pseudoInputController = new TextEditingController();
@@ -82,57 +289,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     mdpInputController = new TextEditingController();
 
     super.initState();
-    getData();
+    _getCurrentUser();
     print('here outside async');
   }
-
-  String mail, pseudo, tel, photo;
-
-  Future userID;
-
-  void getData() async {
-    print('getdatadebut');
-    userID = (await authService.connectedID()) as Future;
-    userID.then((onValue) {
-      print('gonna print the onvalue ');
-      print(onValue);
-      print('printed the onvalue ');
-    });
-    /*var us = authService.db.collection('Utilisateur').document(ref).snapshots().map((val) {
-      Utilisateur.fromMap(val);
-      setState(() {
-        mail = val.data['mail'] ;
-        pseudo = val.data['pseudo'] ;
-        tel= val.data['tel'];
-        photo =  val.data['photo'] ;
-      });
-    });*/
-
-    // print(us.toString());
-    print('getdatafin');
-  }
-}
-/*
- Container (
-          child : FutureBuilder(
-              future:  authService.userRef.document(authService.connectedID()),
-              builder: (context ,snapshot){
-                switch (snapshot.connectionState){
-                  case ConnectionState.none: return Center(child: Text('not connected please retry')) ;
-                   case ConnectionState.active: return Center(
-                     child: SpinKitChasingDots(
-                       // ignore: missing_return
-                       color: Color(0XFF389490),//vert
-                     ),
-                   );
-                    break;
-                  case ConnectionState.done :
-                  default:
-                }
-              },
-          )
-*/
-
 /*_showDialog() async {
   await showDialog<String>(
     context: context,
@@ -200,12 +359,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 } */
 
 
-/* void updateData() {
-    // a verifier ????
+  void updateData() {// a verifier ????
     try {
       authService.db
-          .collection('Utilisateur').document(
-          'Utilisateur/${authService.loggedIn}')
+          .collection('Utilisateur').document('Utilisateur/${authService.loggedIn}')
           .updateData({'description': 'Head First Flutter'});
     } catch (e) {
       print(e.toString());
@@ -213,152 +370,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
 
+  Future fireRef () async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('mail', isEqualTo: authService.loggedIn.email )
+        .getDocuments());
+    // Utilisateur.fromSnapshot(result.documents.first.data);
+
+    //  var user = Utilisateur.fromMap(result);
+  }
 }
-
-
-Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-          child: SingleChildScrollView(
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 140,
-                      ),
-                      Container(
-                        color: Colors.red,
-                        height: 500.0,
-                        width: 320.0,
-                      ),
-                    ],
-                  ),
-                ),
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 140,
-                      ),
-                      Container(
-                        // carre principal
-                        height: 400.0,
-                        width: 320.0,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 70,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                user.pseudo.toString(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff707070),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 26,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'pseudo',
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 23,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'tel' ,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 23,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'mail' ,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey[300],
-                            width: 3,
-                          ),
-                          boxShadow: [
-                            new BoxShadow(
-                              color: Colors.grey[200],
-                              blurRadius: 20.0,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Center(
-                  child: Column(
-                    //photos
-
-                    children: <Widget>[
-                      SizedBox(
-                        height: 90,
-                      ),
-                      Container(
-                        height: 110.0,
-                        width: 110.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey[300],
-                            width: 3,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ), */

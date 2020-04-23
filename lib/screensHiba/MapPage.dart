@@ -13,7 +13,7 @@ import '../main.dart';
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
-Databasegrp data = Databasegrp();
+Database data = Database(pseudo: 'hiba');
 //google maps stuffs
 GoogleMapController mapController;
 String searchAddr;
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
       extendBody: true,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
+      key: _scaffoldKey,
       bottomNavigationBar: bottomNavBar,
       floatingActionButton: flaotButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -154,7 +154,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'utilisateur',
+                                    data.pseudo,
                                     textDirection: TextDirection.rtl,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -314,7 +314,6 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 setState(() {
                                   index = 0;
-                                  _visible = !_visible;
                                 });
 
                                 Navigator.pushNamed(context, NvVoyagePage.id);
@@ -340,10 +339,6 @@ class _HomeState extends State<Home> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  index = 0;
-                                  _visible = !_visible;
-                                });
                                 Navigator.pushNamed(
                                     context, NvLongTermePage.id);
                               },
@@ -530,39 +525,35 @@ class _HomeState extends State<Home> {
 
 class MapVoyagePage extends StatefulWidget {
   Voyage groupe;
-  String path;
-  MapVoyagePage(this.groupe, this.path);
+
+  MapVoyagePage(this.groupe);
 
   @override
-  _MapVoyagePageState createState() => _MapVoyagePageState(groupe, path);
+  _MapVoyagePageState createState() => _MapVoyagePageState(groupe);
 }
 
 class _MapVoyagePageState extends State<MapVoyagePage> {
   Voyage groupe;
-  String path; // asma u use that path as docref
   bool _visible = true;
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
   int index;
 
-  _MapVoyagePageState(this.groupe, this.path);
+  _MapVoyagePageState(this.groupe);
 
   @override
   void initState() {
     index = 0;
-    //  print('groupe');
-    //  print(groupe.nom);
-    //  print('membres:');
-    //  print(groupe.membres);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    var it = groupe.membres.iterator;
     List<Widget> liste = new List();
-    //  var it = groupe.membres.iterator;
-    for (var membre in groupe.membres) {
+    while (it.moveNext()) {
+      it.current;
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
@@ -587,7 +578,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      membre['pseudo'],
+                      it.current,
                       //overflow:TextOverflow.fade,
 
                       //textScaleFactor: 0.4,
@@ -605,6 +596,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         ),
       );
     }
+
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomPadding: true,
@@ -791,7 +783,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'utilisateur',
+                                    data.pseudo,
                                     textDirection: TextDirection.rtl,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -1016,23 +1008,22 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 
 class MapLongTermePage extends StatefulWidget {
   LongTerme groupe;
-  String path;
-  MapLongTermePage(this.groupe, this.path);
+
+  MapLongTermePage(this.groupe);
 
   @override
-  _MapLongTermePageState createState() => _MapLongTermePageState(groupe, path);
+  _MapLongTermePageState createState() => _MapLongTermePageState(groupe);
 }
 
 class _MapLongTermePageState extends State<MapLongTermePage> {
   LongTerme groupe;
-  String path;
   bool _visible = true;
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
   int index;
 
-  _MapLongTermePageState(this.groupe, this.path);
+  _MapLongTermePageState(this.groupe);
 
   @override
   void initState() {
@@ -1042,9 +1033,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    var it = groupe.membres.iterator;
     List<Widget> liste = new List();
-    //  var it = groupe.membres.iterator;
-    for (var membre in groupe.membres) {
+    while (it.moveNext()) {
+      it.current;
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
@@ -1069,10 +1061,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      membre['pseudo'],
-                      //overflow:TextOverflow.fade,
-
-                      //textScaleFactor: 0.4,
+                      it.current,
                       style: TextStyle(
                         fontFamily: 'MontSerrat',
                         fontSize: 10,
@@ -1111,7 +1100,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
               children: <Widget>[
                 Positioned(
                   left: 0,
-                  top: 30,
                   // top:size.height*0.07*0.5,
                   child: IconButton(
                       icon: Icon(
@@ -1130,7 +1118,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                 Positioned(
                   top: 30.0,
                   right: 15.0,
-                  left: 35.0,
+                  left: 15.0,
                   child: Container(
                     height: 50.0,
                     width: double.infinity,
@@ -1274,7 +1262,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'utilisateur',
+                                    data.pseudo,
                                     textDirection: TextDirection.rtl,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
