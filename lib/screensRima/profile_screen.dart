@@ -30,31 +30,199 @@ class _ProfileScreenState extends State<ProfileScreen> {
             iconTheme: IconThemeData(
               color: Colors.black54,
             ),
-          ),
-        ),
-        body: Container(
-          child: FutureBuilder(
-            future: authService.userRef.document(authService.connectedID()),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Center(child: Text('not connected please retry'));
-                case ConnectionState.active:
-                  return Center(
-                    child: SpinKitChasingDots(
-                      // ignore: missing_return
-                      color: Color(0XFF389490), //vert
-                    ),
-                  );
-                  break;
-                case ConnectionState.done :
-                default:
-              }
-            },
-          ),
+
+          ),),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+            child: Container(
+              child: Center(
+                child: Text('test'),
+            ),
+            )
         ),
       ),
     );
+  }
+
+/* SingleChildScrollView(
+
+            child: Stack(
+              children: <Widget>[
+
+                Center(
+                  child: Column(
+
+                    children: <Widget>[
+                      SizedBox(
+                        height: 140,
+                      ),
+                      Container(
+                        height: 500.0,
+                        width: 320.0,
+                      ),
+                    ],),
+                ),
+
+                Center(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 140,
+                      ),
+
+                      Container( // carre principal
+                        height: 400.0,
+                        width: 320.0,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 70,),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                'hello',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff707070),
+                                ),),),
+                            SizedBox(
+                              height: 26,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                pseudo,
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff000000),
+                                ),),),
+                            SizedBox(
+                              height: 23,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                tel,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
+                                ),),),
+                            SizedBox(
+                              height: 23,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40.0, right: 30.0),
+                              child: Text(
+                                mail,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
+                                ),),),
+                          ],),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey[300],
+                            width: 3,),
+                          boxShadow: [
+                            new BoxShadow(
+                              color: Colors.grey[200],
+                              blurRadius: 20.0,),
+                          ],
+                          borderRadius: BorderRadius.circular(20),),
+                      ),
+                    ],
+                  ),),
+
+
+                Positioned(
+                  top: 510,
+                  right: 138,
+                  left: 138,
+                  bottom: 80,
+
+                  child:
+                  Container(
+                    height: 200.0,
+                    width: 30.0,
+                    //Bouton ajoute
+
+                    decoration: BoxDecoration(
+                      color: Color(0xff389490),
+                      border: Border.all(
+                        color: Colors.grey[300],
+                        width: 3,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),),
+
+                Center(
+                  child: Column( //photos
+
+
+                    children: <Widget>[
+                      SizedBox(
+                        height: 90,
+                      ),
+                      Container(
+                        height: 110.0,
+                        width: 110.0,
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey[300],
+                            width: 3,),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            new BoxShadow(
+                              color: Colors.grey[200],
+                              blurRadius: 20.0,),
+                          ],
+                        ),
+                        child: photoWig(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),*/
+  Widget photoWig() {
+    if (photo != null) {
+      return Center(
+        child: Image(image: NetworkImage(photo)),
+      );
+    }
+    else {
+      return
+        Center(
+          child:
+          ListView( //photos
+            children: <Widget>[
+              SizedBox(
+                height: 16,),
+              Icon(
+                Icons.person,
+                color: Color(0xFF5B5050),
+                size: 105.0,
+              ),
+            ],),);
+    }
   }
 
   bool isEditable = false;
@@ -82,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     mdpInputController = new TextEditingController();
 
     super.initState();
-    getData();
+    print(getPseudo('OnW9i9F079QOD3WpLKkiQ0ksZVv1'));
     print('here outside async');
   }
 
@@ -90,15 +258,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future userID;
 
-  void getData() async {
+  String getPseudo(String id) {
+    String name = 'marche pas';
+    authService.userRef.document(id).snapshots().listen((docSnap) {
+      if (docSnap != null) {
+        name = docSnap.data['pseudo'];
+      }
+    });
+    return name;
+  }
+
+/*Future getData() async {
     print('getdatadebut');
-    userID = (await authService.connectedID()) as Future;
-    userID.then((onValue) {
+    await authService.connectedID().then((onValue) {
       print('gonna print the onvalue ');
       print(onValue);
       print('printed the onvalue ');
-    });
-    /*var us = authService.db.collection('Utilisateur').document(ref).snapshots().map((val) {
+
+      authService.userRef.document(onValue).snapshots()
+          .listen((data) {
+        data.documents.forEach((doc) {
+          setState(() {
+            data.documents.forEach((doc) {
+              setState(() {
+                mail = doc.data['mail'];
+                print('mail');
+                print(mail);
+                tel = doc.data['tel'];
+                print('tel');
+
+                print(tel);
+                pseudo = doc.data['pseudo'];
+                print('pseudo');
+
+                print(pseudo);
+                photo = doc.data['photo'];
+                print('photo');
+
+                print(photo);
+              });
+            });
+          });
+        });
+      });
+      /*var us = authService.db.collection('Utilisateur').document(ref).snapshots().map((val) {
       Utilisateur.fromMap(val);
       setState(() {
         mail = val.data['mail'] ;
@@ -108,10 +311,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     });*/
 
-    // print(us.toString());
-    print('getdatafin');
-  }
-}
+      // print(us.toString());
+      print('getdatafin');
+    });
+  }*/
 /*
  Container (
           child : FutureBuilder(
@@ -362,3 +565,4 @@ Padding(
             ),
           ),
         ), */
+}

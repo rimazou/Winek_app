@@ -11,6 +11,7 @@ class AuthService {
 
   Geoflutterfire geo = Geoflutterfire();
   FirebaseUser _loggedIn;
+
   get userRef => _db.collection('Utilisateur');
 
   FirebaseUser get loggedIn => _loggedIn;
@@ -62,25 +63,25 @@ class AuthService {
     );
   }
 
-  Future<String> connectedID() async {
-    print('stratConnectedid');
+  getUser(String idDoc) {
+    return Firestore.instance.collection('Utilisateur')
+        .document(idDoc)
+        .snapshots();
+  }
+
+  String connectedID() {
+    // returns null when no user is logged in
+    // print('stratConnectedid');
     auth.currentUser().then((onValue) {
-      //  final uid = onValue.uid.toString();
-      /*  if (uid.isEmpty) {
-        print('no user connected');
-      } else {
-        print(uid);*/
-      print(onValue.email);
+      //  print(onValue.email);
       print(onValue.uid);
-      print('endConnectedid');
+      // print('endConnectedid');
       return onValue.uid;
-    }
-      /*onError:*/);
-
-
-
-
-
+    }).catchError((onError) {
+      //   print('caught error connectedID') ;
+      //   print(onError);
+      print('means none connected');
+    });
   }
 
   Future sendPwdResetEmail(String email) async {
@@ -91,24 +92,16 @@ class AuthService {
     }
   }
 
-  bool isFirst() {
+  bool isLog() {
+    // returns false when no user is logged in
     var ui = connectedID();
     if (ui == null) {
-      return true;
-    } else {
       return false;
+    } else {
+      return true;
     }
   }
 
-  Future<bool> isUserLogged() async {
-    FirebaseUser firebaseUser = await getLoggedFirebaseUser();
-    if (firebaseUser != null) {
-      IdTokenResult tokenResult = await firebaseUser.getIdToken(refresh: true);
-      return tokenResult.token != null;
-    } else {
-      return false;
-    }
-  }
 
   Future<FirebaseUser> getLoggedFirebaseUser() {
     return auth.currentUser();

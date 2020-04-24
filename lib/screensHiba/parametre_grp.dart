@@ -7,7 +7,7 @@ import 'log_out_icon_icons.dart';
 import 'nouveau_grp.dart';
 import '../main.dart';
 
-Databasegrp data = Databasegrp();
+Database data = Database(pseudo: 'hiba');
 bool _loading = false;
 
 class ParamVoyagePage extends StatefulWidget {
@@ -361,7 +361,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                       });
                                     },
                                     title: Text(
-                                      'user.amis[index].pseudo',
+                                      user.amis[index].pseudo,
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Montserrat',
@@ -685,7 +685,7 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                 return Card(
                                   child: ListTile(
                                     title: Text(
-                                      groupe.membres[index]['pseudo'],
+                                      groupe.membres[index],
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Montserrat',
@@ -749,7 +749,7 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                       });
                                     },
                                     title: Text(
-                                      'user.amis[index].pseudo',
+                                      user.amis[index].pseudo,
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Montserrat',

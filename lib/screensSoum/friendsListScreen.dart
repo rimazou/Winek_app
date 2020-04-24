@@ -14,7 +14,7 @@ class FriendsListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<String>>.value(
+    return StreamProvider<List<dynamic>>.value(
       value: Database().friends,
       child: GestureDetector(
         onTap: () {

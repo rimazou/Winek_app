@@ -13,7 +13,7 @@ class FriendsList extends StatefulWidget {
 class _FriendsListState extends State<FriendsList> {
   @override
   Widget build(BuildContext context) {
-    final friends = Provider.of<List<String>>(context);
+    final friends = Provider.of<List<dynamic>>(context);
     int count;
     if (friends != null) {
       count = friends.length;
@@ -31,7 +31,7 @@ class _FriendsListState extends State<FriendsList> {
 }
 
 class FriendTile extends StatelessWidget {
-  final String id;
+  final Map id;
 
   FriendTile({this.id});
 
@@ -40,7 +40,7 @@ class FriendTile extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(
-          Database().getPseudo(id),
+          id['pseudo'],
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -59,7 +59,7 @@ class FriendTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(id, Database.currentUser)),
+                  builder: (context) => ProfileScreen2(friend : id,currentUser :  Database.currentUser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
@@ -84,7 +84,7 @@ class UsersList extends StatefulWidget {
 class _UsersListState extends State<UsersList> {
   @override
   Widget build(BuildContext context) {
-    final users = Provider.of<List<String>>(context);
+    final users =Provider.of<List<String>>(context);
     int count;
     if (users != null) {
       count = users.length;
@@ -97,8 +97,8 @@ class _UsersListState extends State<UsersList> {
       itemBuilder: (context, index) {
         return widget.filter == null || widget.filter == ""
             ? new UserTile(id: users[index])
-            : Database().getPseudo(users[index]).contains(widget.filter)
-                ? new UserTile(id: users[index])
+            : users[index].toString().contains(widget.filter)
+            ? new UserTile(id: users[index])
                 : new Container();
       },
     );
@@ -106,7 +106,7 @@ class _UsersListState extends State<UsersList> {
 }
 
 class UserTile extends StatelessWidget {
-  final String id;
+  String id;
 
   UserTile({this.id});
 
@@ -115,7 +115,7 @@ class UserTile extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(
-          Database().getPseudo(id),
+         id,
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -130,10 +130,10 @@ class UserTile extends StatelessWidget {
         ),
         trailing: IconButton(
           onPressed: () {
-            Navigator.push(
+           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(id, Database.currentUser)),
+                  builder: (context) => ProfileScreen2(pseudo : id, currentUser : Database.currentUser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
@@ -144,3 +144,4 @@ class UserTile extends StatelessWidget {
     );
   }
 }
+

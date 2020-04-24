@@ -5,7 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
-import 'package:winek/screensHiba/MapPage.dart';
+import 'profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +21,9 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String email, pw, pwd, pseudo, tel;
+  String email, pw, pwd, pseudo, tel , pic ="https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
   File _image;
-  String _uploadedFileURL,
-      pic = "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+  String _uploadedFileURL;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -87,7 +86,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             width: 180.0,
                             height: 180.0,
                             child:(_image!=null) ? Image.file(_image,fit: BoxFit.fill,)
-                                : Image.network(pic,
+                                : Image.network(pic ,
                               fit: BoxFit.fill,
                             ),
                           ),
@@ -109,9 +108,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 TextField(
                   onChanged: (value) {
-                      pseudo= value;
-                   pseudoExist();
-                    },
+                    pseudo= value;
+                    pseudoExist();
+                  },
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black87,
@@ -149,13 +148,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 8.0,
                 ),
                 TextField(
-                    keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
                     email = value;
                     setState(() {
 
-                    !Validator.email(email) ? errMl=null : errMl="Veuillez introduire une adresse valide";
-                    mailExist();
+                      !Validator.email(email) ? errMl=null : errMl="Veuillez introduire une adresse valide";
+                      mailExist();
                     });
 
                   },
@@ -200,10 +199,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     tel = value;
                     setState(() {
 
-                    !Validator.number(tel) ? errTel=null :  errTel='Veuillez entrer un numero';
-    });
+                      !Validator.number(tel) ? errTel=null :  errTel='Veuillez entrer un numero';
+                    });
 
-  },
+                  },
                   textAlign: TextAlign.center,
 
                   keyboardType: TextInputType.numberWithOptions(
@@ -248,12 +247,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   onChanged: (value) {
                     setState(() {
                       pwd = value;
-                 double strength = estimatePasswordStrength(pwd);
+                      double strength = estimatePasswordStrength(pwd);
 
-                    if (strength < 0.3) { errPwd='Mot de passe faible' ;}
-                    else {
-                      errPwd=null ;
-                    }
+                      if (strength < 0.3) { errPwd='Mot de passe faible' ;}
+                      else {
+                        errPwd=null ;
+                      }
                     });
                   },
                   textAlign: TextAlign.center,
@@ -372,35 +371,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print('creaaation bdaaat ');
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
-      GeoFirePoint pt = geo.point(
-          latitude: lt.latitude, longitude: lt.longitude);
+      GeoFirePoint pt = geo.point(latitude: lt.latitude, longitude: lt.longitude) ;
       final newUser = await authService.auth.createUserWithEmailAndPassword(
           email: email,
           password: pwd);
       if (newUser != null) {
         Utilisateur myUser = Utilisateur(
-            pseudo: pseudo,
-            mail: email,
-            tel: tel,
+          pseudo: pseudo,
+          mail: email,
+          tel: tel,
 
           photo: _uploadedFileURL,
-          amis: [],
+          amis: <String>[] ,
           invitation: [],
           invitation_groupe: [],
           alertLIST: [],
           connecte: true,
           location: pt.data,
-          favoris: [],
         );
         // authService.db.collection('Utilisateur').add(myUser.map);
-         //authService..add(myUser.map);
-        authService.db.collection('Utilisateur')
-            .document(newUser.user.uid)
-            .setData(
+        //authService..add(myUser.map);
+        authService.db.collection('Utilisateur').document(newUser.user.uid).setData(
             myUser.map);
-         print('user CREAAAATEEEEED');
+        print('user CREAAAATEEEEED');
         print(newUser.user.uid);
-        Navigator.pushNamed(context, Home.id);
+        Navigator.pushNamed(context, ProfileScreen.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
       }else {
@@ -416,19 +411,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           errMl=null ;
 
         }
-          if (signUpError.code == 'ERROR_INVALID_EMAIL')
-          {
-            errMl="Veuillez introduire une adresse valide";
+        if (signUpError.code == 'ERROR_INVALID_EMAIL')
+        {
+          errMl="Veuillez introduire une adresse valide";
 
-          }else {
-            errMl=null ;
+        }else {
+          errMl=null ;
 
-          }
-            if (signUpError.code == 'ERROR_WEAK_PASSWORD')
-            {
-              errPwd='Mot de passe faible';
+        }
+        if (signUpError.code == 'ERROR_WEAK_PASSWORD')
+        {
+          errPwd='Mot de passe faible';
 
-            }
+        }
         else {
           errPwd=null ;
         }
@@ -440,7 +435,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print(e);
     }
 
-    }
+  }
   String errTel;
 
   String errPwd, errMl ,errPs, errPw ;
@@ -448,7 +443,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() {
 
       if (pw != pwd) {
-         errPw='Veuillez introduire le meme mot de passe';
+        errPw='Veuillez introduire le meme mot de passe';
       } else {
         errPw=null;
       }
@@ -466,8 +461,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('photos/${p.basename(_image.path)}}');
-    _uploadedFileURL =
-    "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+    _uploadedFileURL="https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
 
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
@@ -480,25 +474,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
 
-   pseudoExist() async {
-     final QuerySnapshot result = await Future.value(authService.db
-         .collection('Utilisateur')
-         .where('pseudo', isEqualTo: pseudo)
-         .limit(1)
-         .getDocuments());
-     final List<DocumentSnapshot> documents = result.documents;
-     if (documents.length == 1) {
-       print("UserName Already Exits");
-       setState(() {
-         errPs = 'Ce pseudo est deja pris';
-       });
-     } else {
-       print("UserName is Available");
-       setState(() {
-         errPs = null;
-       });
-     }
-   }
+  pseudoExist() async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('pseudo', isEqualTo: pseudo)
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length == 1) {
+      print("UserName Already Exits");
+      setState(() {
+        errPs = 'Ce pseudo est deja pris';
+      });
+    } else {
+      print("UserName is Available");
+      setState(() {
+        errPs = null;
+      });
+    }
+  }
 
   mailExist() async {
     final QuerySnapshot result = await Future.value(authService.db
@@ -522,6 +516,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
 
-  }
+}
 
 

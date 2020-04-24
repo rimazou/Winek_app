@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
@@ -10,22 +12,30 @@ import 'resetmail.dart';
 import '../auth.dart';
 import 'dart:async';
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 
 
-Firestore _firestore=Firestore.instance;
-Geoflutterfire geo=Geoflutterfire();
-
-void getUserLocation()async{
-      String userID=await authService.connectedID();
+void getUserLocation() async {
+  var val = authService.connectedID();
+  if (val != null) // ca permetra de faire lappel seulement quand le user est co
+      {
+    try {
       var geolocator = Geolocator();
-     var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
-     (Position position) {
-        GeoFirePoint geoFirePoint = geo.point(latitude: position.latitude, longitude: position.longitude);
-           _firestore.collection('Utilisateur').document('2dE7ClNIkPMKWdZFiHcghx5dKzi1').setData({'location': geoFirePoint.data});
-     });
+      var locationOptions = LocationOptions(
+          accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator
+          .getPositionStream(locationOptions).listen(
+              (Position position) {
+            GeoFirePoint geoFirePoint = authService.geo.point(
+                latitude: position.latitude, longitude: position.longitude);
+            authService.userRef.document(val).updateData(
+                {'location': geoFirePoint.data});
+            print(geoFirePoint.data.toString());
+          });
+    } catch (e) {
+      print('ya eu une erreur pour la localisation');
+    }
+  }
 }
 
 class LoginScreen extends StatefulWidget {
@@ -36,7 +46,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String pwd, mail;
+  String pwd, mail, errMl, errPwd;
 
 
   @override
@@ -86,31 +96,43 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40.0,
                 ),
                 TextField(
+                  keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
-                    mail=value ;
+                    mail = value;
+                    setState(() {
+                      !Validator.email(mail) ? errMl = null : errMl =
+                      "Veuillez introduire une adresse valide";
+                    });
                   },
+
+                  textAlign: TextAlign.center,
                   style: TextStyle(
+                    color: Colors.black87,
                     fontFamily: 'Montserrat',
 
-                    color: Colors.black87,
-                    //decorationColor: Color(0XFFFFCC00),//Font color change
-                   // backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                    // decorationColor: Color(0XFFFFCC00),//Font color change
+                    //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Email/pseudo',
+                    labelText: 'Adresse mail',
+                    hoverColor: Colors.black87,
+                    errorText: errMl,
+                    errorStyle: TextStyle(
+                        color: Colors.red,
+                        fontFamily: 'Montserrat',
+
+                        fontWeight: FontWeight.bold),
                     contentPadding:
                     EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 1.0),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 2.0),
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
@@ -121,6 +143,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   onChanged: (value) {
                     pwd=value ;
+                    if (pwd.isEmpty) {
+                      setState(() {
+                        errPwd = 'Veuillez introduire un mot de passe';
+                      });
+                    }
                   },
                   obscureText: true,
                   autocorrect: false,
@@ -204,20 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
-                          onPressed: () async{
-                           try{ final user = await authService.auth.signInWithEmailAndPassword(
-                                email: mail,
-                                password: pwd);
-                            if (user!=null)
-                              { getUserLocation();
-                                Navigator.pushNamed(context, Home.id);
-
-                              }}
-                              catch(e)
-                            {
-                              print(e);
-                            }
-                          },
+                          onPressed: () => connect(),
 
                           minWidth: 140.0,
                           height: 42.0,
@@ -281,6 +295,48 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     else {
       print('failed google authetication');
+    }
+  }
+
+  connect() async {
+    try {
+      final user = await authService.auth.signInWithEmailAndPassword(
+          email: mail,
+          password: pwd);
+      if (user != null) { //getUserLocation();
+        // Navigator.pushNamed(context, Home.id) ;
+        //   Navigator.pushNamed(context, ProfileScreen.id) ;
+        print('yess connected');
+      }
+    }
+    catch (logIn) {
+      setState(() {
+        if (logIn is PlatformException) {
+          if (logIn.code == 'ERROR_USER_NOT_FOUND') {
+            errMl = 'Utilisateur inexistant';
+          } else {
+            errMl = null;
+          }
+          if (logIn.code == 'ERROR_INVALID_EMAIL') {
+            errMl = "Veuillez introduire une adresse valide";
+          } else {
+            errMl = null;
+          }
+          if (logIn.code == 'ERROR_WRONG_PASSWORD') {
+            errPwd = 'Mot de passe errone';
+          }
+          else {
+            errPwd = null;
+          }
+          if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+            // erreur reseau internet faire qlq chose
+
+          }
+          else {
+            errPwd = null;
+          }
+        }
+      });
     }
   }
 
