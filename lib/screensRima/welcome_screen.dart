@@ -192,8 +192,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
+                            Navigator.pushNamed(context,Home.id);
                             print('gonna return the stream builder');
-                            return Container(
+                           /* return Container(
                               child: StreamBuilder(
                                   stream: authService.userRef.document(
                                       'oHFzqoSaM4RUDpqL9UF396aTCf72')
@@ -213,7 +214,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                         break;
                                     }
                                   }),
-                            );
+                            );*/
                           },
                           minWidth: 140.0,
 
