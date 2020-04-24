@@ -34,7 +34,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-          child: SingleChildScrollView(
+            child: Container(
+              child: Center(
+                child: Text('test'),
+            ),
+            )
+        ),
+      ),
+    );
+  }
+
+/* SingleChildScrollView(
 
             child: Stack(
               children: <Widget>[
@@ -191,12 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
+          ),*/
   Widget photoWig() {
     if (photo != null) {
       return Center(
