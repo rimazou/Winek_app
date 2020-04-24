@@ -2,11 +2,42 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
-class LoginScreen extends StatefulWidget {
+import 'profile_screen.dart';
+import 'resetmail.dart';
+import '../auth.dart';
+import 'dart:async';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:geolocator/geolocator.dart';
 
-  static const String id='login';
+
+void getUserLocation() async {
+  var val = authService.connectedID();
+  if (val != null) // ca permetra de faire lappel seulement quand le user est co
+      {
+    try {
+      var geolocator = Geolocator();
+      var locationOptions = LocationOptions(
+          accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator
+          .getPositionStream(locationOptions).listen(
+              (Position position) {
+            GeoFirePoint geoFirePoint = authService.geo.point(
+                latitude: position.latitude, longitude: position.longitude);
+            authService.userRef.document(val).updateData(
+                {'location': geoFirePoint.data});
+            print(geoFirePoint.data.toString());
+          });
+    } catch (e) {
+      print('ya eu une erreur pour la localisation');
+    }
+  }
+}
+
+class LoginScreen extends StatefulWidget {
+  static const String id = 'login';
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -23,7 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: SingleChildScrollView(//tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
+          child: SingleChildScrollView(
+            //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -184,13 +216,13 @@ class _LoginScreenState extends State<LoginScreen> {
                            try{ final user = await authService.auth.signInWithEmailAndPassword(
                                 email: mail,
                                 password: pwd);
-                            if (user!=null)
-                              {
-                                Navigator.pushNamed(context, ProfileScreen.id);
+                            if (user!=null) { //getUserLocation();
+                              Navigator.pushNamed(context, Home.id);
 
                               }}
                               catch(e)
                             {
+                              print('error with cnx');
                               print(e);
                             }
                           },
@@ -220,6 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 /*  Future<FirebaseUser> _signInG() async {
     GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -253,7 +286,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user!=null)
     {
       Navigator.pushNamed(context, ProfileScreen.id);
-
+    }
+    else {
+      print('failed google authetication');
     }
   }
 

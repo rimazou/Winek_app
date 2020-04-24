@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../auth.dart';
+import 'login_screen.dart';
 import 'register_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -165,12 +166,62 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         child: MaterialButton(
                           onPressed: () {
                             authService.connectedID();
-                            print(authService.isFirst());
+                            // print(authService.isFirst());
                           },
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
                             "who's connectede",
+
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 5.0),
+                      child: Material(
+                        color: Color(0XFF389490),
+                        borderRadius: BorderRadius.circular(30.0),
+                        elevation: 5.0,
+                        child: MaterialButton(
+                          onPressed: () {
+                            getUserLocation();
+                            Navigator.pushNamed(context, Home.id);
+                            /* print('gonna return the stream builder');
+                            return Container(
+                              child: StreamBuilder(
+                                  stream: authService.userRef.document(
+                                      'oHFzqoSaM4RUDpqL9UF396aTCf72')
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.done :
+                                        print(snapshot.data['pseudo']);
+                                        print(snapshot.data['photo']);
+                                        break;
+                                      case ConnectionState.waiting :
+                                      case ConnectionState.none:
+                                        print('not working');
+                                        break;
+                                      case ConnectionState.active:
+                                        print("waiting");
+                                        break;
+                                    }
+                                  }),
+                            );*/
+                          },
+                          minWidth: 140.0,
+
+                          height: 42.0,
+                          child: Text(
+                            'go vers hiba',
 
                             style: TextStyle(
                               color: Colors.white,
@@ -193,17 +244,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   _signOut (){
-    authService.isUserLogged()==true ? print('true') : print ('false') ;
-
+    print(' signout');
+    /*print(authService.connectedID());
+     authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
+print('avant singnout');
     authService.auth.signOut();
-    authService.googleSignIn.signOut();
-    authService.isUserLogged()==true ? print('true') : print ('false') ;
-    if (authService.loggedIn== null) {
-      print('nuuulll ');
-    }
-    else{
-      print ('got prob tjr connecte');
-    }
+    print('apres signout');
+    authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
+
+     // authService.googleSignIn.signOut();*/
+    authService.auth.signOut().then((onValue) {
+      print(authService.isLog());
+      authService.connectedID() != null
+          ? print('theres is a user connected')
+          : print('pas de uuser ');
+    });
+    //  authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
+
   }
 
 
