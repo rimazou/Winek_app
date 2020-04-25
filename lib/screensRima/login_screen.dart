@@ -304,8 +304,12 @@ class _LoginScreenState extends State<LoginScreen> {
           email: mail,
           password: pwd);
       if (user != null) { //getUserLocation();
+
+        authService.userRef.document(user.user.uid).updateData(
+            {'connecte': true});
         // Navigator.pushNamed(context, Home.id) ;
         //   Navigator.pushNamed(context, ProfileScreen.id) ;
+
         print('yess connected');
       }
     }

@@ -14,6 +14,7 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
+
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
@@ -164,9 +165,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
-                          onPressed: () {
-                            authService.connectedID();
-                            // print(authService.isFirst());
+                          onPressed: () async {
+                            await authService.connectedID().then((onVal) {
+                              authService.getPseudo(onVal).then((val) {
+                                print(val);
+                              });
+                            });
+                            await authService.isLog().then((log) {
+                              if (log) {
+                                print('yes log');
+                              } else {
+                                print('no log');
+                              }
+                            });
+
                           },
                           minWidth: 140.0,
                           height: 42.0,
@@ -192,7 +204,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
-                            getUserLocation();
+                            // getUserLocation();
                             Navigator.pushNamed(context, Home.id);
                             /* print('gonna return the stream builder');
                             return Container(
@@ -243,8 +255,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  _signOut (){
-    print(' signout');
+  _signOut() async {
+    print(' debutsignout');
     /*print(authService.connectedID());
      authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
 print('avant singnout');
@@ -253,12 +265,24 @@ print('avant singnout');
     authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
 
      // authService.googleSignIn.signOut();*/
-    authService.auth.signOut().then((onValue) {
+
+    await authService.connectedID().then((val) {
+      print(val);
+      authService.auth.signOut();
+      authService.userRef.document(val).updateData({'connecte': false});
+      print('plus d user');
+    }).catchError((onError) {
+      print('an error occured ');
+    });
+    print(' fin signout');
+
+    // await authService.userRef.document('').updateData({'connecte':false}) ;
+    /*authService.auth.signOut().then((onValue) {
       print(authService.isLog());
       authService.connectedID() != null
           ? print('theres is a user connected')
           : print('pas de uuser ');
-    });
+    });*/
     //  authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
 
   }

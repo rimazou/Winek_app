@@ -69,7 +69,7 @@ class AuthService {
         .snapshots();
   }
 
-  String connectedID() {
+  /*Future <String> connectedID() async {
     // returns null when no user is logged in
     // print('stratConnectedid');
     auth.currentUser().then((onValue) {
@@ -82,8 +82,28 @@ class AuthService {
       //   print(onError);
       print('means none connected');
     });
+  }*/
+  Future<String> connectedID() async {
+    final FirebaseUser user = await auth.currentUser();
+    if (user == null) {
+      print('no user connected'); // dans ce cas connectedID retourne null
+    } else {
+      print(user.uid);
+      print(user.email);
+      return user.uid;
+    }
   }
 
+  Future<String> getPseudo(String id) async {
+    String name = 'marche pas';
+    await authService.db.collection('Utilisateur').document(id).get().then((
+        docSnap) {
+      if (docSnap != null) {
+        name = docSnap.data['pseudo'];
+      }
+    });
+    return name;
+  }
   Future sendPwdResetEmail(String email) async {
     try {
       final reset = _auth.sendPasswordResetEmail(email: email);
@@ -92,14 +112,16 @@ class AuthService {
     }
   }
 
-  bool isLog() {
+  Future<bool> isLog() async {
     // returns false when no user is logged in
-    var ui = connectedID();
+    var ui = await connectedID();
     if (ui == null) {
       return false;
     } else {
       return true;
     }
+
+
   }
 
 

@@ -250,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     mdpInputController = new TextEditingController();
 
     super.initState();
-    print(getPseudo('OnW9i9F079QOD3WpLKkiQ0ksZVv1'));
+    //   print(getPseudo('OnW9i9F079QOD3WpLKkiQ0ksZVv1'));
     print('here outside async');
   }
 
@@ -258,15 +258,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future userID;
 
-  String getPseudo(String id) {
-    String name = 'marche pas';
-    authService.userRef.document(id).snapshots().listen((docSnap) {
-      if (docSnap != null) {
-        name = docSnap.data['pseudo'];
-      }
-    });
-    return name;
-  }
 
 /*Future getData() async {
     print('getdatadebut');
