@@ -9,6 +9,8 @@ import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import '../main.dart';
+import '../UpdateMarkers.dart';
+import 'package:provider/provider.dart';
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -35,6 +37,24 @@ searchandNavigate() {
             LatLng(result[0].position.latitude, result[0].position.longitude),
         zoom: 10.0)));
   });
+}
+
+class MyApp extends StatelessWidget{
+  
+  @override
+  Widget build(BuildContext context) {
+   return ChangeNotifierProvider<UpdateMarkers>(
+       builder:(BuildContext context) =>UpdateMarkers(),
+        child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+       /*title: 'Flutter Maps',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),*/
+        home: Home(),
+      ),  
+    );
+  }
 }
 
 class Home extends StatefulWidget {
@@ -74,454 +94,462 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomPadding: true,
-      resizeToAvoidBottomInset: true,
-      key: _scaffoldKey,
-      bottomNavigationBar: bottomNavBar,
-      floatingActionButton: flaotButton,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(
-            zoomGesturesEnabled: true,
-            scrollGesturesEnabled: true,
-            mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: LatLng(36.7525000, 3.0419700),
-              zoom: 11.0,
-            ),
-          ),
-          IndexedStack(index: index, children: <Widget>[
-            //index = 0 :
-            ResearchBar,
-            // the drawer, index=1
-            Container(
-              width: size.width,
-              color: Color.fromRGBO(255, 255, 255, 0.3),
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.02,
-                    top: MediaQuery.of(context).size.height * 0.03,
-                    child: MaterialButton(
-                      onPressed: () {
-                        // _closeDrawer(context);
-                        setState(() {
-                          index = 0;
-                          _visible = true;
-                        });
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      height: size.height * 0.6,
-                      width: size.width * 0.65,
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color.fromRGBO(59, 70, 107, 0.8),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: size.width * 0.25,
-                            width: size.width * 0.4,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  height: size.width * 0.15,
-                                  width: size.width * 0.15,
-                                  child: CircleAvatar(
-                                    backgroundColor: myWhite,
-                                    child:
-                                        //TODO replace by the photo
-                                        Icon(
-                                      Icons.person_outline,
-                                      size: 40,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    data.pseudo,
-                                    textDirection: TextDirection.rtl,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
+    return ChangeNotifierProvider<UpdateMarkers>(
+         builder: (context)=>UpdateMarkers(),
+         //child:  MaterialApp(
+          child:  Scaffold(
+          extendBody: true,
+          resizeToAvoidBottomPadding: true,
+          resizeToAvoidBottomInset: true,
+          key: _scaffoldKey,
+          bottomNavigationBar: bottomNavBar,
+          floatingActionButton: flaotButton,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          body: Stack(
+            children: <Widget>[
+              GoogleMap(
+                zoomGesturesEnabled: true,
+                scrollGesturesEnabled: true,
+                mapToolbarEnabled: true,
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(36.7525000, 3.0419700),
+                  zoom: 11.0,
+                ),
+                markers: Set<Marker>.of(Provider.of<UpdateMarkers>(context).markers.values),
+              ),
+              IndexedStack(index: index, children: <Widget>[
+                //index = 0 :
+                ResearchBar,
+                // the drawer, index=1
+                Container(
+                  width: size.width,
+                  color: Color.fromRGBO(255, 255, 255, 0.3),
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: MediaQuery.of(context).size.width * 0.02,
+                        top: MediaQuery.of(context).size.height * 0.03,
+                        child: MaterialButton(
+                          onPressed: () {
+                            // _closeDrawer(context);
+                            setState(() {
+                              index = 0;
+                              _visible = true;
+                            });
+                          },
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
                           ),
-                          Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              // crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
-                                  onTap: null,
-                                  leading: Icon(
-                                    Icons.playlist_add_check,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                    "Compte",
-                                    //strutStyle: ,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
-                                  ),
-                                ),
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
-                                  leading: Icon(Icons.star, color: myWhite),
-                                  title: Text(
-                                    "Favoris",
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
-                                  ),
-                                ),
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
-                                  leading: Icon(
-                                    Icons.group,
-                                    color: myWhite,
-                                  ),
-                                  title: Text(
-                                    "Liste d'amis",
-                                    textAlign: TextAlign.left,
-                                    overflow: TextOverflow.visible,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
-                                    //strutStyle: ,
-                                  ),
-                                ),
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
-                                  leading: Icon(
-                                    Icons.build,
-                                    color: myWhite,
-                                  ),
-                                  title: Text(
-                                    "Aide",
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w600,
-                                      color: myWhite,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.45,
-                    bottom: MediaQuery.of(context).size.height * 0.1,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      child: FloatingActionButton(
-                        onPressed: () {},
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Color(0xFFFFFFFF),
-                        child: Transform(
-                          transform: Matrix4.rotationX(170),
-                          child:
-                              Icon(Icons.directions_run, color: c2, size: 32.0),
                         ),
                       ),
+                      Center(
+                        child: Container(
+                          height: size.height * 0.6,
+                          width: size.width * 0.65,
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color.fromRGBO(59, 70, 107, 0.8),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: size.width * 0.25,
+                                width: size.width * 0.4,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      height: size.width * 0.15,
+                                      width: size.width * 0.15,
+                                      child: CircleAvatar(
+                                        backgroundColor: myWhite,
+                                        child:
+                                            //TODO replace by the photo
+                                            Icon(
+                                          Icons.person_outline,
+                                          size: 40,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        data.pseudo,
+                                        textDirection: TextDirection.rtl,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 60.0,
+                                        vertical: 0,
+                                      ),
+                                      onTap: null,
+                                      leading: Icon(
+                                        Icons.playlist_add_check,
+                                        color: Colors.white,
+                                      ),
+                                      title: Text(
+                                        "Compte",
+                                        //strutStyle: ,
+                                        style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600,
+                                            color: myWhite,
+                                            fontSize: 15),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 60.0,
+                                        vertical: 0,
+                                      ),
+                                      leading: Icon(Icons.star, color: myWhite),
+                                      title: Text(
+                                        "Favoris",
+                                        style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600,
+                                            color: myWhite,
+                                            fontSize: 15),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 60.0,
+                                        vertical: 0,
+                                      ),
+                                      leading: Icon(
+                                        Icons.group,
+                                        color: myWhite,
+                                      ),
+                                      title: Text(
+                                        "Liste d'amis",
+                                        textAlign: TextAlign.left,
+                                        overflow: TextOverflow.visible,
+                                        style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600,
+                                            color: myWhite,
+                                            fontSize: 15),
+                                        //strutStyle: ,
+                                      ),
+                                    ),
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 60.0,
+                                        vertical: 0,
+                                      ),
+                                      leading: Icon(
+                                        Icons.build,
+                                        color: myWhite,
+                                      ),
+                                      title: Text(
+                                        "Aide",
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600,
+                                          color: myWhite,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: MediaQuery.of(context).size.width * 0.45,
+                        bottom: MediaQuery.of(context).size.height * 0.1,
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          child: FloatingActionButton(
+                            onPressed: () {},
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            backgroundColor: Color(0xFFFFFFFF),
+                            child: Transform(
+                              transform: Matrix4.rotationX(170),
+                              child:
+                                  Icon(Icons.directions_run, color: c2, size: 32.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //index = 2 : choix de groupe
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _visible = !_visible;
+                      index = 0;
+                    });
+                  },
+                  child: Container(
+                      width: size.width,
+                      height: size.height,
+                      child: Center(
+                        child: Container(
+                          height: 370,
+                          width: 266,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color.fromRGBO(59, 70, 107, 0.5)),
+                          child: Center(
+                            child: Column(
+                              children: <Widget>[
+                                Spacer(
+                                  flex: 1,
+                                ),
+                                Text("Créer un groupe ",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w600,
+                                      color: Color.fromRGBO(255, 255, 255, 1),
+                                    )),
+                                Spacer(
+                                  flex: 1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      index = 0;
+                                    });
+    
+                                    Navigator.pushNamed(context, NvVoyagePage.id);
+                                  },
+                                  child: Bouton(
+                                    icon: Icon(
+                                      Icons.directions_bus,
+                                      color: Color(0xff707070),
+                                      size: 75,
+                                    ),
+                                    contenu: Text(
+                                      "de voyage",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Montserrat',
+                                          color: Color(0xff707070)),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(
+                                  flex: 1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, NvLongTermePage.id);
+                                  },
+                                  child: Bouton(
+                                    icon: Icon(
+                                      Icons.people,
+                                      color: Color(0xff707070),
+                                      size: 75,
+                                    ),
+                                    contenu: Text(
+                                      "a long terme",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Montserrat',
+                                          color: Color(0xff707070)),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(
+                                  flex: 1,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      )),
+                ),
+              ]),
+            ],
+          ),
+         ),
+        //),
+        );
+      }
+    
+      Widget get ResearchBar {
+        return Positioned(
+          left: size.width * 0.075,
+          top: size.height * 0.04,
+          child: AnimatedOpacity(
+            opacity: _visible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 500),
+            child: Container(
+              height: size.height * 0.07,
+              width: size.width * 0.85,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40.0), color: Colors.white),
+              child: Stack(
+                //alignment: Alignment.center,
+                children: <Widget>[
+                  Positioned(
+                    left: 0,
+                    // top:size.height*0.07*0.5,
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.menu,
+                          color: Color(0xFF3B466B),
+                        ),
+                        onPressed: () {
+                          //  _openDrawer(context);
+                          setState(() {
+                            index = 1;
+                            _visible = !_visible;
+                          });
+                        },
+                        iconSize: 30.0),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.3, vertical: 0.001),
+                    child: TextField(
+                      style: TextStyle(
+                          fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
+                      decoration: InputDecoration(
+                        hintText: 'Recherche',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 15.0),
+                      ),
                     ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    // top:size.height*0.5,
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.search,
+                          color: Color(0xFF3B466B),
+                        ),
+                        onPressed: searchandNavigate,
+                        iconSize: 30.0),
                   ),
                 ],
               ),
             ),
-            //index = 2 : choix de groupe
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _visible = !_visible;
-                  index = 0;
-                });
-              },
+          ),
+        );
+      }
+    
+      Widget get flaotButton {
+        return AnimatedOpacity(
+          opacity: _visible ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 500),
+          child: FloatingActionButton(
+            heroTag: null,
+            backgroundColor: Color(0xFF389490),
+            child: Icon(Icons.group_add, size: 32.0),
+            onPressed: () {
+              setState(() {
+                index = 2;
+                _visible = !_visible;
+              });
+            },
+          ),
+        );
+        //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked;
+      }
+    
+      Widget get bottomNavBar {
+        return AnimatedOpacity(
+          opacity: _visible ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 500),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(40),
+              topLeft: Radius.circular(40),
+            ),
+            child: BottomAppBar(
+              shape: CircularNotchedRectangle(),
+              color: Color(0xFF3B466B),
+              notchMargin: 10,
               child: Container(
-                  width: size.width,
-                  height: size.height,
-                  child: Center(
-                    child: Container(
-                      height: 370,
-                      width: 266,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(59, 70, 107, 0.5)),
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            Spacer(
-                              flex: 1,
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {},
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(
+                              Icons.group,
+                              size: 32.0,
+                              color: Colors.white,
                             ),
-                            Text("Créer un groupe ",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                )),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                });
-
-                                Navigator.pushNamed(context, NvVoyagePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.directions_bus,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "de voyage",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, NvLongTermePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "a long terme",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            )
-                          ],
-                        ),
+                            onPressed: () {
+                              setState(() {
+                                index = 0;
+                              });
+                              Navigator.pushNamed(context, ListGrpPage.id);
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  )),
-            ),
-          ]),
-        ],
-      ),
-    );
-  }
-
-  Widget get ResearchBar {
-    return Positioned(
-      left: size.width * 0.075,
-      top: size.height * 0.04,
-      child: AnimatedOpacity(
-        opacity: _visible ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 500),
-        child: Container(
-          height: size.height * 0.07,
-          width: size.width * 0.85,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40.0), color: Colors.white),
-          child: Stack(
-            //alignment: Alignment.center,
-            children: <Widget>[
-              Positioned(
-                left: 0,
-                // top:size.height*0.07*0.5,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      color: Color(0xFF3B466B),
-                    ),
-                    onPressed: () {
-                      //  _openDrawer(context);
-                      setState(() {
-                        index = 1;
-                        _visible = !_visible;
-                      });
-                    },
-                    iconSize: 30.0),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.3, vertical: 0.001),
-                child: TextField(
-                  style: TextStyle(
-                      fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
-                  decoration: InputDecoration(
-                    hintText: 'Recherche',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 15.0),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                // top:size.height*0.5,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      color: Color(0xFF3B466B),
-                    ),
-                    onPressed: searchandNavigate,
-                    iconSize: 30.0),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget get flaotButton {
-    return AnimatedOpacity(
-      opacity: _visible ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 500),
-      child: FloatingActionButton(
-        heroTag: null,
-        backgroundColor: Color(0xFF389490),
-        child: Icon(Icons.group_add, size: 32.0),
-        onPressed: () {
-          setState(() {
-            index = 2;
-            _visible = !_visible;
-          });
-        },
-      ),
-    );
-    //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked;
-  }
-
-  Widget get bottomNavBar {
-    return AnimatedOpacity(
-      opacity: _visible ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 500),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(40),
-          topLeft: Radius.circular(40),
-        ),
-        child: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          color: Color(0xFF3B466B),
-          notchMargin: 10,
-          child: Container(
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {},
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.group,
-                          size: 32.0,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            index = 0;
-                          });
-                          Navigator.pushNamed(context, ListGrpPage.id);
-                        },
+    
+                    // Right Tab bar icons
+    
+                    MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {
+                        //se localiser //zoom ect
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.location_on,
+                            size: 32.0,
+                            color: Colors.white,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-
-                // Right Tab bar icons
-
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    //se localiser //zoom ect
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_on,
-                        size: 32.0,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
+        );
+      }
+    }
+    
+ 
 
 class MapVoyagePage extends StatefulWidget {
   Voyage groupe;

@@ -10,8 +10,14 @@ import 'list_inv_grp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import 'parametre_grp.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:flutter/cupertino.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import'../UpdateMarkers.dart';
 
 Database data = Database(pseudo: 'hiba');
 bool _loading = false;
@@ -91,8 +97,8 @@ class _ListGrpPageState extends State<ListGrpPage> {
   }
 }
 
-class grpTile extends StatelessWidget {
-  final String grp_nom;
+class grpTile extends StatelessWidget{
+   final String grp_nom;
   final String grp_chemin;
 
   grpTile({@required this.grp_nom, @required this.grp_chemin});
@@ -110,6 +116,7 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = Voyage.fromMap(doc.data);
             });
+            Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => MapVoyagePage(g)));
           } else {
@@ -119,6 +126,7 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = LongTerme.fromMap(doc.data);
             });
+            Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => MapLongTermePage(g)));
           }
@@ -171,6 +179,9 @@ class grpTile extends StatelessWidget {
       ),
     );
   }
+
+
+  
 }
 
 class Groupeprovider extends StatelessWidget {

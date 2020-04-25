@@ -192,16 +192,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
-<<<<<<< HEAD
-                            Navigator.pushNamed(context,Home.id);
-                            print('gonna return the stream builder');
-                           /* return Container(
-=======
                             getUserLocation();
                             Navigator.pushNamed(context, Home.id);
                             /* print('gonna return the stream builder');
                             return Container(
->>>>>>> master
                               child: StreamBuilder(
                                   stream: authService.userRef.document(
                                       'oHFzqoSaM4RUDpqL9UF396aTCf72')
