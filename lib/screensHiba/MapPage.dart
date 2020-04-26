@@ -12,6 +12,7 @@ import '../main.dart';
 import '../UpdateMarkers.dart';
 import 'package:provider/provider.dart';
 
+
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
@@ -37,24 +38,6 @@ searchandNavigate() {
             LatLng(result[0].position.latitude, result[0].position.longitude),
         zoom: 10.0)));
   });
-}
-
-class MyApp extends StatelessWidget{
-  
-  @override
-  Widget build(BuildContext context) {
-   return ChangeNotifierProvider<UpdateMarkers>(
-       builder:(BuildContext context) =>UpdateMarkers(),
-        child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-       /*title: 'Flutter Maps',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),*/
-        home: Home(),
-      ),  
-    );
-  }
 }
 
 class Home extends StatefulWidget {
@@ -94,11 +77,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return ChangeNotifierProvider<UpdateMarkers>(
-         builder: (context)=>UpdateMarkers(),
-         //child:  MaterialApp(
-          child:  Scaffold(
-          extendBody: true,
+        return Scaffold(
+          extendBody: true, 
           resizeToAvoidBottomPadding: true,
           resizeToAvoidBottomInset: true,
           key: _scaffoldKey,
@@ -116,7 +96,7 @@ class _HomeState extends State<Home> {
                   target: LatLng(36.7525000, 3.0419700),
                   zoom: 11.0,
                 ),
-                markers: Set<Marker>.of(Provider.of<UpdateMarkers>(context).markers.values),
+                
               ),
               IndexedStack(index: index, children: <Widget>[
                 //index = 0 :
@@ -394,9 +374,9 @@ class _HomeState extends State<Home> {
               ]),
             ],
           ),
-         ),
+         );
         //),
-        );
+       // );
       }
     
       Widget get ResearchBar {
@@ -549,7 +529,6 @@ class _HomeState extends State<Home> {
       }
     }
     
- 
 
 class MapVoyagePage extends StatefulWidget {
   Voyage groupe;
@@ -641,6 +620,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
             ),
+            markers: Set<Marker>.of(Provider.of<UpdateMarkers>(context).markers.values),
           ),
           IndexedStack(index: index, children: <Widget>[
             //index = 0 :
@@ -1034,6 +1014,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   }
 }
 
+
 class MapLongTermePage extends StatefulWidget {
   LongTerme groupe;
 
@@ -1121,6 +1102,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
             ),
+            markers: Set<Marker>.of(Provider.of<UpdateMarkers>(context).markers.values),
           ),
           IndexedStack(index: index, children: <Widget>[
             //index = 0 :

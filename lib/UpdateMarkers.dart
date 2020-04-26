@@ -21,10 +21,6 @@ Geoflutterfire geo=Geoflutterfire();
 void UpdateusersLocation(String path){
 
   var collectionReference = _firestore.document(path).collection('members');
-  //var collectionReference = _firestore.collection('locations');
-   LatLng rima = new LatLng(36.5927, 2.2538);
-   LatLng hiba= new LatLng(36.4334, 3.1058);
-   LatLng soumeya = new LatLng(36.7525000, 3.0419700);
    LatLng lemis = new LatLng(36.6178786, 2.3912362);    
    GeoFirePoint geoFPointl = geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
    LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);

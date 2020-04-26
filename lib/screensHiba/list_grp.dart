@@ -36,9 +36,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalProgressHUD(
-      inAsyncCall: _loading,
-      child: Scaffold(
+    return   Scaffold(
         backgroundColor: Colors.white,
         body: Center(
           child: Column(
@@ -92,8 +90,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -105,79 +102,156 @@ class grpTile extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        onTap: () async {
-          Groupe g = Voyage();
-          if (grp_chemin.startsWith('Voyage')) {
-            await Firestore.instance
-                .document(grp_chemin)
-                .get()
-                .then((DocumentSnapshot doc) {
-              g = Voyage.fromMap(doc.data);
-            });
-            Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MapVoyagePage(g)));
-          } else {
-            await Firestore.instance
-                .document(grp_chemin)
-                .get()
-                .then((DocumentSnapshot doc) {
-              g = LongTerme.fromMap(doc.data);
-            });
-            Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MapLongTermePage(g)));
-          }
-        },
-        title: Text(
-          grp_nom,
-          style: TextStyle(
-            fontSize: 14,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            color: Color(0xff707070),
+       return ChangeNotifierProvider<UpdateMarkers>(
+       builder:(BuildContext context) =>UpdateMarkers(),
+       child: MaterialApp(
+          home:Card(
+          child: ListTile(
+  
+            onTap: () async {
+             
+              Groupe g = Voyage();
+  
+              if (grp_chemin.startsWith('Voyage')) {
+  
+                await Firestore.instance
+  
+                    .document(grp_chemin)
+  
+                    .get()
+  
+                    .then((DocumentSnapshot doc) {
+  
+                  g = Voyage.fromMap(doc.data);
+  
+                });
+  
+                Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
+  
+                Navigator.push(context,
+  
+                    MaterialPageRoute(builder: (context) => MapVoyagePage (g)));
+  
+              } else {
+  
+                await Firestore.instance
+  
+                    .document(grp_chemin)
+  
+                    .get()
+  
+                    .then((DocumentSnapshot doc) {
+  
+                  g = LongTerme.fromMap(doc.data);
+  
+                });
+  
+                Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
+  
+                Navigator.push(context,
+  
+                    MaterialPageRoute(builder: (context) => MapLongTermePage(g)));
+  
+              }
+  
+            },
+  
+            title: Text(
+  
+              grp_nom,
+  
+              style: TextStyle(
+  
+                fontSize: 14,
+  
+                fontFamily: 'Montserrat',
+  
+                fontWeight: FontWeight.w600,
+  
+                color: Color(0xff707070),
+  
+              ),
+  
+            ),
+  
+            leading: Icon(
+  
+              Icons.people,
+  
+              color: primarycolor,
+  
+              size: 30,
+  
+            ),
+  
+            trailing: IconButton(
+  
+              onPressed: () async {
+  
+                Groupe g = Voyage();
+  
+                if (grp_chemin.startsWith('Voyage')) {
+  
+                  await Firestore.instance
+  
+                      .document(grp_chemin)
+  
+                      .get()
+  
+                      .then((DocumentSnapshot doc) {
+  
+                    g = Voyage.fromMap(doc.data);
+  
+                  });
+  
+                  Navigator.push(
+  
+                      context,
+  
+                      MaterialPageRoute(
+  
+                          builder: (context) => ParamVoyagePage(g, grp_chemin)));
+  
+                } else {
+  
+                  await Firestore.instance
+  
+                      .document(grp_chemin)
+  
+                      .get()
+  
+                      .then((DocumentSnapshot doc) {
+  
+                    g = LongTerme.fromMap(doc.data);
+  
+                  });
+  
+                  Navigator.push(
+  
+                      context,
+  
+                      MaterialPageRoute(
+  
+                          builder: (context) => ParamLongTermePage(g, grp_chemin)));
+  
+                }
+  
+              },
+  
+              icon: Icon(Icons.info_outline),
+  
+              color: secondarycolor,
+  
+              iconSize: 30,
+  
+            ),
+  
           ),
-        ),
-        leading: Icon(
-          Icons.people,
-          color: primarycolor,
-          size: 30,
-        ),
-        trailing: IconButton(
-          onPressed: () async {
-            Groupe g = Voyage();
-            if (grp_chemin.startsWith('Voyage')) {
-              await Firestore.instance
-                  .document(grp_chemin)
-                  .get()
-                  .then((DocumentSnapshot doc) {
-                g = Voyage.fromMap(doc.data);
-              });
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ParamVoyagePage(g, grp_chemin)));
-            } else {
-              await Firestore.instance
-                  .document(grp_chemin)
-                  .get()
-                  .then((DocumentSnapshot doc) {
-                g = LongTerme.fromMap(doc.data);
-              });
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ParamLongTermePage(g, grp_chemin)));
-            }
-          },
-          icon: Icon(Icons.info_outline),
-          color: secondarycolor,
-          iconSize: 30,
-        ),
+  
       ),
-    );
+        ),
+        
+        );
   }
 
 
