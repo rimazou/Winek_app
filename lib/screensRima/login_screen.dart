@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/classes.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
@@ -78,20 +80,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontWeight: FontWeight.w900,
                     color:Color(0XFF3B466B),
 
-                ),
+                  ),
                 ),
                 SizedBox(
                   height: 50.0,
                 ),
-            Text(
-              'Connexion',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 20.0,
-                fontWeight: FontWeight.w900,
-                color: Color(0XFF389490),//vert
-              ),
-            ),
+                Text(
+                  'Connexion',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0XFF389490),//vert
+                  ),
+                ),
                 SizedBox(
                   height: 40.0,
                 ),
@@ -156,8 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'Montserrat',
 
                     color: Colors.black87,
-                   // decorationColor: Color(0XFFFFCC00),//Font color change
-                  //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                    // decorationColor: Color(0XFFFFCC00),//Font color change
+                    //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                   ),
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
@@ -237,13 +239,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 42.0,
                           child: Text(
                             'Se connecter',
-                            
+
                             style: TextStyle(
                               color: Colors.white ,
-                            fontFamily: 'Montserrat',
+                              fontFamily: 'Montserrat',
                               fontWeight: FontWeight.bold ,
 
-                          ),
+                            ),
                           ),
                         ),
                       ),
@@ -289,8 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
     assert(user.uid == currentUser.uid);
 
     print(  currentUser.email);
-    if (user!=null)
-    {
+    if (user!=null) {
       Navigator.pushNamed(context, ProfileScreen.id);
     }
     else {
@@ -307,9 +308,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
         authService.userRef.document(user.user.uid).updateData(
             {'connecte': true});
-        // Navigator.pushNamed(context, Home.id) ;
-        //   Navigator.pushNamed(context, ProfileScreen.id) ;
-
+        DocumentSnapshot snapshot = await authService.userRef.document(
+            user.user.uid).get();
+        if (snapshot != null) {
+          Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
+          Navigator.pushNamed(context, Home.id);
+          /* Navigator.push(context, MaterialPageRoute (
+             builder: (context)=> ProfileScreen(utilisateur)
+           )) ;*/
+          print(utilisateur.pseudo);
+          print(utilisateur.tel);
+        }
         print('yess connected');
       }
     }

@@ -78,14 +78,13 @@ class Authentication extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false ,
-      //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
+      // initialRoute:  islog ? WelcomeScreen.id : Home.id,
       initialRoute: WelcomeScreen.id,
       routes: {
         Home.id: (BuildContext context) => Home(), // la map
         WelcomeScreen.id : (context) => WelcomeScreen(),
         LoginScreen.id : (context) => LoginScreen(),
         RegistrationScreen.id : (context) => RegistrationScreen(),
-        ProfileScreen.id :(context) => ProfileScreen() ,
         ResetScreen.id :(context) => ResetScreen() ,
         ResetMailScreen.id :(context) => ResetMailScreen() ,
         NvLongTermePage.id: (context) => NvLongTermePage(),
@@ -100,5 +99,9 @@ class Authentication extends StatelessWidget {
     );
   }
 
+  bool islog;
 
+  getlog() async {
+    islog = await authService.isLog();
+  }
 }

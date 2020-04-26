@@ -167,9 +167,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         child: MaterialButton(
                           onPressed: () async {
                             await authService.connectedID().then((onVal) {
-                              authService.getPseudo(onVal).then((val) {
+                              if (onVal != null) {
+                                authService.getPseudo(onVal).then((val) {
                                 print(val);
-                              });
+                                });
+                              }
                             });
                             await authService.isLog().then((log) {
                               if (log) {

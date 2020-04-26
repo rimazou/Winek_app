@@ -9,12 +9,18 @@ import '../classes.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const String id='profile';
+  final Utilisateur myuser;
+
+  ProfileScreen(this.myuser);
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState(myuser);
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser loggedInUser;
+
+  _ProfileScreenState(Utilisateur myuser);
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
             child: Container(
               child: Center(
-                child: Text('test'),
+                  child: Image.network(widget.myuser.photo)
             ),
             )
         ),
@@ -250,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     mdpInputController = new TextEditingController();
 
     super.initState();
-    //   print(getPseudo('OnW9i9F079QOD3WpLKkiQ0ksZVv1'));
+    getData();
     print('here outside async');
   }
 
@@ -259,14 +265,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future userID;
 
 
-/*Future getData() async {
+  Future getData() async {
     print('getdatadebut');
-    await authService.connectedID().then((onValue) {
+    var id = await authService.connectedID();
+
+    await authService.db.collection('Utilisateur').document(id).get().then((
+        docSnap) {
+      if (docSnap != null) {
+        pseudo = docSnap.data['pseudo'];
+      }
+
+
       print('gonna print the onvalue ');
-      print(onValue);
+      print(docSnap);
       print('printed the onvalue ');
 
-      authService.userRef.document(onValue).snapshots()
+      authService.userRef.document(docSnap).snapshots()
           .listen((data) {
         data.documents.forEach((doc) {
           setState(() {
@@ -305,7 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // print(us.toString());
       print('getdatafin');
     });
-  }*/
+  }
 /*
  Container (
           child : FutureBuilder(

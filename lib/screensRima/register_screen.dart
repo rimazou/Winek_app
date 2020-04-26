@@ -5,6 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -395,7 +396,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             myUser.map);
         print('user CREAAAATEEEEED');
         print(newUser.user.uid);
-        Navigator.pushNamed(context, ProfileScreen.id);
+        Navigator.pushNamed(context, Home.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
       }else {

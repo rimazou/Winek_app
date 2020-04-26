@@ -95,6 +95,25 @@ class Utilisateur {
     location: data.value['location'],
   );
 
+  Utilisateur.fromdocSnapshot (DocumentSnapshot data)
+      :this(
+    pseudo: data.data['pseudo'],
+    tel: data.data['tel'],
+    mail: data.data['mail'],
+    photo: data.data['photo'],
+    connecte: data.data ['connecte'],
+    vitesse: data.data['vitesse'],
+    posLatitude: data.data ['posLatitude'],
+    posLongitude: data.data['posLongitude'],
+    batterie: data.data['batterie'],
+    amis: data.data['amis'],
+    favoris: data.data['favoris'],
+    groupes: data.data['groupes'],
+    invitation_groupe: data.data['invitationGroupe'],
+    invitation: data.data['invitation'],
+    alertLIST: data.data ['alertLIST'],
+    location: data.data['location'],
+  );
 
   void changerPhoto(String value) {
     photo = value;
