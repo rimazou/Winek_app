@@ -1,4 +1,5 @@
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/listeFavorisScreen.dart';
 import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/register_screen.dart';
@@ -16,6 +17,7 @@ import 'screensHiba/list_grp.dart';
 import 'screensHiba/list_inv_grp.dart';
 import 'screensHiba/nouveau_grp.dart';
 import 'screensRima/welcome_screen.dart';
+import 'screensHiba/listeFavorisScreen.dart';
 
 void main() => runApp(Authentication());
 Color primarycolor = Color(0xff3B466B);
@@ -30,8 +32,10 @@ class Authentication extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-      initialRoute: WelcomeScreen.id,
+      home: FavoritePlacesScreen(),
+      //initialRoute: FavoritePlacesScreen.id,
+       //authService.connectedID()==null ? WelcomeScreen.id : Home.id,
+     // initialRoute: WelcomeScreen.id,
       routes: {
         Home.id: (BuildContext context) => Home(), // la map
         WelcomeScreen.id: (context) => WelcomeScreen(),
