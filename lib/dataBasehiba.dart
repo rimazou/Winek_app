@@ -148,35 +148,35 @@ class Databasegrp {
   }
 
   Future<bool> updategroupename(String ref, String nom, String nvnom) async {
-    try {
-      await Firestore.instance.document(ref).updateData({'nom': nvnom});
-    } catch (e) {
-      print(e.toString());
-    }
     Map grp = {'chemin': ref, 'nom': nom};
     //update groupes liste
     try {
-      Firestore.instance
+      await Firestore.instance
           .collection('UserGrp')
-          .where('groupes', arrayContains: grp)
+          .where('groupes', arrayContains: [grp])
           .snapshots()
-          .listen((data) => data.documents.forEach((doc) {
+          .listen((data) => data.documents.forEach((doc) async {
                 print(doc.data['pseudo']);
-                updatelistgroupes(doc.data['pseudo'], ref, nom);
-                updatelistgroupes(doc.data['pseudo'], ref, nvnom);
+                await updatelistgroupes(doc.documentID, ref, nom);
+                await updatelistgroupes(doc.documentID, ref, nvnom);
               }));
     } catch (e) {
       print(e.toString());
     }
     try {
-      Firestore.instance
+      await Firestore.instance
           .collection('UserGrp')
-          .where('invitations', arrayContains: grp)
+          .where('invitations', arrayContains: [grp])
           .snapshots()
-          .listen((data) => data.documents.forEach((doc) {
-                updatelistinvitations(doc.data['pseudo'], ref, nom);
-                updatelistinvitations(doc.data['pseudo'], ref, nvnom);
+          .listen((data) => data.documents.forEach((doc) async {
+                await updatelistinvitations(doc.documentID, ref, nom);
+                await updatelistinvitations(doc.documentID, ref, nvnom);
               }));
+    } catch (e) {
+      print(e.toString());
+    }
+    try {
+      await Firestore.instance.document(ref).updateData({'nom': nvnom});
     } catch (e) {
       print(e.toString());
     }

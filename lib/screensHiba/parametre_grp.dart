@@ -7,8 +7,90 @@ import 'log_out_icon_icons.dart';
 import 'nouveau_grp.dart';
 import '../main.dart';
 
+String nv_nom;
+bool _confirmer;
 Databasegrp data = Databasegrp();
 bool _loading = false;
+var _controller;
+
+class namedialog extends StatelessWidget {
+  final String nom;
+  namedialog(this.nom);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.all(15),
+      title: Text(
+        'changer le nom ',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 19,
+          fontWeight: FontWeight.w700,
+          color: primarycolor,
+        ),
+      ),
+      content: TextField(
+        controller: _controller,
+        maxLines: 1,
+        decoration: InputDecoration(
+          hintText: nom,
+          hintStyle: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: Color(0xff707070),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: primarycolor,
+            ),
+            borderRadius: BorderRadius.circular(50),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: secondarycolor,
+            ),
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            nv_nom = _controller.text;
+            _confirmer = true;
+            Navigator.pop(context);
+          },
+          child: Text(
+            'confirmer',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xff707070),
+            ),
+          ),
+        ),
+        FlatButton(
+          onPressed: () {
+            _confirmer = false;
+            Navigator.pop(context);
+          },
+          child: Text(
+            'annuller',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xff707070),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class ParamVoyagePage extends StatefulWidget {
   @override
@@ -31,7 +113,10 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
 
   @override
   void initState() {
+    _controller = TextEditingController();
+    nv_nom = '';
     index = 0;
+    _confirmer = false;
   }
 
   @override
@@ -45,6 +130,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
           });
         },
         child: Scaffold(
+            resizeToAvoidBottomPadding: false,
             backgroundColor: Colors.white,
             body: IndexedStack(
               index: index,
@@ -56,6 +142,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                     Spacer(
                       flex: 1,
                     ),
+                    //carte d'info
                     Container(
                       width: 350,
                       height: 250,
@@ -88,13 +175,31 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                           Spacer(
                             flex: 1,
                           ),
-                          Text(
-                            groupe.nom,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 30,
-                              fontWeight: FontWeight.w700,
-                              color: secondarycolor,
+                          FlatButton(
+                            onPressed: () async {
+                              setState(() async {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        namedialog(groupe.nom),
+                                    barrierDismissible: true);
+                                print(nv_nom);
+                                print(_confirmer);
+                                if (_confirmer && nv_nom != '') {
+                                  await data.updategroupename(
+                                      path, groupe.nom, nv_nom);
+                                  groupe.nom = nv_nom;
+                                }
+                              });
+                            },
+                            child: Text(
+                              groupe.nom,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 30,
+                                fontWeight: FontWeight.w700,
+                                color: secondarycolor,
+                              ),
                             ),
                           ),
                           Spacer(
@@ -293,7 +398,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                   ],
                 ),
                 // liste des membres = 1
-                Center(
+                /* Center(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,7 +499,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                           flex: 3,
                         ),
                       ]),
-                ),
+                ),*/
               ],
             )),
       ),

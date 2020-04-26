@@ -177,7 +177,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
               padding: EdgeInsets.all(20),
               alignment: Alignment.centerLeft,
               child: Text(
-                '    Ajouter vos amis',
+                '    Ajoutez vos amis',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 13,
@@ -467,7 +467,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
               padding: EdgeInsets.all(20),
               alignment: Alignment.centerLeft,
               child: Text(
-                '    Ajouter vos amis',
+                '    Ajoutez vos amis',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 13,
