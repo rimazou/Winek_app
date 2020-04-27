@@ -12,6 +12,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'parametre_grp.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:flutter/cupertino.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import '../UpdateMarkers.dart';
 
 bool _loading = false;
 
@@ -110,6 +117,8 @@ class grpTile extends StatelessWidget {
               g = Voyage.fromMap(doc.data);
               print(g.membres);
             });
+            Provider.of<UpdateMarkers>(context, listen: false)
+                .UpdateusersLocation(grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -121,6 +130,8 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = LongTerme.fromMap(doc.data);
             });
+            Provider.of<UpdateMarkers>(context, listen: false)
+                .UpdateusersLocation(grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -231,7 +242,7 @@ Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
   // await Databasegrp.getcurret(user['id'], user['pseudo']);
   print("user : $user");
   DocumentSnapshot querySnapshot =
-  await Firestore.instance.collection('UserGrp').document(user['id']).get();
+      await Firestore.instance.collection('UserGrp').document(user['id']).get();
   print(querySnapshot.data.toString());
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
     // Create a new List<String> from List<dynamic>
