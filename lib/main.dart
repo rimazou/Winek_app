@@ -1,4 +1,5 @@
 import 'package:winek/auth.dart';
+import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/register_screen.dart';
@@ -24,19 +25,20 @@ Color secondarycolor = Color(0xff389490);
 
 Utilisateur user = Utilisateur.fromSnapshot(
     authService.userRef.document(authService.connectedID()));
-
+bool log = user != null;
 class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-      initialRoute: Home.id,
+      initialRoute: WelcomeScreen.id,
       routes: {
         Home.id: (BuildContext context) => Home(), // la map
         WelcomeScreen.id: (context) => WelcomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
+        ProfileScreen.id: (context) => ProfileScreen(user),
         ResetScreen.id: (context) => ResetScreen(),
         ResetMailScreen.id: (context) => ResetMailScreen(),
         NvLongTermePage.id: (context) => NvLongTermePage(),

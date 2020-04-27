@@ -1,4 +1,6 @@
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/screensHiba/MapPage.dart';
+import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +141,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
-                            _signOut() ;
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => SignoutWait()
+                            ));
                           },
                           minWidth: 140.0,
 
@@ -169,7 +173,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             await authService.connectedID().then((onVal) {
                               if (onVal != null) {
                                 authService.getPseudo(onVal).then((val) {
-                                print(val);
+                                  print(val);
                                 });
                               }
                             });
@@ -180,7 +184,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 print('no log');
                               }
                             });
-
                           },
                           minWidth: 140.0,
                           height: 42.0,
@@ -247,6 +250,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 5.0),
+                      child: Material(
+                        color: Color(0XFF389490),
+                        borderRadius: BorderRadius.circular(30.0),
+                        elevation: 5.0,
+                        child: MaterialButton(
+                          onPressed: () {
+                            showSpinner();
+                          },
+                          minWidth: 140.0,
+
+                          height: 42.0,
+                          child: Text(
+                            'show spinner',
+
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -257,42 +287,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  _signOut() async {
-    print(' debutsignout');
-    /*print(authService.connectedID());
-     authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
-print('avant singnout');
-    authService.auth.signOut();
-    print('apres signout');
-    authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
 
-     // authService.googleSignIn.signOut();*/
-
-    await authService.connectedID().then((val) {
-      print(val);
-      authService.auth.signOut();
-      authService.userRef.document(val).updateData({'connecte': false});
-      print('plus d user');
-    }).catchError((onError) {
-      print('an error occured ');
-    });
-    print(' fin signout');
-
-    // await authService.userRef.document('').updateData({'connecte':false}) ;
-    /*authService.auth.signOut().then((onValue) {
-      print(authService.isLog());
-      authService.connectedID() != null
-          ? print('theres is a user connected')
-          : print('pas de uuser ');
-    });*/
-    //  authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
-
+  Widget showSpinner() {
+    return SafeArea(
+      child: Scaffold(
+        body: SpinKitChasingDots(
+          color: Colors.deepPurpleAccent,
+        ),
+      ),
+    );
   }
-
-
-/*_loggedOut (){
-    authService.googleSignIn.signOut();
-  } by  google */
-
-
 }
