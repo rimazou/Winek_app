@@ -30,10 +30,68 @@ class _FriendsListState extends State<FriendsList> {
   }
 }
 
-class FriendTile extends StatelessWidget {
-  final Map id;
+class FriendTile extends StatefulWidget {
+   Map id;
+   String image ;
 
-  FriendTile({this.id});
+  FriendTile({Map id}){
+    this.id =id;
+    print('constructooooooooooor');
+
+  }
+
+  @override
+  _FriendTileState createState() => _FriendTileState(id : id);
+}
+
+class _FriendTileState extends State<FriendTile> {
+   String image ;
+   Map id ;
+
+   _FriendTileState({Map id}){
+     this.id =id;
+     print('constructooooooooooor');
+     Firestore.instance
+         .collection('Utilisateur')
+         .where("pseudo", isEqualTo:  id['pseudo'])
+         .limit(1)
+         .snapshots()
+         .listen((data) {
+       data.documents.forEach((doc) {
+          setState(() {
+         print('entreeeeeee');
+         image = doc.data['photo'];
+         print(image); });
+       }
+       );
+
+   });}
+
+
+   @override
+   void initState() {
+     super.initState();
+   }
+     Widget photo()  {
+
+    if (image != null) {
+      print('photoooos');
+     return CircleAvatar(
+       radius: 23.0,
+       backgroundImage: NetworkImage(image),
+       backgroundColor: Colors.transparent,
+     );
+
+    }
+    else {print('noooo photoooos');
+      return Icon(
+                Icons.people,
+                color: Color(0xff3B466B),
+                size: 32,
+
+            );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +106,14 @@ class FriendTile extends StatelessWidget {
             color: Color(0xff707070),
           ),
         ),
-        leading: Icon(
-          Icons.people,
-          color: Color(0xff3B466B),
-          size: 30,
-        ),
+        leading: photo(),
         trailing: IconButton(
           onPressed: () {
             //go to the profile screen
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(friend : id,currentUser :  Database.currentUser)),
+                  builder: (context) => ProfileScreen2(friend : id,currentUser :  Database().currentuser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
@@ -82,6 +136,7 @@ class UsersList extends StatefulWidget {
 }
 
 class _UsersListState extends State<UsersList> {
+
   @override
   Widget build(BuildContext context) {
     final users =Provider.of<List<String>>(context);
@@ -105,17 +160,71 @@ class _UsersListState extends State<UsersList> {
   }
 }
 
-class UserTile extends StatelessWidget {
+class UserTile extends StatefulWidget {
   String id;
 
   UserTile({this.id});
 
   @override
+  _UserTileState createState() => _UserTileState(id : id);
+}
+
+class _UserTileState extends State<UserTile> {
+
+  String image ;
+  String id ;
+
+  _UserTileState({String id}){
+    this.id =id;
+
+    Firestore.instance
+        .collection('Utilisateur')
+        .where("pseudo", isEqualTo:  id)
+        .limit(1)
+        .snapshots()
+        .listen((data) {
+      data.documents.forEach((doc) {
+          setState(() {
+        print('entreeeeeee');
+        image = doc.data['photo'];
+        print(image);});
+      }
+      );
+
+    });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+  Widget photo()  {
+
+    if (image != null) {
+      print('photoooos');
+      return CircleAvatar(
+        radius: 23.0,
+        backgroundImage: NetworkImage(image),
+        backgroundColor: Colors.transparent,
+      );
+
+    }
+    else {print('noooo photoooos');
+    return Icon(
+      Icons.people,
+      color: Color(0xff3B466B),
+      size: 32,
+
+    );
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-         id,
+         widget.id,
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -123,17 +232,13 @@ class UserTile extends StatelessWidget {
             color: Color(0xff707070),
           ),
         ),
-        leading: Icon(
-          Icons.people,
-          color: Color(0xff3B466B),
-          size: 30,
-        ),
+        leading: photo(),
         trailing: IconButton(
-          onPressed: () {
+          onPressed: () async{
            Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(pseudo : id, currentUser : Database.currentUser)),
+                  builder: (context) => ProfileScreen2(pseudo : widget.id, currentUser : Database().currentuser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),

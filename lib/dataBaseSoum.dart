@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:observable/observable.dart';
 import 'package:winek/main.dart';
 import 'dart:core';
 import 'classes.dart';
@@ -13,8 +14,8 @@ class Database {
    String subipseudo ;
    List<dynamic> _modifiedUsersInterested;
    //static final  currentUser = AuthService().connectedID().toString() ;
-static String currentUser = '2dE7ClNIkPMKWdZFiHcghx5dKzi1';
-static String currentName ;
+ String currentUser = '2dE7ClNIkPMKWdZFiHcghx5dKzi1';
+ String currentName ;
    final CollectionReference userCollection = Firestore.instance.collection(
        'Utilisateur');
 
@@ -27,17 +28,22 @@ static String currentName ;
     _modifiedUsersInterested=modifiedUsersInterested;
 
     print('biiiiiiiiiiitch');
-    print(pseudo);
+    print(_modifiedUsersInterested);
+    print(this.pseudo);
+
+    // this.currentUser = AuthService().connectedID().toString() ;
 
   }
 
 
-   Future init  ({String pseudo , String subiid , String subipseudo }) async {
+   Future init  ({String pseudo ,String id , String subiid , String subipseudo }) async {
 print('init');
 
 currentName = await getPseudo(currentUser);
        print('sooooooooooo');
        print(currentName);
+
+this.pseudo =pseudo != null ? pseudo : currentName ;
 
      this.subipseudo = subipseudo != null ? subipseudo : currentName;
      print('eyyyy');
@@ -46,19 +52,21 @@ currentName = await getPseudo(currentUser);
 
        print(this.subiid);
 
-         this.id = await getID(pseudo);
+       this.id = id != null ? id :  await getID(pseudo);
    
          print('idddd');
-         print(id);
+         print(this.id);
 
   await   userCollection
          .getDocuments()
          .then((QuerySnapshot data) {
        data.documents.forEach((doc) {
          if (doc.data['pseudo']==this.subipseudo)
-         _modifiedUsersInterested =  doc.data['amis'];});
+         this._modifiedUsersInterested =  doc.data['amis'];});
      });
-var d = Database(pseudo : pseudo , subipseudo: this.subipseudo , id: this.id , subiid : this.subiid);
+
+
+var d = Database(pseudo : this.pseudo , subipseudo: this.subipseudo , id: this.id , subiid : this.subiid ,modifiedUsersInterested: this._modifiedUsersInterested);
      return d ;
    }
 
@@ -73,16 +81,17 @@ var d = Database(pseudo : pseudo , subipseudo: this.subipseudo , id: this.id , s
     print(this.pseudo);
     print(this.subiid);
 
-    if (_modifiedUsersInterested!=null){_modifiedUsersInterested.add({'pseudo': this.pseudo, 'id': this.id});}
+    map =({'pseudo': this.pseudo, 'id': this.id});
+
+    if (_modifiedUsersInterested.isNotEmpty){_modifiedUsersInterested.add(map);}
 
     else {
     _modifiedUsersInterested= [];
-    map =({'pseudo': this.pseudo, 'id': this.id});
-    _modifiedUsersInterested.add(map);
+    _modifiedUsersInterested.add(map);}
       /* map =({'pseudo': nom, 'id': idd});
     print(map);
-    _modifiedUsersInterested =new List.of(map.values);*/
-  }
+    _modifiedUsersInterested =new List.of(map.values);
+  }*/
     return await userCollection
         .document(subiid)
         .updateData(
@@ -142,6 +151,14 @@ else{
     return userCollection.snapshots().map(_userListFromSnapshot);
   }
 
+  String get currentuser {
+    return currentUser;
+  }
+
+   String get currentname {
+     return currentName;
+   }
+
   Stream<List<dynamic>> get friends {
     return userCollection.document(currentUser).snapshots().map((snap) {
       List<dynamic> friend =  snap.data['amis'];
@@ -150,14 +167,14 @@ else{
     });
   }
 
-   List<dynamic> getfriends (String id){
+   /*List<dynamic> getfriends (String id){
       userCollection.document(id).get()
          .then((DocumentSnapshot doc) {
        List<dynamic> friend =  doc.data['amis'];
        print(friend);
        return friend;
      });
-   }
+   }*/
 
 
    Stream<List<String>> get friendRequest {
@@ -245,6 +262,24 @@ else{
 
      });
      return pseudo.toString();}
+
+    Future< String> getPhoto (String pseudo) async {
+     String image ;
+      Firestore.instance
+         .collection('Utilisateur')
+         .where("pseudo", isEqualTo: pseudo)
+         .limit(1)
+         .snapshots()
+         .listen((data) {
+       data.documents.forEach((doc) {
+
+           print('entreeeeeee');
+           image = doc.data['photo'];
+         print(image);
+       }
+       );
+     });return image.toString();
+     }
      
      
    Future<String> getID (String pseudo) async {
@@ -260,10 +295,60 @@ else{
   });
   print(id);return id.toString(); }
 
+  Future<Null> changePseudo (String oldp , String newp ) async{
+    await   userCollection
+        .getDocuments()
+        .then((QuerySnapshot data) {
+      data.documents.forEach((doc) async {
+        if (doc.data['pseudo']==oldp)
+         {
+           await userCollection
+             .document(doc.documentID)
+             .updateData(
+             {'pseudo': newp});}
+        else{
+          await Firestore.instance // Remplace this one with the one below *******************************
+              .collection('Utilisateur')
+              .document(currentUser).get()
+              .then((DocumentSnapshot doc) async {
+            List<dynamic> list =doc.data['amis'];
+            if(list!=null){
+              for (var map in list){
+                if (map["pseudo"] == oldp) {
+                  await Database(pseudo: oldp).friendDeleteData(doc.documentID);
+                  Database d= await Database().init(pseudo: newp , subipseudo: doc.data['pseudo'] );
+                  await d.userUpdateData();}
+              }}
+            List<dynamic> listinvit =doc.data['invitation '];
+            if(listinvit!=null){
+            for (var map in listinvit){
+              if (map == oldp) {
+                print('why not working');
+                await Database(pseudo: oldp).userDeleteData(currentUser);
+                await Database(pseudo: newp)
+                    .invitUpdateData(currentUser);}
+            }}});
+         /* List<dynamic> list =doc.data['amis'];
+          if(list!=null){
+        for (var map in list){
+          if (map["pseudo"] == oldp) {
+            await Database(pseudo: oldp).friendDeleteData(doc.documentID);
+            Database d= await Database().init(pseudo: newp , subipseudo: doc.data['pseudo'] );
+            await d.userUpdateData();
+          }}
+          List<dynamic> listinvit =doc.data['invitation '];
+          if(listinvit!=null){
+            for (var map in listinvit){
+              if (map == oldp) {
+                await Database( pseudo: oldp).userDeleteData(doc.documentID);
+                await Database(pseudo: newp)
+                    .invitUpdateData(doc.documentID);}}*/}
+
+
+      });
+    });
+
+  }
+
 }
 
-class Amis {
-  String id ;
-  String pseudo ;
-  Amis(this.id , this.pseudo);
-}
