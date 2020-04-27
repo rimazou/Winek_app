@@ -182,6 +182,7 @@ class Databasegrp {
     }
   }
 
+
   void fermergroupe(String ref, String nom) async {
     try {
       await Firestore.instance.document(ref).delete();
