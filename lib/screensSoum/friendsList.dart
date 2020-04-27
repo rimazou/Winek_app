@@ -31,65 +31,66 @@ class _FriendsListState extends State<FriendsList> {
 }
 
 class FriendTile extends StatefulWidget {
-   Map id;
-   String image ;
+  Map id;
+  String image;
 
-  FriendTile({Map id}){
-    this.id =id;
+  FriendTile({Map id}) {
+    this.id = id;
     print('constructooooooooooor');
-
   }
 
   @override
-  _FriendTileState createState() => _FriendTileState(id : id);
+  _FriendTileState createState() => _FriendTileState(id: id);
 }
 
 class _FriendTileState extends State<FriendTile> {
-   String image ;
-   Map id ;
+  String image;
 
-   _FriendTileState({Map id}){
-     this.id =id;
-     print('constructooooooooooor');
-     Firestore.instance
-         .collection('Utilisateur')
-         .where("pseudo", isEqualTo:  id['pseudo'])
-         .limit(1)
-         .snapshots()
-         .listen((data) {
-       data.documents.forEach((doc) {
-          setState(() {
-         print('entreeeeeee');
-         image = doc.data['photo'];
-         print(image); });
-       }
-       );
+  Map id;
 
-   });}
+  _FriendTileState({Map id}) {
+    this.id = id;
+    print('constructooooooooooor');
+    Firestore.instance
+        .collection('Utilisateur')
+        .where("pseudo", isEqualTo: id['pseudo'])
+        .limit(1)
+        .snapshots()
+        .listen((data) {
+      data.documents.forEach((doc) {
+        setState(() {
+          print('entreeeeeee');
+          image = doc.data['photo'];
+          print(image);
+        });
+      }
+      );
+    });
+  }
 
 
-   @override
-   void initState() {
-     super.initState();
-   }
-     Widget photo()  {
+  @override
+  void initState() {
+    super.initState();
+  }
 
+  Widget photo() {
     if (image != null) {
       print('photoooos');
-     return CircleAvatar(
-       radius: 23.0,
-       backgroundImage: NetworkImage(image),
-       backgroundColor: Colors.transparent,
-     );
-
+      return CircleAvatar(
+        radius: 23.0,
+        backgroundImage: NetworkImage(image),
+        backgroundColor: Colors.transparent,
+      );
     }
-    else {print('noooo photoooos');
+    else {
+      print('noooo photoooos');
       return Icon(
-                Icons.people,
-                color: Color(0xff3B466B),
-                size: 32,
+        Icons.people,
+        color: Color(0xff3B466B),
+        size: 32,
 
-            );
+      );
     }
   }
 
@@ -113,7 +114,9 @@ class _FriendTileState extends State<FriendTile> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(friend : id,currentUser :  Database().currentuser)),
+                  builder: (context) =>
+                      ProfileScreen2(
+                          friend: id, currentUser: Database().currentuser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
@@ -166,31 +169,32 @@ class UserTile extends StatefulWidget {
   UserTile({this.id});
 
   @override
-  _UserTileState createState() => _UserTileState(id : id);
+  _UserTileState createState() => _UserTileState(id: id);
 }
 
 class _UserTileState extends State<UserTile> {
 
-  String image ;
-  String id ;
+  String image;
 
-  _UserTileState({String id}){
-    this.id =id;
+  String id;
+
+  _UserTileState({String id}) {
+    this.id = id;
 
     Firestore.instance
         .collection('Utilisateur')
-        .where("pseudo", isEqualTo:  id)
+        .where("pseudo", isEqualTo: id)
         .limit(1)
         .snapshots()
         .listen((data) {
       data.documents.forEach((doc) {
-          setState(() {
-        print('entreeeeeee');
-        image = doc.data['photo'];
-        print(image);});
+        setState(() {
+          print('entreeeeeee');
+          image = doc.data['photo'];
+          print(image);
+        });
       }
       );
-
     });
   }
 
@@ -199,8 +203,8 @@ class _UserTileState extends State<UserTile> {
   void initState() {
     super.initState();
   }
-  Widget photo()  {
 
+  Widget photo() {
     if (image != null) {
       print('photoooos');
       return CircleAvatar(
@@ -208,23 +212,24 @@ class _UserTileState extends State<UserTile> {
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
-
     }
-    else {print('noooo photoooos');
-    return Icon(
-      Icons.people,
-      color: Color(0xff3B466B),
-      size: 32,
+    else {
+      print('noooo photoooos');
+      return Icon(
+        Icons.people,
+        color: Color(0xff3B466B),
+        size: 32,
 
-    );
+      );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-         widget.id,
+          widget.id,
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -234,11 +239,13 @@ class _UserTileState extends State<UserTile> {
         ),
         leading: photo(),
         trailing: IconButton(
-          onPressed: () async{
-           Navigator.push(
+          onPressed: () async {
+            Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen2(pseudo : widget.id, currentUser : Database().currentuser)),
+                  builder: (context) =>
+                      ProfileScreen2(pseudo: widget.id,
+                          currentUser: Database().currentuser)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),

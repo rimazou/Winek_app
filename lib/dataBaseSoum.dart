@@ -14,8 +14,8 @@ class Database {
    String subipseudo ;
    List<dynamic> _modifiedUsersInterested;
    //static final  currentUser = AuthService().connectedID().toString() ;
- String currentUser = '2dE7ClNIkPMKWdZFiHcghx5dKzi1';
- String currentName ;
+   String currentUser = '2dE7ClNIkPMKWdZFiHcghx5dKzi1';
+   String currentName;
    final CollectionReference userCollection = Firestore.instance.collection(
        'Utilisateur');
 
@@ -36,14 +36,15 @@ class Database {
   }
 
 
-   Future init  ({String pseudo ,String id , String subiid , String subipseudo }) async {
+   Future init(
+       {String pseudo, String id, String subiid, String subipseudo }) async {
 print('init');
 
 currentName = await getPseudo(currentUser);
        print('sooooooooooo');
        print(currentName);
 
-this.pseudo =pseudo != null ? pseudo : currentName ;
+this.pseudo = pseudo != null ? pseudo : currentName;
 
      this.subipseudo = subipseudo != null ? subipseudo : currentName;
      print('eyyyy');
@@ -52,21 +53,26 @@ this.pseudo =pseudo != null ? pseudo : currentName ;
 
        print(this.subiid);
 
-       this.id = id != null ? id :  await getID(pseudo);
+this.id = id != null ? id : await getID(pseudo);
    
          print('idddd');
-         print(this.id);
+print(this.id);
 
   await   userCollection
          .getDocuments()
          .then((QuerySnapshot data) {
        data.documents.forEach((doc) {
          if (doc.data['pseudo']==this.subipseudo)
-         this._modifiedUsersInterested =  doc.data['amis'];});
-     });
+           this._modifiedUsersInterested = doc.data['amis'];
+       });
+  });
 
 
-var d = Database(pseudo : this.pseudo , subipseudo: this.subipseudo , id: this.id , subiid : this.subiid ,modifiedUsersInterested: this._modifiedUsersInterested);
+var d = Database(pseudo: this.pseudo,
+    subipseudo: this.subipseudo,
+    id: this.id,
+    subiid: this.subiid,
+    modifiedUsersInterested: this._modifiedUsersInterested);
      return d ;
    }
 
@@ -81,13 +87,16 @@ var d = Database(pseudo : this.pseudo , subipseudo: this.subipseudo , id: this.i
     print(this.pseudo);
     print(this.subiid);
 
-    map =({'pseudo': this.pseudo, 'id': this.id});
+    map = ({'pseudo': this.pseudo, 'id': this.id});
 
-    if (_modifiedUsersInterested.isNotEmpty){_modifiedUsersInterested.add(map);}
+    if (_modifiedUsersInterested.isNotEmpty) {
+      _modifiedUsersInterested.add(map);
+    }
 
     else {
     _modifiedUsersInterested= [];
-    _modifiedUsersInterested.add(map);}
+    _modifiedUsersInterested.add(map);
+    }
       /* map =({'pseudo': nom, 'id': idd});
     print(map);
     _modifiedUsersInterested =new List.of(map.values);
@@ -151,9 +160,9 @@ else{
     return userCollection.snapshots().map(_userListFromSnapshot);
   }
 
-  String get currentuser {
-    return currentUser;
-  }
+   String get currentuser {
+     return currentUser;
+   }
 
    String get currentname {
      return currentName;
@@ -263,23 +272,23 @@ else{
      });
      return pseudo.toString();}
 
-    Future< String> getPhoto (String pseudo) async {
-     String image ;
-      Firestore.instance
+   Future<String> getPhoto(String pseudo) async {
+     String image;
+     Firestore.instance
          .collection('Utilisateur')
          .where("pseudo", isEqualTo: pseudo)
          .limit(1)
          .snapshots()
          .listen((data) {
        data.documents.forEach((doc) {
-
-           print('entreeeeeee');
-           image = doc.data['photo'];
+         print('entreeeeeee');
+         image = doc.data['photo'];
          print(image);
        }
        );
-     });return image.toString();
-     }
+     });
+     return image.toString();
+   }
      
      
    Future<String> getID (String pseudo) async {
@@ -295,40 +304,48 @@ else{
   });
   print(id);return id.toString(); }
 
-  Future<Null> changePseudo (String oldp , String newp ) async{
-    await   userCollection
-        .getDocuments()
-        .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
-        if (doc.data['pseudo']==oldp)
-         {
+   Future<Null> changePseudo(String oldp, String newp) async {
+     await userCollection
+         .getDocuments()
+         .then((QuerySnapshot data) {
+       data.documents.forEach((doc) async {
+         if (doc.data['pseudo'] == oldp) {
            await userCollection
-             .document(doc.documentID)
-             .updateData(
-             {'pseudo': newp});}
-        else{
-          await Firestore.instance // Remplace this one with the one below *******************************
-              .collection('Utilisateur')
-              .document(currentUser).get()
-              .then((DocumentSnapshot doc) async {
-            List<dynamic> list =doc.data['amis'];
-            if(list!=null){
-              for (var map in list){
-                if (map["pseudo"] == oldp) {
-                  await Database(pseudo: oldp).friendDeleteData(doc.documentID);
-                  Database d= await Database().init(pseudo: newp , subipseudo: doc.data['pseudo'] );
-                  await d.userUpdateData();}
-              }}
-            List<dynamic> listinvit =doc.data['invitation '];
-            if(listinvit!=null){
-            for (var map in listinvit){
-              if (map == oldp) {
-                print('why not working');
-                await Database(pseudo: oldp).userDeleteData(currentUser);
-                await Database(pseudo: newp)
-                    .invitUpdateData(currentUser);}
-            }}});
-         /* List<dynamic> list =doc.data['amis'];
+               .document(doc.documentID)
+               .updateData(
+               {'pseudo': newp});
+         }
+         else {
+           await Firestore
+               .instance // Remplace this one with the one below *******************************
+               .collection('Utilisateur')
+               .document(currentUser).get()
+               .then((DocumentSnapshot doc) async {
+             List<dynamic> list = doc.data['amis'];
+             if (list != null) {
+               for (var map in list) {
+                 if (map["pseudo"] == oldp) {
+                   await Database(pseudo: oldp).friendDeleteData(
+                       doc.documentID);
+                   Database d = await Database().init(
+                       pseudo: newp, subipseudo: doc.data['pseudo']);
+                   await d.userUpdateData();
+                 }
+               }
+             }
+             List<dynamic> listinvit = doc.data['invitation '];
+             if (listinvit != null) {
+               for (var map in listinvit) {
+                 if (map == oldp) {
+                   print('why not working');
+                   await Database(pseudo: oldp).userDeleteData(currentUser);
+                   await Database(pseudo: newp)
+                       .invitUpdateData(currentUser);
+                 }
+               }
+             }
+           });
+           /* List<dynamic> list =doc.data['amis'];
           if(list!=null){
         for (var map in list){
           if (map["pseudo"] == oldp) {
@@ -342,13 +359,11 @@ else{
               if (map == oldp) {
                 await Database( pseudo: oldp).userDeleteData(doc.documentID);
                 await Database(pseudo: newp)
-                    .invitUpdateData(doc.documentID);}}*/}
-
-
-      });
-    });
-
-  }
+                    .invitUpdateData(doc.documentID);}}*/
+         }
+       });
+     });
+   }
 
 }
 

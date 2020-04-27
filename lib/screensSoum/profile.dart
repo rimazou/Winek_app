@@ -32,8 +32,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   double size;
   String id;
   Map friend ;
-  String currentName ;
-  bool invit=false;
+
+  String currentName;
+
+  bool invit = false;
 
   final CollectionReference userCollection = Firestore.instance.collection(
       'Utilisateur');
@@ -43,7 +45,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     this.currentUser=currentUser;
 
     size = 102;
-      print('hellooooooooooooo');
+    print('hellooooooooooooo');
     userCollection
         .where("pseudo", isEqualTo: this.pseudo)
         .snapshots()
@@ -51,9 +53,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       data.documents.forEach((doc) {
         setState(() {
           this.id = doc.documentID;
-          if (doc.data['connecte']==true)
-            {online ='En ligne';}
-          else{online ='Hors ligne';}
+          if (doc.data['connecte'] == true) {
+            online = 'En ligne';
+          }
+          else {
+            online = 'Hors ligne';
+          }
           print(id);
         });
       }
@@ -61,9 +66,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     });
 
 
-
-
-    Database().getPseudo(this.currentUser).then((String result){
+    Database().getPseudo(this.currentUser).then((String result) {
       setState(() {
         this.currentName= result;
         print(currentName);
@@ -116,15 +119,18 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     super.initState();
 
 
-print('Initstateeeeeee');
+    print('Initstateeeeeee');
 
     userCollection.document(currentUser) // id du doc
         .get()
         .then((DocumentSnapshot doc) {
-       if (doc.data["invitation "].contains(pseudo))
-         {setState(() {invit=true;});}
+      if (doc.data["invitation "].contains(pseudo)) {
+        setState(() {
+          invit = true;
+        });
+      }
     });
-    if(!invit){
+    if (!invit) {
 
     userCollection.document(currentUser) // id du doc
         .get()
@@ -180,18 +186,27 @@ print('Initstateeeeeee');
           );
         });
       }
-    });}
+    });
+    }
 
-    userCollection .where("pseudo", isEqualTo: currentName)
+    userCollection.where("pseudo", isEqualTo: currentName)
         .limit(1)
         .snapshots()
         .listen((data) {
       data.documentChanges.forEach((change) {
-      if (!change.document.data["invitation "].contains(pseudo))
-      {setState(() {invit=false;});}
-      else {setState(() {invit=true;});}
-    });});
-    if(!invit){
+        if (!change.document.data["invitation "].contains(pseudo)) {
+          setState(() {
+            invit = false;
+          });
+        }
+        else {
+          setState(() {
+            invit = true;
+          });
+        }
+      });
+    });
+    if (!invit) {
     Firestore.instance
         .collection('Utilisateur')
         .where("pseudo", isEqualTo: currentName)
@@ -235,7 +250,8 @@ print('Initstateeeeeee');
 
 
                 if (change.document.data["invitation "].contains(currentName)) // amis*
-                    {print('annuuule invit');
+                    {
+                  print('annuuule invit');
                   setState(() {
                     who = 'Annuler l\'invitaion';
                     size = 102;
@@ -255,72 +271,82 @@ print('Initstateeeeeee');
           });
         } //fin else
       });
-    });}}
+    });
+    }
+  }
 
-    Widget getButton(){
-    if(pseudo==currentName)
-      {return Container();}
-    if (invit)
-      { return  Positioned(
-          top: 470,
-          right: 80 ,
-          left: 80,
-          bottom: 50,
+  Widget getButton() {
+    if (pseudo == currentName) {
+      return Container();
+    }
+    if (invit) {
+      return Positioned(
+        top: 470,
+        right: 80,
+        left: 80,
+        bottom: 50,
 
-          child:
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Column(
-                children: <Widget>[
-                  MaterialButton(
-                    child: Center(child: Text(
-                    '$pseudo vous a envoyé une invitation',
-                    style: TextStyle(
+        child:
+        Container(
+          height: 200.0,
+          width: 200.0,
+          child: Column(
+            children: <Widget>[
+              MaterialButton(
+                child: Center(child: Text(
+                  '$pseudo vous a envoyé une invitation',
+                  style: TextStyle(
                     fontFamily: 'montserrat',
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                      color: Color(0xff707070),),),),),
+                    color: Color(0xff707070),),),),),
 
-                Row(children: <Widget>[
-                  SizedBox(
-                    width: 8,),
-                 Container(
-                     height: 40.0,
-                     width: 110.0,
-                   child: MaterialButton(
-                     child: Center(child: Text(
-                       'Accepter',
-                       style: TextStyle(
-                         fontFamily: 'montserrat',
-                         fontSize: 14,
-                         fontWeight: FontWeight.w900,
-                         color: Colors.white,),),),
-                    onPressed:
-                    () async {
-                      Database d= await Database().init(pseudo: pseudo , subipseudo: Database().currentname);
-                      await d.userUpdateData();
-                      Database c =await Database().init( id:  Database().currentUser , subipseudo: pseudo);
-                      await c.userUpdateData();
-                      await Database( pseudo: pseudo).userDeleteData(Database().currentuser);
-                        setState(() {invit=false; size = 138;  who = "Supprimer"; });
-                    }
-                    ),
-                   decoration: BoxDecoration(
-                     color: Color(0xff389490),
-                     border: Border.all(
-                       color: Color(0xff389490),
-                       width: 3,
-                     ),
-                     borderRadius: BorderRadius.circular(20),
-                   ),) ,
-                  SizedBox(
-                    width: 10,
+              Row(children: <Widget>[
+                SizedBox(
+                  width: 8,),
+                Container(
+                  height: 40.0,
+                  width: 110.0,
+                  child: MaterialButton(
+                      child: Center(child: Text(
+                        'Accepter',
+                        style: TextStyle(
+                          fontFamily: 'montserrat',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,),),),
+                      onPressed:
+                          () async {
+                        Database d = await Database().init(
+                            pseudo: pseudo, subipseudo: Database().currentname);
+                        await d.userUpdateData();
+                        Database c = await Database().init(id: Database()
+                            .currentUser, subipseudo: pseudo);
+                        await c.userUpdateData();
+                        await Database(pseudo: pseudo).userDeleteData(
+                            Database().currentuser);
+                        setState(() {
+                          invit = false;
+                          size = 138;
+                          who = "Supprimer";
+                        });
+                      }
                   ),
-                  Container(
-                    height: 40.0,
-                    width: 110.0,
-                    child: MaterialButton(
+                  decoration: BoxDecoration(
+                    color: Color(0xff389490),
+                    border: Border.all(
+                      color: Color(0xff389490),
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  height: 40.0,
+                  width: 110.0,
+                  child: MaterialButton(
                       child: Center(child: Text(
                         'Refuser',
                         style: TextStyle(
@@ -329,93 +355,100 @@ print('Initstateeeeeee');
                           fontWeight: FontWeight.w900,
                           color: Colors.white,),),),
                       onPressed:
-                      () async {
-                        await Database( pseudo: pseudo).userDeleteData(Database().currentuser);
-                        setState(() {invit=false; size = 138; who = "Ajouter"; });
+                          () async {
+                        await Database(pseudo: pseudo).userDeleteData(
+                            Database().currentuser);
+                        setState(() {
+                          invit = false;
+                          size = 138;
+                          who = "Ajouter";
+                        });
                       }),
-                    decoration: BoxDecoration(
+                  decoration: BoxDecoration(
+                    color: Colors.red[400],
+                    border: Border.all(
                       color: Colors.red[400],
-                      border: Border.all(
-                        color: Colors.red[400],
-                        width: 3,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),) ,
-                ],),],),
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),),
+              ],),
+            ],),
 
-           decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-            color: Colors.grey[300],
-            width: 3,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: Colors.grey[300],
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(20),
           ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-                ),);}
-    else{
-      return  Positioned(
-          top: 495,
-          right: size,
-          left: size,
-          bottom: 76,
+        ),);
+    }
+    else {
+      return Positioned(
+        top: 495,
+        right: size,
+        left: size,
+        bottom: 76,
 
-          child: Container(
-            height: 200.0,
-            width: 30.0,
-            //Bouton ajouter
-            child: MaterialButton(
-              child: Center(child: Text(
-            who,
-            style: TextStyle(
-              fontFamily: 'montserrat',
-              fontSize: 17,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,),),),
-          onPressed:
-              () async {
-
-            if (who == "Ajouter") { //envoyer invit
-              setState(() {
-                who = "Annuler l\'invitaion";
-                size = 102;
-              });
-              await Database(pseudo: currentName)
-                  .invitUpdateData(id);
-            }
-            else {
-              if (who == 'Annuler l\'invitaion') {
+        child: Container(
+          height: 200.0,
+          width: 30.0,
+          //Bouton ajouter
+          child: MaterialButton(
+            child: Center(child: Text(
+              who,
+              style: TextStyle(
+                fontFamily: 'montserrat',
+                fontSize: 17,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,),),),
+            onPressed:
+                () async {
+              if (who == "Ajouter") { //envoyer invit
                 setState(() {
-                  who = "Ajouter";
-                  size = 138;
+                  who = "Annuler l\'invitaion";
+                  size = 102;
                 });
                 await Database(pseudo: currentName)
-                    .userDeleteData(id);
+                    .invitUpdateData(id);
               }
-              else { // if who=supprimer
-                await Database(pseudo: pseudo).friendDeleteData(Database().currentuser);
-                await Database(pseudo: currentName).friendDeleteData( id);
-                setState(() {
-                  who = "Ajouter";
-                  size = 138;
-                });
-               // ami=false ;
-                // amipseudo=false;
+              else {
+                if (who == 'Annuler l\'invitaion') {
+                  setState(() {
+                    who = "Ajouter";
+                    size = 138;
+                  });
+                  await Database(pseudo: currentName)
+                      .userDeleteData(id);
+                }
+                else { // if who=supprimer
+                  await Database(pseudo: pseudo).friendDeleteData(
+                      Database().currentuser);
+                  await Database(pseudo: currentName).friendDeleteData(id);
+                  setState(() {
+                    who = "Ajouter";
+                    size = 138;
+                  });
+                  // ami=false ;
+                  // amipseudo=false;
 
+                }
               }
-            }
-          },),
+            },),
 
-        decoration: BoxDecoration(
-          color: Color(0xff389490),
-          border: Border.all(
-            color: Colors.grey[300],
-            width: 3,
+          decoration: BoxDecoration(
+            color: Color(0xff389490),
+            border: Border.all(
+              color: Colors.grey[300],
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(20),
           ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),);
+        ),);
     }
-    }
+  }
 
 
     Widget photo() {
