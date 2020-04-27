@@ -37,7 +37,6 @@ class Authentication extends StatelessWidget {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
-        ProfileScreen.id: (context) => ProfileScreen(),
         ResetScreen.id: (context) => ResetScreen(),
         ResetMailScreen.id: (context) => ResetMailScreen(),
         NvLongTermePage.id: (context) => NvLongTermePage(),

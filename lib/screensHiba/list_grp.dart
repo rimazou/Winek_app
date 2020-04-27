@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:winek/auth.dart';
 import 'MapPage.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
@@ -10,10 +11,8 @@ import 'list_inv_grp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import 'parametre_grp.dart';
 
-Database data = Database(pseudo: 'hiba');
 bool _loading = false;
 
 class ListGrpPage extends StatefulWidget {
@@ -109,9 +108,12 @@ class grpTile extends StatelessWidget {
                 .get()
                 .then((DocumentSnapshot doc) {
               g = Voyage.fromMap(doc.data);
+              print(g.membres);
             });
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MapVoyagePage(g)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MapVoyagePage(g, grp_chemin)));
           } else {
             await Firestore.instance
                 .document(grp_chemin)
@@ -119,8 +121,10 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = LongTerme.fromMap(doc.data);
             });
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MapLongTermePage(g)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MapLongTermePage(g, grp_chemin)));
           }
         },
         title: Text(
@@ -177,10 +181,7 @@ class Groupeprovider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Map<dynamic, dynamic>>>.value(
-      value: getListGroupes().asStream().timeout(Duration(seconds: 10),
-          onTimeout: (EventSink) {
-        _loading = false;
-      }),
+      value: getListGroupes().asStream(),
       child: GroupesList(),
     );
   }
@@ -217,43 +218,20 @@ class _GroupesListState extends State<GroupesList> {
   }
 }
 
-/*
-Future<List<Groupe>> groupeslist() async {
-  DocumentSnapshot querySnapshot = await Firestore.instance
-      .collection('UserGrp')
-      .document(data.pseudo)
-      .get();
-  print(querySnapshot.data['pseudo']);
-  if (querySnapshot.exists &&
-      querySnapshot.data.containsKey('groupes') &&
-      querySnapshot.data['groupes'] is List) {
-    // Create a new List<String> of ref
-    List<String> grpref = List<String>.from(querySnapshot.data['groupes']);
-    print(grpref);
-    List<Groupe> g = List();
-    for (String ref in grpref) {
-      if (ref.startsWith('LongTerme')) {
-        _firestore.document(ref).get().then((DocumentSnapshot doc) {
-          g.add(LongTerme.fromMap(doc.data));
-          print(g.last.nom);
-        });
-      }
-      if (ref.startsWith('Voyage')) {
-        Firestore.instance.document(ref).get().then((DocumentSnapshot doc) {
-          g.add(Voyage.fromMap(doc.data));
-          print(g.last.nom);
-        });
-      }
-    }
-    return g;
-  }
-}
-*/
 Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
-  DocumentSnapshot querySnapshot = await Firestore.instance
-      .collection('UserGrp')
-      .document(data.pseudo)
-      .get();
+  Map user = {'pseudo': '', 'id': ''};
+  user['id'] = await authService.connectedID();
+  user['pseudo'] = await Firestore.instance
+      .collection('Utilisateur')
+      .document(user['id'])
+      .get()
+      .then((Doc) {
+    return Doc.data['pseudo'];
+  });
+  // await Databasegrp.getcurret(user['id'], user['pseudo']);
+  print("user : $user");
+  DocumentSnapshot querySnapshot =
+  await Firestore.instance.collection('UserGrp').document(user['id']).get();
   print(querySnapshot.data.toString());
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
     // Create a new List<String> from List<dynamic>
