@@ -30,7 +30,7 @@ searchandNavigate() {
   Geolocator().placemarkFromAddress(searchAddr).then((result) {
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target:
-        LatLng(result[0].position.latitude, result[0].position.longitude),
+            LatLng(result[0].position.latitude, result[0].position.longitude),
         zoom: 10.0)));
   });
 }
@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
-      await _places.getDetailsByPlaceId(p.placeId);
+          await _places.getDetailsByPlaceId(p.placeId);
 
       var placeId = p.placeId;
       double lat = detail.result.geometry.location.lat;
@@ -142,8 +142,8 @@ class _HomeState extends State<Home> {
                                   child: CircleAvatar(
                                     backgroundColor: myWhite,
                                     child:
-                                    //TODO replace by the photo
-                                    Icon(
+                                        //TODO replace by the photo
+                                        Icon(
                                       Icons.person_outline,
                                       size: 40,
                                       color: Colors.white,
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
                         child: Transform(
                           transform: Matrix4.rotationX(170),
                           child:
-                          Icon(Icons.directions_run, color: c2, size: 32.0),
+                              Icon(Icons.directions_run, color: c2, size: 32.0),
                         ),
                       ),
                     ),
@@ -659,7 +659,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           hintText: 'Recherche',
                           border: InputBorder.none,
                           contentPadding:
-                          EdgeInsets.only(left: 15.0, top: 15.0),
+                              EdgeInsets.only(left: 15.0, top: 15.0),
                           suffixIcon: IconButton(
                               icon: Icon(Icons.search),
                               onPressed: searchandNavigate,
@@ -779,8 +779,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   child: CircleAvatar(
                                     backgroundColor: myWhite,
                                     child:
-                                    //TODO replace by the photo
-                                    Icon(
+                                        //TODO replace by the photo
+                                        Icon(
                                       Icons.person_outline,
                                       size: 40,
                                       color: Colors.white,
@@ -903,7 +903,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: Transform(
                           transform: Matrix4.rotationX(170),
                           child:
-                          Icon(Icons.directions_run, color: c2, size: 32.0),
+                              Icon(Icons.directions_run, color: c2, size: 32.0),
                         ),
                       ),
                     ),
@@ -1140,7 +1140,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                           hintText: 'Recherche',
                           border: InputBorder.none,
                           contentPadding:
-                          EdgeInsets.only(left: 15.0, top: 15.0),
+                              EdgeInsets.only(left: 15.0, top: 15.0),
                           suffixIcon: IconButton(
                               icon: Icon(Icons.search),
                               onPressed: searchandNavigate,
@@ -1262,8 +1262,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   child: CircleAvatar(
                                     backgroundColor: myWhite,
                                     child:
-                                    //TODO replace by the photo
-                                    Icon(
+                                        //TODO replace by the photo
+                                        Icon(
                                       Icons.person_outline,
                                       size: 40,
                                       color: Colors.white,
@@ -1386,7 +1386,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                         child: Transform(
                           transform: Matrix4.rotationX(170),
                           child:
-                          Icon(Icons.directions_run, color: c2, size: 32.0),
+                              Icon(Icons.directions_run, color: c2, size: 32.0),
                         ),
                       ),
                     ),
