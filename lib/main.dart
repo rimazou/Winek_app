@@ -4,8 +4,6 @@ import 'package:winek/screensRima/resetmail.dart';
 import 'package:winek/screensRima/resetpwd_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:winek/screensSoum/usersListScreen.dart';
-
-
 import 'screensHiba/MapPage.dart';
 import 'classes.dart';
 import 'dataBasehiba.dart';
@@ -17,7 +15,8 @@ import 'screensHiba/nouveau_grp.dart';
 import 'screensRima/login_screen.dart';
 import 'screensRima/register_screen.dart';
 import 'screensRima/welcome_screen.dart';
-
+import 'UpdateMarkers.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(Authentication());
 Color primarycolor = Color(0xff3B466B);
@@ -71,7 +70,9 @@ Utilisateur user = Utilisateur(
 class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return  ChangeNotifierProvider<UpdateMarkers>(
+       create:(BuildContext context) =>UpdateMarkers(),
+      child:  MaterialApp(
       theme: ThemeData.light().copyWith(
         textTheme: TextTheme(
           body1: TextStyle(color: Colors.black54),
@@ -97,6 +98,7 @@ class Authentication extends StatelessWidget {
         FriendsListScreen.id: (context) => FriendsListScreen(),
 
       },
+       ),
     );
   }
 

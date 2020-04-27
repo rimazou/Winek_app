@@ -102,10 +102,7 @@ class grpTile extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-       return ChangeNotifierProvider<UpdateMarkers>(
-       builder:(BuildContext context) =>UpdateMarkers(),
-       child: MaterialApp(
-          home:Card(
+       return Card(
           child: ListTile(
   
             onTap: () async {
@@ -126,7 +123,7 @@ class grpTile extends StatelessWidget{
   
                 });
   
-                Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
+                Provider.of<UpdateMarkers>(context,listen:false).UpdateusersLocation(grp_chemin);
   
                 Navigator.push(context,
   
@@ -146,7 +143,7 @@ class grpTile extends StatelessWidget{
   
                 });
   
-                Provider.of<UpdateMarkers>(context).UpdateusersLocation(grp_chemin);
+                Provider.of<UpdateMarkers>(context,listen:false).UpdateusersLocation(grp_chemin);
   
                 Navigator.push(context,
   
@@ -248,10 +245,7 @@ class grpTile extends StatelessWidget{
   
           ),
   
-      ),
-        ),
-        
-        );
+      );
   }
 
 
