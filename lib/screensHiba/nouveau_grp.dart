@@ -47,7 +47,7 @@ void createlongterme() async {
   // adding that grp to member's invitations liste.
   for (Map m in membres) {
     DocumentSnapshot doc =
-        await Firestore.instance.collection('UserGrp').document(m['id']).get();
+    await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -67,7 +67,7 @@ void createlongterme() async {
   }
   //adding the grp into the admin list of grp
   DocumentSnapshot userdoc =
-      await Firestore.instance.collection('UserGrp').document(user['id']).get();
+  await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
     if (userdoc.data.containsKey('groupes')) {
       userdoc.reference.updateData({
@@ -287,7 +287,7 @@ void createvoyage() async {
   // adding that grp to member's invitations liste:
   for (Map m in membres) {
     DocumentSnapshot doc =
-        await Firestore.instance.collection('UserGrp').document(m['id']).get();
+    await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -307,7 +307,7 @@ void createvoyage() async {
   }
   //adding it to admin list of grp
   DocumentSnapshot userdoc =
-      await Firestore.instance.collection('UserGrp').document(user['id']).get();
+  await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
     if (userdoc.data.containsKey('groupes')) {
       userdoc.reference.updateData({
@@ -656,15 +656,15 @@ class _FriendsListState extends State<FriendsList> {
             ),
             trailing: membres.contains(friends[index])
                 ? Icon(
-                    Icons.done,
-                    color: secondarycolor,
-                    size: 30,
-                  )
+              Icons.done,
+              color: secondarycolor,
+              size: 30,
+            )
                 : Icon(
-                    Icons.add_circle_outline,
-                    color: secondarycolor,
-                    size: 30,
-                  ),
+              Icons.add_circle_outline,
+              color: secondarycolor,
+              size: 30,
+            ),
           ),
         );
       },

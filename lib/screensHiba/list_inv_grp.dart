@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
-import '../classes.dart';
-import '../main.dart';
-import 'list_grp.dart';
-import 'nouveau_grp.dart';
+import 'package:winek/classes.dart';
+import 'package:winek/main.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winek/dataBasehiba.dart';
+import 'package:winek/auth.dart';
+
+Databasegrp data = Databasegrp();
+
+Stream invitation;
+bool waiting;
+Voyage _voyage;
+LongTerme _longTerme;
+String ref = '';
 
 class InvitationGrpPage extends StatefulWidget {
   @override
@@ -11,89 +21,72 @@ class InvitationGrpPage extends StatefulWidget {
 }
 
 class _InvitationGrpPageState extends State<InvitationGrpPage> {
-  bool _infogrp;
-  Groupe select;
-
+  int index;
+  int count;
   @override
   void initState() {
-    // TODO: implement initState
-    select = new Voyage(destination: " ");
-    _infogrp = true;
+    _voyage = Voyage(
+        nom: ' ',
+        membres: List<Map<dynamic, dynamic>>(),
+        admin: '',
+        destination: " ");
+    _longTerme =
+        LongTerme(nom: ' ', membres: List<Map<dynamic, dynamic>>(), admin: '');
+    index = 0;
+    setState(() {
+      waiting = true;
+    });
+    invitation = data.getListInvitations().asStream();
+    setState(() {
+      waiting = false;
+    });
+  }
+
+  void switchindex(int value) {
+    setState(() {
+      index = value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(children: <Widget>[
-          Spacer(
-            flex: 2,
-          ),
-          Text(
-            'Invitations Groupes',
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 25,
-              fontWeight: FontWeight.w900,
-              color: secondarycolor,
+    return StreamProvider<List<Map<dynamic, dynamic>>>.value(
+      value: invitation,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(children: <Widget>[
+            Spacer(
+              flex: 2,
             ),
-          ),
-          Spacer(
-            flex: 2,
-          ),
-          Container(
-            width: 350,
-            height: 390,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(59, 70, 107, 0.3),
+            Text(
+              'Invitations Groupes',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 25,
+                fontWeight: FontWeight.w900,
+                color: secondarycolor,
+              ),
             ),
-            child: (_infogrp)
-                ? ListView.builder(
-                    itemCount: user.invitation_groupe.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            select = user.invitation_groupe[index];
-                            _infogrp = false;
-                          });
-                        },
-                        child: Card(
-                          child: Container(
-                            height: 60,
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.people,
-                                  color: primarycolor,
-                                  size: 30,
-                                ),
-                                Text('   '),
-                                Text(
-                                  user.invitation_groupe[index].nom,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff707070),
-                                  ),
-                                ),
-                                Spacer(
-                                  flex: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    })
-                : (select is Voyage)
-                    ? GestureDetector(
-                        child: Container(
+            Spacer(
+              flex: 2,
+            ),
+            Container(
+              width: 350,
+              height: 390,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Color.fromRGBO(59, 70, 107, 0.3),
+              ),
+              child: IndexedStack(
+                index: index,
+                children: <Widget>[
+                  // liste des invitation = 0
+                  InvitationsList(switchindex),
+                  //Voyage card
+                  GestureDetector(
+                      child: Container(
                         padding: EdgeInsets.all(10),
                         color: Colors.white,
                         child: Column(
@@ -102,9 +95,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               children: <Widget>[
                                 IconButton(
                                   onPressed: () {
-                                    setState(() {
-                                      _infogrp = true;
-                                    });
+                                    switchindex(0);
                                   },
                                   icon: Icon(Icons.arrow_back_ios),
                                   color: Color(0xff707070),
@@ -128,7 +119,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               flex: 2,
                             ),
                             Text(
-                              select.nom,
+                              _voyage.nom,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 30,
@@ -154,7 +145,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   ),
                                 ),
                                 Text(
-                                  destination(select),
+                                  _voyage.destination,
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 15,
@@ -185,7 +176,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   ),
                                 ),
                                 Text(
-                                  select.admin,
+                                  _voyage.admin,
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 15,
@@ -209,7 +200,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               ),
                               child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: select.membres.length,
+                                  itemCount: _voyage.membres.length,
                                   itemBuilder: (context, index) {
                                     return Card(
                                       child: Container(
@@ -217,7 +208,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                         height: 49,
                                         child: Center(
                                           child: Text(
-                                            select.membres[index],
+                                            _voyage.membres[index]['pseudo'],
                                           ),
                                         ),
                                       ),
@@ -233,12 +224,13 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   flex: 1,
                                 ),
                                 IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await data.acceptinvitation(
+                                        ref, _voyage.nom);
                                     setState(() {
-                                      //  user.groupes.add(select);
-                                      // select.membres.add(user);
-                                      //  user.invitation_groupe.remove(select);
-                                      _infogrp = true;
+                                      invitation =
+                                          data.getListInvitations().asStream();
+                                      index = 0;
                                     });
                                   },
                                   icon: Icon(Icons.done),
@@ -249,10 +241,13 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   flex: 1,
                                 ),
                                 IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await data.refuseinvitation(
+                                        ref, _voyage.nom);
                                     setState(() {
-                                      user.invitation_groupe.remove(select);
-                                      _infogrp = true;
+                                      invitation =
+                                          data.getListInvitations().asStream();
+                                      index = 0;
                                     });
                                   },
                                   icon: Icon(Icons.delete),
@@ -266,9 +261,10 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             ),
                           ],
                         ),
-                      ))
-                    : GestureDetector(
-                        child: Container(
+                      )),
+                  //long terme card
+                  GestureDetector(
+                      child: Container(
                         padding: EdgeInsets.all(10),
                         color: Colors.white,
                         child: Column(
@@ -278,7 +274,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      _infogrp = true;
+                                      index = 0;
                                     });
                                   },
                                   icon: Icon(Icons.arrow_back_ios),
@@ -303,7 +299,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               flex: 1,
                             ),
                             Text(
-                              select.nom,
+                              _longTerme.nom,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 30,
@@ -329,7 +325,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   ),
                                 ),
                                 Text(
-                                  select.admin,
+                                  _longTerme.admin,
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 15,
@@ -353,7 +349,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               ),
                               child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: select.membres.length,
+                                  itemCount: _longTerme.membres.length,
                                   itemBuilder: (context, index) {
                                     return Card(
                                       child: Container(
@@ -362,7 +358,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                         color: Colors.white,
                                         child: Center(
                                           child: Text(
-                                            select.membres[index],
+                                            _longTerme.membres[index]['pseudo'],
                                             style: TextStyle(
                                               fontFamily: 'Montserrat',
                                               fontSize: 15,
@@ -384,12 +380,13 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   flex: 1,
                                 ),
                                 IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await data.acceptinvitation(
+                                        ref, _longTerme.nom);
                                     setState(() {
-                                      // user.groupes.add(select);
-                                      // select.membres.add(user);
-                                      // user.invitation_groupe.remove(select);
-                                      // _infogrp = true;
+                                      invitation =
+                                          data.getListInvitations().asStream();
+                                      index = 0;
                                     });
                                   },
                                   icon: Icon(Icons.done),
@@ -397,10 +394,13 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                   iconSize: 30,
                                 ),
                                 IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await data.refuseinvitation(
+                                        ref, _longTerme.nom);
                                     setState(() {
-                                      user.invitation_groupe.remove(select);
-                                      _infogrp = true;
+                                      invitation =
+                                          data.getListInvitations().asStream();
+                                      index = 0;
                                     });
                                   },
                                   icon: Icon(Icons.delete),
@@ -415,16 +415,98 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                           ],
                         ),
                       )),
-          ),
-          Spacer(
-            flex: 2,
-          ),
-        ]),
+                ],
+              ),
+            ),
+            Spacer(
+              flex: 2,
+            ),
+          ]),
+        ),
       ),
     );
   }
 }
 
-String destination(Voyage v) {
-  return v.destination;
+class InvitationsList extends StatefulWidget {
+  Function changeindex;
+
+  InvitationsList(this.changeindex);
+
+  @override
+  _InvitationsListState createState() => _InvitationsListState(changeindex);
+}
+
+class _InvitationsListState extends State<InvitationsList> {
+  Function changeindex;
+
+  _InvitationsListState(this.changeindex);
+
+  @override
+  Widget build(BuildContext context) {
+    final grps = Provider.of<List<Map<dynamic, dynamic>>>(context);
+    int count;
+    setState(() {
+      if (grps != null) {
+        count = grps.length;
+        print('count: $count');
+      } else {
+        count = 0;
+      }
+    });
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: count,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () async {
+            ref = grps[index]['chemin'];
+            int i = await Firestore.instance
+                .document(grps[index]['chemin'])
+                .get()
+                .then((DocumentSnapshot doc) {
+              if (grps[index]['chemin'].toString().startsWith('Voyage')) {
+                _voyage = Voyage.fromMap(doc.data);
+                print(_voyage.nom);
+                return 1;
+              } else {
+                _longTerme = LongTerme.fromMap(doc.data);
+                print(_longTerme.nom);
+                return 2;
+              }
+            });
+            changeindex(i);
+          },
+          child: Card(
+            child: Container(
+              height: 60,
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.people,
+                    color: primarycolor,
+                    size: 30,
+                  ),
+                  Text('   '),
+                  Text(
+                    grps[index]['nom'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff707070),
+                    ),
+                  ),
+                  Spacer(
+                    flex: 1,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

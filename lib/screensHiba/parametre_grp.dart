@@ -105,7 +105,7 @@ class ParamVoyagePage extends StatefulWidget {
 
 class _ParamVoyagePageState extends State<ParamVoyagePage> {
   Voyage
-      groupe; //= Voyage(nom: '', admin: '', membres: List(), destination: '');
+  groupe; //= Voyage(nom: '', admin: '', membres: List(), destination: '');
   int index;
   String path;
 
@@ -317,26 +317,26 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                     ),
                     (data.pseudo == groupe.admin)
                         ? ListTile(
-                            title: Text(
-                              "Supprimer un membre",
-                              style: TextStyle(
-                                color: Color(0xff707070),
-                                fontFamily: "Montserrat",
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            leading: Icon(
-                              Icons.person,
-                              color: primarycolor,
-                              size: 30,
-                            ),
-                            onTap: () {
-                              setState(() {
-                                index = 3;
-                              });
-                            },
-                          )
+                      title: Text(
+                        "Supprimer un membre",
+                        style: TextStyle(
+                          color: Color(0xff707070),
+                          fontFamily: "Montserrat",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      leading: Icon(
+                        Icons.person,
+                        color: primarycolor,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          index = 3;
+                        });
+                      },
+                    )
                         : Container(),
                     ListTile(
                       title: Text(
@@ -366,31 +366,31 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                     ),
                     (data.pseudo == groupe.admin)
                         ? ListTile(
-                            title: Text(
-                              "fermer  le groupe",
-                              style: TextStyle(
-                                color: Color(0xff707070),
-                                fontFamily: "Montserrat",
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            leading: Icon(
-                              LogOutIcon.logout,
-                              color: primarycolor,
-                              size: 29,
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _loading = true;
-                              });
-                              data.fermergroupe(path, groupe.nom);
-                              setState(() {
-                                _loading = false;
-                              });
-                              Navigator.pop(context);
-                            },
-                          )
+                      title: Text(
+                        "fermer  le groupe",
+                        style: TextStyle(
+                          color: Color(0xff707070),
+                          fontFamily: "Montserrat",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      leading: Icon(
+                        LogOutIcon.logout,
+                        color: primarycolor,
+                        size: 29,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _loading = true;
+                        });
+                        data.fermergroupe(path, groupe.nom);
+                        setState(() {
+                          _loading = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                    )
                         : Container(),
                     Spacer(
                       flex: 6,
@@ -677,26 +677,26 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                     ),
                     (data.pseudo == groupe.admin)
                         ? ListTile(
-                            title: Text(
-                              "Supprimer un membre",
-                              style: TextStyle(
-                                color: Color(0xff707070),
-                                fontFamily: "Montserrat",
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            leading: Icon(
-                              Icons.person,
-                              color: primarycolor,
-                              size: 30,
-                            ),
-                            onTap: () {
-                              setState(() {
-                                index = 3;
-                              });
-                            },
-                          )
+                      title: Text(
+                        "Supprimer un membre",
+                        style: TextStyle(
+                          color: Color(0xff707070),
+                          fontFamily: "Montserrat",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      leading: Icon(
+                        Icons.person,
+                        color: primarycolor,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          index = 3;
+                        });
+                      },
+                    )
                         : Container(),
                     ListTile(
                       title: Text(
@@ -726,31 +726,31 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                     ),
                     (data.pseudo == groupe.admin)
                         ? ListTile(
-                            title: Text(
-                              "fermer  le groupe",
-                              style: TextStyle(
-                                color: Color(0xff707070),
-                                fontFamily: "Montserrat",
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            leading: Icon(
-                              LogOutIcon.logout,
-                              color: primarycolor,
-                              size: 29,
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _loading = true;
-                              });
-                              data.fermergroupe(path, groupe.nom);
-                              setState(() {
-                                _loading = false;
-                              });
-                              Navigator.pop(context);
-                            },
-                          )
+                      title: Text(
+                        "fermer  le groupe",
+                        style: TextStyle(
+                          color: Color(0xff707070),
+                          fontFamily: "Montserrat",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      leading: Icon(
+                        LogOutIcon.logout,
+                        color: primarycolor,
+                        size: 29,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _loading = true;
+                        });
+                        data.fermergroupe(path, groupe.nom);
+                        setState(() {
+                          _loading = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                    )
                         : Container(),
                     Spacer(
                       flex: 6,
@@ -868,17 +868,17 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                       size: 30,
                                     ),
                                     trailing: groupe.membres
-                                            .contains(user.amis[index])
+                                        .contains(user.amis[index])
                                         ? Icon(
-                                            Icons.done,
-                                            color: secondarycolor,
-                                            size: 30,
-                                          )
+                                      Icons.done,
+                                      color: secondarycolor,
+                                      size: 30,
+                                    )
                                         : Icon(
-                                            Icons.add_circle_outline,
-                                            color: secondarycolor,
-                                            size: 30,
-                                          ),
+                                      Icons.add_circle_outline,
+                                      color: secondarycolor,
+                                      size: 30,
+                                    ),
                                   ),
                                 );
                               }),
