@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import '../classes.dart';
 import 'waitingSignout.dart';
 import 'package:winek/screensRima/profile_screen.dart';
@@ -317,10 +318,10 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         if (snapshot != null) {
           Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
-          //  Navigator.pushNamed(context, Home.id);
-          Navigator.push(context, MaterialPageRoute(
+          Navigator.pushNamed(context, Home.id);
+          /* Navigator.push(context, MaterialPageRoute(
               builder: (context) => ProfileScreen(utilisateur)
-          ));
+          ));*/
           print(utilisateur.pseudo);
           print(utilisateur.tel);
         }

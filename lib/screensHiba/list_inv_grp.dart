@@ -4,7 +4,6 @@ import 'package:winek/main.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/dataBasehiba.dart';
-import 'package:winek/auth.dart';
 
 Databasegrp data = Databasegrp();
 

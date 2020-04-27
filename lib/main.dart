@@ -1,5 +1,6 @@
 
 import 'package:winek/auth.dart';
+import 'package:winek/screensRima/firstLoading.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
@@ -33,8 +34,9 @@ class Authentication extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-      initialRoute: WelcomeScreen.id,
+      initialRoute: FirstLoading.id,
       routes: {
+        FirstLoading.id: (context) => FirstLoading(),
         Home.id: (BuildContext context) => Home(), // la map
         WelcomeScreen.id: (context) => WelcomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
