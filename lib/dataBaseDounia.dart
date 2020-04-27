@@ -22,20 +22,38 @@ static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
    
   final CollectionReference userCollection = Firestore.instance.collection('Utilisateur');
 
-  Future favorisUpdateData(GeoFirePoint geop) async 
+  Future favorisUpdateData(GeoFirePoint geop,String id) async 
   {
     // ajouter un amis a la liste de current
     print('not yeeeeeeeeet');
     return await userCollection.document(currentUser).updateData({ 
-      "favoris": FieldValue.arrayUnion([geop.data])
+      "favoristest": FieldValue.arrayUnion([{'latitude': geop.latitude,"longitude": geop.longitude,"placeid":id}]
+      ),
+    });
+  }
+
+    Future favorisDeleteData(GeoFirePoint g,String id) async {
+    // supprimer une invit de pseudo de la liste de current
+    return await userCollection.document(currentUser).updateData({
+      "favoristest": FieldValue.arrayRemove([{"latitude": g.latitude,"longitude": g.longitude,"placeid":id}]
+      ),
+    });
+  }
+
+    Future favorisIdUpdateData(String id) async 
+  {
+    // ajouter un amis a la liste de current
+    print('not yeeeeeeeeet');
+    return await userCollection.document(currentUser).updateData({ 
+      "favorisPlaceId": FieldValue.arrayUnion([id])
      
     });
   }
 
-    Future favorisDeleteData(GeoFirePoint g) async {
+    Future favorisIdDeleteData(String id) async {
     // supprimer une invit de pseudo de la liste de current
     return await userCollection.document(currentUser).updateData({
-      "favoris": FieldValue.arrayRemove([g.data])
+      "favorisPlaceId": FieldValue.arrayRemove([id])
     });
   }
 
@@ -48,7 +66,7 @@ static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
        print('gonna copy dataaaaaaaaaaaaaaaa');
       
            GeoFirePoint g;
-       List<dynamic> listfavoris=snap.data['favoris'];
+       List<dynamic> listfavoris=snap.data['favoristest'];
        print(listfavoris);
        print('liiiiiiiiiist');
        return listfavoris;

@@ -90,6 +90,7 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
 
     // show input autocomplete with selected mode
     // then get the Prediction selected
+    //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
      Prediction p = await PlacesAutocomplete.show(
         context: context,
       apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
@@ -119,19 +120,18 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
  Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
-
+     //final placeDetail=p.result;
       var placeId = p.placeId;
-      
+      String placeIdToString="$placeId";
+      DataBaseFavoris().favorisIdUpdateData(placeIdToString);
       print('Place id : $placeId');
+   
       double lat = detail.result.geometry.location.lat;
       double lng = detail.result.geometry.location.lng;
-
-      //var address = await Geocoder.local.findAddressesFromQuery(p.description);
- //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-        //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+      //stockage du geopoint dans la bdd champs "favoris"
              Geoflutterfire g= Geoflutterfire();
                 GeoFirePoint gp= g.point(latitude:lat, longitude:lng); 
-                DataBaseFavoris().favorisUpdateData(gp);
+                DataBaseFavoris().favorisUpdateData(gp,placeIdToString);
            /* mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
           target:
           LatLng(lat,lng),
@@ -147,3 +147,10 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
       SnackBar(content: Text(response.errorMessage)),
     );
   }
+  /*Future<Null> showDetailPlace(String placeId,BuildContext context) async {
+if (placeId != null) {
+Navigator.push(
+context,
+MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
+);
+}*/

@@ -6,10 +6,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:geocoder/geocoder.dart' as coord;
+//import 'package:winek/dataBaseDounia.dart';
 import '../DataBaseDounia.dart';
 import 'package:provider/provider.dart';
 import 'package:geocoder/geocoder.dart' ;
 import 'package:geoflutterfire/geoflutterfire.dart' ;
+import 'package:google_maps_webservice/places.dart';
+
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey:"AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 class FavorisList extends StatefulWidget {
   @override
@@ -33,9 +37,11 @@ class _FavorisListState extends State<FavorisList> {
       itemBuilder: (context, index) {
         return FavorisTile(
          //geopointfav: favoris[index]['geopoint'],
-         favoris[index]['geopoint'].latitude,
-         favoris[index]['geopoint'].longitude 
-          , favoris[index]['geohash']
+         favoris[index]['latitude'],
+         favoris[index]['longitude'] ,
+         // favoris[index]['geohash'],
+         
+          favoris[index]['placeid']
           //addressToPrint: FavorisTile().convertLatLong().then(String),
           );
       },
@@ -45,104 +51,115 @@ class _FavorisListState extends State<FavorisList> {
 }
  class FavorisTile extends StatefulWidget
  {
+   GeoFirePoint gp;
    double latitude;
    double longitude;
    String hsh;
-  FavorisTile(double latit,double longit,String hash){
-    this.latitude=latit;
-    this.longitude=longit;
-    this.hsh=hash;
+   String placeId;
+  FavorisTile(double lt,double lg,String placeid){
+    this.latitude=lt;
+    this.longitude=lg;
+    //this.hsh=hash;
+    //this.gp=g;
+    this.placeId=placeid;
   }
   @override
-  _FavorisTile createState() => _FavorisTile(latitude,longitude,hsh);
+  _FavorisTile createState() => _FavorisTile(latitude,longitude,placeId);
  }
 
 
 class _FavorisTile extends State<FavorisTile>{
 
- String addressToPrint="";
- static Geoflutterfire geo = Geoflutterfire();
+String addressToPrint="";
+static Geoflutterfire geo = Geoflutterfire();
 GeoFirePoint geoP;
 static double l1;
 static double l2;
 double lat;
 double long;
-  /*LatLng pos=new LatLng( lat,long);
-  FavorisTile({this.lat,this.long});*/
-  String geohsh;
-  //Geoflutterfire gp=Geoflutterfire();
-  //GeoFirePoint geopointfav;
-  _FavorisTile(double lati,double longi,String str)
+String placeName;
+String placeAddress;
+String placeid;
+String geohsh;
+
+  _FavorisTile(double latd,double lng,String p)
   {
-    this.lat=lati;
-    this.long=longi;
-    this.geohsh=str;
+    this.placeid=p;
+    this.lat=latd;
+    this.long=lng;
+    //this.geohsh=str;
     l1=this.lat;
     l2=this.long;
     geoP=geo.point(latitude: l1, longitude: l2) ; 
-    convertLatLong().then((String result)
+    convertPlaceId().then((String result)
     {
       setState(() {
         this.addressToPrint=result;
+        print("address to print : ");
+        print(this.addressToPrint);
       });
-
+      print("Place's name : ");
+      print(this.placeName);
+      print("addresse : ");
+      print(this.placeAddress);
     }
     );
   }
 
+  Future<String> convertPlaceId() async
+  {
+          PlacesDetailsResponse place =await _places.getDetailsByPlaceId(this.placeid);
+      final placeDetail = place.result;
+      this.placeName="${placeDetail.name}";
+      this.placeAddress="${placeDetail.formattedAddress}";
+      String adr="${placeDetail.name} : ${placeDetail.formattedAddress}";
+      print("is it what i want ? : ${placeDetail.name}”, “${placeDetail.formattedAddress}");
+      return adr;
+  }
+
    Future<String> convertLatLong() async{
         
-       
         final coordinates = new coord.Coordinates(this.lat,this.long);
         //final addresses = await coord.Geocoder.local.findAddressesFromCoordinates(coordinates);
-        final addresses = await coord.Geocoder.google("AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",language:"fr").findAddressesFromCoordinates(coordinates);
+        final addresses = await coord.Geocoder.google("AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",language:"fr")
+        .findAddressesFromCoordinates(coordinates);
         final first = addresses.first;
-
         this.addressToPrint="${first.locality} : ${first.subLocality} : ${first.thoroughfare} : ${first.featureName} : ${first.addressLine}";
   
-    String adr="${first.featureName} : ${first.addressLine}";
+        String adr="${first.featureName} : ${first.addressLine}";
            print(addressToPrint);
           print("let's see more details: ${first.locality} : ${first.subLocality} : ${first.thoroughfare} ");
-         
-          print('hola');
-    
+        
       return adr;
         
     }
-
-    /*String convertToString(double latit,double longi)
-    {
-        convertLatLong(latit, longi).then((String result)
-        {
-           final adr=result;
-           this.addressToPrint=result;
-          print('result : $result');
-            print('adrToPrint1: ');
-        print(this.addressToPrint);
-        return adr;
-        }
-        );
-        jso
-        print('adrToPrint2: ');
-        print(this.addressToPrint);
-        return this.addressToPrint ;
-    }*/
 
   
   @override
   Widget build(BuildContext context) {
   return Card(
-      //child:FutureBuilder(
+      
         child:
          ListTile(
+           
         title: Text(
-         addressToPrint,
+         placeName,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 14,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             //color: Color(0xff707070),
-            color: Color(0xff000000),
+            color: Color(0xff5B5050),
+          ),
+        ),
+        subtitle: Text(
+         placeAddress,
+          style: TextStyle(
+            fontSize: 12,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600,
+            //color: Color(0xff707070),
+            color: Color(0xff5B5050),
           ),
         ),
         leading: Icon(
@@ -153,7 +170,8 @@ double long;
         trailing: IconButton(
           onPressed: ()
           {
-          DataBaseFavoris().favorisDeleteData(this.geoP);
+          DataBaseFavoris().favorisDeleteData(this.geoP,this.placeid);
+          //DataBaseFavoris().favorisIdDeleteData(this.placeid);
           },
           icon: Icon(Icons.remove_circle_outline),
           color: Color(0xff389490),
