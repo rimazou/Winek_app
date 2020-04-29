@@ -1,5 +1,5 @@
-
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/listeFavorisScreen.dart';
 import 'package:winek/screensRima/firstLoading.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensRima/login_screen.dart';
@@ -23,11 +23,11 @@ import 'screensRima/welcome_screen.dart';
 void main() => runApp(Authentication());
 Color primarycolor = Color(0xff3B466B);
 Color secondarycolor = Color(0xff389490);
-//Database data = Database(pseudo: 'hiba');
 
 Utilisateur user = Utilisateur.fromSnapshot(
     authService.userRef.document(authService.connectedID()));
 bool log = user != null;
+
 class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -41,6 +41,7 @@ class Authentication extends StatelessWidget {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
+        FavoritePlacesScreen.id: (context) => FavoritePlacesScreen(),
         ProfileScreen.id: (context) => ProfileScreen(user),
         ResetScreen.id: (context) => ResetScreen(),
         ResetMailScreen.id: (context) => ResetMailScreen(),

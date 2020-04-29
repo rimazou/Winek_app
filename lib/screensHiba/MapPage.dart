@@ -9,6 +9,7 @@ import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import 'package:winek/auth.dart';
+import 'listeFavorisScreen.dart';
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -193,6 +194,10 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, FavoritePlacesScreen.id);
+                                  },
                                   contentPadding: EdgeInsets.symmetric(
                                     horizontal: 60.0,
                                     vertical: 0,
@@ -831,6 +836,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, FavoritePlacesScreen.id);
+                                  },
                                   contentPadding: EdgeInsets.symmetric(
                                     horizontal: 60.0,
                                     vertical: 0,
@@ -1315,6 +1324,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, FavoritePlacesScreen.id);
+                                  },
                                   contentPadding: EdgeInsets.symmetric(
                                     horizontal: 60.0,
                                     vertical: 0,
