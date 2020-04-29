@@ -10,6 +10,7 @@ import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'DestinationFromFav.dart';
 
 Databasegrp data = Databasegrp();
@@ -287,6 +288,18 @@ void createvoyage() async {
     // since he's the admin, others have to accept the invitation first
   });
   print('voyage cree');
+  //creating the subcollection doc for location
+  Geoflutterfire geo = Geoflutterfire();
+  GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
+
+  await _firestore
+      .document(ref.path)
+      .collection('members')
+      .document(user['id'])
+      .setData({
+    'position': point.data,
+  });
+  print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   // adding that grp to member's invitations liste:
   for (Map m in membres) {

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'main.dart';
-import 'package:flutter/cupertino.dart';
 import 'dart:core';
 import 'classes.dart';
 import 'auth.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class Databasegrp {
   String pseudo;
@@ -182,7 +182,6 @@ class Databasegrp {
     }
   }
 
-
   void fermergroupe(String ref, String nom) async {
     try {
       await Firestore.instance.document(ref).delete();
@@ -254,6 +253,7 @@ class Databasegrp {
       String ref, String nom, String memberid, String memberpseudo) async {
     await updatelistgroupes(memberid, ref, nom);
     await updategroupemembers(ref, memberpseudo, memberid);
+    //delete lemis doc
   }
 
   void refuseinvitation(String ref, String nom) async {
@@ -302,6 +302,16 @@ class Databasegrp {
       });
     });
     await updategroupemembers(ref, pseudo, id);
+
+    Geoflutterfire geo = Geoflutterfire();
+    GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
+    await Firestore.instance
+        .document(ref)
+        .collection('members')
+        .document(id)
+        .setData({
+      'position': point.data,
+    });
   }
 
   Future<List<Map<dynamic, dynamic>>> getListInvitations() async {
