@@ -7,6 +7,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
+import 'auth.dart';
 
 class UpdateMarkers extends ChangeNotifier {
   Firestore _firestore = Firestore.instance;
@@ -14,14 +15,23 @@ class UpdateMarkers extends ChangeNotifier {
   StreamSubscription<List<DocumentSnapshot>> stream;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Marker _marker;
-  //GoogleMapController _controller;
+  GoogleMapController _controller;
+  var val = authService.connectedID();
 
-  void UpdateusersLocation(String path) {
+  void UpdateusersLocation(String path) async{
     var collectionReference = _firestore.document(path).collection('members');
+    
+    markers.clear();
+
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
         geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
-    LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
+    
+   // GeoFirePoint geoFPointl ;
+   /*await collectionReference.document(val).get().then((DocumentSnapshot ds)
+   {
+      geoFPointl=ds.data['location'];
+   });*/
     // CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(latLng, 12);
     // _controller.animateCamera(cameraUpdate);
 
@@ -33,11 +43,20 @@ class UpdateMarkers extends ChangeNotifier {
         .listen(_updateMarkers);
   }
 
+
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
+    LatLng latlng;
+    CameraUpdate cameraUpdate;
     documentList.forEach((DocumentSnapshot document) async {
       String userid = document.data['userID'];
       markers.remove(MarkerId(userid));
       GeoPoint point = document.data['position']['geopoint'];
+      /*  if(val==document.documentID)
+      {
+        latlng = new LatLng(point.latitude,point.longitude);
+          cameraUpdate = CameraUpdate.newLatLngZoom(latlng,12);
+         _controller.animateCamera(cameraUpdate);
+      }*/
       _addMarker(point.latitude, point.longitude, userid);
     });
   }
@@ -119,7 +138,11 @@ class UpdateMarkers extends ChangeNotifier {
 
   Future<void> _addMarker(double lat, double lng, String usrid) async {
     MarkerId id = MarkerId(usrid);
-
+    String url;
+    /*await _firestore.collection('Utilisateur').document(usrid).get().then((DocumentSnapshot ds)
+   {
+      url=ds.data['photo'];
+   });*/
     _marker = Marker(
       markerId: id,
       position: LatLng(lat, lng),

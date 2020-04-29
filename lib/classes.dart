@@ -165,12 +165,12 @@ class LongTerme extends Groupe {
       : this(
     nom: data['nom'],
     admin: data['admin'],
-    membres: new List<String>.from(data['membres']),
+    membres: new List.from(data['membres']),
   );
 }
 
 class Voyage extends Groupe {
-  double destination_altitude;
+  double destination_latitude;
   double destination_longitude;
   String destination;
   List<Membre> membre_info;
@@ -185,7 +185,7 @@ class Voyage extends Groupe {
     bool affiche,
     List membres,
     String admin,
-    this.destination_altitude,
+    this.destination_latitude,
     this.destination_longitude,
     this.destination,
     this.membre_info})
@@ -195,7 +195,9 @@ class Voyage extends Groupe {
       : this(
     nom: data['nom'],
     admin: data['admin'],
-    destination: data['destination'],
+    destination: data['destination']['adresse'],
+    destination_latitude:data['destination']['latitude'],
+    destination_longitude:data['destination']['longitude'],
     membres: new List.from(data['membres']),
   );
 }
