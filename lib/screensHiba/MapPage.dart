@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,28 @@ import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import 'package:winek/auth.dart';
+import 'composants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+
+
+
+//asma's variables
+final _firestore = Firestore.instance;
+String currentUser = 'ireumimweo';
+String utilisateurID;
+
+int stackIndex = 0;
+
+String groupPath;
+
+bool justReceivedAlert = false;
+ValueNotifier valueNotifier = ValueNotifier(justReceivedAlert);
+
+//---------------------------
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -548,6 +571,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 
   _MapVoyagePageState(this.groupe, this.path);
 
+  //asma variables2
+  String alertePerso;
+
+  final _controller = TextEditingController();
+  //-----------------------
+
   @override
   void initState() {
     index = 0;
@@ -609,7 +638,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
       extendBody: true,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -675,30 +704,144 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   ),
                 ),
                 //liste of members
+
                 Positioned(
                   bottom: 4,
                   left: MediaQuery.of(context).size.width * 0.025,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    height: MediaQuery.of(context).size.height * 0.10,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(33.0),
-                      color: Color(0xFF3B466B),
-                      //color:Color.fromRGBO(59, 70, 150, 0.8),
-                    ),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: liste,
-                    ),
+                  child: Column(
+                    children: <Widget>[
+                      FlatButton(//HEEEEre grey container
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xFF7888a0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blueGrey,
+                                blurRadius: 3.0,
+                                spreadRadius: 0.5,
+                                offset: Offset(0.0, 2.0),
+                              )
+                            ],
+                          ),
+                          child: SizedBox(
+                            height: 10.0,
+                            width: 60.0,
+                          ),
+                        ),
+                        onPressed: () async {
+                          utilisateurID = await AuthService().connectedID();
+                          currentUser = await AuthService().getPseudo(utilisateurID);
+                          groupPath = path;
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xB07888a0),
+                                      borderRadius: BorderRadius.only(
+                                        topRight:
+                                        const Radius.circular(10),
+                                        topLeft:
+                                        const Radius.circular(10),
+                                      )),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            children: <Widget>[
+                                              RoundedButton(
+                                                  title: 'Personnaliser',
+                                                  colour:
+                                                  Color(0xFF389490),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      stackIndex = 1;
+                                                      Navigator.pop(
+                                                          context);
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          //height: 338,
+                                          child: AlertStream(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        height: MediaQuery.of(context).size.height * 0.10,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(33.0),
+                          color: Color(0xFF3B466B),
+                          //color:Color.fromRGBO(59, 70, 150, 0.8),
+                        ),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: liste,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                //floationg butons
+                //floationg butons asma
                 Positioned(
                   right: 5,
                   //MediaQuery.of(context).size.width*0.05,
                   bottom: MediaQuery.of(context).size.height * 0.15,
                   child: Column(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(3),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () async {
+                            setState(() async {
+                            });
+                          },
+                          backgroundColor: Color(0xFF389490),
+                          foregroundColor: Color(0xFFFFFFFF),
+                          child: Icon(
+                            Icons.free_breakfast,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Padding(//asma boite reception
+                        padding: EdgeInsets.all(3),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () async {
+                            setState(() async {
+                              utilisateurID = await AuthService().connectedID();
+                              currentUser = await AuthService().getPseudo(utilisateurID);
+                              groupPath = path;
+                              stackIndex = 2;
+                            });
+                          },
+                          backgroundColor: Color(0xFF389490),
+                          foregroundColor: Color(0xFFFFFFFF),
+                          child: Icon(
+                            Icons.message,
+                            size: 20,
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
@@ -710,7 +853,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           foregroundColor: Color(0xFFFFFFFF),
                           child: Icon(
                             Icons.group,
-                            size: 30,
+                            size: 20,
                           ),
                         ),
                       ),
@@ -727,12 +870,212 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           foregroundColor: Color(0xFFFFFFFF),
                           child: Icon(
                             Icons.group_add,
-                            size: 30,
+                            size: 20,
                           ),
                         ),
                       ),
                     ],
                   ),
+                ),
+                //la fenetre personnaliser asma
+                IndexedStack(
+                  index: stackIndex,
+                  children: <Widget>[
+                    Container(),
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: <Widget>[
+                            FlatButton(
+                                padding: EdgeInsets.all(0),
+                                child: Container(
+                                  color: Color(0x99707070),
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                ),
+                                onPressed: (){
+                                  setState(() {
+                                    stackIndex = 0;
+                                  });
+                                }
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                width: 380,
+                                height: 280,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color(0xFFd0d8e8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blueGrey,
+                                      blurRadius: 3.0,
+                                      spreadRadius: 1.0,
+                                      offset: Offset(0.0, 2.0),
+                                    )
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      'Personnaliser une alerte',
+                                      style: TextStyle(
+                                          color: Color(0xFF707070),
+                                          fontSize: 18.0,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(height: 15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(32.0)),
+                                        color: Colors.white,
+                                        elevation: 5.0,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child:  TextField(
+                                            onChanged: (value) {
+                                              alertePerso=value ;
+                                            },
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              color: Color(0xFF707070),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            decoration: InputDecoration(
+                                              prefixIcon: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.sms_failed,
+                                                  color: Color(0xFF707070),
+                                                ),
+                                              ),
+                                              labelText: 'Contenu de l\'alerte',
+                                              contentPadding:
+                                              EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide:
+                                                BorderSide(color: Color(0xd03b466b), width: 1.0),
+                                                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide:
+                                                BorderSide(color: Color(0xd03b466b), width: 2.0),
+                                                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                                              ),
+                                              labelStyle: TextStyle(color: Color(0xd03b466b),),
+                                            ),
+                                            maxLength: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    RoundedButton(
+                                      title: 'Ok',
+                                      colour: Color(0xd03b466b),
+                                      onPressed: () async {
+                                        if (alertePerso != null) {
+                                          /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
+                                          List<DocumentSnapshot> fff=result.documents;
+                                          DocumentSnapshot fff1=fff[0];*/
+                                          _firestore
+                                              .collection('Utilisateur')
+                                              .document(utilisateurID)
+                                              .updateData({
+                                            'alertLIST':
+                                            FieldValue.arrayUnion([alertePerso]),
+                                          });
+                                          alertePerso = null;
+                                        }
+                                        setState(() {
+                                          stackIndex = 0;
+                                          _controller.clear();
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: <Widget>[
+                        FlatButton(
+                            padding: EdgeInsets.all(0),
+                            child: Container(
+                              color: Color(0x99707070),
+                              height: double.infinity,
+                              width: double.infinity,
+                            ),
+                            onPressed: (){
+                              setState(() {
+                                stackIndex = 0;
+                              });
+                            }
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 150.0, horizontal: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFFd0d8e8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueGrey,
+                                  blurRadius: 3.0,
+                                  spreadRadius: 1.0,
+                                  offset: Offset(0.0, 2.0),
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              children: <Widget>[
+
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    'Boite de recécption',
+                                    style: TextStyle(
+                                        letterSpacing: 2,
+                                        color: Color(0xFF3b466b),
+                                        fontSize: 18.0,
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                      child: ReceivedAlertStream(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1607,3 +1950,469 @@ class Bouton extends StatelessWidget {
         ));
   }
 }
+
+//asma la fin
+class AlertBubble extends StatelessWidget {
+  final icon;
+  final text;
+  final bool isReceived;
+
+  AlertBubble({
+    @required this.icon,
+    @required this.text,
+    @required this.isReceived,
+  });
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: () async {
+        //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
+        if(isReceived){}
+        else {
+          try {
+            final result = await InternetAddress.lookup('google.com');
+            var result2 = await Connectivity().checkConnectivity();
+            var b = (result2 != ConnectivityResult.none);
+
+            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              bool isLocationEnabled =
+              await Geolocator().isLocationServiceEnabled();
+              if (isLocationEnabled) {
+                //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
+                var vaaa = _AlertScreenState();
+                vaaa.initState();
+                await vaaa.showNotificationWithDefaultSound();
+
+                Position position = await Geolocator()
+                    .getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.medium);
+                Geoflutterfire geo = Geoflutterfire();
+                GeoFirePoint geoP = geo.point(
+                    latitude: position.longitude,
+                    longitude: position.longitude);
+
+                if (text != null &&
+                    icon != null &&
+                    currentUser != null &&
+                    geoP != null) {
+                  _firestore.document(groupPath)
+                      .collection('receivedAlerts')
+                      .add({
+                    'content': text,
+                    'icon': icon.toString(),
+                    'sender': currentUser,
+                    'envoyeLe': DateTime.now().toUtc(),
+                    'position': geoP.data,
+                  });
+                }
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Row(
+                    children: <Widget>[
+                      Text(
+                        'Alerte envoyée !',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Expanded(
+                        child: SizedBox(),
+                      ),
+                      Icon(
+                        Icons.check,
+                        color: Color(0xFF3b466b),
+                      )
+                    ],
+                  ),
+                ));
+                Navigator.pop(context);
+
+              } else {
+                Navigator.pop(context);
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Row(
+                    children: <Widget>[
+                      Text(
+                        'Veuillez activer votre GPS',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Expanded(
+                        child: SizedBox(),
+                      ),
+                      Icon(
+                        Icons.location_off,
+                        color: Colors.yellow,
+                      )
+                    ],
+                  ),
+                ));
+              }
+            }
+          } on SocketException catch (_) {
+            Navigator.pop(context);
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Row(
+                children: <Widget>[
+                  Text(
+                    'Vérifiez votre connexion internet',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Icon(
+                    Icons.signal_wifi_off,
+                    color: Colors.yellow,
+                  )
+                ],
+              ),
+            ));
+          }
+        }
+
+        if (currentUser == 'ireumimweo') {
+          //c'est un membre du groupe
+          //TODO : SHOW NOTIF FOR A GROUP
+        }
+      },
+      padding: const EdgeInsets.all(0),
+      child: Card(
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+        margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+        color: Colors.white,
+        elevation: 5.0,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(11.0),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  Image(
+                    image: AssetImage(
+                      'images/circle.png',
+                    ),
+                    width: 52.0,
+                  ),
+                  Icon(
+                    icon,
+                    color: Color(0xFF707070),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 25,
+                top: 25,
+                left: 8,
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                    fontSize: 16.0,
+                    color: Color(0xFF707070),
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AlertStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> alertList = [
+      AlertBubble(
+        text: 'Accident',
+        icon: Icons.directions_car,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Arrêt',
+        icon: Icons.subway,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Arrivé à destination',
+        icon: Icons.pin_drop,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Embouteillage',
+        icon: Icons.traffic,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Radar',
+        icon: Icons.settings_input_antenna,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Route barrée',
+        icon: Icons.block,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Station-services',
+        icon: Icons.local_gas_station,
+        isReceived: false,
+      ),
+    ];
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('Utilisateur').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Color(0xFF707070),
+            ),
+          );
+        }
+
+        List<Widget> alertBubbles = alertList;
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          var id = alert.documentID;
+          if (utilisateurID == id) {
+            final List alertText = List.from(alert.data['alertLIST']);
+            for (int i = 0; i < alertText.length; i++) {
+              int llist = alertList.length;
+              if (llist < (alertText.length + 7)) {
+                var alertBubble = AlertBubble(
+                  text: alertText[i],
+                  icon: Icons.sms_failed,
+                  isReceived: false,
+                );
+                alertList.add(alertBubble);
+              }
+            }
+          }
+        }
+        return ListView(
+          children: alertBubbles,
+        );
+      },
+    );
+  }
+}
+
+class AlertScreen extends StatefulWidget {
+  @override
+  _AlertScreenState createState() => _AlertScreenState();
+}
+
+class _AlertScreenState extends State<AlertScreen> {
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('app_icon');
+    var ios = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: onSelectedNotification);
+  }
+
+  Future onSelectedNotification(String payload) {
+    debugPrint('payload : $payload');
+    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
+    setState(() {
+      stackIndex = 3;
+    });
+    /*showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Color(0xFFd0d8e2),
+          title: Text('Notification'),
+          content: Text('heeeeeeeeeeey'),
+        );
+      },
+    );*/
+  }
+
+  Future showNotificationWithDefaultSound() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Vous avez reçu une nouvelle alerte',
+      'Clickez pour en savoir plus',
+      platformChannelSpecifics,
+      payload: 'Default_Sound',
+    );
+  }
+  //------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+IconData createIcon(String s) {
+  switch (s) {
+    case 'IconData(U+0E531)':
+      {
+        return Icons.directions_car;
+      }
+      break;
+    case 'IconData(U+0E546)':
+      {
+        return Icons.local_gas_station;
+      }
+      break;
+    case 'IconData(U+0E14B)':
+      {
+        return Icons.block;
+      }
+      break;
+    case 'IconData(U+0E55E)':
+      {
+        return Icons.pin_drop;
+      }
+      break;
+    case 'IconData(U+0E565)':
+      {
+        return Icons.traffic;
+      }
+      break;
+    case 'IconData(U+0E8BF)':
+      {
+        return Icons.settings_input_antenna;
+      }
+      break;
+    case 'IconData(U+0E56F)':
+      {
+        return Icons.subway;
+      }
+      break;
+    case 'IconData(U+0E626)':
+      {
+        return Icons.sms_failed;
+      }
+      break;
+  }
+}
+
+class ReceivedAlertBubble extends StatelessWidget {
+  String sender;
+  AlertBubble alert;
+  DateTime date;
+  GeoPoint geoPoint;
+
+  ReceivedAlertBubble(
+      {String sender, AlertBubble alert, Timestamp date, GeoPoint geoPoint}) {
+    this.sender = sender;
+    this.date = date.toDate();
+    this.alert = alert;
+    this.geoPoint = geoPoint;
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FlatButton(
+        onPressed: () {
+          //TODO: je positionne l'alerte sur la map
+        },
+        padding: const EdgeInsets.all(0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            alert,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Envoyée par: $sender le $date',
+                style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xFF707070),
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ReceivedAlertStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .document(groupPath)
+          .collection("receivedAlerts")
+          .orderBy("envoyeLe", descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Color(0xFF707070),
+            ),
+          );
+        }
+
+        List<Widget> alertList = [];
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          final alertContent = alert.data['content'];
+          final alertSender = alert.data['sender'];
+          final alertIconName = alert.data['icon'];
+          final alertDate = alert.data['envoyeLe'];
+          final alertGeoP = alert.data['position']['geopoint'];
+
+          var alertBubble = AlertBubble(
+            text: alertContent,
+            icon: createIcon(alertIconName),
+            isReceived: true,
+          );
+
+          var receivedAlertBubble = ReceivedAlertBubble(
+            sender: alertSender,
+            alert: alertBubble,
+            date: alertDate,
+            geoPoint: alertGeoP,
+          );
+          alertList.add(receivedAlertBubble);
+        }
+
+        return ListView(
+          children: alertList,
+        );
+      },
+    );
+  }
+}
+

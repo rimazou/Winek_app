@@ -195,7 +195,7 @@ class Voyage extends Groupe {
       : this(
     nom: data['nom'],
     admin: data['admin'],
-    destination: data['destination'],
+    destination: data['destination']['adresse'],
     membres: new List.from(data['membres']),
   );
 }
