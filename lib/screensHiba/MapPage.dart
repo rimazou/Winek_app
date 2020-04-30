@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,6 +11,8 @@ import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
+import 'package:search_map_place/search_map_place.dart';
+import 'package:google_maps_webservice/places.dart';
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -18,15 +21,19 @@ Databasegrp data = Databasegrp();
 //google maps stuffs
 GoogleMapController mapController;
 String searchAddr;
-
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
 void _onMapCreated(GoogleMapController controller) {
   mapController = controller;
 }
-/*
+
 void _openDrawer(BuildContext context) {
   _scaffoldKey.currentState.openDrawer();
 }
- */
+
+void _closeDrawer(BuildContext context) {
+  Navigator.of(context).pop();
+}
+ 
 
 searchandNavigate() {
   Geolocator().placemarkFromAddress(searchAddr).then((result) {
@@ -36,6 +43,30 @@ searchandNavigate() {
         zoom: 10.0)));
   });
 }
+    void onError(PlacesAutocompleteResponse response) {
+    homeScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+ Future<Null> displayPredictionRecherche(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+ //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+        //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+            mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target:
+          LatLng(lat,lng),
+          zoom: 14.0)));
+      print(lat);
+      print(lng);
+    }
+ }
 
 class Home extends StatefulWidget {
   static const String id = 'map';
@@ -85,6 +116,8 @@ class _HomeState extends State<Home> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
+            
+           // trafficEnabled: true,
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
@@ -108,11 +141,11 @@ class _HomeState extends State<Home> {
                     top: MediaQuery.of(context).size.height * 0.03,
                     child: MaterialButton(
                       onPressed: () {
-                        // _closeDrawer(context);
-                        setState(() {
+                         _closeDrawer(context);
+                      /*  setState(() {
                           index = 0;
                           _visible = true;
-                        });
+                        });*/
                       },
                       child: Icon(
                         Icons.arrow_back_ios,
@@ -346,7 +379,7 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 setState(() {
                                   index = 0;
-                                  _visible = !_visible;
+                                 // _visible = !_visible;
                                 });
                                 Navigator.pushNamed(
                                     context, NvLongTermePage.id);
@@ -386,9 +419,9 @@ class _HomeState extends State<Home> {
     return Positioned(
       left: size.width * 0.075,
       top: size.height * 0.04,
-      child: AnimatedOpacity(
-        opacity: _visible ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 500),
+     // child: AnimatedOpacity(
+       // opacity: _visible ? 1.0 : 0.0,
+        //duration: Duration(milliseconds: 500),
         child: Container(
           height: size.height * 0.07,
           width: size.width * 0.85,
@@ -406,11 +439,11 @@ class _HomeState extends State<Home> {
                       color: Color(0xFF3B466B),
                     ),
                     onPressed: () {
-                      //  _openDrawer(context);
-                      setState(() {
+                        _openDrawer(context);
+                    /*  setState(() {
                         index = 1;
                         _visible = !_visible;
-                      });
+                      });*/
                     },
                     iconSize: 30.0),
               ),
@@ -418,6 +451,22 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.symmetric(
                     horizontal: size.width * 0.3, vertical: 0.001),
                 child: TextField(
+                  onTap: ()async{
+
+    // show input autocomplete with selected mode
+    // then get the Prediction selected
+       Prediction p = await PlacesAutocomplete.show(
+        context: context,
+      apiKey: kGoogleApiKey,
+      onError: onError,
+      mode: Mode.overlay,
+      language: "fr",
+      components: [Component(Component.country, "DZ")],
+      
+    );
+
+    displayPredictionRecherche(p);
+  },
                   style: TextStyle(
                       fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
                   decoration: InputDecoration(
@@ -441,34 +490,37 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-      ),
+      //),
     );
   }
 
   Widget get flaotButton {
-    return AnimatedOpacity(
-      opacity: _visible ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 500),
-      child: FloatingActionButton(
+    return 
+    //AnimatedOpacity(
+     // opacity: _visible ? 1.0 : 0.0,
+      //duration: Duration(milliseconds: 500),
+      //child:
+       FloatingActionButton(
         heroTag: null,
         backgroundColor: Color(0xFF389490),
         child: Icon(Icons.group_add, size: 32.0),
         onPressed: () {
-          setState(() {
+         /* setState(() {
             index = 2;
             _visible = !_visible;
-          });
+          });*/
         },
-      ),
+     // ),
     );
     //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked;
   }
 
   Widget get bottomNavBar {
-    return AnimatedOpacity(
+    return /*AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
-      child: ClipRRect(
+      child: */
+      ClipRRect(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(40),
           topLeft: Radius.circular(40),
@@ -495,9 +547,9 @@ class _HomeState extends State<Home> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                          setState(() {
+                         /* setState(() {
                             index = 0;
-                          });
+                          });*/
                           Navigator.pushNamed(context, ListGrpPage.id);
                         },
                       ),
@@ -509,8 +561,11 @@ class _HomeState extends State<Home> {
 
                 MaterialButton(
                   minWidth: 40,
-                  onPressed: () {
-                    //se localiser //zoom ect
+                  onPressed: () async{
+                    Position position = await Geolocator().getCurrentPosition(desiredAccuracy:LocationAccuracy.high);
+                    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                    target: LatLng(position.latitude,position.longitude ),
+                   zoom: 14.0)));
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -527,7 +582,7 @@ class _HomeState extends State<Home> {
             ),
           ),
         ),
-      ),
+     // ),
     );
   }
 }
@@ -642,11 +697,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         size: 30,
                       ),
                       onPressed: () {
-                        // _openDrawer(context);
-                        setState(() {
+                         _openDrawer(context);
+                      /*  setState(() {
                           index = 1;
                           //_visible = !_visible;
-                        });
+                        });*/
                         print(index);
                       },
                       iconSize: 30.0),
