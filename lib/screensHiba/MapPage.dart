@@ -505,10 +505,10 @@ class _HomeState extends State<Home> {
         backgroundColor: Color(0xFF389490),
         child: Icon(Icons.group_add, size: 32.0),
         onPressed: () {
-         /* setState(() {
+          setState(() {
             index = 2;
-            _visible = !_visible;
-          });*/
+           // _visible = !_visible;
+          });
         },
      // ),
     );
@@ -547,9 +547,9 @@ class _HomeState extends State<Home> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                         /* setState(() {
+                          setState(() {
                             index = 0;
-                          });*/
+                          });
                           Navigator.pushNamed(context, ListGrpPage.id);
                         },
                       ),
