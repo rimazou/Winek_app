@@ -177,6 +177,7 @@ class UpdateMarkers extends ChangeNotifier {
   //GoogleMapController _controller;
 
   void UpdateusersLocation(String path) {
+    markers.clear();
     var collectionReference = _firestore.document(path).collection('members');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
@@ -283,6 +284,7 @@ class UpdateMarkers extends ChangeNotifier {
    await _firestore.collection('Utilisateur').document(usrid).get().then((DocumentSnapshot ds)
    {
       url=ds.data['photo'];
+      print("voiciiiiiiii l url   $url");
    });
     _marker = Marker(
       markerId: id,
@@ -291,7 +293,7 @@ class UpdateMarkers extends ChangeNotifier {
       //icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       //infoWindow: InfoWindow(title: 'distance', snippet: '$distance'),
     );
-
+   print("voiciiiiiiii l url   $url");
     markers[id] = _marker;
     notifyListeners();
   }
