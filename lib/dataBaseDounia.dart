@@ -6,12 +6,19 @@ import 'package:geocoder/geocoder.dart' as coord;
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DataBaseFavoris {
   String id;
-  static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
-  // static final currentUser = 'J2XLzfTvGSaauvH38q4Z6OexQRr1';
+  String currentUser;
+  //static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
+              Future<void> getConnectedId() async {
+              var connectedUser =await authService.connectedID();
+              this.currentUser="$connectedUser";
+              print("currentUser : " );
+              print(currentUser);
 
+              }
   // GeoFirePoint geoPoint ;
   double lat;
   double long;
@@ -23,9 +30,9 @@ class DataBaseFavoris {
 
   Future favorisUpdateData(GeoFirePoint geop, String id) async {
     // ajouter un amis a la liste de current
-    print('not yeeeeeeeeet');
+    getConnectedId();
     return await userCollection.document(currentUser).updateData({
-      "favoristest": FieldValue.arrayUnion([
+      "favoris": FieldValue.arrayUnion([
         {'latitude': geop.latitude, "longitude": geop.longitude, "placeid": id}
       ]),
     });
@@ -33,8 +40,9 @@ class DataBaseFavoris {
 
   Future favorisDeleteData(GeoFirePoint g, String id) async {
     // supprimer une invit de pseudo de la liste de current
+getConnectedId();
     return await userCollection.document(currentUser).updateData({
-      "favoristest": FieldValue.arrayRemove([
+      "favoris": FieldValue.arrayRemove([
         {"latitude": g.latitude, "longitude": g.longitude, "placeid": id}
       ]),
     });
@@ -57,10 +65,11 @@ class DataBaseFavoris {
 
   Stream<List<dynamic>> get getlistfavoris {
     // String id = await authService.connectedID();
+    getConnectedId();
     return userCollection.document(currentUser).snapshots().map((snap) {
       print('gonna copy dataaaaaaaaaaaaaaaa');
 
-      List<dynamic> listfavoris = snap.data['favoristest'];
+      List<dynamic> listfavoris = snap.data['favoris'];
       print(listfavoris);
       print('liiiiiiiiiist');
       if (listfavoris != null) {

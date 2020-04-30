@@ -141,11 +141,11 @@ class _HomeState extends State<Home> {
                     top: MediaQuery.of(context).size.height * 0.03,
                     child: MaterialButton(
                       onPressed: () {
-                         _closeDrawer(context);
-                      /*  setState(() {
+                        // _closeDrawer(context);
+                       setState(() {
                           index = 0;
-                          _visible = true;
-                        });*/
+                         // _visible = true;
+                        });
                       },
                       child: Icon(
                         Icons.arrow_back_ios,
@@ -351,7 +351,7 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 setState(() {
                                   index = 0;
-                                  _visible = !_visible;
+                                 // _visible = !_visible;
                                 });
 
                                 Navigator.pushNamed(context, NvVoyagePage.id);
@@ -439,11 +439,11 @@ class _HomeState extends State<Home> {
                       color: Color(0xFF3B466B),
                     ),
                     onPressed: () {
-                        _openDrawer(context);
-                    /*  setState(() {
+                       /// _openDrawer(context);
+                      setState(() {
                         index = 1;
-                        _visible = !_visible;
-                      });*/
+                       // _visible = !_visible;
+                      });
                     },
                     iconSize: 30.0),
               ),
@@ -697,7 +697,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         size: 30,
                       ),
                       onPressed: () {
-                         _openDrawer(context);
+                        // _openDrawer(context);
                       /*  setState(() {
                           index = 1;
                           //_visible = !_visible;
