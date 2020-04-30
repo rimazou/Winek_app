@@ -177,7 +177,7 @@ class UpdateMarkers extends ChangeNotifier {
   //GoogleMapController _controller;
 
   void UpdateusersLocation(String path) {
-    markers.clear();
+   
     var collectionReference = _firestore.document(path).collection('members');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
