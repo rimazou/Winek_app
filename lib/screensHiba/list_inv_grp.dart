@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:winek/classes.dart';
 import 'package:winek/main.dart';
@@ -116,7 +117,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                           ),
                         ),
                         Spacer(
-                          flex: 2,
+                          flex: 1,
                         ),
                         Text(
                           _voyage.nom,
@@ -128,35 +129,37 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                           ),
                         ),
                         Spacer(
-                          flex: 2,
+                          flex: 1,
                         ),
-                        Row(
-                          children: <Widget>[
-                            Spacer(
-                              flex: 1,
-                            ),
-                            Text(
-                              'vers ',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff707070),
+                        Expanded(
+                          child: Container(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.all(0.1),
+                              child: RichText(
+                                text: TextSpan(children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'vers ',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff707070),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: _voyage.destination,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff707070),
+                                    ),
+                                  ),
+                                ]),
                               ),
                             ),
-                            Text(
-                              _voyage.destination,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff707070),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                          ],
+                          ),
                         ),
                         Spacer(
                           flex: 1,
@@ -190,7 +193,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                           ],
                         ),
                         Spacer(
-                          flex: 2,
+                          flex: 1,
                         ),
                         Container(
                           height: 50,
@@ -390,6 +393,9 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               icon: Icon(Icons.done),
                               color: secondarycolor,
                               iconSize: 30,
+                            ),
+                            Spacer(
+                              flex: 1,
                             ),
                             IconButton(
                               onPressed: () async {

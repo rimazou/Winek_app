@@ -172,7 +172,6 @@ class Voyage extends Groupe {
   double destination_latitude;
   double destination_longitude;
   String destination;
-  List<Membre> membre_info;
 
   //cette list contient les infos des membres a affiche sur la carte
   //a utiliser avec la barre d'info
@@ -180,15 +179,14 @@ class Voyage extends Groupe {
   // du groupe : voir membres, ajouter, creer grp... ect
   //pour pouvoir gerer les deux types de grp au memes temps
 
-  Voyage(
-      {String nom,
-      List membres,
-      String admin,
-      this.destination_latitude,
-      this.destination_longitude,
-      this.destination,
-      this.membre_info})
-      : super(nom: nom, membres: membres, admin: admin);
+  Voyage({
+    String nom,
+    List membres,
+    String admin,
+    this.destination_latitude,
+    this.destination_longitude,
+    this.destination,
+  }) : super(nom: nom, membres: membres, admin: admin);
 
   Voyage.fromMap(Map<String, dynamic> data)
       : this(

@@ -206,33 +206,35 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                           Spacer(
                             flex: 2,
                           ),
-                          Row(
-                            children: <Widget>[
-                              Spacer(
-                                flex: 1,
-                              ),
-                              Text(
-                                'vers ',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff707070),
+                          Expanded(
+                            child: Container(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.all(0.1),
+                                child: RichText(
+                                  text: TextSpan(children: <TextSpan>[
+                                    TextSpan(
+                                      text: 'vers ',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xff707070),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: groupe.destination,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff707070),
+                                      ),
+                                    ),
+                                  ]),
                                 ),
                               ),
-                              Text(
-                                groupe.destination,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff707070),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 1,
-                              ),
-                            ],
+                            ),
                           ),
                           Spacer(
                             flex: 1,
