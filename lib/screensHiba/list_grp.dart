@@ -114,7 +114,8 @@ class grpTile extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => MapVoyagePage(g, grp_chemin)));
-          } else {
+          }
+          if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance
                 .document(grp_chemin)
                 .get()
@@ -143,6 +144,16 @@ class grpTile extends StatelessWidget {
         ),
         trailing: IconButton(
           onPressed: () async {
+            String id = await authService.connectedID();
+            String pseudo = await Firestore.instance
+                .collection('Utilisateur')
+                .document(id)
+                .get()
+                .then((doc) {
+              return doc.data['pseudo'];
+            });
+
+            print("current user :$pseudo");
             Groupe g = Voyage();
             if (grp_chemin.startsWith('Voyage')) {
               await Firestore.instance
@@ -154,7 +165,8 @@ class grpTile extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ParamVoyagePage(g, grp_chemin)));
+                      builder: (context) =>
+                          ParamVoyagePage(g, grp_chemin, pseudo)));
             } else {
               await Firestore.instance
                   .document(grp_chemin)
@@ -165,7 +177,8 @@ class grpTile extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ParamLongTermePage(g, grp_chemin)));
+                      builder: (context) =>
+                          ParamLongTermePage(g, grp_chemin, pseudo)));
             }
           },
           icon: Icon(Icons.info_outline),

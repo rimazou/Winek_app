@@ -22,7 +22,7 @@ Groupe nv_grp;
 String _destinationAdr;
 Map<String, dynamic> _destination;
 List<Map<dynamic, dynamic>> membres;
-bool _loading = false;
+bool _loading;
 final _firestore = Firestore.instance;
 GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
@@ -47,6 +47,17 @@ void createlongterme() async {
       user
     ], // since he's the admin, others have to accept the invitation first
   });
+  Geoflutterfire geo = Geoflutterfire();
+  GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
+
+  await _firestore
+      .document(ref.path)
+      .collection('members')
+      .document(user['id'])
+      .setData({
+    'position': point.data,
+  });
+  print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   print(grp);
   // adding that grp to member's invitations liste.
@@ -104,6 +115,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
   void initState() {
     membres = List<Map>();
     _controller = TextEditingController();
+    _loading = false;
   }
 
   Widget build(BuildContext context) {
@@ -357,6 +369,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
     membres = new List();
     _destinationAdr = 'votre destination';
     _controller = TextEditingController();
+    _loading = false;
   }
 
   Widget build(BuildContext context) {

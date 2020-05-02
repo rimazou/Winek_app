@@ -182,39 +182,33 @@ class Databasegrp {
     }
   }
 
-  void fermergroupe(String ref, String nom) async {
-    try {
-      await Firestore.instance.document(ref).delete();
-    } catch (e) {
-      print(e.toString());
-    }
+  Future<void> fermergroupe(String ref, String nom) async {
     Map grp = {'chemin': ref, 'nom': nom};
-    //update groupes liste
     try {
-      Firestore.instance
+      //update groupes liste
+      await Firestore.instance
           .collection('UserGrp')
           .where('groupes', arrayContains: [grp])
           .snapshots()
-          .listen((data) => data.documents.forEach((doc) {
-                doc.reference.updateData({
+          .listen((data) => data.documents.forEach((doc) async {
+                await doc.reference.updateData({
                   'groupes': FieldValue.arrayRemove([grp])
                 });
-                //updatelistgroupes(doc.documentID, ref, nom);
               }));
-    } catch (e) {
-      print(e.toString());
-    }
-    try {
-      Firestore.instance
+      print('groupes deleted');
+      await Firestore.instance
           .collection('UserGrp')
           .where('invitations', arrayContains: [grp])
           .snapshots()
-          .listen((data) => data.documents.forEach((doc) {
-                doc.reference.updateData({
+          .listen((data) => data.documents.forEach((doc) async {
+                await doc.reference.updateData({
                   'invitations': FieldValue.arrayRemove([grp])
                 });
-                // updatelistinvitations(doc.data['pseudo'], ref, nom);
               }));
+
+      print('invitations deleted');
+      //  await Firestore.instance.document(ref).delete();
+      print("groupe deleted");
     } catch (e) {
       print(e.toString());
     }
@@ -235,25 +229,49 @@ class Databasegrp {
       Firestore.instance.collection('UserGrp').document(id).updateData({
         'groupes': FieldValue.arrayRemove([grp]),
       });
-    } catch (e) {
-      print(e.toString());
-    }
-    try {
-      updategroupemembers(ref, pseudo, id);
+      //  await updategroupemembers(ref, pseudo, id);
+      await Firestore.instance.document(ref).updateData({
+        'membres': FieldValue.arrayRemove([
+          {'id': id, 'pseudo': pseudo}
+        ]),
+      });
+      await Firestore.instance
+          .document(ref)
+          .collection('members')
+          .document(id)
+          .delete();
     } catch (e) {
       print(e.toString());
     }
   }
 
   void invitemember(String ref, String nom, String memberid) async {
-    updatelistinvitations(memberid, ref, nom);
+    await updatelistinvitations(memberid, ref, nom);
   }
 
   void deletemember(
       String ref, String nom, String memberid, String memberpseudo) async {
-    await updatelistgroupes(memberid, ref, nom);
-    await updategroupemembers(ref, memberpseudo, memberid);
+    //  await updatelistgroupes(memberid, ref, nom);
+    await Firestore.instance
+        .collection('UserGrp')
+        .document(memberid)
+        .updateData({
+      'groupes': FieldValue.arrayRemove([
+        {'chemin': ref, 'nom': nom}
+      ]),
+    });
+    // await updategroupemembers(ref, memberpseudo, memberid);
+    await Firestore.instance.document(ref).updateData({
+      'membres': FieldValue.arrayRemove([
+        {'id': memberid, 'pseudo': memberpseudo}
+      ]),
+    });
     //delete lemis doc
+    await Firestore.instance
+        .document(ref)
+        .collection('members')
+        .document(memberid)
+        .delete();
   }
 
   void refuseinvitation(String ref, String nom) async {
