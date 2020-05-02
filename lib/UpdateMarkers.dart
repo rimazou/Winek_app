@@ -16,6 +16,8 @@ class UpdateMarkers extends ChangeNotifier {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Marker _marker;
   GoogleMapController _controller;
+  double dest_lat;
+  double dest_lng;
   
 
   void UpdateusersLocation(String path) {
@@ -26,7 +28,7 @@ class UpdateMarkers extends ChangeNotifier {
         geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
-
+     marker_dest(path);
     double radius = 50;
     String field = 'position';
     stream = geo
@@ -35,6 +37,29 @@ class UpdateMarkers extends ChangeNotifier {
         .listen(_updateMarkers);
   }
 
+  marker_dest(String chemin)async{
+    await _firestore.document(chemin).get().then((DocumentSnapshot ds)
+   { 
+     dest_lat=ds.data['destinaton']['latitude'];
+   
+   });
+   await _firestore.document(chemin).get().then((DocumentSnapshot ds)
+   { 
+     dest_lng=ds.data['destinaton']['longitude'];
+   
+   });
+    MarkerId id = MarkerId(dest_lat.toString() + dest_lng.toString());
+    _marker = Marker(
+      markerId: id,
+      position: LatLng(dest_lat,dest_lng),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+      infoWindow: InfoWindow(title: 'destination'),
+    );
+   
+    markers[id] = _marker;
+    notifyListeners();
+  } 
+  
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
 
     documentList.forEach((DocumentSnapshot document) async {
@@ -128,12 +153,18 @@ class UpdateMarkers extends ChangeNotifier {
 
   Future<void> _addMarker(double lat, double lng, String usrid) async {
     MarkerId id = MarkerId(usrid);
+
+
+
    String url;
    await _firestore.collection('Utilisateur').document(usrid).get().then((DocumentSnapshot ds)
    { 
      url=ds.data['photo'];
    
    });
+
+
+
 
    _marker = Marker(
       markerId: id,
