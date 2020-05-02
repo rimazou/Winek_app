@@ -116,7 +116,8 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = Voyage.fromMap(doc.data);
               print(g.membres);
-            });
+            }); 
+             Provider.of<UpdateMarkers>(context).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
                 .UpdateusersLocation(grp_chemin);
             Navigator.push(
