@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,11 +12,14 @@ import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
+
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:search_map_place/search_map_place.dart';
+import 'package:google_maps_webservice/places.dart';
 
 //asma's variables
 final _firestore = Firestore.instance;
@@ -36,15 +40,18 @@ Databasegrp data = Databasegrp();
 //google maps stuffs
 GoogleMapController mapController;
 String searchAddr;
-
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
 void _onMapCreated(GoogleMapController controller) {
   mapController = controller;
 }
-/*
+
 void _openDrawer(BuildContext context) {
   _scaffoldKey.currentState.openDrawer();
 }
- */
+
+void _closeDrawer(BuildContext context) {
+  Navigator.of(context).pop();
+}
 
 searchandNavigate() {
   Geolocator().placemarkFromAddress(searchAddr).then((result) {
@@ -53,6 +60,30 @@ searchandNavigate() {
             LatLng(result[0].position.latitude, result[0].position.longitude),
         zoom: 10.0)));
   });
+}
+
+void onError(PlacesAutocompleteResponse response) {
+  homeScaffoldKey.currentState.showSnackBar(
+    SnackBar(content: Text(response.errorMessage)),
+  );
+}
+
+Future<Null> displayPredictionRecherche(Prediction p) async {
+  if (p != null) {
+    PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
+
+    var placeId = p.placeId;
+    double lat = detail.result.geometry.location.lat;
+    double lng = detail.result.geometry.location.lng;
+
+    var address = await Geocoder.local.findAddressesFromQuery(p.description);
+    //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+    //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+    print(lat);
+    print(lng);
+  }
 }
 
 class Home extends StatefulWidget {
@@ -103,6 +134,7 @@ class _HomeState extends State<Home> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
+            // trafficEnabled: true,
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
@@ -129,7 +161,7 @@ class _HomeState extends State<Home> {
                         // _closeDrawer(context);
                         setState(() {
                           index = 0;
-                          _visible = true;
+                          // _visible = true;
                         });
                       },
                       child: Icon(
@@ -336,7 +368,7 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 setState(() {
                                   index = 0;
-                                  _visible = !_visible;
+                                  // _visible = !_visible;
                                 });
 
                                 Navigator.pushNamed(context, NvVoyagePage.id);
@@ -364,7 +396,7 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 setState(() {
                                   index = 0;
-                                  _visible = !_visible;
+                                  // _visible = !_visible;
                                 });
                                 Navigator.pushNamed(
                                     context, NvLongTermePage.id);
@@ -404,148 +436,170 @@ class _HomeState extends State<Home> {
     return Positioned(
       left: size.width * 0.075,
       top: size.height * 0.04,
-      child: AnimatedOpacity(
-        opacity: _visible ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 500),
-        child: Container(
-          height: size.height * 0.07,
-          width: size.width * 0.85,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40.0), color: Colors.white),
-          child: Stack(
-            //alignment: Alignment.center,
-            children: <Widget>[
-              Positioned(
-                left: 0,
-                // top:size.height*0.07*0.5,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      color: Color(0xFF3B466B),
-                    ),
-                    onPressed: () {
-                      //  _openDrawer(context);
-                      setState(() {
-                        index = 1;
-                        _visible = !_visible;
-                      });
-                    },
-                    iconSize: 30.0),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.3, vertical: 0.001),
-                child: TextField(
-                  style: TextStyle(
-                      fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
-                  decoration: InputDecoration(
-                    hintText: 'Recherche',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 15.0),
+      // child: AnimatedOpacity(
+      // opacity: _visible ? 1.0 : 0.0,
+      //duration: Duration(milliseconds: 500),
+      child: Container(
+        height: size.height * 0.07,
+        width: size.width * 0.85,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40.0), color: Colors.white),
+        child: Stack(
+          //alignment: Alignment.center,
+          children: <Widget>[
+            Positioned(
+              left: 0,
+              // top:size.height*0.07*0.5,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.menu,
+                    color: Color(0xFF3B466B),
                   ),
+                  onPressed: () {
+                    /// _openDrawer(context);
+                    setState(() {
+                      index = 1;
+                      // _visible = !_visible;
+                    });
+                  },
+                  iconSize: 30.0),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.3, vertical: 0.001),
+              child: TextField(
+                onTap: () async {
+                  // show input autocomplete with selected mode
+                  // then get the Prediction selected
+                  Prediction p = await PlacesAutocomplete.show(
+                    context: context,
+                    apiKey: kGoogleApiKey,
+                    onError: onError,
+                    mode: Mode.overlay,
+                    language: "fr",
+                    components: [Component(Component.country, "DZ")],
+                  );
+
+                  displayPredictionRecherche(p);
+                },
+                style: TextStyle(
+                    fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
+                decoration: InputDecoration(
+                  hintText: 'Recherche',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0),
                 ),
               ),
-              Positioned(
-                right: 0,
-                // top:size.height*0.5,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      color: Color(0xFF3B466B),
-                    ),
-                    onPressed: searchandNavigate,
-                    iconSize: 30.0),
-              ),
-            ],
-          ),
+            ),
+            Positioned(
+              right: 0,
+              // top:size.height*0.5,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Color(0xFF3B466B),
+                  ),
+                  onPressed: searchandNavigate,
+                  iconSize: 30.0),
+            ),
+          ],
         ),
       ),
+      //),
     );
   }
 
   Widget get flaotButton {
-    return AnimatedOpacity(
-      opacity: _visible ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 500),
-      child: FloatingActionButton(
-        heroTag: null,
-        backgroundColor: Color(0xFF389490),
-        child: Icon(Icons.group_add, size: 32.0),
-        onPressed: () {
-          setState(() {
-            index = 2;
-            _visible = !_visible;
-          });
-        },
-      ),
+    return
+        //AnimatedOpacity(
+        // opacity: _visible ? 1.0 : 0.0,
+        //duration: Duration(milliseconds: 500),
+        //child:
+        FloatingActionButton(
+      heroTag: null,
+      backgroundColor: Color(0xFF389490),
+      child: Icon(Icons.group_add, size: 32.0),
+      onPressed: () {
+        setState(() {
+          index = 2;
+          // _visible = !_visible;
+        });
+      },
+      // ),
     );
     //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked;
   }
 
   Widget get bottomNavBar {
-    return AnimatedOpacity(
+    return /*AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(40),
-          topLeft: Radius.circular(40),
-        ),
-        child: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          color: Color(0xFF3B466B),
-          notchMargin: 10,
-          child: Container(
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {},
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.group,
-                          size: 32.0,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            index = 0;
-                          });
-                          Navigator.pushNamed(context, ListGrpPage.id);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Right Tab bar icons
-
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    //se localiser //zoom ect
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_on,
+      child: */
+        ClipRRect(
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(40),
+        topLeft: Radius.circular(40),
+      ),
+      child: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: Color(0xFF3B466B),
+        notchMargin: 10,
+        child: Container(
+          height: 80,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              MaterialButton(
+                minWidth: 40,
+                onPressed: () {},
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.group,
                         size: 32.0,
                         color: Colors.white,
                       ),
-                    ],
-                  ),
+                      onPressed: () {
+                        setState(() {
+                          index = 0;
+                        });
+                        Navigator.pushNamed(context, ListGrpPage.id);
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              // Right Tab bar icons
+
+              MaterialButton(
+                minWidth: 40,
+                onPressed: () async {
+                  Position position = await Geolocator().getCurrentPosition(
+                      desiredAccuracy: LocationAccuracy.high);
+                  mapController.animateCamera(CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                          target: LatLng(position.latitude, position.longitude),
+                          zoom: 14.0)));
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.location_on,
+                      size: 32.0,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
+      // ),
     );
   }
 }
@@ -667,10 +721,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       ),
                       onPressed: () {
                         // _openDrawer(context);
-                        setState(() {
+                        /*  setState(() {
                           index = 1;
                           //_visible = !_visible;
-                        });
+                        });*/
                         print(index);
                       },
                       iconSize: 30.0),
