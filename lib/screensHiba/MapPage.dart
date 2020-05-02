@@ -12,6 +12,8 @@ import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
+import 'package:winek/UpdateMarkers.dart';
+import 'package:provider/provider.dart';
 
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -704,6 +706,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
             ),
+            markers: Set<Marker>.of(
+                Provider.of<UpdateMarkers>(context).markers.values),
           ),
           IndexedStack(index: index, children: <Widget>[
             //index = 0 :
@@ -1510,6 +1514,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
             ),
+            markers: Set<Marker>.of(
+                Provider.of<UpdateMarkers>(context).markers.values),
           ),
           IndexedStack(index: index, children: <Widget>[
             //index = 0 :
