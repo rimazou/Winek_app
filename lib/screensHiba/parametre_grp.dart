@@ -254,20 +254,94 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                         ),
                         FlatButton(
                           onPressed: () async {
-                            setState(() async {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      namedialog(groupe.nom),
-                                  barrierDismissible: true);
-                              print(nv_nom);
-                              print(_confirmer);
-                              if (_confirmer && nv_nom != '') {
-                                await data.updategroupename(
-                                    path, groupe.nom, nv_nom);
-                                groupe.nom = nv_nom;
-                              }
-                            });
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    //   namedialog(groupe.nom),
+                                    AlertDialog(
+                                      contentPadding: EdgeInsets.all(15),
+                                      title: Text(
+                                        'changer le nom ',
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w700,
+                                          color: primarycolor,
+                                        ),
+                                      ),
+                                      content: TextField(
+                                        controller: _controller,
+                                        maxLines: 1,
+                                        decoration: InputDecoration(
+                                          hintText: groupe.nom,
+                                          hintStyle: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xff707070),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: primarycolor,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: secondarycolor,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          onPressed: () async {
+                                            nv_nom = _controller.text;
+                                            setState(() {
+                                              _loading = true;
+                                            });
+                                            if (nv_nom != '') {
+                                              await data.updategroupename(
+                                                  path, groupe.nom, nv_nom);
+                                            }
+                                            setState(() {
+                                              _loading = false;
+                                              groupe.nom = nv_nom;
+                                            });
+                                            // nv_nom = _controller.text;
+                                            // _confirmer = true;
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'confirmer',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff707070),
+                                            ),
+                                          ),
+                                        ),
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'annuller',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff707070),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                barrierDismissible: true);
                           },
                           child: Text(
                             groupe.nom,
@@ -911,20 +985,94 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                         ),
                         FlatButton(
                           onPressed: () async {
-                            setState(() async {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      namedialog(groupe.nom),
-                                  barrierDismissible: true);
-                              print(nv_nom);
-                              print(_confirmer);
-                              if (_confirmer && nv_nom != '') {
-                                await data.updategroupename(
-                                    path, groupe.nom, nv_nom);
-                                groupe.nom = nv_nom;
-                              }
-                            });
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    //   namedialog(groupe.nom),
+                                    AlertDialog(
+                                      contentPadding: EdgeInsets.all(15),
+                                      title: Text(
+                                        'changer le nom ',
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w700,
+                                          color: primarycolor,
+                                        ),
+                                      ),
+                                      content: TextField(
+                                        controller: _controller,
+                                        maxLines: 1,
+                                        decoration: InputDecoration(
+                                          hintText: groupe.nom,
+                                          hintStyle: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xff707070),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: primarycolor,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: secondarycolor,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          onPressed: () async {
+                                            nv_nom = _controller.text;
+                                            setState(() {
+                                              _loading = true;
+                                            });
+                                            if (nv_nom != '') {
+                                              await data.updategroupename(
+                                                  path, groupe.nom, nv_nom);
+                                            }
+                                            setState(() {
+                                              _loading = false;
+                                              groupe.nom = nv_nom;
+                                            });
+                                            // nv_nom = _controller.text;
+                                            // _confirmer = true;
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'confirmer',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff707070),
+                                            ),
+                                          ),
+                                        ),
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'annuller',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff707070),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                barrierDismissible: true);
                           },
                           child: Text(
                             groupe.nom,
