@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 
 class Utilisateur {
   String pseudo;
@@ -12,45 +11,30 @@ class Utilisateur {
 
   String photo;
 
-  double vitesse;
-
-  double posLatitude;
-
-  double posLongitude;
-
   int batterie;
 
   bool connecte;
 
-  List amis;
+  List<dynamic> amis;
 
-  List favoris;
-
-  List groupes;
-
-  List invitation_groupe;
+  List<Map<String, dynamic>> favoris;
 
   List invitation;
 
   List alertLIST;
- Map <String , dynamic> location;
+  Map <String, dynamic> location;
 
   Utilisateur({this.pseudo,
     this.tel,
     this.mail,
     this.photo,
-    this.vitesse,
-    this.posLatitude,
-    this.posLongitude,
     this.batterie,
     this.connecte,
     this.amis,
     this.favoris,
-    this.groupes,
     this.alertLIST,
-    this.invitation_groupe,
     this.invitation,
-    this.location
+    this.location,
   });
 
   @override
@@ -61,14 +45,9 @@ class Utilisateur {
       'mail': mail,
       'photo': photo,
       'connecte': connecte,
-      'vitesse': vitesse,
-      'posLatitude': posLatitude,
-      'posLongitude': posLongitude,
       'batterie': batterie,
       'amis': amis,
       'favoris': favoris,
-      'groupes': groupes,
-      'invitationGroupe': invitation_groupe,
       'invitation ': invitation,
       'alertLIST': alertLIST,
       'location': location,
@@ -82,14 +61,9 @@ class Utilisateur {
     mail: data.value['mail'],
     photo: data.value['photo'],
     connecte: data.value ['connecte'],
-    vitesse: data.value['vitesse'],
-    posLatitude: data.value ['posLatitude'],
-    posLongitude: data.value['posLongitude'],
     batterie: data.value['batterie'],
     amis: data.value['amis'],
     favoris: data.value['favoris'],
-    groupes: data.value['groupes'],
-    invitation_groupe: data.value['invitationGroupe'],
     invitation: data.value['invitation'],
     alertLIST: data.value ['alertLIST'],
     location: data.value['location'],
@@ -102,30 +76,14 @@ class Utilisateur {
     mail: data.data['mail'],
     photo: data.data['photo'],
     connecte: data.data ['connecte'],
-    vitesse: data.data['vitesse'],
-    posLatitude: data.data ['posLatitude'],
-    posLongitude: data.data['posLongitude'],
     batterie: data.data['batterie'],
     amis: data.data['amis'],
-    favoris: data.data['favoris'],
-    groupes: data.data['groupes'],
-    invitation_groupe: data.data['invitationGroupe'],
+    favoris: List.from(data.data['favoris']),
     invitation: data.data['invitation'],
     alertLIST: data.data ['alertLIST'],
     location: data.data['location'],
   );
 
-  void changerPhoto(String value) {
-    photo = value;
-  }
-
-  void changerTel(String value) {
-    tel = value;
-  }
-
-  void changerPseudo(String value) {
-    pseudo = value;
-  }
 }
 
 class MsgPredefinis {
@@ -165,7 +123,7 @@ class LongTerme extends Groupe {
       : this(
     nom: data['nom'],
     admin: data['admin'],
-    membres: new List<String>.from(data['membres']),
+    membres: new List.from(data['membres']),
   );
 }
 

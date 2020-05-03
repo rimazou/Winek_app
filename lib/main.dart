@@ -33,8 +33,8 @@ class Authentication extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-      initialRoute: FirstLoading.id,
+      initialRoute: WelcomeScreen.id,
+      // initialRoute: FirstLoading.id,
       routes: {
         FirstLoading.id: (context) => FirstLoading(),
         Home.id: (BuildContext context) => Home(), // la map

@@ -27,7 +27,6 @@ class Database {
     this.id=id ;
     _modifiedUsersInterested=modifiedUsersInterested;
 
-    print('biiiiiiiiiiitch');
     print(_modifiedUsersInterested);
     print(this.pseudo);
 

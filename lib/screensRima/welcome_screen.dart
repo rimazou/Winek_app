@@ -1,4 +1,4 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
@@ -7,6 +7,7 @@ import 'package:winek/screensRima/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../auth.dart';
+import '../classes.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 
@@ -115,9 +116,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
-                          onPressed: () {
-                            //Go to registration screen.
-                            Navigator.pushNamed(context,ProfileScreen.id);
+                          onPressed: () async {
+                            String id = await authService.connectedID();
+                            if (id != null) {
+                              DocumentSnapshot snapshot = await authService
+                                  .userRef.document(id).get();
+                              while (snapshot == null) {
+                                showSpinner();
+                              }
+                              if (snapshot != null) {
+                                Utilisateur utilisateur = Utilisateur
+                                    .fromdocSnapshot(snapshot);
+                                //  Navigator.pushNamed(context, Home.id);
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfileScreen(utilisateur)
+                                ));
+                              }
+                            }
                           },
                           minWidth: 140.0,
                           height: 42.0,

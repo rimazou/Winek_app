@@ -8,6 +8,7 @@ import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
+import 'package:winek/screensRima/register_screen.dart';
 import '../classes.dart';
 import 'waitingSignout.dart';
 import 'package:winek/screensRima/profile_screen.dart';
@@ -21,7 +22,7 @@ import 'package:geolocator/geolocator.dart';
 
 
 void getUserLocation() async {
-  var val = authService.connectedID();
+  var val = await authService.connectedID();
   if (val != null) // ca permetra de faire lappel seulement quand le user est co
       {
     try {
@@ -211,12 +212,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         child: MaterialButton(
 
-                          onPressed: () => _testSignInWithGoogle() ,//_signInG(),
+                          onPressed: () =>
+                              Navigator.pushNamed(
+                                  context, RegistrationScreen.id), //_signInG(),
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
 
-                            'Google',
+                            "s'inscrire",
 
                             style: TextStyle(
                               fontFamily: 'Montserrat',
@@ -275,47 +278,20 @@ class _LoginScreenState extends State<LoginScreen> {
     print("signed in " + user.displayName);
     return user;
   }*/
-  Future<String> _testSignInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final FirebaseUser user = (await authService.auth.signInWithCredential(credential)).user;
-
-    assert(user.email != null);
-    assert(user.displayName != null);
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
-
-    final FirebaseUser currentUser = await authService.auth.currentUser();
-    assert(user.uid == currentUser.uid);
-
-    print(  currentUser.email);
-    if (user!=null) {
-      Navigator.pushNamed(context, ProfileScreen.id);
-    }
-    else {
-      print('failed google authetication');
-    }
-  }
 
   connect() async {
     try {
       final user = await authService.auth.signInWithEmailAndPassword(
           email: mail,
           password: pwd);
-      if (user != null) { //getUserLocation();
+      if (user != null) {
+        //getUserLocation();
 
         authService.userRef.document(user.user.uid).updateData(
             {'connecte': true});
         DocumentSnapshot snapshot = await authService.userRef.document(
             user.user.uid).get();
-        while (snapshot == null) {
-          showSpinner();
-        }
+
         if (snapshot != null) {
           Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
           Navigator.pushNamed(context, Home.id);
@@ -328,33 +304,56 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
     catch (logIn) {
-      setState(() {
+
         if (logIn is PlatformException) {
           if (logIn.code == 'ERROR_USER_NOT_FOUND') {
-            errMl = 'Utilisateur inexistant';
+            setState(() {
+              errMl = 'Utilisateur inexistant';
+            });
+            print(logIn);
+            print(errMl);
+
           } else {
-            errMl = null;
+            print(logIn);
+            setState(() {
+              errMl = null;
+            });
           }
           if (logIn.code == 'ERROR_INVALID_EMAIL') {
-            errMl = "Veuillez introduire une adresse valide";
+            print(logIn);
+            setState(() {
+              errMl = "Veuillez introduire une adresse valide";
+            });
           } else {
-            errMl = null;
+            print(logIn);
+            setState(() {
+              errMl = null;
+            });
           }
           if (logIn.code == 'ERROR_WRONG_PASSWORD') {
-            errPwd = 'Mot de passe errone';
+            print(logIn);
+            setState(() {
+              errPwd = 'Mot de passe errone';
+              // showAlertDialog(context, errPwd, "heading", "ok");
+
+            });
           }
           else {
-            errPwd = null;
+            setState(() {
+              errPwd = null;
+            });
           }
           if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
             // erreur reseau internet faire qlq chose
+            print(logIn);
 
           }
           else {
-            errPwd = null;
+            setState(() {
+              errPwd = null;
+            });
           }
         }
-      });
     }
   }
 
@@ -372,6 +371,32 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  showAlertDialog(BuildContext context, String message, String heading,
+      String buttonOKTitle) {
+    // set up the buttons
+    Widget OKButton = FlatButton(
+      child: Text(buttonOKTitle),
+      onPressed: () => Navigator.pop(context),
+    );
 
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(heading),
+      content: Text(message),
+      actions: [
+
+        OKButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
 }

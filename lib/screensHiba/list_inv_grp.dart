@@ -391,6 +391,9 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                               color: secondarycolor,
                               iconSize: 30,
                             ),
+                            Spacer(
+                              flex: 1,
+                            ),
                             IconButton(
                               onPressed: () async {
                                 await data.refuseinvitation(

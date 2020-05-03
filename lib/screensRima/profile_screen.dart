@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:winek/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:winek/main.dart';
+import 'package:path/path.dart' as p;
+import 'package:winek/dataBaseSoum.dart';
+import 'package:winek/screensRima/editProfile.dart';
 
 import '../classes.dart';
 
@@ -12,12 +17,16 @@ class ProfileScreen extends StatefulWidget {
   final Utilisateur myuser;
 
   ProfileScreen(this.myuser);
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState(myuser);
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser loggedInUser;
+
+  String errMl, errPs, errTel;
+
 
   _ProfileScreenState(Utilisateur myuser);
 
@@ -39,179 +48,352 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           ),),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+            padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
             child: Container(
-              child: Center(
-                  child: Image.network(widget.myuser.photo)
-            ),
+              child: SingleChildScrollView(
+
+                child: Stack(
+                  children: <Widget>[
+
+                    Center(
+                      child: Column(
+
+                        children: <Widget>[
+                          SizedBox(
+                            height: 140,
+                          ),
+                          Container(
+                            height: 500.0,
+                            width: 320.0,
+                          ),
+                        ],),
+                    ),
+
+                    Center(
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 180,
+                          ),
+
+                          Container( // carre principal
+                            height: 380.0,
+                            width: 320.0,
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 70,),
+
+                                SizedBox(
+                                  height: 26,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 30.0, right: 30.0),
+                                  child: Container(
+                                    height: 1.0,
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey,
+                                    ),
+
+                                  ),
+
+                                ),
+                                Container(
+
+                                  padding: const EdgeInsets.only(
+                                      left: 40.0, right: 30.0, top: 10.0),
+                                  child: TextField(
+                                    enabled: true,
+                                    onChanged: (val) {
+                                      pseudo = val;
+                                    },
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontFamily: 'Montserrat',
+
+                                      // decorationColor: Color(0XFFFFCC00),//Font color change
+                                      //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: widget.myuser.pseudo,
+
+                                      errorText: errPs,
+                                      errorStyle: TextStyle(
+                                          fontFamily: 'Montserrat',
+
+
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                      contentPadding: EdgeInsets.only(left: 15,
+                                          bottom: 0,
+                                          top: 32,
+                                          right: 15),
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 23,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 30.0, right: 30.0),
+                                  child: Container(
+                                    height: 1.0,
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey,
+                                    ),
+
+                                  ),
+
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      left: 40.0, right: 30.0),
+                                  child: TextField(
+                                    enabled: true,
+                                    onChanged: (val) {
+                                      tel = val;
+                                    },
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontFamily: 'Montserrat',
+
+                                      // decorationColor: Color(0XFFFFCC00),//Font color change
+                                      //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: widget.myuser.tel == null
+                                          ? 'aucun numero'
+                                          : widget.myuser.tel,
+
+                                      errorText: errTel,
+                                      errorStyle: TextStyle(
+                                          fontFamily: 'Montserrat',
+
+
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                      contentPadding: EdgeInsets.only(left: 15,
+                                          bottom: 0,
+                                          top: 32,
+                                          right: 15),
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 23,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 30.0, right: 30.0),
+                                  child: Container(
+                                    height: 1.0,
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey,
+                                    ),
+
+                                  ),
+
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      left: 40.0, right: 30.0),
+                                  child: TextField(
+                                    enabled: true,
+                                    onChanged: (val) {
+                                      mail = val;
+                                    },
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontFamily: 'Montserrat',
+
+                                      // decorationColor: Color(0XFFFFCC00),//Font color change
+                                      //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: widget.myuser.mail,
+
+                                      errorText: errMl,
+                                      errorStyle: TextStyle(
+                                          fontFamily: 'Montserrat',
+
+
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                      contentPadding: EdgeInsets.only(left: 15,
+                                          bottom: 0,
+                                          top: 32,
+                                          right: 15),
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+
+                                    ),
+                                  ),
+                                ),
+                              ],),
+
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey[300],
+                                width: 3,),
+                              boxShadow: [
+                                new BoxShadow(
+                                  color: Colors.grey[200],
+                                  blurRadius: 20.0,),
+                              ],
+                              borderRadius: BorderRadius.circular(20),),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Center(
+                      child: Column( //photos
+
+
+                        children: <Widget>[
+                          SizedBox(
+                            height: 130,
+                          ),
+                          Center(
+                            child: Container(
+                              height: 100.0,
+                              width: 100.0,
+
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey[300],
+                                  width: 3,),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  new BoxShadow(
+                                    color: Colors.grey[200],
+                                    blurRadius: 20.0,),
+                                ],
+                              ),
+                              child: photoWig(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+
+                    Positioned(
+                      bottom: 100,
+                      right: 19,
+                      child: Center(
+                        child: IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: _edit(),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 53,
+                      left: 200,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 60.0),
+                        child: IconButton(
+
+                          icon: Icon(
+                            Icons.camera_alt,
+                            size: 30.0,),
+                          onPressed: () => updatePic(),
+                          // uploadFile();
+
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 120,
+                      top: 12,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+
+                            height: 60.0,
+                            width: 60.0,
+                            child: Image.asset(
+                              'images/logo.png', fit: BoxFit.fill,
+                              height: 120.0,
+                              width: 120.0,),
+                          ),
+                          Text(
+                            'inek',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0XFF3B466B),
+
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Positioned(
+                      left: 96,
+                      top: 50,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20, bottom: 20,),
+                        child: Text(
+                          'Compte',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0XFF389490), //vert
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+
+
+                  ],
+                ),
+              ),
             )
         ),
       ),
     );
   }
 
-/* SingleChildScrollView(
-
-            child: Stack(
-              children: <Widget>[
-
-                Center(
-                  child: Column(
-
-                    children: <Widget>[
-                      SizedBox(
-                        height: 140,
-                      ),
-                      Container(
-                        height: 500.0,
-                        width: 320.0,
-                      ),
-                    ],),
-                ),
-
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 140,
-                      ),
-
-                      Container( // carre principal
-                        height: 400.0,
-                        width: 320.0,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 70,),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'hello',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff707070),
-                                ),),),
-                            SizedBox(
-                              height: 26,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                pseudo,
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff000000),
-                                ),),),
-                            SizedBox(
-                              height: 23,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                tel,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
-                                ),),),
-                            SizedBox(
-                              height: 23,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                mail,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
-                                ),),),
-                          ],),
-
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey[300],
-                            width: 3,),
-                          boxShadow: [
-                            new BoxShadow(
-                              color: Colors.grey[200],
-                              blurRadius: 20.0,),
-                          ],
-                          borderRadius: BorderRadius.circular(20),),
-                      ),
-                    ],
-                  ),),
-
-
-                Positioned(
-                  top: 510,
-                  right: 138,
-                  left: 138,
-                  bottom: 80,
-
-                  child:
-                  Container(
-                    height: 200.0,
-                    width: 30.0,
-                    //Bouton ajoute
-
-                    decoration: BoxDecoration(
-                      color: Color(0xff389490),
-                      border: Border.all(
-                        color: Colors.grey[300],
-                        width: 3,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),),
-
-                Center(
-                  child: Column( //photos
-
-
-                    children: <Widget>[
-                      SizedBox(
-                        height: 90,
-                      ),
-                      Container(
-                        height: 110.0,
-                        width: 110.0,
-
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey[300],
-                            width: 3,),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            new BoxShadow(
-                              color: Colors.grey[200],
-                              blurRadius: 20.0,),
-                          ],
-                        ),
-                        child: photoWig(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),*/
+// tester si les chaines de caratceres ne sont pas vides
   Widget photoWig() {
-    if (photo != null) {
+    if (widget.myuser.photo != null) {
       return Center(
-        child: Image(image: NetworkImage(photo)),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(17.0),
+
+            child: Image.network(widget.myuser.photo,
+              height: 110.0,
+
+              gaplessPlayback: true,
+              fit: BoxFit.fill,
+            ),
+          )
       );
     }
     else {
@@ -240,23 +422,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  String accountStatus = '******';
-  FirebaseUser result;
+  modifmail() {
+    widget.myuser.mail = mail;
+  }
 
+  modiftel() {
+    widget.myuser.tel = tel;
+  }
 
-  TextEditingController pseudoInputController;
+  File _image;
+  String _uploadedFileURL;
 
-  TextEditingController telInputController;
-  TextEditingController mdpInputController;
+  Future updatePic() async {
+    print('choooose file');
+    await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
+      setState(() {
+        _image = image;
+      });
+    });
+    print('uploaaaaaaaaaadfile');
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('photos/${p.basename(_image.path)}}');
+    _uploadedFileURL = widget.myuser.photo;
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        _uploadedFileURL = fileURL;
+      });
+      authService.auth.currentUser().then((onValue) {
+        authService.userRef.document(onValue.uid).updateData(
+            {'photo': _uploadedFileURL});
+        setState(() {
+          print(widget.myuser.photo);
+          widget.myuser.photo = _uploadedFileURL;
+          print(widget.myuser.photo);
+        });
+      });
+    });
+  }
+
+  modifier() {
+    modifmail();
+    modiftel();
+    print(' debutsignout');
+    authService.auth.currentUser().then((onValue) {
+      authService.userRef.document(onValue.uid).updateData(
+          {'mail': mail, 'tel': tel, 'photo': widget.myuser.photo});
+      onValue.updateEmail(mail).then((onVal) {
+        print('changed mail succeedeed');
+      });
+    });
+
+    print('succeddeed ?');
+  }
+
 
   @override
   initState() {
-    pseudoInputController = new TextEditingController();
-    telInputController = new TextEditingController();
-    mdpInputController = new TextEditingController();
-
     super.initState();
-    getData();
+
     print('here outside async');
   }
 
@@ -265,309 +492,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future userID;
 
 
-  Future getData() async {
-    print('getdatadebut');
-    var id = await authService.connectedID();
-
-    await authService.db.collection('Utilisateur').document(id).get().then((
-        docSnap) {
-      if (docSnap != null) {
-        pseudo = docSnap.data['pseudo'];
-      }
-
-
-      print('gonna print the onvalue ');
-      print(docSnap);
-      print('printed the onvalue ');
-
-      authService.userRef.document(docSnap).snapshots()
-          .listen((data) {
-        data.documents.forEach((doc) {
-          setState(() {
-            data.documents.forEach((doc) {
-              setState(() {
-                mail = doc.data['mail'];
-                print('mail');
-                print(mail);
-                tel = doc.data['tel'];
-                print('tel');
-
-                print(tel);
-                pseudo = doc.data['pseudo'];
-                print('pseudo');
-
-                print(pseudo);
-                photo = doc.data['photo'];
-                print('photo');
-
-                print(photo);
-              });
-            });
-          });
-        });
-      });
-      /*var us = authService.db.collection('Utilisateur').document(ref).snapshots().map((val) {
-      Utilisateur.fromMap(val);
-      setState(() {
-        mail = val.data['mail'] ;
-        pseudo = val.data['pseudo'] ;
-        tel= val.data['tel'];
-        photo =  val.data['photo'] ;
-      });
-    });*/
-
-      // print(us.toString());
-      print('getdatafin');
-    });
-  }
-/*
- Container (
-          child : FutureBuilder(
-              future:  authService.userRef.document(authService.connectedID()),
-              builder: (context ,snapshot){
-                switch (snapshot.connectionState){
-                  case ConnectionState.none: return Center(child: Text('not connected please retry')) ;
-                   case ConnectionState.active: return Center(
-                     child: SpinKitChasingDots(
-                       // ignore: missing_return
-                       color: Color(0XFF389490),//vert
-                     ),
-                   );
-                    break;
-                  case ConnectionState.done :
-                  default:
-                }
-              },
-          )
-*/
-
-/*_showDialog() async {
-  await showDialog<String>(
-    context: context,
-    child: AlertDialog(
-      contentPadding: const EdgeInsets.all(16.0),
-      content: Column(
-          children: <Widget>[
-          Text("Please fill all fields to create a new task"),
-      Expanded(
-        child: TextField(
-          autofocus: true,
-          decoration: InputDecoration(labelText: 'pseudo'),
-          controller: pseudoInputController,
-        ),
-      ),
-      Expanded(
-        child: TextField(
-          decoration: InputDecoration(labelText: 'telephone'),
-            controller: telInputController,
-          ),
-        ),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(labelText: 'mot de passe'),
-                controller: mdpInputController,
-              ),
-            ),
-
-          ],
-      ),
-      actions: <Widget>[
-        FlatButton(
-            child: Text('Cancel'),
-            onPressed: () {
-              pseudoInputController.clear();
-              telInputController.clear();
-              mdpInputController.clear();
-
-              Navigator.pop(context);
-            }),
-        FlatButton(
-            child: Text('Changer'),
-            onPressed: () {
-              if (pseudoInputController.text.isNotEmpty &&
-                  telInputController.text.isNotEmpty  &&
-                  mdpInputController.text.isNotEmpty) {
-                authService.db.collection('Utilisateur').document('liste'){
-                  "pseudo": pseudoInputController.text,
-                  "tel": telInputController.text,
-                  "mot de passe": mdpInputController.text,
-                })
-                    .then((result) => {
-                  Navigator.pop(context),
-                  pseudoInputController.clear(),
-                  telInputController.clear(),
-                  mdpInputController.clear(),
-
-                })
-                    .catchError((err) => print(err));
-              }
-            })
-      ],
-    ),
-  );
-} */
-
-
-/* void updateData() {
-    // a verifier ????
-    try {
-      authService.db
-          .collection('Utilisateur').document(
-          'Utilisateur/${authService.loggedIn}')
-          .updateData({'description': 'Head First Flutter'});
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-
-}
-
-
-Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-          child: SingleChildScrollView(
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 140,
-                      ),
-                      Container(
-                        color: Colors.red,
-                        height: 500.0,
-                        width: 320.0,
-                      ),
-                    ],
-                  ),
-                ),
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 140,
-                      ),
-                      Container(
-                        // carre principal
-                        height: 400.0,
-                        width: 320.0,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 70,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                user.pseudo.toString(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff707070),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 26,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'pseudo',
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 23,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'tel' ,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 23,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
-                              child: Text(
-                                'mail' ,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey[300],
-                            width: 3,
-                          ),
-                          boxShadow: [
-                            new BoxShadow(
-                              color: Colors.grey[200],
-                              blurRadius: 20.0,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Center(
-                  child: Column(
-                    //photos
-
-                    children: <Widget>[
-                      SizedBox(
-                        height: 90,
-                      ),
-                      Container(
-                        height: 110.0,
-                        width: 110.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey[300],
-                            width: 3,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ), */
 }
