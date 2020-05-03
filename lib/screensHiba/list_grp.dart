@@ -18,7 +18,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../UpdateMarkers.dart';
 
-bool _loading = false;
+bool _loading;
 
 class ListGrpPage extends StatefulWidget {
   @override
@@ -30,6 +30,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
   @override
   void initState() {
     super.initState();
+    _loading = false;
   }
 
   @override
@@ -113,15 +114,27 @@ class grpTile extends StatelessWidget {
                 .get()
                 .then((DocumentSnapshot doc) {
               g = Voyage.fromMap(doc.data);
-              print(g.membres);
+              //print(g.membres);
             });
+            List<String> images = List();
+            for (Map member in g.membres) {
+              String url = await Firestore.instance
+                  .collection('Utilisateur')
+                  .document(member['id'])
+                  .get()
+                  .then((doc) {
+                return doc.data['photo'].toString();
+              });
+              images.add(url);
+            }
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
                 .UpdateusersLocation(grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MapVoyagePage(g, grp_chemin)));
+                    builder: (context) =>
+                        MapVoyagePage(g, grp_chemin, images)));
           }
           if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance
@@ -130,13 +143,25 @@ class grpTile extends StatelessWidget {
                 .then((DocumentSnapshot doc) {
               g = LongTerme.fromMap(doc.data);
             });
+            List<String> images = List();
+            for (Map member in g.membres) {
+              String url = await Firestore.instance
+                  .collection('Utilisateur')
+                  .document(member['id'])
+                  .get()
+                  .then((doc) {
+                return doc.data['photo'].toString();
+              });
+              images.add(url);
+            }
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
                 .UpdateusersLocation(grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MapLongTermePage(g, grp_chemin)));
+                    builder: (context) =>
+                        MapLongTermePage(g, grp_chemin, images)));
           }
         },
         title: Text(

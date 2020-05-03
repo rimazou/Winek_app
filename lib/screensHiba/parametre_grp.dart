@@ -105,6 +105,7 @@ class deletememberdialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       contentPadding: EdgeInsets.all(15),
       title: Text(
         'supprimez un membre',
@@ -259,6 +260,9 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                 builder: (BuildContext context) =>
                                     //   namedialog(groupe.nom),
                                     AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
                                       contentPadding: EdgeInsets.all(15),
                                       title: Text(
                                         'changer le nom ',
@@ -780,6 +784,9 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                       context: context,
                                       builder: (BuildContext context) =>
                                           AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
                                         contentPadding: EdgeInsets.all(15),
                                         title: Text(
                                           'supprimez un membre',
@@ -990,6 +997,9 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                 builder: (BuildContext context) =>
                                     //   namedialog(groupe.nom),
                                     AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
                                       contentPadding: EdgeInsets.all(15),
                                       title: Text(
                                         'changer le nom ',
@@ -1478,6 +1488,9 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                       context: context,
                                       builder: (BuildContext context) =>
                                           AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
                                         contentPadding: EdgeInsets.all(15),
                                         title: Text(
                                           'supprimez un membre',

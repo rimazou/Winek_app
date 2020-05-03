@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:winek/main.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
@@ -20,8 +22,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:search_map_place/search_map_place.dart';
-import 'package:google_maps_webservice/places.dart';
 
 //asma's variables
 final _firestore = Firestore.instance;
@@ -39,20 +39,14 @@ const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
+
 //google maps stuffs
 GoogleMapController mapController;
 String searchAddr;
+
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 void _onMapCreated(GoogleMapController controller) {
   mapController = controller;
-}
-
-void _openDrawer(BuildContext context) {
-  _scaffoldKey.currentState.openDrawer();
-}
-
-void _closeDrawer(BuildContext context) {
-  Navigator.of(context).pop();
 }
 
 searchandNavigate() {
@@ -333,100 +327,103 @@ class _HomeState extends State<Home> {
               ),
             ),
             //index = 2 : choix de groupe
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _visible = !_visible;
-                  index = 0;
-                });
-              },
-              child: Container(
-                  width: size.width,
-                  height: size.height,
-                  child: Center(
-                    child: Container(
-                      height: 370,
-                      width: 266,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(59, 70, 107, 0.5)),
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            Spacer(
-                              flex: 1,
-                            ),
-                            Text("Créer un groupe ",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                )),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                  // _visible = !_visible;
-                                });
+            Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      //  _visible = !_visible;
+                      index = 0;
+                    });
+                  },
+                  child: Container(
+                    height: size.height,
+                    width: size.width,
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                  ),
+                ),
+                Center(
+                  child: Container(
+                    height: 370,
+                    width: 266,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(59, 70, 107, 0.5)),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          Spacer(
+                            flex: 1,
+                          ),
+                          Text("Créer un groupe ",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                                color: Color.fromRGBO(255, 255, 255, 1),
+                              )),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                index = 0;
+                              });
 
-                                Navigator.pushNamed(context, NvVoyagePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.directions_bus,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "de voyage",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
+                              Navigator.pushNamed(context, NvVoyagePage.id);
+                            },
+                            child: Bouton(
+                              icon: Icon(
+                                Icons.directions_bus,
+                                color: Color(0xff707070),
+                                size: 75,
+                              ),
+                              contenu: Text(
+                                "de voyage",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xff707070)),
                               ),
                             ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                  // _visible = !_visible;
-                                });
-                                Navigator.pushNamed(
-                                    context, NvLongTermePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "a long terme",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                index = 0;
+                              });
+                              Navigator.pushNamed(context, NvLongTermePage.id);
+                            },
+                            child: Bouton(
+                              icon: Icon(
+                                Icons.people,
+                                color: Color(0xff707070),
+                                size: 75,
+                              ),
+                              contenu: Text(
+                                "a long terme",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xff707070)),
                               ),
                             ),
-                            Spacer(
-                              flex: 1,
-                            )
-                          ],
-                        ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          )
+                        ],
                       ),
                     ),
-                  )),
+                  ),
+                ),
+              ],
             ),
           ]),
         ],
@@ -442,17 +439,13 @@ class _HomeState extends State<Home> {
       // opacity: _visible ? 1.0 : 0.0,
       //duration: Duration(milliseconds: 500),
       child: Container(
-        height: size.height * 0.07,
-        width: size.width * 0.85,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40.0), color: Colors.white),
-        child: Stack(
-          //alignment: Alignment.center,
-          children: <Widget>[
-            Positioned(
-              left: 0,
-              // top:size.height*0.07*0.5,
-              child: IconButton(
+          height: size.height * 0.07,
+          width: size.width * 0.85,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40.0), color: Colors.white),
+          child: Row(
+            children: <Widget>[
+              IconButton(
                   icon: Icon(
                     Icons.menu,
                     color: Color(0xFF3B466B),
@@ -465,49 +458,45 @@ class _HomeState extends State<Home> {
                     });
                   },
                   iconSize: 30.0),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: size.width * 0.3, vertical: 0.001),
-              child: TextField(
-                onTap: () async {
-                  // show input autocomplete with selected mode
-                  // then get the Prediction selected
-                  Prediction p = await PlacesAutocomplete.show(
-                    context: context,
-                    apiKey: kGoogleApiKey,
-                    onError: onError,
-                    mode: Mode.overlay,
-                    language: "fr",
-                    components: [Component(Component.country, "DZ")],
-                  );
-
-                  displayPredictionRecherche(p);
-                },
-                style: TextStyle(
-                    fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
-                decoration: InputDecoration(
-                  hintText: 'Recherche',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.only(left: 15.0),
+              Spacer(
+                flex: 1,
+              ),
+              Center(
+                child: Text(
+                  'Recherche',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Montserrat',
+                    fontSize: 15,
+                    color: Color(0xff707070),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              right: 0,
-              // top:size.height*0.5,
-              child: IconButton(
+              Spacer(
+                flex: 1,
+              ),
+              IconButton(
                   icon: Icon(
                     Icons.search,
                     color: Color(0xFF3B466B),
                   ),
-                  onPressed: searchandNavigate,
+                  onPressed: () async {
+                    // show input autocomplete with selected mode
+                    // then get the Prediction selected
+                    Prediction p = await PlacesAutocomplete.show(
+                      context: context,
+                      apiKey: kGoogleApiKey,
+                      onError: onError,
+                      mode: Mode.overlay,
+                      language: "fr",
+                      components: [Component(Component.country, "DZ")],
+                    );
+
+                    displayPredictionRecherche(p);
+                  },
                   iconSize: 30.0),
-            ),
-          ],
-        ),
-      ),
-      //),
+            ],
+          )),
     );
   }
 
@@ -547,31 +536,27 @@ class _HomeState extends State<Home> {
         color: Color(0xFF3B466B),
         notchMargin: 10,
         child: Container(
-          height: 80,
+          height: 70,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              MaterialButton(
-                minWidth: 40,
-                onPressed: () {},
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.group,
-                        size: 32.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          index = 0;
-                        });
-                        Navigator.pushNamed(context, ListGrpPage.id);
-                      },
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.group,
+                      size: 32.0,
+                      color: Colors.white,
                     ),
-                  ],
-                ),
+                    onPressed: () {
+                      setState(() {
+                        index = 0;
+                      });
+                      Navigator.pushNamed(context, ListGrpPage.id);
+                    },
+                  ),
+                ],
               ),
 
               // Right Tab bar icons
@@ -609,11 +594,12 @@ class _HomeState extends State<Home> {
 class MapVoyagePage extends StatefulWidget {
   Voyage groupe;
   String path;
-
-  MapVoyagePage(this.groupe, this.path);
+  List<String> imagesUrl;
+  MapVoyagePage(this.groupe, this.path, this.imagesUrl);
 
   @override
-  _MapVoyagePageState createState() => _MapVoyagePageState(groupe, path);
+  _MapVoyagePageState createState() =>
+      _MapVoyagePageState(groupe, path, imagesUrl);
 }
 
 class _MapVoyagePageState extends State<MapVoyagePage> {
@@ -624,8 +610,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
   int index;
-
-  _MapVoyagePageState(this.groupe, this.path);
+  List<String> imagesUrl;
+  Map membreinfo;
+  _MapVoyagePageState(this.groupe, this.path, this.imagesUrl);
 
   //asma variables2
   String alertePerso;
@@ -636,10 +623,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   @override
   void initState() {
     index = 0;
-    //  print('groupe');
-    //  print(groupe.nom);
-    //  print('membres:');
-    //  print(groupe.membres);
+    membreinfo = {
+      'pseudo': '',
+      'image': '',
+      'vitesse': 0.0,
+      'temps': 0.0,
+      'batterie': 0.0
+    };
   }
 
   @override
@@ -647,45 +637,49 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     Size size = MediaQuery.of(context).size;
     List<Widget> liste = new List();
     //  var it = groupe.membres.iterator;
-    for (var membre in groupe.membres) {
+    for (int i = 0; i < groupe.membres.length; i++) {
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
-          child: InkWell(
-            //onPressed: null,
-            //minWidth: 85,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.1 * 0.65,
-                  width: MediaQuery.of(context).size.height * 0.1 * 0.65,
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  child: CircleAvatar(
-                    backgroundColor: Color(0xFFFFFFFF),
-                    child: Icon(
-                      Icons.person,
-                      color: Color(0xFF707070),
-                    ),
-                  ),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.1 * 0.65,
+                width: MediaQuery.of(context).size.height * 0.1 * 0.65,
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                child: CircleAvatar(
+                  backgroundColor: Color(0xFFFFFFFF),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              membreinfo['pseudo'] =
+                                  groupe.membres[i]['pseudo'];
+                              membreinfo['image'] = imagesUrl[i];
+                              index = 3;
+                            });
+                          },
+                          child: Image.network(imagesUrl[i]))),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    child: Text(
-                      membre['pseudo'],
-                      //overflow:TextOverflow.fade,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    groupe.membres[i]['pseudo'],
+                    //overflow:TextOverflow.fade,
 
-                      //textScaleFactor: 0.4,
-                      style: TextStyle(
-                        fontFamily: 'MontSerrat',
-                        fontSize: 10,
-                        color: Color(0xFFFFFFFF),
-                      ),
+                    //textScaleFactor: 0.4,
+                    style: TextStyle(
+                      fontFamily: 'MontSerrat',
+                      fontSize: 10,
+                      color: Color(0xFFFFFFFF),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
@@ -713,56 +707,78 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
             //index = 0 :
             Stack(
               children: <Widget>[
+                //recherche barre
                 Positioned(
-                  left: 0,
-                  top: 30.0,
-                  // top:size.height*0.07*0.5,
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Color(0xFF3B466B),
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        // _openDrawer(context);
-                        /*  setState(() {
-                          index = 1;
-                          //_visible = !_visible;
-                        });*/
-                        print(index);
-                      },
-                      iconSize: 30.0),
-                ),
-                Positioned(
-                  top: 30.0,
-                  right: 15.0,
-                  left: 35.0,
+                  left: size.width * 0.075,
+                  top: size.height * 0.04,
+                  // child: AnimatedOpacity(
+                  // opacity: _visible ? 1.0 : 0.0,
+                  //duration: Duration(milliseconds: 500),
                   child: Container(
-                    height: 50.0,
-                    width: 250,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          hintText: 'Recherche',
-                          border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(left: 15.0, top: 15.0),
-                          suffixIcon: IconButton(
-                              icon: Icon(Icons.search),
-                              onPressed: searchandNavigate,
-                              iconSize: 30.0)),
-                      onChanged: (val) {
-                        setState(() {
-                          searchAddr = val;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                //liste of members
+                      height: size.height * 0.07,
+                      width: size.width * 0.85,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40.0),
+                          color: Colors.white),
+                      child: Row(
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(
+                                Icons.menu,
+                                color: Color(0xFF3B466B),
+                              ),
+                              onPressed: () {
+                                /// _openDrawer(context);
+                                setState(() {
+                                  index = 1;
+                                  // _visible = !_visible;
+                                });
+                              },
+                              iconSize: 30.0),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          Center(
+                            child: Text(
+                              'Recherche',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Montserrat',
+                                fontSize: 15,
+                                color: Color(0xff707070),
+                              ),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.search,
+                                color: Color(0xFF3B466B),
+                              ),
+                              onPressed: () async {
+                                // show input autocomplete with selected mode
+                                // then get the Prediction selected
+                                Prediction p = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey: kGoogleApiKey,
+                                  onError: onError,
+                                  mode: Mode.overlay,
+                                  language: "fr",
+                                  components: [
+                                    Component(Component.country, "DZ")
+                                  ],
+                                );
 
+                                displayPredictionRecherche(p);
+                              },
+                              iconSize: 30.0),
+                        ],
+                      )),
+                ),
+
+                //liste of members
                 Positioned(
                   bottom: 4,
                   left: MediaQuery.of(context).size.width * 0.025,
@@ -848,10 +864,39 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: liste,
+                          shrinkWrap: false,
                         ),
                       ),
                     ],
                   ),
+                ),
+                //nom groupe
+                Positioned(
+                  bottom: 60,
+                  left: MediaQuery.of(context).size.width * 0.025,
+                  child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: primarycolor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueGrey,
+                            blurRadius: 3.0,
+                            spreadRadius: 0.1,
+                            offset: Offset(0.0, 1.0),
+                          )
+                        ],
+                      ),
+                      child: Text(
+                        groupe.nom,
+                        style: TextStyle(
+                          color: myWhite,
+                          fontSize: 12,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
                 ),
                 //floationg butons asma
                 Positioned(
@@ -881,10 +926,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
-                            setState(() async {
-                              utilisateurID = await AuthService().connectedID();
-                              currentUser =
-                                  await AuthService().getPseudo(utilisateurID);
+                            utilisateurID = await AuthService().connectedID();
+                            currentUser =
+                                await AuthService().getPseudo(utilisateurID);
+                            setState(() {
                               groupPath = path;
                               stackIndex = 2;
                             });
@@ -1323,98 +1368,246 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
               ),
             ),
             //index = 2 : choix de groupe
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _visible = !_visible;
-                  index = 0;
-                });
-              },
-              child: Container(
-                  width: size.width,
-                  height: size.height,
-                  child: Center(
-                    child: Container(
-                      height: 370,
-                      width: 266,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(59, 70, 107, 0.5)),
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            Spacer(
-                              flex: 1,
-                            ),
-                            Text("Créer un groupe ",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                )),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                });
+            Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      //  _visible = !_visible;
+                      index = 0;
+                    });
+                  },
+                  child: Container(
+                    height: size.height,
+                    width: size.width,
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                  ),
+                ),
+                Container(
+                    width: size.width,
+                    height: size.height,
+                    child: Center(
+                      child: Container(
+                        height: 370,
+                        width: 266,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(59, 70, 107, 0.5)),
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Spacer(
+                                flex: 1,
+                              ),
+                              Text("Créer un groupe ",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                  )),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    index = 0;
+                                  });
 
-                                Navigator.pushNamed(context, NvVoyagePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.directions_bus,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "de voyage",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                });
-                                Navigator.pushNamed(
-                                    context, NvLongTermePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "a long terme",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
+                                  Navigator.pushNamed(context, NvVoyagePage.id);
+                                },
+                                child: Bouton(
+                                  icon: Icon(
+                                    Icons.directions_bus,
+                                    color: Color(0xff707070),
+                                    size: 75,
+                                  ),
+                                  contenu: Text(
+                                    "de voyage",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
+                                        color: Color(0xff707070)),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            )
-                          ],
+                              Spacer(
+                                flex: 1,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    index = 0;
+                                  });
+                                  Navigator.pushNamed(
+                                      context, NvLongTermePage.id);
+                                },
+                                child: Bouton(
+                                  icon: Icon(
+                                    Icons.people,
+                                    color: Color(0xff707070),
+                                    size: 75,
+                                  ),
+                                  contenu: Text(
+                                    "a long terme",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
+                                        color: Color(0xff707070)),
+                                  ),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 1,
+                              )
+                            ],
+                          ),
                         ),
                       ),
+                    )),
+              ],
+            ),
+            //index =3 : barre d'info
+            Stack(
+              children: <Widget>[
+                Container(
+                    height: size.height,
+                    width: size.width,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          index = 0;
+                        });
+                      },
+                    )),
+                Positioned(
+                  bottom: 4,
+                  left: MediaQuery.of(context).size.width * 0.025,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    height: MediaQuery.of(context).size.height * 0.10,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(33.0),
+                      color: Color(0xFF3B466B),
+                      //color:Color.fromRGBO(59, 70, 150, 0.8),
                     ),
-                  )),
+                    child: Row(
+                      children: <Widget>[
+                        Spacer(
+                          flex: 1,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: MediaQuery.of(context).size.height *
+                                    0.1 *
+                                    0.65,
+                                width: MediaQuery.of(context).size.height *
+                                    0.1 *
+                                    0.65,
+                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                child: CircleAvatar(
+                                  backgroundColor: Color(0xFFFFFFFF),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child:
+                                          Image.network(membreinfo['image'])),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text(
+                                    membreinfo['pseudo'],
+                                    style: TextStyle(
+                                      fontFamily: 'MontSerrat',
+                                      fontSize: 10,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        //distance restante restant
+                        Spacer(
+                          flex: 1,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            child: Text(
+                              '${membreinfo['vitesse']} Km/h',
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFFFFFFF),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Spacer(flex: 1),
+                        //temps restant
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                              height: 40,
+                              width: 40,
+                              child: Text(
+                                '${membreinfo['temps']} min',
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                              )),
+                        ),
+                        //niveau de batterie
+                        Spacer(flex: 1),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            child: Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.battery_std,
+                                  color: Color(0xFFFFFFFF),
+                                  semanticLabel: '30%',
+                                  textDirection: TextDirection.rtl,
+                                ),
+                                Text(
+                                  '${membreinfo['batterie']}%',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFFFFFFF),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Spacer(flex: 1),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ]),
         ],
@@ -1426,11 +1619,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 class MapLongTermePage extends StatefulWidget {
   LongTerme groupe;
   String path;
-
-  MapLongTermePage(this.groupe, this.path);
+  List<String> imagesUrl;
+  MapLongTermePage(this.groupe, this.path, this.imagesUrl);
 
   @override
-  _MapLongTermePageState createState() => _MapLongTermePageState(groupe, path);
+  _MapLongTermePageState createState() =>
+      _MapLongTermePageState(groupe, path, imagesUrl);
 }
 
 class _MapLongTermePageState extends State<MapLongTermePage> {
@@ -1441,8 +1635,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
   int index;
-
-  _MapLongTermePageState(this.groupe, this.path);
+  List<String> imagesUrl;
+  _MapLongTermePageState(this.groupe, this.path, this.imagesUrl);
 
   @override
   void initState() {
@@ -1454,7 +1648,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
     Size size = MediaQuery.of(context).size;
     List<Widget> liste = new List();
     //  var it = groupe.membres.iterator;
-    for (var membre in groupe.membres) {
+    for (int index = 0; index < groupe.membres.length; index++) {
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
@@ -1469,17 +1663,16 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                   margin: EdgeInsets.symmetric(horizontal: 4),
                   child: CircleAvatar(
                     backgroundColor: Color(0xFFFFFFFF),
-                    child: Icon(
-                      Icons.person,
-                      color: Color(0xFF707070),
-                    ),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(imagesUrl[index])),
                   ),
                 ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      membre['pseudo'],
+                      groupe.membres[index]['pseudo'],
                       //overflow:TextOverflow.fade,
 
                       //textScaleFactor: 0.4,
