@@ -32,7 +32,7 @@ class UpdateMarkers extends ChangeNotifier {
         geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
-     marker_dest(path);
+       marker_dest(path);
     double radius = 50;
     String field = 'position';
     stream = geo
@@ -77,12 +77,7 @@ class UpdateMarkers extends ChangeNotifier {
       {
         latlng = new LatLng(point.latitude,point.longitude);
           cameraUpdate = CameraUpdate.newLatLngZoom(latlng,12);
-         if(val==userid)
-      {
-        latlng = new LatLng(point.latitude,point.longitude);
-          cameraUpdate = CameraUpdate.newLatLngZoom(latlng,12);
-          Provider.of<controllermap>(mapcontext,listen:false).mapController.animateCamera(cameraUpdate);
-      }_controller.animateCamera(cameraUpdate);
+          Provider.of<controllermap>(mapcontext,listen:false).mapController.animateCamera(cameraUpdate); 
       }
       _addMarker(point.latitude, point.longitude, userid);
     });
