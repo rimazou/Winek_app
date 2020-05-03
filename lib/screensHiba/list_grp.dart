@@ -9,11 +9,16 @@ import '../dataBasehiba.dart';
 import '../main.dart';
 import 'list_inv_grp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'parametre_grp.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:flutter/cupertino.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import '../UpdateMarkers.dart';
 
-bool _loading = false;
+bool _loading;
 
 class ListGrpPage extends StatefulWidget {
   @override
@@ -25,6 +30,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
   @override
   void initState() {
     super.initState();
+    _loading = false;
   }
 
   @override
@@ -108,23 +114,54 @@ class grpTile extends StatelessWidget {
                 .get()
                 .then((DocumentSnapshot doc) {
               g = Voyage.fromMap(doc.data);
-              print(g.membres);
+              //print(g.membres);
             });
+            List<String> images = List();
+            for (Map member in g.membres) {
+              String url = await Firestore.instance
+                  .collection('Utilisateur')
+                  .document(member['id'])
+                  .get()
+                  .then((doc) {
+                return doc.data['photo'].toString();
+              });
+              images.add(url);
+            }
+            Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
+            Provider.of<UpdateMarkers>(context, listen: false)
+                .UpdateusersLocation(grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MapVoyagePage(g, grp_chemin)));
-          } else {
+                    builder: (context) =>
+                        MapVoyagePage(g, grp_chemin, images)));
+          }
+          if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance
                 .document(grp_chemin)
                 .get()
                 .then((DocumentSnapshot doc) {
               g = LongTerme.fromMap(doc.data);
             });
+            List<String> images = List();
+            for (Map member in g.membres) {
+              String url = await Firestore.instance
+                  .collection('Utilisateur')
+                  .document(member['id'])
+                  .get()
+                  .then((doc) {
+                return doc.data['photo'].toString();
+              });
+              images.add(url);
+            }
+            Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
+            Provider.of<UpdateMarkers>(context, listen: false)
+                .UpdateusersLocation(grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MapLongTermePage(g, grp_chemin)));
+                    builder: (context) =>
+                        MapLongTermePage(g, grp_chemin, images)));
           }
         },
         title: Text(
@@ -143,6 +180,16 @@ class grpTile extends StatelessWidget {
         ),
         trailing: IconButton(
           onPressed: () async {
+            String id = await authService.connectedID();
+            String pseudo = await Firestore.instance
+                .collection('Utilisateur')
+                .document(id)
+                .get()
+                .then((doc) {
+              return doc.data['pseudo'];
+            });
+
+            print("current user :$pseudo");
             Groupe g = Voyage();
             if (grp_chemin.startsWith('Voyage')) {
               await Firestore.instance
@@ -154,7 +201,8 @@ class grpTile extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ParamVoyagePage(g, grp_chemin)));
+                      builder: (context) =>
+                          ParamVoyagePage(g, grp_chemin, pseudo)));
             } else {
               await Firestore.instance
                   .document(grp_chemin)
@@ -165,7 +213,8 @@ class grpTile extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ParamLongTermePage(g, grp_chemin)));
+                      builder: (context) =>
+                          ParamLongTermePage(g, grp_chemin, pseudo)));
             }
           },
           icon: Icon(Icons.info_outline),

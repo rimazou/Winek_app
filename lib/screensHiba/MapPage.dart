@@ -1,31 +1,52 @@
+import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:winek/main.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
 import 'list_grp.dart';
 import 'package:winek/auth.dart';
+import 'listeFavorisScreen.dart';
+import 'package:winek/UpdateMarkers.dart';
+import 'package:provider/provider.dart';
+
+import 'composants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+
+//asma's variables
+final _firestore = Firestore.instance;
+String currentUser = 'ireumimweo';
+String utilisateurID;
+int stackIndex = 0;
+String groupPath;
+String Username;
+String Userimage;
+bool justReceivedAlert = false;
+ValueNotifier valueNotifier = ValueNotifier(justReceivedAlert);
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
+
 //google maps stuffs
 GoogleMapController mapController;
 String searchAddr;
 
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
 void _onMapCreated(GoogleMapController controller) {
   mapController = controller;
 }
-/*
-void _openDrawer(BuildContext context) {
-  _scaffoldKey.currentState.openDrawer();
-}
- */
 
 searchandNavigate() {
   Geolocator().placemarkFromAddress(searchAddr).then((result) {
@@ -34,6 +55,30 @@ searchandNavigate() {
             LatLng(result[0].position.latitude, result[0].position.longitude),
         zoom: 10.0)));
   });
+}
+
+void onError(PlacesAutocompleteResponse response) {
+  homeScaffoldKey.currentState.showSnackBar(
+    SnackBar(content: Text(response.errorMessage)),
+  );
+}
+
+Future<Null> displayPredictionRecherche(Prediction p) async {
+  if (p != null) {
+    PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
+
+    var placeId = p.placeId;
+    double lat = detail.result.geometry.location.lat;
+    double lng = detail.result.geometry.location.lng;
+
+    var address = await Geocoder.local.findAddressesFromQuery(p.description);
+    //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+    //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+    print(lat);
+    print(lng);
+  }
 }
 
 class Home extends StatefulWidget {
@@ -45,7 +90,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 //variables
-  int index = 0;
+  int index;
   bool _visible = true;
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
@@ -69,6 +114,12 @@ class _HomeState extends State<Home> {
   }
 
   Size size;
+  @override
+  void initState() {
+    Userimage = '';
+    Username = '';
+    index = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +135,7 @@ class _HomeState extends State<Home> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
+            // trafficEnabled: true,
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
@@ -99,72 +151,77 @@ class _HomeState extends State<Home> {
             // the drawer, index=1
             Container(
               width: size.width,
-              color: Color.fromRGBO(255, 255, 255, 0.3),
-              child: Stack(
+              height: size.height,
+              color: Color.fromRGBO(255, 255, 255, 0.5),
+              child: Column(
                 children: <Widget>[
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.02,
-                    top: MediaQuery.of(context).size.height * 0.03,
-                    child: MaterialButton(
-                      onPressed: () {
-                        // _closeDrawer(context);
-                        setState(() {
-                          index = 0;
-                          _visible = true;
-                        });
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
+                  Spacer(
+                    flex: 1,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      MaterialButton(
+                        onPressed: () {
+                          // _closeDrawer(context);
+                          setState(() {
+                            index = 0;
+                          });
+                        },
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                    ],
+                  ),
+                  Spacer(
+                    flex: 2,
                   ),
                   Center(
                     child: Container(
-                      height: size.height * 0.6,
-                      width: size.width * 0.65,
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      height: 450,
+                      width: 280,
+                      //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromRGBO(59, 70, 107, 0.8),
+                        color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Spacer(
+                            flex: 1,
+                          ),
                           Container(
-                            height: size.width * 0.25,
-                            width: size.width * 0.4,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  height: size.width * 0.15,
-                                  width: size.width * 0.15,
-                                  child: CircleAvatar(
-                                    backgroundColor: myWhite,
-                                    child:
-                                        //TODO replace by the photo
-                                        Icon(
-                                      Icons.person_outline,
-                                      size: 40,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'utilisateur',
-                                    textDirection: TextDirection.rtl,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ],
+                            height: 80,
+                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                            width: 80,
+                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            child: CircleAvatar(
+                              backgroundColor: Color(0xFFFFFFFF),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(Userimage)),
                             ),
+                          ),
+                          Center(
+                            child: Text(
+                              Username,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 1,
                           ),
                           Center(
                             child: Column(
@@ -173,10 +230,6 @@ class _HomeState extends State<Home> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   onTap: null,
                                   leading: Icon(
                                     Icons.playlist_add_check,
@@ -193,10 +246,10 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, FavoritePlacesScreen.id);
+                                  },
                                   leading: Icon(Icons.star, color: myWhite),
                                   title: Text(
                                     "Favoris",
@@ -208,10 +261,6 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   leading: Icon(
                                     Icons.group,
                                     color: myWhite,
@@ -229,10 +278,6 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -247,129 +292,136 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                 ),
+                                ListTile(
+                                  onTap: null,
+                                  leading: Icon(
+                                    Icons.directions_run,
+                                    color: Colors.white,
+                                  ),
+                                  title: Text(
+                                    "Déconnecter",
+                                    //strutStyle: ,
+                                    style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w600,
+                                        color: myWhite,
+                                        fontSize: 15),
+                                  ),
+                                ),
                               ],
                             ),
+                          ),
+                          Spacer(
+                            flex: 1,
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.45,
-                    bottom: MediaQuery.of(context).size.height * 0.1,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      child: FloatingActionButton(
-                        onPressed: () {},
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Color(0xFFFFFFFF),
-                        child: Transform(
-                          transform: Matrix4.rotationX(170),
-                          child:
-                              Icon(Icons.directions_run, color: c2, size: 32.0),
-                        ),
-                      ),
-                    ),
+                  Spacer(
+                    flex: 5,
                   ),
                 ],
               ),
             ),
             //index = 2 : choix de groupe
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _visible = !_visible;
-                  index = 0;
-                });
-              },
-              child: Container(
-                  width: size.width,
-                  height: size.height,
-                  child: Center(
-                    child: Container(
-                      height: 370,
-                      width: 266,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(59, 70, 107, 0.5)),
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            Spacer(
-                              flex: 1,
-                            ),
-                            Text("Créer un groupe ",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                )),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                  _visible = !_visible;
-                                });
+            Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      //  _visible = !_visible;
+                      index = 0;
+                    });
+                  },
+                  child: Container(
+                    height: size.height,
+                    width: size.width,
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                  ),
+                ),
+                Center(
+                  child: Container(
+                    height: 370,
+                    width: 266,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(59, 70, 107, 0.5)),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          Spacer(
+                            flex: 1,
+                          ),
+                          Text("Créer un groupe ",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                                color: Color.fromRGBO(255, 255, 255, 1),
+                              )),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                index = 0;
+                              });
 
-                                Navigator.pushNamed(context, NvVoyagePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.directions_bus,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "de voyage",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
+                              Navigator.pushNamed(context, NvVoyagePage.id);
+                            },
+                            child: Bouton(
+                              icon: Icon(
+                                Icons.directions_bus,
+                                color: Color(0xff707070),
+                                size: 75,
+                              ),
+                              contenu: Text(
+                                "de voyage",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xff707070)),
                               ),
                             ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                  _visible = !_visible;
-                                });
-                                Navigator.pushNamed(
-                                    context, NvLongTermePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "a long terme",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                index = 0;
+                              });
+                              Navigator.pushNamed(context, NvLongTermePage.id);
+                            },
+                            child: Bouton(
+                              icon: Icon(
+                                Icons.people,
+                                color: Color(0xff707070),
+                                size: 75,
+                              ),
+                              contenu: Text(
+                                "a long terme",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xff707070)),
                               ),
                             ),
-                            Spacer(
-                              flex: 1,
-                            )
-                          ],
-                        ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          )
+                        ],
                       ),
                     ),
-                  )),
+                  ),
+                ),
+              ],
             ),
           ]),
         ],
@@ -381,148 +433,175 @@ class _HomeState extends State<Home> {
     return Positioned(
       left: size.width * 0.075,
       top: size.height * 0.04,
-      child: AnimatedOpacity(
-        opacity: _visible ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 500),
-        child: Container(
+      // child: AnimatedOpacity(
+      // opacity: _visible ? 1.0 : 0.0,
+      //duration: Duration(milliseconds: 500),
+      child: Container(
           height: size.height * 0.07,
           width: size.width * 0.85,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40.0), color: Colors.white),
-          child: Stack(
-            //alignment: Alignment.center,
+          child: Row(
             children: <Widget>[
-              Positioned(
-                left: 0,
-                // top:size.height*0.07*0.5,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      color: Color(0xFF3B466B),
-                    ),
-                    onPressed: () {
-                      //  _openDrawer(context);
-                      setState(() {
-                        index = 1;
-                        _visible = !_visible;
-                      });
-                    },
-                    iconSize: 30.0),
+              IconButton(
+                  icon: Icon(
+                    Icons.menu,
+                    color: Color(0xFF3B466B),
+                  ),
+                  onPressed: () async {
+                    String id = await authService.connectedID();
+                    String pseudo = await Firestore.instance
+                        .collection('Utilisateur')
+                        .document(id)
+                        .get()
+                        .then((doc) {
+                      return doc.data['pseudo'];
+                    });
+                    String image = await Firestore.instance
+                        .collection('Utilisateur')
+                        .document(id)
+                        .get()
+                        .then((doc) {
+                      return doc.data['photo'];
+                    });
+                    // _openDrawer(context);
+                    setState(() {
+                      Username = pseudo;
+                      Userimage = image;
+                      index = 1;
+                      // _visible = !_visible;
+                    });
+                  },
+                  iconSize: 30.0),
+              Spacer(
+                flex: 1,
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.3, vertical: 0.001),
-                child: TextField(
+              Center(
+                child: Text(
+                  'Recherche',
                   style: TextStyle(
-                      fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
-                  decoration: InputDecoration(
-                    hintText: 'Recherche',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 15.0),
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Montserrat',
+                    fontSize: 15,
+                    color: Color(0xff707070),
                   ),
                 ),
               ),
-              Positioned(
-                right: 0,
-                // top:size.height*0.5,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      color: Color(0xFF3B466B),
-                    ),
-                    onPressed: searchandNavigate,
-                    iconSize: 30.0),
+              Spacer(
+                flex: 1,
               ),
+              IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Color(0xFF3B466B),
+                  ),
+                  onPressed: () async {
+                    // show input autocomplete with selected mode
+                    // then get the Prediction selected
+                    Prediction p = await PlacesAutocomplete.show(
+                      context: context,
+                      apiKey: kGoogleApiKey,
+                      onError: onError,
+                      mode: Mode.overlay,
+                      language: "fr",
+                      components: [Component(Component.country, "DZ")],
+                    );
+
+                    displayPredictionRecherche(p);
+                  },
+                  iconSize: 30.0),
             ],
-          ),
-        ),
-      ),
+          )),
     );
   }
 
   Widget get flaotButton {
-    return AnimatedOpacity(
-      opacity: _visible ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 500),
-      child: FloatingActionButton(
-        heroTag: null,
-        backgroundColor: Color(0xFF389490),
-        child: Icon(Icons.group_add, size: 32.0),
-        onPressed: () {
-          setState(() {
-            index = 2;
-            _visible = !_visible;
-          });
-        },
-      ),
+    return
+        //AnimatedOpacity(
+        // opacity: _visible ? 1.0 : 0.0,
+        //duration: Duration(milliseconds: 500),
+        //child:
+        FloatingActionButton(
+      heroTag: null,
+      backgroundColor: Color(0xFF389490),
+      child: Icon(Icons.group_add, size: 32.0),
+      onPressed: () {
+        setState(() {
+          index = 2;
+          // _visible = !_visible;
+        });
+      },
+      // ),
     );
     //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked;
   }
 
   Widget get bottomNavBar {
-    return AnimatedOpacity(
+    return /*AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(40),
-          topLeft: Radius.circular(40),
-        ),
-        child: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          color: Color(0xFF3B466B),
-          notchMargin: 10,
-          child: Container(
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {},
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.group,
-                          size: 32.0,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            index = 0;
-                          });
-                          Navigator.pushNamed(context, ListGrpPage.id);
-                        },
-                      ),
-                    ],
+      child: */
+        ClipRRect(
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(40),
+        topLeft: Radius.circular(40),
+      ),
+      child: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: Color(0xFF3B466B),
+        notchMargin: 10,
+        child: Container(
+          height: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.group,
+                      size: 32.0,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        index = 0;
+                      });
+                      Navigator.pushNamed(context, ListGrpPage.id);
+                    },
                   ),
-                ),
+                ],
+              ),
 
-                // Right Tab bar icons
+              // Right Tab bar icons
 
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    //se localiser //zoom ect
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_on,
-                        size: 32.0,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
+              MaterialButton(
+                minWidth: 40,
+                onPressed: () async {
+                  Position position = await Geolocator().getCurrentPosition(
+                      desiredAccuracy: LocationAccuracy.high);
+                  mapController.animateCamera(CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                          target: LatLng(position.latitude, position.longitude),
+                          zoom: 14.0)));
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.location_on,
+                      size: 32.0,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
+      // ),
     );
   }
 }
@@ -530,11 +609,12 @@ class _HomeState extends State<Home> {
 class MapVoyagePage extends StatefulWidget {
   Voyage groupe;
   String path;
-
-  MapVoyagePage(this.groupe, this.path);
+  List<String> imagesUrl;
+  MapVoyagePage(this.groupe, this.path, this.imagesUrl);
 
   @override
-  _MapVoyagePageState createState() => _MapVoyagePageState(groupe, path);
+  _MapVoyagePageState createState() =>
+      _MapVoyagePageState(groupe, path, imagesUrl);
 }
 
 class _MapVoyagePageState extends State<MapVoyagePage> {
@@ -545,16 +625,54 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
   int index;
+  List<String> imagesUrl;
+  Map membreinfo;
+  _MapVoyagePageState(this.groupe, this.path, this.imagesUrl);
 
-  _MapVoyagePageState(this.groupe, this.path);
+  //asma variables2
+  String alertePerso;
+
+  final _controller = TextEditingController();
+  //-----------------------
 
   @override
   void initState() {
     index = 0;
-    //  print('groupe');
-    //  print(groupe.nom);
-    //  print('membres:');
-    //  print(groupe.membres);
+    Username = '';
+    Userimage = '';
+    membreinfo = {
+      'pseudo': '',
+      'image': '',
+      'vitesse': Text(
+        '0 km/h',
+        overflow: TextOverflow.clip,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFFFFFFFF),
+        ),
+      ),
+      'temps': Text(
+        '0 min',
+        overflow: TextOverflow.clip,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFFFFFFFF),
+        ),
+      ),
+      'batterie': Text(
+        '100%',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFFFFFFFF),
+        ),
+      ),
+    };
   }
 
   @override
@@ -562,45 +680,55 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     Size size = MediaQuery.of(context).size;
     List<Widget> liste = new List();
     //  var it = groupe.membres.iterator;
-    for (var membre in groupe.membres) {
+    for (int i = 0; i < groupe.membres.length; i++) {
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
-          child: InkWell(
-            //onPressed: null,
-            //minWidth: 85,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.1 * 0.65,
-                  width: MediaQuery.of(context).size.height * 0.1 * 0.65,
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  child: CircleAvatar(
-                    backgroundColor: Color(0xFFFFFFFF),
-                    child: Icon(
-                      Icons.person,
-                      color: Color(0xFF707070),
-                    ),
-                  ),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.1 * 0.65,
+                width: MediaQuery.of(context).size.height * 0.1 * 0.65,
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                child: CircleAvatar(
+                  backgroundColor: Color(0xFFFFFFFF),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              //zoum sur la personne, son id est dans
+                              // groupe.membres[i]['id']
+                              membreinfo['pseudo'] =
+                                  groupe.membres[i]['pseudo'];
+                              membreinfo['image'] = imagesUrl[i];
+                              //remplir le reste des champs de memreinfo avec des Text()
+                              // membreinfo['vitesse']
+                              //membreinfo['temps']
+                              //membreinfo['batterie']
+                              index = 3;
+                            });
+                          },
+                          child: Image.network(imagesUrl[i]))),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    child: Text(
-                      membre['pseudo'],
-                      //overflow:TextOverflow.fade,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    groupe.membres[i]['pseudo'],
+                    //overflow:TextOverflow.fade,
 
-                      //textScaleFactor: 0.4,
-                      style: TextStyle(
-                        fontFamily: 'MontSerrat',
-                        fontSize: 10,
-                        color: Color(0xFFFFFFFF),
-                      ),
+                    //textScaleFactor: 0.4,
+                    style: TextStyle(
+                      fontFamily: 'MontSerrat',
+                      fontSize: 10,
+                      color: Color(0xFFFFFFFF),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
@@ -609,7 +737,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
       extendBody: true,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -621,84 +749,264 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
             ),
+            markers: Set<Marker>.of(
+                Provider.of<UpdateMarkers>(context).markers.values),
           ),
           IndexedStack(index: index, children: <Widget>[
             //index = 0 :
             Stack(
               children: <Widget>[
+                //recherche barre
                 Positioned(
-                  left: 0,
-                  top: 30.0,
-                  // top:size.height*0.07*0.5,
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Color(0xFF3B466B),
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        // _openDrawer(context);
-                        setState(() {
-                          index = 1;
-                          //_visible = !_visible;
-                        });
-                        print(index);
-                      },
-                      iconSize: 30.0),
-                ),
-                Positioned(
-                  top: 30.0,
-                  right: 15.0,
-                  left: 35.0,
+                  left: size.width * 0.075,
+                  top: size.height * 0.04,
+                  // child: AnimatedOpacity(
+                  // opacity: _visible ? 1.0 : 0.0,
+                  //duration: Duration(milliseconds: 500),
                   child: Container(
-                    height: 50.0,
-                    width: 250,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          hintText: 'Recherche',
-                          border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(left: 15.0, top: 15.0),
-                          suffixIcon: IconButton(
-                              icon: Icon(Icons.search),
-                              onPressed: searchandNavigate,
-                              iconSize: 30.0)),
-                      onChanged: (val) {
-                        setState(() {
-                          searchAddr = val;
-                        });
-                      },
-                    ),
-                  ),
+                      height: size.height * 0.07,
+                      width: size.width * 0.85,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40.0),
+                          color: Colors.white),
+                      child: Row(
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(
+                                Icons.menu,
+                                color: Color(0xFF3B466B),
+                              ),
+                              onPressed: () async {
+                                String id = await authService.connectedID();
+                                String pseudo = await Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(id)
+                                    .get()
+                                    .then((doc) {
+                                  return doc.data['pseudo'];
+                                });
+                                String image = await Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(id)
+                                    .get()
+                                    .then((doc) {
+                                  return doc.data['photo'];
+                                });
+                                // _openDrawer(context);
+                                setState(() {
+                                  Username = pseudo;
+                                  Userimage = image;
+                                  index = 1;
+                                  // _visible = !_visible;
+                                });
+                              },
+                              iconSize: 30.0),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          Center(
+                            child: Text(
+                              'Recherche',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Montserrat',
+                                fontSize: 15,
+                                color: Color(0xff707070),
+                              ),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.search,
+                                color: Color(0xFF3B466B),
+                              ),
+                              onPressed: () async {
+                                // show input autocomplete with selected mode
+                                // then get the Prediction selected
+                                Prediction p = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey: kGoogleApiKey,
+                                  onError: onError,
+                                  mode: Mode.overlay,
+                                  language: "fr",
+                                  components: [
+                                    Component(Component.country, "DZ")
+                                  ],
+                                );
+
+                                displayPredictionRecherche(p);
+                              },
+                              iconSize: 30.0),
+                        ],
+                      )),
                 ),
                 //liste of members
                 Positioned(
                   bottom: 4,
                   left: MediaQuery.of(context).size.width * 0.025,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    height: MediaQuery.of(context).size.height * 0.10,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(33.0),
-                      color: Color(0xFF3B466B),
-                      //color:Color.fromRGBO(59, 70, 150, 0.8),
-                    ),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: liste,
-                    ),
+                  child: Column(
+                    children: <Widget>[
+                      FlatButton(
+                        //HEEEEre grey container
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xFF7888a0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blueGrey,
+                                blurRadius: 3.0,
+                                spreadRadius: 0.5,
+                                offset: Offset(0.0, 2.0),
+                              )
+                            ],
+                          ),
+                          child: SizedBox(
+                            height: 10.0,
+                            width: 60.0,
+                          ),
+                        ),
+                        onPressed: () async {
+                          utilisateurID = await AuthService().connectedID();
+                          currentUser =
+                              await AuthService().getPseudo(utilisateurID);
+                          groupPath = path;
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xB07888a0),
+                                      borderRadius: BorderRadius.only(
+                                        topRight: const Radius.circular(10),
+                                        topLeft: const Radius.circular(10),
+                                      )),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            children: <Widget>[
+                                              RoundedButton(
+                                                  title: 'Personnaliser',
+                                                  colour: Color(0xFF389490),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      stackIndex = 1;
+                                                      Navigator.pop(context);
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          //height: 338,
+                                          child: AlertStream(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        height: MediaQuery.of(context).size.height * 0.10,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(33.0),
+                          color: Color(0xFF3B466B),
+                          //color:Color.fromRGBO(59, 70, 150, 0.8),
+                        ),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: liste,
+                          shrinkWrap: false,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                //floationg butons
+                //nom groupe
+                Positioned(
+                  bottom: 60,
+                  left: MediaQuery.of(context).size.width * 0.025,
+                  child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: primarycolor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueGrey,
+                            blurRadius: 3.0,
+                            spreadRadius: 0.1,
+                            offset: Offset(0.0, 1.0),
+                          )
+                        ],
+                      ),
+                      child: Text(
+                        groupe.nom,
+                        style: TextStyle(
+                          color: myWhite,
+                          fontSize: 12,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                ),
+                //floationg butons asma
                 Positioned(
                   right: 5,
                   //MediaQuery.of(context).size.width*0.05,
                   bottom: MediaQuery.of(context).size.height * 0.15,
                   child: Column(
                     children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(3),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () async {
+                            setState(() async {});
+                          },
+                          backgroundColor: Color(0xFF389490),
+                          foregroundColor: Color(0xFFFFFFFF),
+                          child: Icon(
+                            Icons.free_breakfast,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        //asma boite reception
+                        padding: EdgeInsets.all(3),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () async {
+                            utilisateurID = await AuthService().connectedID();
+                            currentUser =
+                                await AuthService().getPseudo(utilisateurID);
+                            setState(() {
+                              groupPath = path;
+                              stackIndex = 2;
+                            });
+                          },
+                          backgroundColor: Color(0xFF389490),
+                          foregroundColor: Color(0xFFFFFFFF),
+                          child: Icon(
+                            Icons.message,
+                            size: 20,
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
@@ -710,7 +1018,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           foregroundColor: Color(0xFFFFFFFF),
                           child: Icon(
                             Icons.group,
-                            size: 30,
+                            size: 20,
                           ),
                         ),
                       ),
@@ -727,82 +1035,296 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           foregroundColor: Color(0xFFFFFFFF),
                           child: Icon(
                             Icons.group_add,
-                            size: 30,
+                            size: 20,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
+                //la fenetre personnaliser asma
+                IndexedStack(
+                  index: stackIndex,
+                  children: <Widget>[
+                    Container(),
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: <Widget>[
+                            FlatButton(
+                                padding: EdgeInsets.all(0),
+                                child: Container(
+                                  color: Color(0x99707070),
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    stackIndex = 0;
+                                  });
+                                }),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                width: 380,
+                                height: 280,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color(0xFFd0d8e8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blueGrey,
+                                      blurRadius: 3.0,
+                                      spreadRadius: 1.0,
+                                      offset: Offset(0.0, 2.0),
+                                    )
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      'Personnaliser une alerte',
+                                      style: TextStyle(
+                                          color: Color(0xFF707070),
+                                          fontSize: 18.0,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(height: 15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(32.0)),
+                                        color: Colors.white,
+                                        elevation: 5.0,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              alertePerso = value;
+                                            },
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              color: Color(0xFF707070),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            decoration: InputDecoration(
+                                              prefixIcon: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.sms_failed,
+                                                  color: Color(0xFF707070),
+                                                ),
+                                              ),
+                                              labelText: 'Contenu de l\'alerte',
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 10.0,
+                                                      horizontal: 20.0),
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(32.0)),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Color(0xd03b466b),
+                                                    width: 1.0),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(32.0)),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Color(0xd03b466b),
+                                                    width: 2.0),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(32.0)),
+                                              ),
+                                              labelStyle: TextStyle(
+                                                color: Color(0xd03b466b),
+                                              ),
+                                            ),
+                                            maxLength: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    RoundedButton(
+                                      title: 'Ok',
+                                      colour: Color(0xd03b466b),
+                                      onPressed: () async {
+                                        if (alertePerso != null) {
+                                          /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
+                                          List<DocumentSnapshot> fff=result.documents;
+                                          DocumentSnapshot fff1=fff[0];*/
+                                          _firestore
+                                              .collection('Utilisateur')
+                                              .document(utilisateurID)
+                                              .updateData({
+                                            'alertLIST': FieldValue.arrayUnion(
+                                                [alertePerso]),
+                                          });
+                                          alertePerso = null;
+                                        }
+                                        setState(() {
+                                          stackIndex = 0;
+                                          _controller.clear();
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: <Widget>[
+                        FlatButton(
+                            padding: EdgeInsets.all(0),
+                            child: Container(
+                              color: Color(0x99707070),
+                              height: double.infinity,
+                              width: double.infinity,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                stackIndex = 0;
+                              });
+                            }),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 150.0, horizontal: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFFd0d8e8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueGrey,
+                                  blurRadius: 3.0,
+                                  spreadRadius: 1.0,
+                                  offset: Offset(0.0, 2.0),
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    'Boite de recécption',
+                                    style: TextStyle(
+                                        letterSpacing: 2,
+                                        color: Color(0xFF3b466b),
+                                        fontSize: 18.0,
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: ReceivedAlertStream(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
             // the drawer, index=1
             Container(
               width: size.width,
-              color: Color.fromRGBO(255, 255, 255, 0.3),
-              child: Stack(
+              height: size.height,
+              color: Color.fromRGBO(255, 255, 255, 0.5),
+              child: Column(
                 children: <Widget>[
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.02,
-                    top: MediaQuery.of(context).size.height * 0.03,
-                    child: MaterialButton(
-                      onPressed: () {
-                        setState(() {
-                          index = 0;
-                        });
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
+                  Spacer(
+                    flex: 1,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      MaterialButton(
+                        onPressed: () {
+                          // _closeDrawer(context);
+                          setState(() {
+                            index = 0;
+                          });
+                        },
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                    ],
+                  ),
+                  Spacer(
+                    flex: 2,
                   ),
                   Center(
                     child: Container(
-                      height: size.height * 0.6,
-                      width: size.width * 0.65,
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      height: 450,
+                      width: 280,
+                      //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromRGBO(59, 70, 107, 0.8),
+                        color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Spacer(
+                            flex: 1,
+                          ),
                           Container(
-                            height: size.width * 0.25,
-                            width: size.width * 0.4,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  height: size.width * 0.15,
-                                  width: size.width * 0.15,
-                                  child: CircleAvatar(
-                                    backgroundColor: myWhite,
-                                    child:
-                                        //TODO replace by the photo
-                                        Icon(
-                                      Icons.person_outline,
-                                      size: 40,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'utilisateur',
-                                    textDirection: TextDirection.rtl,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ],
+                            height: 80,
+                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                            width: 80,
+                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            child: CircleAvatar(
+                              backgroundColor: Color(0xFFFFFFFF),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(Userimage)),
                             ),
+                          ),
+                          Center(
+                            child: Text(
+                              Username,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 1,
                           ),
                           Center(
                             child: Column(
@@ -811,10 +1333,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   onTap: null,
                                   leading: Icon(
                                     Icons.playlist_add_check,
@@ -831,10 +1349,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, FavoritePlacesScreen.id);
+                                  },
                                   leading: Icon(Icons.star, color: myWhite),
                                   title: Text(
                                     "Favoris",
@@ -846,10 +1364,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   leading: Icon(
                                     Icons.group,
                                     color: myWhite,
@@ -867,10 +1381,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -885,127 +1395,256 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     ),
                                   ),
                                 ),
+                                ListTile(
+                                  onTap: null,
+                                  leading: Icon(
+                                    Icons.directions_run,
+                                    color: Colors.white,
+                                  ),
+                                  title: Text(
+                                    "Déconnecter",
+                                    //strutStyle: ,
+                                    style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w600,
+                                        color: myWhite,
+                                        fontSize: 15),
+                                  ),
+                                ),
                               ],
                             ),
+                          ),
+                          Spacer(
+                            flex: 1,
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.45,
-                    bottom: MediaQuery.of(context).size.height * 0.1,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      child: FloatingActionButton(
-                        onPressed: () {},
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Color(0xFFFFFFFF),
-                        child: Transform(
-                          transform: Matrix4.rotationX(170),
-                          child:
-                              Icon(Icons.directions_run, color: c2, size: 32.0),
-                        ),
-                      ),
-                    ),
+                  Spacer(
+                    flex: 5,
                   ),
                 ],
               ),
             ),
             //index = 2 : choix de groupe
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _visible = !_visible;
-                  index = 0;
-                });
-              },
-              child: Container(
-                  width: size.width,
-                  height: size.height,
-                  child: Center(
-                    child: Container(
-                      height: 370,
-                      width: 266,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(59, 70, 107, 0.5)),
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            Spacer(
-                              flex: 1,
-                            ),
-                            Text("Créer un groupe ",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromRGBO(255, 255, 255, 1),
-                                )),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                });
+            Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      //  _visible = !_visible;
+                      index = 0;
+                    });
+                  },
+                  child: Container(
+                    height: size.height,
+                    width: size.width,
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                  ),
+                ),
+                Container(
+                    width: size.width,
+                    height: size.height,
+                    child: Center(
+                      child: Container(
+                        height: 370,
+                        width: 266,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(59, 70, 107, 0.5)),
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Spacer(
+                                flex: 1,
+                              ),
+                              Text("Créer un groupe ",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                  )),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    index = 0;
+                                  });
 
-                                Navigator.pushNamed(context, NvVoyagePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.directions_bus,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "de voyage",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
-                                ),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  index = 0;
-                                });
-                                Navigator.pushNamed(
-                                    context, NvLongTermePage.id);
-                              },
-                              child: Bouton(
-                                icon: Icon(
-                                  Icons.people,
-                                  color: Color(0xff707070),
-                                  size: 75,
-                                ),
-                                contenu: Text(
-                                  "a long terme",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xff707070)),
+                                  Navigator.pushNamed(context, NvVoyagePage.id);
+                                },
+                                child: Bouton(
+                                  icon: Icon(
+                                    Icons.directions_bus,
+                                    color: Color(0xff707070),
+                                    size: 75,
+                                  ),
+                                  contenu: Text(
+                                    "de voyage",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
+                                        color: Color(0xff707070)),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            )
-                          ],
+                              Spacer(
+                                flex: 1,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    index = 0;
+                                  });
+                                  Navigator.pushNamed(
+                                      context, NvLongTermePage.id);
+                                },
+                                child: Bouton(
+                                  icon: Icon(
+                                    Icons.people,
+                                    color: Color(0xff707070),
+                                    size: 75,
+                                  ),
+                                  contenu: Text(
+                                    "a long terme",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
+                                        color: Color(0xff707070)),
+                                  ),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 1,
+                              )
+                            ],
+                          ),
                         ),
                       ),
+                    )),
+              ],
+            ),
+            //index =3 : barre d'info
+            Stack(
+              children: <Widget>[
+                Container(
+                    height: size.height,
+                    width: size.width,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          // pour dezoumer de cette personne
+                          // et remettre la cam sur l'utilisateur courrant
+                          index = 0;
+                        });
+                      },
+                    )),
+                Positioned(
+                  bottom: 4,
+                  left: MediaQuery.of(context).size.width * 0.025,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    height: MediaQuery.of(context).size.height * 0.10,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(33.0),
+                      color: Color(0xFF3B466B),
+                      //color:Color.fromRGBO(59, 70, 150, 0.8),
                     ),
-                  )),
+                    child: Row(
+                      children: <Widget>[
+                        Spacer(
+                          flex: 1,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: MediaQuery.of(context).size.height *
+                                    0.1 *
+                                    0.65,
+                                width: MediaQuery.of(context).size.height *
+                                    0.1 *
+                                    0.65,
+                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                child: CircleAvatar(
+                                  backgroundColor: Color(0xFFFFFFFF),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child:
+                                          Image.network(membreinfo['image'])),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text(
+                                    membreinfo['pseudo'],
+                                    style: TextStyle(
+                                      fontFamily: 'MontSerrat',
+                                      fontSize: 10,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        //distance restante restant
+                        Spacer(
+                          flex: 1,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            child: membreinfo['vitesse'],
+                          ),
+                        ),
+                        Spacer(flex: 1),
+                        //temps restant
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            child: membreinfo['temps'],
+                          ),
+                        ),
+                        //niveau de batterie
+                        Spacer(flex: 1),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            child: Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.battery_std,
+                                  color: Color(0xFFFFFFFF),
+                                  semanticLabel: '30%',
+                                  textDirection: TextDirection.rtl,
+                                ),
+                                membreinfo['batterie'],
+                              ],
+                            ),
+                          ),
+                        ),
+                        Spacer(flex: 1),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ]),
         ],
@@ -1017,11 +1656,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 class MapLongTermePage extends StatefulWidget {
   LongTerme groupe;
   String path;
-
-  MapLongTermePage(this.groupe, this.path);
+  List<String> imagesUrl;
+  MapLongTermePage(this.groupe, this.path, this.imagesUrl);
 
   @override
-  _MapLongTermePageState createState() => _MapLongTermePageState(groupe, path);
+  _MapLongTermePageState createState() =>
+      _MapLongTermePageState(groupe, path, imagesUrl);
 }
 
 class _MapLongTermePageState extends State<MapLongTermePage> {
@@ -1032,8 +1672,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
   int index;
-
-  _MapLongTermePageState(this.groupe, this.path);
+  List<String> imagesUrl;
+  _MapLongTermePageState(this.groupe, this.path, this.imagesUrl);
 
   @override
   void initState() {
@@ -1045,7 +1685,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
     Size size = MediaQuery.of(context).size;
     List<Widget> liste = new List();
     //  var it = groupe.membres.iterator;
-    for (var membre in groupe.membres) {
+    for (int index = 0; index < groupe.membres.length; index++) {
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
@@ -1060,17 +1700,16 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                   margin: EdgeInsets.symmetric(horizontal: 4),
                   child: CircleAvatar(
                     backgroundColor: Color(0xFFFFFFFF),
-                    child: Icon(
-                      Icons.person,
-                      color: Color(0xFF707070),
-                    ),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(imagesUrl[index])),
                   ),
                 ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      membre['pseudo'],
+                      groupe.membres[index]['pseudo'],
                       //overflow:TextOverflow.fade,
 
                       //textScaleFactor: 0.4,
@@ -1105,60 +1744,102 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
             ),
+            markers: Set<Marker>.of(
+                Provider.of<UpdateMarkers>(context).markers.values),
           ),
           IndexedStack(index: index, children: <Widget>[
             //index = 0 :
             Stack(
               children: <Widget>[
                 Positioned(
-                  left: 0,
-                  top: 30,
-                  // top:size.height*0.07*0.5,
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Color(0xFF3B466B),
-                      ),
-                      onPressed: () {
-                        // _openDrawer(context);
-                        setState(() {
-                          index = 1;
-                          _visible = !_visible;
-                        });
-                      },
-                      iconSize: 30.0),
-                ),
-                Positioned(
-                  top: 30.0,
-                  right: 15.0,
-                  left: 35.0,
+                  left: size.width * 0.075,
+                  top: size.height * 0.04,
+                  // child: AnimatedOpacity(
+                  // opacity: _visible ? 1.0 : 0.0,
+                  //duration: Duration(milliseconds: 500),
                   child: Container(
-                    height: 50.0,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          hintText: 'Recherche',
-                          border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(left: 15.0, top: 15.0),
-                          suffixIcon: IconButton(
-                              icon: Icon(Icons.search),
-                              onPressed: searchandNavigate,
-                              iconSize: 30.0)),
-                      onChanged: (val) {
-                        setState(() {
-                          searchAddr = val;
-                        });
-                      },
-                    ),
-                  ),
+                      height: size.height * 0.07,
+                      width: size.width * 0.85,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40.0),
+                          color: Colors.white),
+                      child: Row(
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(
+                                Icons.menu,
+                                color: Color(0xFF3B466B),
+                              ),
+                              onPressed: () async {
+                                String id = await authService.connectedID();
+                                String pseudo = await Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(id)
+                                    .get()
+                                    .then((doc) {
+                                  return doc.data['pseudo'];
+                                });
+                                String image = await Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(id)
+                                    .get()
+                                    .then((doc) {
+                                  return doc.data['photo'];
+                                });
+                                // _openDrawer(context);
+                                setState(() {
+                                  Username = pseudo;
+                                  Userimage = image;
+                                  index = 1;
+                                  // _visible = !_visible;
+                                });
+                              },
+                              iconSize: 30.0),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          Center(
+                            child: Text(
+                              'Recherche',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Montserrat',
+                                fontSize: 15,
+                                color: Color(0xff707070),
+                              ),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 1,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.search,
+                                color: Color(0xFF3B466B),
+                              ),
+                              onPressed: () async {
+                                // show input autocomplete with selected mode
+                                // then get the Prediction selected
+                                Prediction p = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey: kGoogleApiKey,
+                                  onError: onError,
+                                  mode: Mode.overlay,
+                                  language: "fr",
+                                  components: [
+                                    Component(Component.country, "DZ")
+                                  ],
+                                );
+
+                                displayPredictionRecherche(p);
+                              },
+                              iconSize: 30.0),
+                        ],
+                      )),
                 ),
                 //liste of members
                 Positioned(
-                  bottom: 4,
+                  bottom: 5,
                   left: MediaQuery.of(context).size.width * 0.025,
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.95,
@@ -1171,8 +1852,37 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: liste,
+                      shrinkWrap: false,
                     ),
                   ),
+                ),
+                //nom groupe
+                Positioned(
+                  bottom: 65,
+                  left: MediaQuery.of(context).size.width * 0.025,
+                  child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: primarycolor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueGrey,
+                            blurRadius: 3.0,
+                            spreadRadius: 0.1,
+                            offset: Offset(0.0, 1.0),
+                          )
+                        ],
+                      ),
+                      child: Text(
+                        groupe.nom,
+                        style: TextStyle(
+                          color: myWhite,
+                          fontSize: 12,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
                 ),
                 //floationg butons
                 Positioned(
@@ -1221,72 +1931,77 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             // the drawer, index=1
             Container(
               width: size.width,
-              color: Color.fromRGBO(255, 255, 255, 0.3),
-              child: Stack(
+              height: size.height,
+              color: Color.fromRGBO(255, 255, 255, 0.5),
+              child: Column(
                 children: <Widget>[
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.02,
-                    top: MediaQuery.of(context).size.height * 0.03,
-                    child: MaterialButton(
-                      onPressed: () {
-                        // _closeDrawer(context);
-                        setState(() {
-                          index = 0;
-                          _visible = true;
-                        });
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
+                  Spacer(
+                    flex: 1,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      MaterialButton(
+                        onPressed: () {
+                          // _closeDrawer(context);
+                          setState(() {
+                            index = 0;
+                          });
+                        },
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                    ],
+                  ),
+                  Spacer(
+                    flex: 2,
                   ),
                   Center(
                     child: Container(
-                      height: size.height * 0.6,
-                      width: size.width * 0.65,
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      height: 450,
+                      width: 280,
+                      //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromRGBO(59, 70, 107, 0.8),
+                        color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Spacer(
+                            flex: 1,
+                          ),
                           Container(
-                            height: size.width * 0.25,
-                            width: size.width * 0.4,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  height: size.width * 0.15,
-                                  width: size.width * 0.15,
-                                  child: CircleAvatar(
-                                    backgroundColor: myWhite,
-                                    child:
-                                        //TODO replace by the photo
-                                        Icon(
-                                      Icons.person_outline,
-                                      size: 40,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'utilisateur',
-                                    textDirection: TextDirection.rtl,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              ],
+                            height: 80,
+                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                            width: 80,
+                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            child: CircleAvatar(
+                              backgroundColor: Color(0xFFFFFFFF),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(Userimage)),
                             ),
+                          ),
+                          Center(
+                            child: Text(
+                              Username,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 1,
                           ),
                           Center(
                             child: Column(
@@ -1295,10 +2010,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   onTap: null,
                                   leading: Icon(
                                     Icons.playlist_add_check,
@@ -1315,10 +2026,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, FavoritePlacesScreen.id);
+                                  },
                                   leading: Icon(Icons.star, color: myWhite),
                                   title: Text(
                                     "Favoris",
@@ -1330,10 +2041,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   leading: Icon(
                                     Icons.group,
                                     color: myWhite,
@@ -1351,10 +2058,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 60.0,
-                                    vertical: 0,
-                                  ),
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -1369,30 +2072,34 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                     ),
                                   ),
                                 ),
+                                ListTile(
+                                  onTap: null,
+                                  leading: Icon(
+                                    Icons.directions_run,
+                                    color: Colors.white,
+                                  ),
+                                  title: Text(
+                                    "Déconnecter",
+                                    //strutStyle: ,
+                                    style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w600,
+                                        color: myWhite,
+                                        fontSize: 15),
+                                  ),
+                                ),
                               ],
                             ),
+                          ),
+                          Spacer(
+                            flex: 1,
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.45,
-                    bottom: MediaQuery.of(context).size.height * 0.1,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      child: FloatingActionButton(
-                        onPressed: () {},
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Color(0xFFFFFFFF),
-                        child: Transform(
-                          transform: Matrix4.rotationX(170),
-                          child:
-                              Icon(Icons.directions_run, color: c2, size: 32.0),
-                        ),
-                      ),
-                    ),
+                  Spacer(
+                    flex: 5,
                   ),
                 ],
               ),
@@ -1605,5 +2312,466 @@ class Bouton extends StatelessWidget {
             )
           ],
         ));
+  }
+}
+
+//asma la fin
+class AlertBubble extends StatelessWidget {
+  final icon;
+  final text;
+  final bool isReceived;
+
+  AlertBubble({
+    @required this.icon,
+    @required this.text,
+    @required this.isReceived,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: () async {
+        //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
+        if (isReceived) {
+        } else {
+          try {
+            final result = await InternetAddress.lookup('google.com');
+            var result2 = await Connectivity().checkConnectivity();
+            var b = (result2 != ConnectivityResult.none);
+
+            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              bool isLocationEnabled =
+                  await Geolocator().isLocationServiceEnabled();
+              if (isLocationEnabled) {
+                //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
+                var vaaa = _AlertScreenState();
+                vaaa.initState();
+                await vaaa.showNotificationWithDefaultSound();
+
+                Position position = await Geolocator().getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.medium);
+                Geoflutterfire geo = Geoflutterfire();
+                GeoFirePoint geoP = geo.point(
+                    latitude: position.longitude,
+                    longitude: position.longitude);
+
+                if (text != null &&
+                    icon != null &&
+                    currentUser != null &&
+                    geoP != null) {
+                  _firestore
+                      .document(groupPath)
+                      .collection('receivedAlerts')
+                      .add({
+                    'content': text,
+                    'icon': icon.toString(),
+                    'sender': currentUser,
+                    'envoyeLe': DateTime.now().toUtc(),
+                    'position': geoP.data,
+                  });
+                }
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Row(
+                    children: <Widget>[
+                      Text(
+                        'Alerte envoyée !',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Expanded(
+                        child: SizedBox(),
+                      ),
+                      Icon(
+                        Icons.check,
+                        color: Color(0xFF3b466b),
+                      )
+                    ],
+                  ),
+                ));
+                Navigator.pop(context);
+              } else {
+                Navigator.pop(context);
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Row(
+                    children: <Widget>[
+                      Text(
+                        'Veuillez activer votre GPS',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Expanded(
+                        child: SizedBox(),
+                      ),
+                      Icon(
+                        Icons.location_off,
+                        color: Colors.yellow,
+                      )
+                    ],
+                  ),
+                ));
+              }
+            }
+          } on SocketException catch (_) {
+            Navigator.pop(context);
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Row(
+                children: <Widget>[
+                  Text(
+                    'Vérifiez votre connexion internet',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Icon(
+                    Icons.signal_wifi_off,
+                    color: Colors.yellow,
+                  )
+                ],
+              ),
+            ));
+          }
+        }
+
+        if (currentUser == 'ireumimweo') {
+          //c'est un membre du groupe
+          //TODO : SHOW NOTIF FOR A GROUP
+        }
+      },
+      padding: const EdgeInsets.all(0),
+      child: Card(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+        margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+        color: Colors.white,
+        elevation: 5.0,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(11.0),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  Image(
+                    image: AssetImage(
+                      'images/circle.png',
+                    ),
+                    width: 52.0,
+                  ),
+                  Icon(
+                    icon,
+                    color: Color(0xFF707070),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 25,
+                top: 25,
+                left: 8,
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                    fontSize: 16.0,
+                    color: Color(0xFF707070),
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AlertStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> alertList = [
+      AlertBubble(
+        text: 'Accident',
+        icon: Icons.directions_car,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Arrêt',
+        icon: Icons.subway,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Arrivé à destination',
+        icon: Icons.pin_drop,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Embouteillage',
+        icon: Icons.traffic,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Radar',
+        icon: Icons.settings_input_antenna,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Route barrée',
+        icon: Icons.block,
+        isReceived: false,
+      ),
+      AlertBubble(
+        text: 'Station-services',
+        icon: Icons.local_gas_station,
+        isReceived: false,
+      ),
+    ];
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('Utilisateur').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Color(0xFF707070),
+            ),
+          );
+        }
+
+        List<Widget> alertBubbles = alertList;
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          var id = alert.documentID;
+          if (utilisateurID == id) {
+            final List alertText = List.from(alert.data['alertLIST']);
+            for (int i = 0; i < alertText.length; i++) {
+              int llist = alertList.length;
+              if (llist < (alertText.length + 7)) {
+                var alertBubble = AlertBubble(
+                  text: alertText[i],
+                  icon: Icons.sms_failed,
+                  isReceived: false,
+                );
+                alertList.add(alertBubble);
+              }
+            }
+          }
+        }
+        return ListView(
+          children: alertBubbles,
+        );
+      },
+    );
+  }
+}
+
+class AlertScreen extends StatefulWidget {
+  @override
+  _AlertScreenState createState() => _AlertScreenState();
+}
+
+class _AlertScreenState extends State<AlertScreen> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('app_icon');
+    var ios = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: onSelectedNotification);
+  }
+
+  Future onSelectedNotification(String payload) {
+    debugPrint('payload : $payload');
+    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
+    setState(() {
+      stackIndex = 3;
+    });
+    /*showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Color(0xFFd0d8e2),
+          title: Text('Notification'),
+          content: Text('heeeeeeeeeeey'),
+        );
+      },
+    );*/
+  }
+
+  Future showNotificationWithDefaultSound() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Vous avez reçu une nouvelle alerte',
+      'Clickez pour en savoir plus',
+      platformChannelSpecifics,
+      payload: 'Default_Sound',
+    );
+  }
+  //------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+IconData createIcon(String s) {
+  switch (s) {
+    case 'IconData(U+0E531)':
+      {
+        return Icons.directions_car;
+      }
+      break;
+    case 'IconData(U+0E546)':
+      {
+        return Icons.local_gas_station;
+      }
+      break;
+    case 'IconData(U+0E14B)':
+      {
+        return Icons.block;
+      }
+      break;
+    case 'IconData(U+0E55E)':
+      {
+        return Icons.pin_drop;
+      }
+      break;
+    case 'IconData(U+0E565)':
+      {
+        return Icons.traffic;
+      }
+      break;
+    case 'IconData(U+0E8BF)':
+      {
+        return Icons.settings_input_antenna;
+      }
+      break;
+    case 'IconData(U+0E56F)':
+      {
+        return Icons.subway;
+      }
+      break;
+    case 'IconData(U+0E626)':
+      {
+        return Icons.sms_failed;
+      }
+      break;
+  }
+}
+
+class ReceivedAlertBubble extends StatelessWidget {
+  String sender;
+  AlertBubble alert;
+  DateTime date;
+  GeoPoint geoPoint;
+
+  ReceivedAlertBubble(
+      {String sender, AlertBubble alert, Timestamp date, GeoPoint geoPoint}) {
+    this.sender = sender;
+    this.date = date.toDate();
+    this.alert = alert;
+    this.geoPoint = geoPoint;
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FlatButton(
+        onPressed: () {
+          //TODO: je positionne l'alerte sur la map
+        },
+        padding: const EdgeInsets.all(0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            alert,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Envoyée par: $sender le $date',
+                style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xFF707070),
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ReceivedAlertStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .document(groupPath)
+          .collection("receivedAlerts")
+          .orderBy("envoyeLe", descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Color(0xFF707070),
+            ),
+          );
+        }
+
+        List<Widget> alertList = [];
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          final alertContent = alert.data['content'];
+          final alertSender = alert.data['sender'];
+          final alertIconName = alert.data['icon'];
+          final alertDate = alert.data['envoyeLe'];
+          final alertGeoP = alert.data['position']['geopoint'];
+
+          var alertBubble = AlertBubble(
+            text: alertContent,
+            icon: createIcon(alertIconName),
+            isReceived: true,
+          );
+
+          var receivedAlertBubble = ReceivedAlertBubble(
+            sender: alertSender,
+            alert: alertBubble,
+            date: alertDate,
+            geoPoint: alertGeoP,
+          );
+          alertList.add(receivedAlertBubble);
+        }
+
+        return ListView(
+          children: alertList,
+        );
+      },
+    );
   }
 }

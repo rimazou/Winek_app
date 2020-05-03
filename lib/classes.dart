@@ -22,6 +22,7 @@ class Utilisateur {
   List invitation;
 
   List alertLIST;
+
   Map <String, dynamic> location;
 
   Utilisateur({this.pseudo,
@@ -36,6 +37,7 @@ class Utilisateur {
     this.invitation,
     this.location,
   });
+
 
   @override
   Map<String, dynamic> get map {
@@ -84,6 +86,7 @@ class Utilisateur {
     location: data.data['location'],
   );
 
+
 }
 
 class MsgPredefinis {
@@ -96,13 +99,12 @@ class MsgPredefinis {
 
 abstract class Groupe {
   String nom;
-  bool affiche;
   List membres;
   String admin;
 
   //----------fonctions--------------//
 
-  Groupe({this.nom, this.affiche, this.membres, this.admin});
+  Groupe({this.nom, this.membres, this.admin});
 /*
   void modifier_nom_groupe();
   void ajouter_membre();
@@ -116,22 +118,23 @@ abstract class Groupe {
 class LongTerme extends Groupe {
   // la liste des membres contient des utilisateurs
 
-  LongTerme({String nom, bool affiche, List membres, String admin})
-      : super(nom: nom, affiche: affiche, membres: membres, admin: admin);
+  LongTerme({String nom, List membres, String admin})
+      : super(nom: nom, membres: membres, admin: admin);
 
   LongTerme.fromMap(Map<String, dynamic> data)
       : this(
-    nom: data['nom'],
-    admin: data['admin'],
-    membres: new List.from(data['membres']),
-  );
+
+          nom: data['nom'],
+          admin: data['admin'],
+          membres: new List.from(data['membres']),
+        );
+
 }
 
 class Voyage extends Groupe {
-  double destination_altitude;
+  double destination_latitude;
   double destination_longitude;
   String destination;
-  List<Membre> membre_info;
 
   //cette list contient les infos des membres a affiche sur la carte
   //a utiliser avec la barre d'info
@@ -139,23 +142,24 @@ class Voyage extends Groupe {
   // du groupe : voir membres, ajouter, creer grp... ect
   //pour pouvoir gerer les deux types de grp au memes temps
 
-  Voyage({String nom,
-    bool affiche,
+  Voyage({
+    String nom,
     List membres,
     String admin,
-    this.destination_altitude,
+    this.destination_latitude,
     this.destination_longitude,
     this.destination,
-    this.membre_info})
-      : super(nom: nom, affiche: affiche, membres: membres, admin: admin);
+  }) : super(nom: nom, membres: membres, admin: admin);
 
   Voyage.fromMap(Map<String, dynamic> data)
       : this(
-    nom: data['nom'],
-    admin: data['admin'],
-    destination: data['destination'],
-    membres: new List.from(data['membres']),
-  );
+          nom: data['nom'],
+          admin: data['admin'],
+          destination: data['destination']['adresse'],
+          destination_latitude: data['destination']['latitude'],
+          destination_longitude: data['destination']['longitude'],
+          membres: new List.from(data['membres']),
+        );
 }
 
 class Membre {

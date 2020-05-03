@@ -8,8 +8,10 @@ import 'MapPage.dart';
 import '../main.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
-import '../dataBaseSoum.dart';
-import 'list_grp.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'DestinationFromFav.dart';
 
 Databasegrp data = Databasegrp();
 bool _alerte_nom = false;
@@ -17,10 +19,13 @@ bool _alerte_mbr = false;
 String nom_grp = "";
 var _controller;
 Groupe nv_grp;
-String _destination;
+String _destinationAdr;
+Map<String, dynamic> _destination;
 List<Map<dynamic, dynamic>> membres;
-bool _loading = false;
+bool _loading;
 final _firestore = Firestore.instance;
+GoogleMapsPlaces _places =
+    GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 void createlongterme() async {
   // get the current user info
@@ -42,6 +47,17 @@ void createlongterme() async {
       user
     ], // since he's the admin, others have to accept the invitation first
   });
+  Geoflutterfire geo = Geoflutterfire();
+  GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
+
+  await _firestore
+      .document(ref.path)
+      .collection('members')
+      .document(user['id'])
+      .setData({
+    'position': point.data,
+  });
+  print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   print(grp);
   // adding that grp to member's invitations liste.
@@ -99,6 +115,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
   void initState() {
     membres = List<Map>();
     _controller = TextEditingController();
+    _loading = false;
   }
 
   Widget build(BuildContext context) {
@@ -278,11 +295,23 @@ void createvoyage() async {
     'nom': nom_grp,
     'admin': user['pseudo'],
     'destination': _destination,
-    'membres': [
-      user
-    ], // since he's the admin, others have to accept the invitation first
+    'membres': [user],
+    'justReceivedAlert': false,
+    // since he's the admin, others have to accept the invitation first
   });
+  print('voyage cree');
+  //creating the subcollection doc for location
+  Geoflutterfire geo = Geoflutterfire();
+  GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
 
+  await _firestore
+      .document(ref.path)
+      .collection('members')
+      .document(user['id'])
+      .setData({
+    'position': point.data,
+  });
+  print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   // adding that grp to member's invitations liste:
   for (Map m in membres) {
@@ -305,6 +334,7 @@ void createvoyage() async {
       });
     }
   }
+  print('invitations sent');
   //adding it to admin list of grp
   DocumentSnapshot userdoc =
       await Firestore.instance.collection('UserGrp').document(user['id']).get();
@@ -324,6 +354,7 @@ void createvoyage() async {
       'groupes': [grp]
     });
   }
+  print('groupe added');
 }
 
 class NvVoyagePage extends StatefulWidget {
@@ -336,8 +367,9 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
   @override
   void initState() {
     membres = new List();
-    _destination = 'votre destination';
+    _destinationAdr = 'votre destination';
     _controller = TextEditingController();
+    _loading = false;
   }
 
   Widget build(BuildContext context) {
@@ -387,17 +419,56 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                       fontSize: 14,
                     ),
                   ),
-                  Text(
-                    '$_destination',
-                    style: TextStyle(
-                      color: Color(0xff707070),
-                      fontFamily: "Montserrat",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
+                  Expanded(
+                    child: Text(
+                      '$_destinationAdr',
+                      style: TextStyle(
+                        color: Color(0xff707070),
+                        fontFamily: "Montserrat",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                  Spacer(
-                    flex: 1,
+                  IconButton(
+                    onPressed: () async {
+                      // show input autocomplete with selected mode
+                      // then get the Prediction selected
+                      //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
+                      Prediction p = await PlacesAutocomplete.show(
+                        context: context,
+                        apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
+                        onError: onError,
+                        mode: Mode.overlay,
+                        language: "fr",
+                        components: [Component(Component.country, "DZ")],
+                      );
+                      if (p != null) {
+                        PlacesDetailsResponse detail =
+                            await _places.getDetailsByPlaceId(p.placeId);
+                        var placeId = p.placeId;
+                        String placeIdToString = "$placeId";
+                        double lat = detail.result.geometry.location.lat;
+                        double lng = detail.result.geometry.location.lng;
+                        PlacesDetailsResponse place =
+                            await _places.getDetailsByPlaceId(placeIdToString);
+                        final placeDetail = place.result;
+                        setState(() {
+                          _destinationAdr = placeDetail.formattedAddress;
+                          print(_destinationAdr);
+                          _destination = {
+                            'latitude': lat,
+                            'longitude': lng,
+                            'adresse': _destinationAdr
+                          };
+                        });
+                      }
+
+                      print(_destination);
+                    },
+                    icon: Icon(Icons.mode_edit),
+                    color: Color(0xff707070),
+                    iconSize: 20,
                   ),
                   IconButton(
                     onPressed: () {
@@ -405,13 +476,14 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                         _destination = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RecherchePage()));
+                                builder: (context) => GetDestination()));
+                        _destinationAdr = _destination['adresse'];
                       });
                     },
-                    icon: Icon(Icons.mode_edit),
+                    icon: Icon(Icons.star),
                     color: Color(0xff707070),
                     iconSize: 20,
-                  ),
+                  )
                 ],
               ),
             ),
@@ -551,38 +623,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
     );
   }
 }
-//----------------------------------------------------------------------------------//
 
-class RecherchePage extends StatefulWidget {
-  @override
-  _RecherchePageState createState() => _RecherchePageState();
-}
-
-class _RecherchePageState extends State<RecherchePage> {
-  @override
-  Widget build(BuildContext context) {
-    var _control = TextEditingController();
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _control,
-              maxLines: 1,
-            ),
-            FlatButton(
-              child: Text('ok'),
-              onPressed: () {
-                var txt = _control.text;
-                Navigator.pop(context, txt);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 //----------------------------------------------------------------------------------//
 
 class FriendList extends StatelessWidget {
@@ -676,16 +717,16 @@ class _FriendsListState extends State<FriendsList> {
 Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
   String id = await authService.connectedID();
   print(id);
-  List<dynamic> friendsid = List();
+  List<Map<dynamic, dynamic>> friendsid = List<Map>();
   await Firestore.instance
       .collection('Utilisateur')
       .document(id)
       .get()
       .then((DocumentSnapshot doc) {
-    friendsid = doc.data['amis'];
+    friendsid = List<Map>.from(doc.data['amis']);
   });
   print(friendsid);
-  List<dynamic> pseudos = List();
+  /* List<dynamic> pseudos = List();
   for (String id in friendsid) {
     await Firestore.instance
         .collection('Utilisateur')
@@ -699,6 +740,14 @@ Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
   List<Map<dynamic, dynamic>> friendlist = List();
   for (int index = 0; index < friendsid.length; index++) {
     friendlist.add({'pseudo': pseudos[index], 'id': friendsid[index]});
-  }
-  return friendlist;
+  } */
+  return friendsid;
+}
+
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
+
+void onError(PlacesAutocompleteResponse response) {
+  homeScaffoldKey.currentState.showSnackBar(
+    SnackBar(content: Text(response.errorMessage)),
+  );
 }
