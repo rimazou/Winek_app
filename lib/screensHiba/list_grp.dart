@@ -117,7 +117,7 @@ class grpTile extends StatelessWidget {
             });
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
-                .UpdateusersLocation(grp_chemin);
+                .UpdateusersLocation(grp_chemin,context);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -132,7 +132,7 @@ class grpTile extends StatelessWidget {
             });
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
-                .UpdateusersLocation(grp_chemin);
+                .UpdateusersLocation(grp_chemin,context);
             Navigator.push(
                 context,
                 MaterialPageRoute(

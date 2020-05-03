@@ -40,35 +40,26 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
 //google maps stuffs
-GoogleMapController mapController;
+
 String searchAddr;
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
+
+class controllermap extends ChangeNotifier{
+  GoogleMapController mapController;
+
 void _onMapCreated(GoogleMapController controller) {
-  mapController = controller;
-}
-
-void _openDrawer(BuildContext context) {
-  _scaffoldKey.currentState.openDrawer();
-}
-
-void _closeDrawer(BuildContext context) {
-  Navigator.of(context).pop();
+   
+   mapController = controller;
 }
 
 searchandNavigate() {
   Geolocator().placemarkFromAddress(searchAddr).then((result) {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+  mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target:
             LatLng(result[0].position.latitude, result[0].position.longitude),
         zoom: 10.0)));
   });
-}
-
-void onError(PlacesAutocompleteResponse response) {
-  homeScaffoldKey.currentState.showSnackBar(
-    SnackBar(content: Text(response.errorMessage)),
-  );
 }
 
 Future<Null> displayPredictionRecherche(Prediction p) async {
@@ -88,6 +79,27 @@ Future<Null> displayPredictionRecherche(Prediction p) async {
     print(lng);
   }
 }
+}
+
+
+
+void _openDrawer(BuildContext context) {
+  _scaffoldKey.currentState.openDrawer();
+}
+
+void _closeDrawer(BuildContext context) {
+  Navigator.of(context).pop();
+}
+
+
+
+void onError(PlacesAutocompleteResponse response) {
+  homeScaffoldKey.currentState.showSnackBar(
+    SnackBar(content: Text(response.errorMessage)),
+  );
+}
+
+
 
 class Home extends StatefulWidget {
   static const String id = 'map';
@@ -141,7 +153,7 @@ class _HomeState extends State<Home> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context,listen:false). _onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -483,7 +495,7 @@ class _HomeState extends State<Home> {
                     components: [Component(Component.country, "DZ")],
                   );
 
-                  displayPredictionRecherche(p);
+                   Provider.of<controllermap>(context,listen:false).displayPredictionRecherche(p);
                 },
                 style: TextStyle(
                     fontFamily: 'Montserrat', color: myWhite, fontSize: 18),
@@ -502,7 +514,7 @@ class _HomeState extends State<Home> {
                     Icons.search,
                     color: Color(0xFF3B466B),
                   ),
-                  onPressed: searchandNavigate,
+                  onPressed:  Provider.of<controllermap>(context,listen:false).searchandNavigate,
                   iconSize: 30.0),
             ),
           ],
@@ -582,7 +594,7 @@ class _HomeState extends State<Home> {
                 onPressed: () async {
                   Position position = await Geolocator().getCurrentPosition(
                       desiredAccuracy: LocationAccuracy.high);
-                  mapController.animateCamera(CameraUpdate.newCameraPosition(
+                   Provider.of<controllermap>(context,listen:false).mapController.animateCamera(CameraUpdate.newCameraPosition(
                       CameraPosition(
                           target: LatLng(position.latitude, position.longitude),
                           zoom: 14.0)));
@@ -702,7 +714,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated:  Provider.of<controllermap>(context,listen:false)._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -752,7 +764,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               EdgeInsets.only(left: 15.0, top: 15.0),
                           suffixIcon: IconButton(
                               icon: Icon(Icons.search),
-                              onPressed: searchandNavigate,
+                              onPressed:  Provider.of<controllermap>(context,listen:false).searchandNavigate,
                               iconSize: 30.0)),
                       onChanged: (val) {
                         setState(() {
@@ -1510,7 +1522,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated:  Provider.of<controllermap>(context,listen:false)._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -1558,7 +1570,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               EdgeInsets.only(left: 15.0, top: 15.0),
                           suffixIcon: IconButton(
                               icon: Icon(Icons.search),
-                              onPressed: searchandNavigate,
+                              onPressed:  Provider.of<controllermap>(context,listen:false).searchandNavigate,
                               iconSize: 30.0)),
                       onChanged: (val) {
                         setState(() {

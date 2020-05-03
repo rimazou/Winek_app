@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'auth.dart';
+import 'package:winek/screensHiba/MapPage.dart';
+import 'package:provider/provider.dart';
 
 class UpdateMarkers extends ChangeNotifier {
   Firestore _firestore = Firestore.instance;
@@ -18,10 +20,12 @@ class UpdateMarkers extends ChangeNotifier {
   GoogleMapController _controller;
   double dest_lat;
   double dest_lng;
-  
+  BuildContext mapcontext;
+  var val;
 
-  void UpdateusersLocation(String path) {
-
+  void UpdateusersLocation(String path,BuildContext context)async {
+   mapcontext=context;
+   val=await authService.connectedID();
     var collectionReference = _firestore.document(path).collection('members');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
@@ -37,7 +41,7 @@ class UpdateMarkers extends ChangeNotifier {
         .listen(_updateMarkers);
   }
 
-  marker_dest(String chemin)async{
+  void marker_dest(String chemin)async{
     await _firestore.document(chemin).get().then((DocumentSnapshot ds)
    { 
      dest_lat=ds.data['destinaton']['latitude'];
@@ -59,13 +63,27 @@ class UpdateMarkers extends ChangeNotifier {
     markers[id] = _marker;
     notifyListeners();
   } 
+
   
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
-
+     LatLng latlng;
+    CameraUpdate cameraUpdate;
+   
     documentList.forEach((DocumentSnapshot document) async {
       String userid = document.documentID;
       markers.remove(MarkerId(userid));
       GeoPoint point = document.data['position']['geopoint'];
+      if(val==userid)
+      {
+        latlng = new LatLng(point.latitude,point.longitude);
+          cameraUpdate = CameraUpdate.newLatLngZoom(latlng,12);
+         if(val==userid)
+      {
+        latlng = new LatLng(point.latitude,point.longitude);
+          cameraUpdate = CameraUpdate.newLatLngZoom(latlng,12);
+          Provider.of<controllermap>(mapcontext,listen:false).mapController.animateCamera(cameraUpdate);
+      }_controller.animateCamera(cameraUpdate);
+      }
       _addMarker(point.latitude, point.longitude, userid);
     });
   }
