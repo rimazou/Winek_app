@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dataBaseSoum.dart';
 import 'usersListScreen.dart';
+import 'package:winek/auth.dart';
 
 
 class ProfileScreen2 extends StatefulWidget {
@@ -11,11 +12,15 @@ class ProfileScreen2 extends StatefulWidget {
   final String currentUser ;
   final Map friend ;
 
+  final String name;
 
-  const ProfileScreen2( {this.friend ,this.pseudo,this.currentUser});
+
+  const ProfileScreen2({this.friend, this.pseudo, this.currentUser, this.name});
 
   @override
-  _ProfileScreen2State createState() => _ProfileScreen2State(friend : friend , pseudo : pseudo,currentUser : currentUser);
+  _ProfileScreen2State createState() =>
+      _ProfileScreen2State(
+          friend: friend, pseudo: pseudo, currentUser: currentUser, name: name);
 }
 
 class _ProfileScreen2State extends State<ProfileScreen2> {
@@ -40,7 +45,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   final CollectionReference userCollection = Firestore.instance.collection(
       'Utilisateur');
 
-  _ProfileScreen2State({Map friend , String pseudo, String currentUser}) {
+  _ProfileScreen2State(
+      {Map friend, String pseudo, String currentUser, String name}) {
     this.pseudo = pseudo != null ? pseudo : friend['pseudo'];
     this.currentUser=currentUser;
 
@@ -66,11 +72,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     });
 
 
-    Database().getPseudo(this.currentUser).then((String result) {
-      setState(() {
-        this.currentName= result;
-        print(currentName);
-      });});
+    this.currentName = name;
+
+    print('currentuuuuuuuuuuuuuserrr $currentUser');
+    print('currrrrentnnnnaaaameeeeeeeee  $currentName');
 
 
     Firestore.instance
@@ -118,7 +123,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   void initState()  {
     super.initState();
 
-
     print('Initstateeeeeee');
 
     userCollection.document(currentUser) // id du doc
@@ -130,8 +134,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         });
       }
     });
-    if (!invit) {
 
+    if (!invit) {
     userCollection.document(currentUser) // id du doc
         .get()
         .then((DocumentSnapshot doc) {
@@ -317,14 +321,16 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                           color: Colors.white,),),),
                       onPressed:
                           () async {
-                        Database d = await Database().init(
-                            pseudo: pseudo, subipseudo: Database().currentname);
+                        Database d = await Database().init(pseudo: pseudo,
+                            subipseudo: currentName,
+                            currentid: currentUser);
                         await d.userUpdateData();
-                        Database c = await Database().init(id: Database()
-                            .currentUser, subipseudo: pseudo);
+                        Database c = await Database().init(id: currentUser,
+                            subipseudo: pseudo,
+                            currentid: currentUser);
                         await c.userUpdateData();
                         await Database(pseudo: pseudo).userDeleteData(
-                            Database().currentuser);
+                            currentUser);
                         setState(() {
                           invit = false;
                           size = 138;
@@ -357,7 +363,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       onPressed:
                           () async {
                         await Database(pseudo: pseudo).userDeleteData(
-                            Database().currentuser);
+                            currentUser);
                         setState(() {
                           invit = false;
                           size = 138;
@@ -424,8 +430,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       .userDeleteData(id);
                 }
                 else { // if who=supprimer
-                  await Database(pseudo: pseudo).friendDeleteData(
-                      Database().currentuser);
+
+                  await Database(pseudo: pseudo).friendDeleteData(currentUser);
                   await Database(pseudo: currentName).friendDeleteData(id);
                   setState(() {
                     who = "Ajouter";
@@ -466,7 +472,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       });
       if (image != null) {
         return Center(
-          child: Image(image: NetworkImage(image)),
+          child: FittedBox(child: Image(image: NetworkImage(image)),
+            fit: BoxFit.fill,),
         );
       }
       else {

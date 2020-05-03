@@ -9,13 +9,43 @@ import 'package:winek/auth.dart';
 
 var _controller = TextEditingController();
 
-class FriendsListScreen extends StatelessWidget {
+class FriendsListScreen extends StatefulWidget {
   static const String id = 'FriendsListScreen';
+  String current;
+
+  FriendsListScreen(this.current);
+
+
+  @override
+  _FriendsListScreenState createState() => _FriendsListScreenState(current);
+}
+
+class _FriendsListScreenState extends State<FriendsListScreen> {
+  static const String id = '_FriendsListScreenState';
+  Database d;
+
+  String current;
+
+  _FriendsListScreenState(this.current);
+
+  Future<Database> init() async {
+    Database da = await Database().init();
+    return da;
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    init().then((Database result) {
+      this.d = result;
+      print('resuuuuuuuuuuuuult');
+      print(d);
+    });
+
+    print('hellevatoooooooooooooooor');
+
     return StreamProvider<List<dynamic>>.value(
-      value: Database().friends,
+      value: Database(current: this.current).friends,
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -35,11 +65,14 @@ class FriendsListScreen extends StatelessWidget {
             actions: <Widget>[
               IconButton(
                 onPressed: () async {
-                  Navigator.pushNamed(context, FriendRequestListScreen.id);
+                  String currentUser = await AuthService().connectedID();
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          FriendRequestListScreen(currentUser)));
                   //await AuthService().connectedID();
                 },
                 icon: Icon(Icons.group_add),
-                color: Color(0xFF5B5050),
+                color: Color(0xFF3B466B),
                 iconSize: 35.0,
               ),
             ],

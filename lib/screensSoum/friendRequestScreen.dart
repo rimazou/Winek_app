@@ -4,13 +4,27 @@ import 'package:winek/screensSoum/friendRequestList.dart';
 
 import '../dataBaseSoum.dart';
 
-class FriendRequestListScreen extends StatelessWidget {
+class FriendRequestListScreen extends StatefulWidget {
   static String id = 'FriendRequestListScreen';
+  String current;
+
+  FriendRequestListScreen(this.current);
+
+  @override
+  _FriendRequestListScreenState createState() =>
+      _FriendRequestListScreenState(current);
+}
+
+class _FriendRequestListScreenState extends State<FriendRequestListScreen> {
+
+  String current;
+
+  _FriendRequestListScreenState(this.current);
 
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<String>>.value(
-      value: Database().friendRequest,
+      value: Database(current: this.current).friendRequest,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(

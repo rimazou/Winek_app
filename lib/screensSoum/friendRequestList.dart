@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winek/auth.dart';
 
 import '../dataBaseSoum.dart';
 
@@ -72,6 +73,7 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
   }
 
   Widget photo() {
+
     if (image != null) {
       print('photoooos');
       return CircleAvatar(
@@ -79,6 +81,7 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
+
     }
     else {
       print('noooo photoooos');
@@ -90,18 +93,21 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        onTap: () {
+        onTap: () async {
+          String currentUser = await AuthService().connectedID();
+          String name = await Database().getPseudo(currentUser);
+          print('bouuuuutttooooooooooon current user $currentUser');
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
                     ProfileScreen2(pseudo: widget.invit,
-                        currentUser: Database().currentuser)),);
+                      currentUser: currentUser,
+                      name: name,)),);
         },
         title: Text(
           widget.invit,
@@ -118,14 +124,16 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
           children: <Widget>[
             IconButton(
               onPressed: () async {
+                String currentUser = await AuthService().connectedID();
+                String name = await Database().getPseudo(currentUser);
                 Database d = await Database().init(
-                    pseudo: widget.invit, subipseudo: Database().currentname);
+                    pseudo: widget.invit, subipseudo: name);
                 await d.userUpdateData();
                 Database c = await Database().init(
-                    id: Database().currentuser, subipseudo: widget.invit);
+                    id: currentUser, subipseudo: widget.invit);
                 await c.userUpdateData();
                 await Database(pseudo: widget.invit).userDeleteData(
-                    Database().currentuser);
+                    currentUser);
               },
               icon: Icon(Icons.check),
               color: Color(0xFF389490),
@@ -133,8 +141,9 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
             ),
             IconButton(
               onPressed: () async {
+                String currentUser = await AuthService().connectedID();
                 await Database(pseudo: widget.invit).userDeleteData(
-                    Database().currentuser);
+                    currentUser);
               },
               icon: Icon(Icons.delete),
               color: Colors.red,

@@ -4,6 +4,7 @@ import 'package:winek/screensSoum/profile.dart';
 import 'package:provider/provider.dart';
 import '../classes.dart';
 import 'package:winek/dataBaseSoum.dart';
+import 'package:winek/auth.dart';
 
 class FriendsList extends StatefulWidget {
   @override
@@ -37,6 +38,7 @@ class FriendTile extends StatefulWidget {
   FriendTile({Map id}) {
     this.id = id;
     print('constructooooooooooor');
+
   }
 
   @override
@@ -75,6 +77,7 @@ class _FriendTileState extends State<FriendTile> {
   }
 
   Widget photo() {
+
     if (image != null) {
       print('photoooos');
       return CircleAvatar(
@@ -82,6 +85,7 @@ class _FriendTileState extends State<FriendTile> {
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
+
     }
     else {
       print('noooo photoooos');
@@ -109,14 +113,17 @@ class _FriendTileState extends State<FriendTile> {
         ),
         leading: photo(),
         trailing: IconButton(
-          onPressed: () {
+          onPressed: () async {
+            String currentUser = await AuthService().connectedID();
+            String name = await Database().getPseudo(currentUser);
+            print('bouuuuutttooooooooooon current user $currentUser');
             //go to the profile screen
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfileScreen2(
-                          friend: id, currentUser: Database().currentuser)),
+                        friend: id, currentUser: currentUser, name: name,)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
@@ -195,6 +202,7 @@ class _UserTileState extends State<UserTile> {
         });
       }
       );
+
     });
   }
 
@@ -205,6 +213,7 @@ class _UserTileState extends State<UserTile> {
   }
 
   Widget photo() {
+
     if (image != null) {
       print('photoooos');
       return CircleAvatar(
@@ -212,6 +221,7 @@ class _UserTileState extends State<UserTile> {
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
+
     }
     else {
       print('noooo photoooos');
@@ -223,7 +233,6 @@ class _UserTileState extends State<UserTile> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -240,12 +249,15 @@ class _UserTileState extends State<UserTile> {
         leading: photo(),
         trailing: IconButton(
           onPressed: () async {
+            String currentUser = await AuthService().connectedID();
+            String name = await Database().getPseudo(currentUser);
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfileScreen2(pseudo: widget.id,
-                          currentUser: Database().currentuser)),
+                        currentUser: currentUser,
+                        name: name,)),
             ); // call the class and passing arguments
           },
           icon: Icon(Icons.info_outline),
