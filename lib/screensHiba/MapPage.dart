@@ -2948,7 +2948,7 @@ void addListnerToNotifier() {
 
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
-    checkSenderUser();
+
 
     var vaaa = _AlertScreenState();
     vaaa.initState();
@@ -2978,6 +2978,7 @@ class NotifStream extends StatelessWidget {
             print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
             if (groupJRA != justReceivedAlert){
+              checkSenderUser();
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');
               if (notifSender != currentUser){
                 valueNotifier.notifyListeners();
