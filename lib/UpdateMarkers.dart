@@ -23,16 +23,17 @@ class UpdateMarkers extends ChangeNotifier {
   BuildContext mapcontext;
   var val;
 
-  void UpdateusersLocation(String path,BuildContext context)async {
-   mapcontext=context;
-   val=await authService.connectedID();
+  void UpdateusersLocation(String path, BuildContext context) async {
+    await Future.delayed(Duration(seconds: 1));
+    mapcontext = context;
+    val = await authService.connectedID();
     var collectionReference = _firestore.document(path).collection('members');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
         geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
-       marker_dest(path);
+    marker_dest(path);
     double radius = 50;
     String field = 'position';
     stream = geo
@@ -41,43 +42,39 @@ class UpdateMarkers extends ChangeNotifier {
         .listen(_updateMarkers);
   }
 
-  void marker_dest(String chemin)async{
-    await _firestore.document(chemin).get().then((DocumentSnapshot ds)
-   { 
-     dest_lat=ds.data['destinaton']['latitude'];
-   
-   });
-   await _firestore.document(chemin).get().then((DocumentSnapshot ds)
-   { 
-     dest_lng=ds.data['destinaton']['longitude'];
-   
-   });
+  void marker_dest(String chemin) async {
+    await _firestore.document(chemin).get().then((DocumentSnapshot ds) {
+      dest_lat = ds.data['destination']['latitude'];
+    });
+    await _firestore.document(chemin).get().then((DocumentSnapshot ds) {
+      dest_lng = ds.data['destination']['longitude'];
+    });
     MarkerId id = MarkerId(dest_lat.toString() + dest_lng.toString());
     _marker = Marker(
       markerId: id,
-      position: LatLng(dest_lat,dest_lng),
+      position: LatLng(dest_lat, dest_lng),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       infoWindow: InfoWindow(title: 'destination'),
     );
-   
+
     markers[id] = _marker;
     notifyListeners();
-  } 
+  }
 
-  
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
-     LatLng latlng;
+    LatLng latlng;
     CameraUpdate cameraUpdate;
-   
+
     documentList.forEach((DocumentSnapshot document) async {
       String userid = document.documentID;
       markers.remove(MarkerId(userid));
       GeoPoint point = document.data['position']['geopoint'];
-      if(val==userid)
-      {
-        latlng = new LatLng(point.latitude,point.longitude);
-          cameraUpdate = CameraUpdate.newLatLngZoom(latlng,12);
-          Provider.of<controllermap>(mapcontext,listen:false).mapController.animateCamera(cameraUpdate); 
+      if (val == userid) {
+        latlng = new LatLng(point.latitude, point.longitude);
+        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+        Provider.of<controllermap>(mapcontext, listen: false)
+            .mapController
+            .animateCamera(cameraUpdate);
       }
       _addMarker(point.latitude, point.longitude, userid);
     });
@@ -126,33 +123,28 @@ class UpdateMarkers extends ChangeNotifier {
     // Add path for oval image
     canvas.clipPath(Path()..addOval(oval));
 
-    
     // Add image
     ui.Image image = await getImage(imagePath);
-      
+
     paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fill);
 
     // Convert canvas to image
-  final ui.Image markerAsImage = await pictureRecorder
+    final ui.Image markerAsImage = await pictureRecorder
         .endRecording()
         .toImage(size.width.toInt(), size.height.toInt());
 
     // Convert image to bytes
- final ByteData byteData =
+    final ByteData byteData =
         await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
-      
+
     final Uint8List uint8List = byteData.buffer.asUint8List();
-     
+
     return BitmapDescriptor.fromBytes(uint8List);
   }
 
- 
-  
-
-
   Future<ui.Image> getImage(String path) async {
-       Completer<ImageInfo> completer = Completer();
-      var img = new NetworkImage(path);  
+    Completer<ImageInfo> completer = Completer();
+    var img = new NetworkImage(path);
     img
         .resolve(ImageConfiguration())
         .addListener(ImageStreamListener((ImageInfo info, bool _) {
@@ -167,28 +159,24 @@ class UpdateMarkers extends ChangeNotifier {
   Future<void> _addMarker(double lat, double lng, String usrid) async {
     MarkerId id = MarkerId(usrid);
 
+    String url;
+    await _firestore
+        .collection('Utilisateur')
+        .document(usrid)
+        .get()
+        .then((DocumentSnapshot ds) {
+      url = ds.data['photo'];
+    });
 
-
-   String url;
-   await _firestore.collection('Utilisateur').document(usrid).get().then((DocumentSnapshot ds)
-   { 
-     url=ds.data['photo'];
-   
-   });
-
-
-
-
-   _marker = Marker(
+    _marker = Marker(
       markerId: id,
       position: LatLng(lat, lng),
-      icon: await getMarkerIcon(url,Size(200.0, 200.0)),
+      icon: await getMarkerIcon(url, Size(200.0, 200.0)),
       //icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       //infoWindow: InfoWindow(title: 'distance', snippet: '$distance'),
     );
-   
+
     markers[id] = _marker;
     notifyListeners();
   }
 }
-
