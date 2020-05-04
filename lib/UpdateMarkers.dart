@@ -11,6 +11,7 @@ import 'auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:provider/provider.dart';
 import 'package:battery/battery.dart';
+import 'package:geolocator/geolocator.dart';
 
 class UpdateMarkers extends ChangeNotifier {
   Firestore _firestore = Firestore.instance;
@@ -205,28 +206,26 @@ class DeviceInformationService extends ChangeNotifier {
   }
 }
 
-// body:Text('${Provider.of<DeviceInformationService>(context).batteryLvl}'),
-/* body:StreamBuilder(
-         stream:_firestore.collection('Utilisateur').document().snapshots(),
-         builder:(context,snapshot){
-           if(!snapshot.hasData)
-           return Text('Loading data ... please wait');
-           return Text('Le niveau de batterie est : ${snapshot.data['baterie']}');
-         } ,
-         ),*/
-/*
-Future<double> getDistance(Position position, LatLng dest)async{
-  double distanced= await Geolocator().distanceBetween(position.latitude, position.longitude,dest.latitude, dest.longitude);
-  return distanced;
-}
 
-double getSpeed(String groupeid, String id) {
+
+ /* await Firestore.instance.document(chemin).get().then((DocumentSnapshot ds) {
+      double destination_lat = ds.data['destination']['latitude'];
+    });
+    await Firestore.instance.document(chemin).get().then((DocumentSnapshot ds) {
+      double destination_lng = ds.data['destination']['longitude'];
+    });
+
   StreamBuilder(
     stream:
         Firestore.instance.collection('Utilisateur').document(id).snapshots(),
-    builder: (context, snapshot) {
+    builder: (context, snapshot)async {
+       GeoPoint location = snapshot.data['position']['geopoint'];
+   int distanced= await Geolocator().distanceBetween(location.latitude, location.longitude,destination_lat.latitude, destination_lng.longitude);
+     Position pos=new Position(latitude:location.latitude,longitude:location.longitude);
+       double vitesse=(pos.speed);
+       int temps=(distanced~/vitesse)~/60;
       return Text(
-        '${snapshot.data['batterie']}%',
+        '$temps min',
         style: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 10,
@@ -236,7 +235,52 @@ double getSpeed(String groupeid, String id) {
       );
     },
   );
-  double speed = position.speed;
-  return speed;
-}
-*/
+
+   
+
+   StreamBuilder(
+    stream:
+        Firestore.instance.collection('Utilisateur').document(id).snapshots(),
+    builder: (context, snapshot) {
+       GeoPoint point = snapshot.data['position']['geopoint'];
+       Position pos=new Position(latitude:point.latitude,longitude:point.longitude);
+       double vitesse=(pos.speed)*3.6;
+      return Text(
+        '$vitesse km/h',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFFFFFFFF),
+        ),
+      );
+    },
+  );
+
+
+ void zoom(String id)async{
+   GeoPoint point;
+   CameraUpdate cameraUpdate;
+   await Firestore.instance.collection('Utilisateur').document(id).get().then((DocumentSnapshot ds) {
+      point = ds.data['position']['geopoint'];
+    });
+   LatLng latlng = new LatLng(point.latitude, point.longitude);
+        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+        Provider.of<controllermap>(context,listen: false)
+            .mapController
+            .animateCamera(cameraUpdate);
+ }
+
+ void dezoom()async{
+     GeoPoint point;
+   CameraUpdate cameraUpdate;
+    var val = await authService.connectedID();
+   await Firestore.instance.collection('Utilisateur').document(val).get().then((DocumentSnapshot ds) {
+      point = ds.data['position']['geopoint'];
+    });
+   LatLng latlng = new LatLng(point.latitude, point.longitude);
+        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+        Provider.of<controllermap>(context,listen: false)
+            .mapController
+            .animateCamera(cameraUpdate);
+ }*/
