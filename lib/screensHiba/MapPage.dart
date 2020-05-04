@@ -28,7 +28,7 @@ import 'package:winek/UpdateMarkers.dart';
 
 //asma's variables
 final _firestore = Firestore.instance;
-String currentUser = 'ireumimweo';
+String currentUser;
 String utilisateurID;
 
 int stackIndex = 0;
@@ -37,6 +37,8 @@ String groupPath;
 
 bool justReceivedAlert = false;
 ValueNotifier valueNotifier = ValueNotifier(justReceivedAlert);
+
+bool ilYaAlertesPerso = false;
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -873,14 +875,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 
                               var vvv = await _firestore.document(groupPath).get();
                               bool tr = vvv.data['justReceivedAlert'];
-                              print('you have just changed justReceived alerts value');
                               _firestore.document(groupPath).updateData({
                                 'justReceivedAlert': !tr,
                               });
-                              valueNotifier.notifyListeners();
-
-
-
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1063,6 +1060,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       colour: Color(0xd03b466b),
                                       onPressed: () async {
                                         if (alertePerso != null) {
+
                                           /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
                                           List<DocumentSnapshot> fff=result.documents;
                                           DocumentSnapshot fff1=fff[0];*/
@@ -2091,6 +2089,13 @@ class AlertBubble extends StatelessWidget {
                 'position': geoP.data,
               });
             }
+
+            var vvv = await _firestore.document(groupPath).get();
+            bool tr = vvv.data['justReceivedAlert'];
+            _firestore.document(groupPath).updateData({
+              'justReceivedAlert': !tr,
+            });
+
             _scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Row(
                 children: <Widget>[
@@ -2654,10 +2659,13 @@ class ReceivedAlertStream extends StatelessWidget {
 void addListnerToNotifier() {
 
   valueNotifier.addListener(() async {
-    print('ey tout le monde on a recu une alerte');
-    var vaaa = _AlertScreenState();
-    vaaa.initState();
-    await vaaa.showNotificationWithDefaultSound();
+    //print('ey tout le monde on a recu une alerte');
+
+      var vaaa = _AlertScreenState();
+      vaaa.initState();
+      await vaaa.showNotificationWithDefaultSound();
+
+
   });
 }
 
@@ -2723,6 +2731,7 @@ class AlertBubbleBox extends StatelessWidget {
 class NotifStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection("Voyage")
@@ -2737,7 +2746,16 @@ class NotifStream extends StatelessWidget {
           if (id == _firestore.document(groupPath).documentID){
             print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
-            justReceivedAlert = groupJRA;
+            if (groupJRA != justReceivedAlert){
+              checkSenderUser();
+              print('SENDEEEEEER $notifSender USEEEEER $currentUser');
+              if (notifSender != currentUser){
+                valueNotifier.notifyListeners();
+
+              }
+              justReceivedAlert = groupJRA;
+
+            }
           }
         }
 
@@ -2747,3 +2765,11 @@ class NotifStream extends StatelessWidget {
   }
 }
 
+String notifSender;
+
+Future<void> checkSenderUser() async {
+  var ggg = await _firestore.document(groupPath).collection("receivedAlerts").orderBy("envoyeLe", descending: true).getDocuments();
+  List<DocumentSnapshot> ggglist = ggg.documents;
+  notifSender = ggglist[0].data['sender'];
+
+}
