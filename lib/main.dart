@@ -32,12 +32,19 @@ bool log = user != null;
 class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UpdateMarkers>(
-      create: (BuildContext context) => UpdateMarkers(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (BuildContext context) => UpdateMarkers()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => controllermap()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => DeviceInformationService()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-        initialRoute: FirstLoading.id,
+        initialRoute: WelcomeScreen.id, //FirstLoading.id,
         routes: {
           Home.id: (BuildContext context) => Home(), // la map
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -57,7 +64,6 @@ class Authentication extends StatelessWidget {
           FirstLoading.id: (context) => FirstLoading(),
         },
       ),
-
     );
   }
 }
