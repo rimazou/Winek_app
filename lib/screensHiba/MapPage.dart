@@ -718,7 +718,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       borderRadius: BorderRadius.circular(50),
                       child: GestureDetector(
                           onTap: () async {
-                            await setState(() {
+                            GeoPoint point;
+                            CameraUpdate cameraUpdate;
+                            await Firestore.instance
+                                .document(path)
+                                .collection('members')
+                                .document(groupe.membres[i]['id'])
+                                .get()
+                                .then((DocumentSnapshot ds) {
+                              point = ds.data['position']['geopoint'];
+                            });
+                            LatLng latlng =
+                                new LatLng(point.latitude, point.longitude);
+                            cameraUpdate =
+                                CameraUpdate.newLatLngZoom(latlng, 12);
+                            Provider.of<controllermap>(context, listen: false)
+                                .mapController
+                                .animateCamera(cameraUpdate);
+                            setState(() {
                               //zoum sur la personne, son id est dans
                               // groupe.membres[i]['id']
                               membreinfo['pseudo'] =
@@ -726,7 +743,36 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               membreinfo['image'] = imagesUrl[i];
                               //remplir le reste des champs de memreinfo avec des Text()
                               // membreinfo['vitesse']
+                              membreinfo['vitesse'] = StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  GeoPoint point =
+                                      snapshot.data['location']['geopoint'];
+                                  Position pos = new Position(
+                                    latitude: point.latitude,
+                                    longitude: point.longitude,
+                                    speed: 0,
+                                  );
+                                  double vitesse = 30;
+                                  vitesse = (pos.speed);
+                                  print(vitesse);
+                                  return Text(
+                                    '$vitesse km/h',
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  );
+                                },
+                              );
                               //membreinfo['temps']
+
                               //membreinfo['batterie']
                               membreinfo['batterie'] = StreamBuilder(
                                 stream: _firestore
@@ -1526,7 +1572,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   setState(() {
                                     index = 0;
                                   });
-
                                   Navigator.pushNamed(context, NvVoyagePage.id);
                                 },
                                 child: Bouton(
@@ -1589,7 +1634,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     height: size.height,
                     width: size.width,
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
+                        GeoPoint point;
+                        CameraUpdate cameraUpdate;
+                        String val = await authService.connectedID();
+                        await Firestore.instance
+                            .document(path)
+                            .collection('members')
+                            .document(val)
+                            .get()
+                            .then((DocumentSnapshot ds) {
+                          point = ds.data['position']['geopoint'];
+                        });
+                        LatLng latlng =
+                            new LatLng(point.latitude, point.longitude);
+                        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                        Provider.of<controllermap>(context, listen: false)
+                            .mapController
+                            .animateCamera(cameraUpdate);
                         setState(() {
                           // pour dezoumer de cette personne
                           // et remettre la cam sur l'utilisateur courrant
