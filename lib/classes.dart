@@ -80,7 +80,7 @@ class Utilisateur {
     connecte: data.data ['connecte'],
     batterie: data.data['batterie'],
     amis: data.data['amis'],
-    favoris: List.from(data.data['favoris']),
+    //  favoris: List.from(data.data['favoris']),
     invitation: data.data['invitation'],
     alertLIST: data.data ['alertLIST'],
     location: data.data['location'],

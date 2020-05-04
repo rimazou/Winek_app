@@ -539,7 +539,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             onPressed: () =>
                                 showAlertDialog(
                                     context, "choisissez la source de l'image",
-                                    "chooose"),
+                                    "Source"),
                             // uploadFile();
 
                           ),
