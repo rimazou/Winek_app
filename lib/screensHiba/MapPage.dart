@@ -25,6 +25,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 
+
+
+
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -984,7 +987,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
-                            setState(() async {});
+                            var vvv = await _firestore.document(groupPath).get();
+                            bool tr = vvv.data['justReceivedAlert'];
+                            _firestore.document(groupPath).updateData({
+                              'justReceivedAlert': !tr,
+                            });
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1256,6 +1263,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         ),
                       ],
                     ),
+                    //indexe3
+                    NotifStream(),
                   ],
                 ),
               ],
@@ -2354,9 +2363,9 @@ class AlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
-        //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
-        if (isReceived) {
-        } else {
+        if(isReceived){}
+        else{
+          //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
           try {
             final result = await InternetAddress.lookup('google.com');
             var result2 = await Connectivity().checkConnectivity();
@@ -2364,13 +2373,9 @@ class AlertBubble extends StatelessWidget {
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               bool isLocationEnabled =
-                  await Geolocator().isLocationServiceEnabled();
+              await Geolocator().isLocationServiceEnabled();
               if (isLocationEnabled) {
-                //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
-
-                var vaaa = _AlertScreenState();
-                vaaa.initState();
-                await vaaa.showNotificationWithDefaultSound();
+                //TODO: je change le just received
 
                 Position position = await Geolocator().getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.medium);
@@ -2394,6 +2399,13 @@ class AlertBubble extends StatelessWidget {
                     'position': geoP.data,
                   });
                 }
+
+                var vvv = await _firestore.document(groupPath).get();
+                bool tr = vvv.data['justReceivedAlert'];
+                _firestore.document(groupPath).updateData({
+                  'justReceivedAlert': !tr,
+                });
+
                 _scaffoldKey.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
@@ -2467,15 +2479,13 @@ class AlertBubble extends StatelessWidget {
           }
         }
 
-        if (currentUser == 'ireumimweo') {
-          //c'est un membre du groupe
-          //TODO : SHOW NOTIF FOR A GROUP
-        }
+        //TODO : SHOW NOTIF FOR A GROUP MEMBRER
+
       },
       padding: const EdgeInsets.all(0),
       child: Card(
         shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
         margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
         color: Colors.white,
         elevation: 5.0,
@@ -2525,43 +2535,7 @@ class AlertBubble extends StatelessWidget {
 class AlertStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Widget> alertList = [
-      AlertBubble(
-        text: 'Accident',
-        icon: Icons.directions_car,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Arrêt',
-        icon: Icons.subway,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Arrivé à destination',
-        icon: Icons.pin_drop,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Embouteillage',
-        icon: Icons.traffic,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Radar',
-        icon: Icons.settings_input_antenna,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Route barrée',
-        icon: Icons.block,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Station-services',
-        icon: Icons.local_gas_station,
-        isReceived: false,
-      ),
-    ];
+    List<Widget> alertList = [];
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection('Utilisateur').snapshots(),
       builder: (context, snapshot) {
@@ -2573,8 +2547,6 @@ class AlertStream extends StatelessWidget {
           );
         }
 
-        List<Widget> alertBubbles = alertList;
-
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
@@ -2582,7 +2554,7 @@ class AlertStream extends StatelessWidget {
             final List alertText = List.from(alert.data['alertLIST']);
             for (int i = 0; i < alertText.length; i++) {
               int llist = alertList.length;
-              if (llist < (alertText.length + 7)) {
+              if (llist < (alertText.length )) {
                 var alertBubble = AlertBubble(
                   text: alertText[i],
                   icon: Icons.sms_failed,
@@ -2593,8 +2565,113 @@ class AlertStream extends StatelessWidget {
             }
           }
         }
-        return ListView(
-          children: alertBubbles,
+        return SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            children: <Widget>[
+              AlertBubble(
+                text: 'Accident',
+                icon: Icons.directions_car,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Arrêt',
+                icon: Icons.subway,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Arrivé à destination',
+                icon: Icons.pin_drop,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Embouteillage',
+                icon: Icons.traffic,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Réduction de vitesse',
+                icon: Icons.av_timer,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Route barrée',
+                icon: Icons.block,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Station-services',
+                icon: Icons.local_gas_station,
+                isReceived: false,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6,top: 16),
+                child: Text(
+                  'Vos alertes',
+                  style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 15.0,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: alertList.length,
+                itemBuilder:(context, int index){
+                  return Dismissible(
+                    key: Key(index.toString()),
+                    onDismissed: (direction){
+                      AlertBubble alal = alertList[index];
+                      _firestore.collection('Utilisateur').document(utilisateurID).updateData({
+                        'alertLIST':FieldValue.arrayRemove([alal.text]),
+                      });
+
+                      alertList.removeAt(index);//iciiiiii
+                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                        content: Row(
+                          children: <Widget>[
+                            Text(
+                              'Alerte supprimée !',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.0,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Expanded(
+                              child: SizedBox(),
+                            ),
+                            Icon(
+                              Icons.check,
+                              color: Color(0xFF3b466b),
+                            )
+                          ],
+                        ),
+                      ));
+                      Navigator.pop(context);
+
+
+                    },
+                    background: Container(color: Color(0xB0FF5252),
+                      child: Row(children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal :15.0),
+                          child: Icon(Icons.delete,color: Colors.white,),
+                        ),
+                        Expanded(child: SizedBox(),),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal :15.0),
+                          child: Icon(Icons.delete,color: Colors.white,),
+                        ),
+                      ],),),
+                    child: alertList[index],
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -2623,7 +2700,7 @@ class _AlertScreenState extends State<AlertScreen> {
     debugPrint('payload : $payload');
     //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
     setState(() {
-      stackIndex = 3;
+      stackIndex = 2;
     });
     /*showDialog(
       context: context,
@@ -2707,12 +2784,12 @@ IconData createIcon(String s) {
 
 class ReceivedAlertBubble extends StatelessWidget {
   String sender;
-  AlertBubble alert;
+  AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
 
   ReceivedAlertBubble(
-      {String sender, AlertBubble alert, Timestamp date, GeoPoint geoPoint}) {
+      {String sender, AlertBubbleBox alert, Timestamp date, GeoPoint geoPoint}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
@@ -2723,6 +2800,15 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () {
+
+          MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
+          Marker _marker = Marker(
+            markerId: markerId,
+            position: LatLng(geoPoint.latitude,geoPoint.latitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          );
+          Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
+
           //TODO: je positionne l'alerte sur la map
         },
         padding: const EdgeInsets.all(0),
@@ -2776,10 +2862,9 @@ class ReceivedAlertStream extends StatelessWidget {
           final alertDate = alert.data['envoyeLe'];
           final alertGeoP = alert.data['position']['geopoint'];
 
-          var alertBubble = AlertBubble(
+          var alertBubble = AlertBubbleBox(
             text: alertContent,
             icon: createIcon(alertIconName),
-            isReceived: true,
           );
 
           var receivedAlertBubble = ReceivedAlertBubble(
@@ -2793,8 +2878,128 @@ class ReceivedAlertStream extends StatelessWidget {
 
         return ListView(
           children: alertList,
+          padding: EdgeInsets.all(0),
         );
       },
     );
   }
+}
+
+class AlertBubbleBox extends StatelessWidget {
+  final icon;
+  final text;
+
+  AlertBubbleBox({
+    @required this.icon,
+    @required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return  Card(
+      shape:
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      color: Colors.white,
+      elevation: 5.0,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(11.0),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: <Widget>[
+                Image(
+                  image: AssetImage(
+                    'images/circle.png',
+                  ),
+                  width: 52.0,
+                ),
+                Icon(
+                  icon,
+                  color: Color(0xFF707070),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 25,
+              top: 25,
+              left: 8,
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                  fontSize: 16.0,
+                  color: Color(0xFF707070),
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+void addListnerToNotifier() {
+
+  valueNotifier.addListener(() async {
+    //print('ey tout le monde on a recu une alerte');
+    checkSenderUser();
+
+    var vaaa = _AlertScreenState();
+    vaaa.initState();
+    await vaaa.showNotificationWithDefaultSound();
+
+
+  });
+}
+
+
+class NotifStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .collection("Voyage")
+          .snapshots(),
+      builder: (context, snapshot) {
+
+        addListnerToNotifier();
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          var id = alert.documentID;
+          if (id == _firestore.document(groupPath).documentID){
+            print('FOUUUUUUUUUUUUUUUUUUUND');
+            final groupJRA = alert.data['justReceivedAlert'];
+            if (groupJRA != justReceivedAlert){
+              print('SENDEEEEEER $notifSender USEEEEER $currentUser');
+              if (notifSender != currentUser){
+                valueNotifier.notifyListeners();
+
+              }
+              justReceivedAlert = groupJRA;
+
+            }
+          }
+        }
+
+        return Container();
+      },
+    );
+  }
+}
+
+String notifSender;
+
+Future<void> checkSenderUser() async {
+  var ggg = await _firestore.document(groupPath).collection("receivedAlerts").orderBy("envoyeLe", descending: true).getDocuments();
+  List<DocumentSnapshot> ggglist = ggg.documents;
+  notifSender = ggglist[0].data['sender'];
+
 }
