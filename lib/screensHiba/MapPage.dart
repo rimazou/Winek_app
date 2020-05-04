@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:search_map_place/search_map_place.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:provider/provider.dart';
+import 'package:winek/UpdateMarkers.dart';
 
 //asma's variables
 final _firestore = Firestore.instance;
@@ -864,8 +867,33 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
-                          onPressed: () async {
-                            setState(() async {});
+                          onPressed: () {
+                            bool tr = true;
+                            setState(() {
+                              _firestore.document(groupPath).updateData({
+                                'justReceivedAlert': tr,
+                                //'array': FieldValue.arrayRemove(elements),
+                              });
+                              valueNotifier.notifyListeners();
+                            });
+
+                          },
+                          backgroundColor: Color(0xFF389490),
+                          foregroundColor: Color(0xFFFFFFFF),
+                          child: Icon(
+                            Icons.not_interested,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(3),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            setState(() {
+//                              addListnerToNotifier();
+                            });
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -880,12 +908,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
-                          onPressed: () async {
-                            setState(() async {
-                              utilisateurID = await AuthService().connectedID();
-                              currentUser =
-                                  await AuthService().getPseudo(utilisateurID);
-                              groupPath = path;
+                          onPressed: ()  {
+                            groupPath = path;
+                            setState(()  {
                               stackIndex = 2;
                             });
                           },
@@ -1116,8 +1141,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   child: Text(
                                     'Boite de recécption',
                                     style: TextStyle(
-                                        letterSpacing: 2,
-                                        color: Color(0xFF3b466b),
+                                        letterSpacing: 1,
+                                        color: Color(0xFF7888a0),
                                         fontSize: 18.0,
                                         fontFamily: 'Montserrat',
                                         fontWeight: FontWeight.w800),
@@ -2039,100 +2064,51 @@ class AlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
-        //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
-        if (isReceived) {
-        } else {
-          try {
-            final result = await InternetAddress.lookup('google.com');
-            var result2 = await Connectivity().checkConnectivity();
-            var b = (result2 != ConnectivityResult.none);
+        if(isReceived){}
+        else{
+      //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        var result2 = await Connectivity().checkConnectivity();
+        var b = (result2 != ConnectivityResult.none);
 
-            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-              bool isLocationEnabled =
-                  await Geolocator().isLocationServiceEnabled();
-              if (isLocationEnabled) {
-                //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          bool isLocationEnabled =
+              await Geolocator().isLocationServiceEnabled();
+          if (isLocationEnabled) {
+            //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
 
-                var vaaa = _AlertScreenState();
-                vaaa.initState();
-                await vaaa.showNotificationWithDefaultSound();
+            var vaaa = _AlertScreenState();
+            vaaa.initState();
+            await vaaa.showNotificationWithDefaultSound();
 
-                Position position = await Geolocator().getCurrentPosition(
-                    desiredAccuracy: LocationAccuracy.medium);
-                Geoflutterfire geo = Geoflutterfire();
-                GeoFirePoint geoP = geo.point(
-                    latitude: position.longitude,
-                    longitude: position.longitude);
+            Position position = await Geolocator().getCurrentPosition(
+                desiredAccuracy: LocationAccuracy.medium);
+            Geoflutterfire geo = Geoflutterfire();
+            GeoFirePoint geoP = geo.point(
+                latitude: position.longitude,
+                longitude: position.longitude);
 
-                if (text != null &&
-                    icon != null &&
-                    currentUser != null &&
-                    geoP != null) {
-                  _firestore
-                      .document(groupPath)
-                      .collection('receivedAlerts')
-                      .add({
-                    'content': text,
-                    'icon': icon.toString(),
-                    'sender': currentUser,
-                    'envoyeLe': DateTime.now().toUtc(),
-                    'position': geoP.data,
-                  });
-                }
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Row(
-                    children: <Widget>[
-                      Text(
-                        'Alerte envoyée !',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.0,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      Icon(
-                        Icons.check,
-                        color: Color(0xFF3b466b),
-                      )
-                    ],
-                  ),
-                ));
-                Navigator.pop(context);
-              } else {
-                Navigator.pop(context);
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Row(
-                    children: <Widget>[
-                      Text(
-                        'Veuillez activer votre GPS',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.0,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      Icon(
-                        Icons.location_off,
-                        color: Colors.yellow,
-                      )
-                    ],
-                  ),
-                ));
-              }
+            if (text != null &&
+                icon != null &&
+                currentUser != null &&
+                geoP != null) {
+              _firestore
+                  .document(groupPath)
+                  .collection('receivedAlerts')
+                  .add({
+                'content': text,
+                'icon': icon.toString(),
+                'sender': currentUser,
+                'envoyeLe': DateTime.now().toUtc(),
+                'position': geoP.data,
+              });
             }
-          } on SocketException catch (_) {
-            Navigator.pop(context);
             _scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Row(
                 children: <Widget>[
                   Text(
-                    'Vérifiez votre connexion internet',
+                    'Alerte envoyée !',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.0,
@@ -2143,7 +2119,31 @@ class AlertBubble extends StatelessWidget {
                     child: SizedBox(),
                   ),
                   Icon(
-                    Icons.signal_wifi_off,
+                    Icons.check,
+                    color: Color(0xFF3b466b),
+                  )
+                ],
+              ),
+            ));
+            Navigator.pop(context);
+          } else {
+            Navigator.pop(context);
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Row(
+                children: <Widget>[
+                  Text(
+                    'Veuillez activer votre GPS',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Icon(
+                    Icons.location_off,
                     color: Colors.yellow,
                   )
                 ],
@@ -2151,11 +2151,34 @@ class AlertBubble extends StatelessWidget {
             ));
           }
         }
+      } on SocketException catch (_) {
+        Navigator.pop(context);
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Row(
+            children: <Widget>[
+              Text(
+                'Vérifiez votre connexion internet',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600),
+              ),
+              Expanded(
+                child: SizedBox(),
+              ),
+              Icon(
+                Icons.signal_wifi_off,
+                color: Colors.yellow,
+              )
+            ],
+          ),
+        ));
+      }
+    }
 
-        if (currentUser == 'ireumimweo') {
-          //c'est un membre du groupe
-          //TODO : SHOW NOTIF FOR A GROUP
-        }
+          //TODO : SHOW NOTIF FOR A GROUP MEMBRER
+
       },
       padding: const EdgeInsets.all(0),
       child: Card(
@@ -2207,46 +2230,91 @@ class AlertBubble extends StatelessWidget {
   }
 }
 
+//class AlertStream extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    List<Widget> alertList = [
+//      AlertBubble(
+//        text: 'Accident',
+//        icon: Icons.directions_car,
+//        isReceived: false,
+//      ),
+//      AlertBubble(
+//        text: 'Arrêt',
+//        icon: Icons.subway,
+//        isReceived: false,
+//      ),
+//      AlertBubble(
+//        text: 'Arrivé à destination',
+//        icon: Icons.pin_drop,
+//        isReceived: false,
+//      ),
+//      AlertBubble(
+//        text: 'Embouteillage',
+//        icon: Icons.traffic,
+//        isReceived: false,
+//      ),
+//      AlertBubble(
+//        text: 'Radar',
+//        icon: Icons.settings_input_antenna,
+//        isReceived: false,
+//      ),
+//      AlertBubble(
+//        text: 'Route barrée',
+//        icon: Icons.block,
+//        isReceived: false,
+//      ),
+//      AlertBubble(
+//        text: 'Station-services',
+//        icon: Icons.local_gas_station,
+//        isReceived: false,
+//      ),
+//    ];
+//    return StreamBuilder<QuerySnapshot>(
+//      stream: _firestore.collection('Utilisateur').snapshots(),
+//      builder: (context, snapshot) {
+//        if (!snapshot.hasData) {
+//          return Center(
+//            child: CircularProgressIndicator(
+//              backgroundColor: Color(0xFF707070),
+//            ),
+//          );
+//        }
+//
+//        List<Widget> alertBubbles = alertList;
+//
+//        final alerts = snapshot.data.documents;
+//        for (var alert in alerts) {
+//          var id = alert.documentID;
+//          if (utilisateurID == id) {
+//            final List alertText = List.from(alert.data['alertLIST']);
+//            for (int i = 0; i < alertText.length; i++) {
+//              int llist = alertList.length;
+//              if (llist < (alertText.length + 7)) {
+//                var alertBubble = AlertBubble(
+//                  text: alertText[i],
+//                  icon: Icons.sms_failed,
+//                  isReceived: false,
+//                );
+//                alertList.add(alertBubble);
+//              }
+//            }
+//          }
+//        }
+//        return ListView(
+//          children: alertBubbles,
+//        );
+//      },
+//    );
+//  }
+//}
+
+//DISMISS
+
 class AlertStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Widget> alertList = [
-      AlertBubble(
-        text: 'Accident',
-        icon: Icons.directions_car,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Arrêt',
-        icon: Icons.subway,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Arrivé à destination',
-        icon: Icons.pin_drop,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Embouteillage',
-        icon: Icons.traffic,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Radar',
-        icon: Icons.settings_input_antenna,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Route barrée',
-        icon: Icons.block,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Station-services',
-        icon: Icons.local_gas_station,
-        isReceived: false,
-      ),
-    ];
+    List<Widget> alertList = [];
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection('Utilisateur').snapshots(),
       builder: (context, snapshot) {
@@ -2258,8 +2326,6 @@ class AlertStream extends StatelessWidget {
           );
         }
 
-        List<Widget> alertBubbles = alertList;
-
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
@@ -2267,7 +2333,7 @@ class AlertStream extends StatelessWidget {
             final List alertText = List.from(alert.data['alertLIST']);
             for (int i = 0; i < alertText.length; i++) {
               int llist = alertList.length;
-              if (llist < (alertText.length + 7)) {
+              if (llist < (alertText.length )) {
                 var alertBubble = AlertBubble(
                   text: alertText[i],
                   icon: Icons.sms_failed,
@@ -2278,13 +2344,105 @@ class AlertStream extends StatelessWidget {
             }
           }
         }
-        return ListView(
-          children: alertBubbles,
+        return SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            children: <Widget>[
+              AlertBubble(
+                text: 'Accident',
+                icon: Icons.directions_car,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Arrêt',
+                icon: Icons.subway,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Arrivé à destination',
+                icon: Icons.pin_drop,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Embouteillage',
+                icon: Icons.traffic,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Réduction de vitesse',
+                icon: Icons.av_timer,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Route barrée',
+                icon: Icons.block,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Station-services',
+                icon: Icons.local_gas_station,
+                isReceived: false,
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: alertList.length,
+                itemBuilder:(context, int index){
+                  return Dismissible(
+                    key: Key(index.toString()),
+                    onDismissed: (direction){
+                      AlertBubble alal = alertList[index];
+                    _firestore.collection('Utilisateur').document(utilisateurID).updateData({
+                      'alertLIST':FieldValue.arrayRemove([alal.text]),
+                    });
+
+                    alertList.removeAt(index);//iciiiiii
+                    _scaffoldKey.currentState.showSnackBar(SnackBar(
+                      content: Row(
+                        children: <Widget>[
+                          Text(
+                            'Alerte supprimée !',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.0,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Expanded(
+                            child: SizedBox(),
+                          ),
+                          Icon(
+                            Icons.check,
+                            color: Color(0xFF3b466b),
+                          )
+                        ],
+                      ),
+                    ));
+                    Navigator.pop(context);
+
+
+                    },
+                    background: Container(color: Color(0xB0FF5252),
+                      child: Row(children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal :15.0),
+                          child: Icon(Icons.delete,color: Colors.white,),
+                        ),
+                        Expanded(child: SizedBox(),),
+                        Icon(Icons.delete,color: Colors.white,),
+                      ],),),
+                    child: alertList[index],
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
   }
 }
+
 
 class AlertScreen extends StatefulWidget {
   @override
@@ -2306,9 +2464,8 @@ class _AlertScreenState extends State<AlertScreen> {
 
   Future onSelectedNotification(String payload) {
     debugPrint('payload : $payload');
-    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
     setState(() {
-      stackIndex = 3;
+      stackIndex = 3;//JE MONTRE LA BOITE DE RECEP
     });
     /*showDialog(
       context: context,
@@ -2372,9 +2529,9 @@ IconData createIcon(String s) {
         return Icons.traffic;
       }
       break;
-    case 'IconData(U+0E8BF)':
+    case 'IconData(U+0E01B)':
       {
-        return Icons.settings_input_antenna;
+        return Icons.av_timer;
       }
       break;
     case 'IconData(U+0E56F)':
@@ -2392,12 +2549,12 @@ IconData createIcon(String s) {
 
 class ReceivedAlertBubble extends StatelessWidget {
   String sender;
-  AlertBubble alert;
+  AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
 
   ReceivedAlertBubble(
-      {String sender, AlertBubble alert, Timestamp date, GeoPoint geoPoint}) {
+      {String sender, AlertBubbleBox alert, Timestamp date, GeoPoint geoPoint}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
@@ -2408,6 +2565,15 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () {
+
+          MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
+          Marker _marker = Marker(
+            markerId: markerId,
+            position: LatLng(geoPoint.latitude,geoPoint.latitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          );
+          Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
+
           //TODO: je positionne l'alerte sur la map
         },
         padding: const EdgeInsets.all(0),
@@ -2461,10 +2627,9 @@ class ReceivedAlertStream extends StatelessWidget {
           final alertDate = alert.data['envoyeLe'];
           final alertGeoP = alert.data['position']['geopoint'];
 
-          var alertBubble = AlertBubble(
+          var alertBubble = AlertBubbleBox(
             text: alertContent,
             icon: createIcon(alertIconName),
-            isReceived: true,
           );
 
           var receivedAlertBubble = ReceivedAlertBubble(
@@ -2478,8 +2643,81 @@ class ReceivedAlertStream extends StatelessWidget {
 
         return ListView(
           children: alertList,
+          padding: EdgeInsets.all(0),
         );
       },
     );
   }
 }
+
+void addListnerToNotifier() async {
+
+  valueNotifier.addListener(() async {
+    print('ey tout le monde on a recu une alerte');
+    var vaaa = _AlertScreenState();
+    vaaa.initState();
+    await vaaa.showNotificationWithDefaultSound();
+
+  });
+  valueNotifier.notifyListeners();
+}
+
+class AlertBubbleBox extends StatelessWidget {
+  final icon;
+  final text;
+
+  AlertBubbleBox({
+    @required this.icon,
+    @required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return  Card(
+      shape:
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      color: Colors.white,
+      elevation: 5.0,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(11.0),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: <Widget>[
+                Image(
+                  image: AssetImage(
+                    'images/circle.png',
+                  ),
+                  width: 52.0,
+                ),
+                Icon(
+                  icon,
+                  color: Color(0xFF707070),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 25,
+              top: 25,
+              left: 8,
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                  fontSize: 16.0,
+                  color: Color(0xFF707070),
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
