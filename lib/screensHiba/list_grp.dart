@@ -122,6 +122,10 @@ class grpTile extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => MapVoyagePage(g, grp_chemin)));
+            //asma initialise
+            groupPath = grp_chemin;
+            stackIndex = 3;
+
           }
           if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance

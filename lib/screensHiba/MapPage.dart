@@ -867,33 +867,20 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
-                          onPressed: () {
-                            bool tr = true;
-                            setState(() {
+                          onPressed: () async {
+                            //TODO: this is what happens when someone sends alert
+
+
+                              var vvv = await _firestore.document(groupPath).get();
+                              bool tr = vvv.data['justReceivedAlert'];
+                              print('you have just changed justReceived alerts value');
                               _firestore.document(groupPath).updateData({
-                                'justReceivedAlert': tr,
-                                //'array': FieldValue.arrayRemove(elements),
+                                'justReceivedAlert': !tr,
                               });
                               valueNotifier.notifyListeners();
-                            });
 
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.not_interested,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            setState(() {
-//                              addListnerToNotifier();
-                            });
+
+
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -903,13 +890,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           ),
                         ),
                       ),
+
                       Padding(
                         //asma boite reception
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: ()  {
-                            groupPath = path;
+                            //groupPath = path; //asma
                             setState(()  {
                               stackIndex = 2;
                             });
@@ -1103,6 +1091,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         ),
                       ),
                     ),
+                    //indexe2
                     Stack(
                       alignment: AlignmentDirectional.center,
                       children: <Widget>[
@@ -1162,6 +1151,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         ),
                       ],
                     ),
+                    //indexe3,
+                    NotifStream(),
                   ],
                 ),
               ],
@@ -2076,11 +2067,7 @@ class AlertBubble extends StatelessWidget {
           bool isLocationEnabled =
               await Geolocator().isLocationServiceEnabled();
           if (isLocationEnabled) {
-            //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
-
-            var vaaa = _AlertScreenState();
-            vaaa.initState();
-            await vaaa.showNotificationWithDefaultSound();
+            //TODO: je change le just received
 
             Position position = await Geolocator().getCurrentPosition(
                 desiredAccuracy: LocationAccuracy.medium);
@@ -2383,6 +2370,17 @@ class AlertStream extends StatelessWidget {
                 icon: Icons.local_gas_station,
                 isReceived: false,
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6,top: 16),
+                child: Text(
+                  'Vos alertes',
+                  style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 15.0,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
               ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -2429,7 +2427,10 @@ class AlertStream extends StatelessWidget {
                           child: Icon(Icons.delete,color: Colors.white,),
                         ),
                         Expanded(child: SizedBox(),),
-                        Icon(Icons.delete,color: Colors.white,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal :15.0),
+                          child: Icon(Icons.delete,color: Colors.white,),
+                        ),
                       ],),),
                     child: alertList[index],
                   );
@@ -2650,16 +2651,14 @@ class ReceivedAlertStream extends StatelessWidget {
   }
 }
 
-void addListnerToNotifier() async {
+void addListnerToNotifier() {
 
   valueNotifier.addListener(() async {
     print('ey tout le monde on a recu une alerte');
     var vaaa = _AlertScreenState();
     vaaa.initState();
     await vaaa.showNotificationWithDefaultSound();
-
   });
-  valueNotifier.notifyListeners();
 }
 
 class AlertBubbleBox extends StatelessWidget {
@@ -2717,6 +2716,33 @@ class AlertBubbleBox extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class NotifStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .collection("Voyage")
+          .snapshots(),
+      builder: (context, snapshot) {
+
+        addListnerToNotifier();
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          var id = alert.documentID;
+          if (id == _firestore.document(groupPath).documentID){
+            print('FOUUUUUUUUUUUUUUUUUUUND');
+            final groupJRA = alert.data['justReceivedAlert'];
+            justReceivedAlert = groupJRA;
+          }
+        }
+
+        return Container();
+      },
     );
   }
 }
