@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:winek/main.dart';
+import 'package:winek/screensSoum/friendsListScreen.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
@@ -16,6 +17,7 @@ import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
+
 
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -261,6 +263,13 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () async {
+                                    String currentUser = await AuthService()
+                                        .connectedID();
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) =>
+                                            FriendsListScreen(currentUser)));
+                                  },
                                   leading: Icon(
                                     Icons.group,
                                     color: myWhite,
@@ -1364,6 +1373,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () async {
+                                    String currentUser = await AuthService()
+                                        .connectedID();
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) =>
+                                            FriendsListScreen(currentUser)));
+                                  },
                                   leading: Icon(
                                     Icons.group,
                                     color: myWhite,
@@ -2041,6 +2057,13 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () async {
+                                    String currentUser = await AuthService()
+                                        .connectedID();
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) =>
+                                            FriendsListScreen(currentUser)));
+                                  },
                                   leading: Icon(
                                     Icons.group,
                                     color: myWhite,
