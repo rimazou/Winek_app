@@ -739,63 +739,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         Positioned(
-                          top: 53,
+                          top: 110,
                           left: 200,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 60.0),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.camera_alt,
-                                size: 30.0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                // border: Border.all(color: secondarycolor, width: 1),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color:
+                                        secondarycolor, //Color.fromRGBO(59, 70, 107, 0.3),
+                                    blurRadius: 3.0,
+                                    offset: Offset(0.0, 0.75),
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(50)),
+                            child: Padding(
+                              padding: EdgeInsets.all(0),
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.camera_alt,
+                                  size: 30.0,
+                                ),
+                                onPressed: () => showAlertDialog(
+                                    context,
+                                    "choisissez la source de l'image",
+                                    "Source"),
                               ),
-                              onPressed: () => showAlertDialog(context,
-                                  "choisissez la source de l'image", "Source"),
                             ),
                           ),
                         ),
-                        Positioned(
-                          right: 150,
-                          top: 12,
-                          child: Column(
-                            children: <Widget>[
-                              Center(
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 60.0,
-                                      width: 60.0,
-                                      child: Image.asset(
-                                        'images/logo.png',
-                                        fit: BoxFit.fill,
-                                        height: 120.0,
-                                        width: 120.0,
-                                      ),
+                        Column(
+                          children: <Widget>[
+                            Center(
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    height: 60.0,
+                                    width: 60.0,
+                                    child: Image.asset(
+                                      'images/logo.png',
+                                      fit: BoxFit.fill,
+                                      height: 120.0,
+                                      width: 120.0,
                                     ),
-                                    Text(
-                                      'inek',
-                                      style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 25.0,
-                                        fontWeight: FontWeight.w900,
-                                        color: Color(0XFF3B466B),
-                                      ),
+                                  ),
+                                  Text(
+                                    'inek',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 25.0,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0XFF3B466B),
                                     ),
-                                  ],
+                                  ),
+                                ],
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                'Compte',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0XFF389490), //vert
                                 ),
                               ),
-                              Center(
-                                child: Text(
-                                  'Compte',
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.w900,
-                                    color: Color(0XFF389490), //vert
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                            )
+                          ],
                         ),
                         SizedBox(
                           height: 50,
