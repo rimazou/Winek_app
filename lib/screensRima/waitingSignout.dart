@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/welcome_screen.dart';
 
 class SignoutWait extends StatefulWidget {
@@ -36,7 +37,7 @@ print('avant singnout');
       print('an error occured ');
     });
     print(' fin signout');
-    Navigator.pushNamed(context, WelcomeScreen.id);
+    Navigator.pushNamed(context, LoginScreen.id);
 
     // await authService.userRef.document('').updateData({'connecte':false}) ;
     /*authService.auth.signOut().then((onValue) {
@@ -55,7 +56,7 @@ print('avant singnout');
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
+              color: Color(0xFF3B466B),
             ),
           ),
         ),

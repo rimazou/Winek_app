@@ -310,6 +310,14 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               errMl = 'Utilisateur inexistant';
             });
+            /*final snackBar = SnackBar(
+                content: Text(errMl),
+                action: SnackBarAction(
+                    label: 'Refresh',
+                    onPressed: () {
+                      Navigator.pushNamed(context, LoginScreen.id);
+                    },));
+            Scaffold.of(context).showSnackBar(snackBar);*/
             print(logIn);
             print(errMl);
 
