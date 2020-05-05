@@ -17,7 +17,7 @@ import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
-
+import '../screensRima/profile_screen.dart';
 
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,45 +45,51 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
 
 //google maps stuffs
-GoogleMapController mapController;
+//GoogleMapController mapController;
 String searchAddr;
 
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
-void _onMapCreated(GoogleMapController controller) {
-  mapController = controller;
-}
 
-searchandNavigate() {
-  Geolocator().placemarkFromAddress(searchAddr).then((result) {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target:
-            LatLng(result[0].position.latitude, result[0].position.longitude),
-        zoom: 10.0)));
-  });
+class controllermap extends ChangeNotifier {
+  GoogleMapController mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  searchandNavigate() {
+    Geolocator().placemarkFromAddress(searchAddr).then((result) {
+      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target:
+              LatLng(result[0].position.latitude, result[0].position.longitude),
+          zoom: 10.0)));
+    });
+  }
+
+  Future<Null> displayPredictionRecherche(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail =
+          await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+      //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+      print(lat);
+      print(lng);
+    }
+  }
 }
 
 void onError(PlacesAutocompleteResponse response) {
   homeScaffoldKey.currentState.showSnackBar(
     SnackBar(content: Text(response.errorMessage)),
   );
-}
-
-Future<Null> displayPredictionRecherche(Prediction p) async {
-  if (p != null) {
-    PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
-
-    var placeId = p.placeId;
-    double lat = detail.result.geometry.location.lat;
-    double lng = detail.result.geometry.location.lng;
-
-    var address = await Geocoder.local.findAddressesFromQuery(p.description);
-    //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-    //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
-    print(lat);
-    print(lng);
-  }
 }
 
 class Home extends StatefulWidget {
@@ -144,7 +150,8 @@ class _HomeState extends State<Home> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context, listen: false)
+                ._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -235,7 +242,28 @@ class _HomeState extends State<Home> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -267,11 +295,14 @@ class _HomeState extends State<Home> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser = await AuthService()
-                                        .connectedID();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>
-                                            FriendsListScreen(currentUser)));
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsListScreen(
+                                                    currentUser)));
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -519,7 +550,8 @@ class _HomeState extends State<Home> {
                       components: [Component(Component.country, "DZ")],
                     );
 
-                    displayPredictionRecherche(p);
+                    Provider.of<controllermap>(context, listen: false)
+                        .displayPredictionRecherche(p);
                   },
                   iconSize: 30.0),
             ],
@@ -593,10 +625,13 @@ class _HomeState extends State<Home> {
                 onPressed: () async {
                   Position position = await Geolocator().getCurrentPosition(
                       desiredAccuracy: LocationAccuracy.high);
-                  mapController.animateCamera(CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                          target: LatLng(position.latitude, position.longitude),
-                          zoom: 14.0)));
+                  Provider.of<controllermap>(context, listen: false)
+                      .mapController
+                      .animateCamera(CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                              target:
+                                  LatLng(position.latitude, position.longitude),
+                              zoom: 14.0)));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -707,7 +742,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            GeoPoint point;
+                            CameraUpdate cameraUpdate;
+                            await Firestore.instance
+                                .document(path)
+                                .collection('members')
+                                .document(groupe.membres[i]['id'])
+                                .get()
+                                .then((DocumentSnapshot ds) {
+                              point = ds.data['position']['geopoint'];
+                            });
+                            LatLng latlng =
+                                new LatLng(point.latitude, point.longitude);
+                            cameraUpdate =
+                                CameraUpdate.newLatLngZoom(latlng, 12);
+                            Provider.of<controllermap>(context, listen: false)
+                                .mapController
+                                .animateCamera(cameraUpdate);
                             setState(() {
                               //zoum sur la personne, son id est dans
                               // groupe.membres[i]['id']
@@ -716,8 +768,54 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               membreinfo['image'] = imagesUrl[i];
                               //remplir le reste des champs de memreinfo avec des Text()
                               // membreinfo['vitesse']
+                              membreinfo['vitesse'] = StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  GeoPoint point =
+                                      snapshot.data['location']['geopoint'];
+                                  Position pos = new Position(
+                                    latitude: point.latitude,
+                                    longitude: point.longitude,
+                                    speed: 0,
+                                  );
+                                  double vitesse = 30;
+                                  vitesse = (pos.speed);
+                                  print(vitesse);
+                                  return Text(
+                                    '$vitesse km/h',
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  );
+                                },
+                              );
                               //membreinfo['temps']
+
                               //membreinfo['batterie']
+                              membreinfo['batterie'] = StreamBuilder(
+                                stream: _firestore
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    '${snapshot.data['batterie']}%',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  );
+                                },
+                              );
                               index = 3;
                             });
                           },
@@ -756,7 +854,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context, listen: false)
+                ._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -849,7 +948,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ],
                                 );
 
-                                displayPredictionRecherche(p);
+                                Provider.of<controllermap>(context,
+                                        listen: false)
+                                    .displayPredictionRecherche(p);
                               },
                               iconSize: 30.0),
                         ],
@@ -1351,7 +1452,28 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -1383,11 +1505,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser = await AuthService()
-                                        .connectedID();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>
-                                            FriendsListScreen(currentUser)));
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsListScreen(
+                                                    currentUser)));
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -1499,7 +1624,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   setState(() {
                                     index = 0;
                                   });
-
                                   Navigator.pushNamed(context, NvVoyagePage.id);
                                 },
                                 child: Bouton(
@@ -1562,7 +1686,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     height: size.height,
                     width: size.width,
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
+                        GeoPoint point;
+                        CameraUpdate cameraUpdate;
+                        String val = await authService.connectedID();
+                        await Firestore.instance
+                            .document(path)
+                            .collection('members')
+                            .document(val)
+                            .get()
+                            .then((DocumentSnapshot ds) {
+                          point = ds.data['position']['geopoint'];
+                        });
+                        LatLng latlng =
+                            new LatLng(point.latitude, point.longitude);
+                        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                        Provider.of<controllermap>(context, listen: false)
+                            .mapController
+                            .animateCamera(cameraUpdate);
                         setState(() {
                           // pour dezoumer de cette personne
                           // et remettre la cam sur l'utilisateur courrant
@@ -1764,7 +1905,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context, listen: false)
+                ._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -1856,7 +1998,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ],
                                 );
 
-                                displayPredictionRecherche(p);
+                                Provider.of<controllermap>(context,
+                                        listen: false)
+                                    .displayPredictionRecherche(p);
                               },
                               iconSize: 30.0),
                         ],
@@ -2035,7 +2179,28 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -2067,11 +2232,14 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser = await AuthService()
-                                        .connectedID();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>
-                                            FriendsListScreen(currentUser)));
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsListScreen(
+                                                    currentUser)));
                                   },
                                   leading: Icon(
                                     Icons.group,
