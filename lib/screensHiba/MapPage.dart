@@ -2949,7 +2949,6 @@ void addListnerToNotifier() {
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
 
-
     var vaaa = _AlertScreenState();
     vaaa.initState();
     await vaaa.showNotificationWithDefaultSound();
