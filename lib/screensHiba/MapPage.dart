@@ -17,6 +17,7 @@ import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
+import '../screensRima/profile_screen.dart';
 
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -238,7 +239,28 @@ class _HomeState extends State<Home> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -1421,7 +1443,28 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -2127,7 +2170,28 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
