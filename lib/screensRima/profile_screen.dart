@@ -442,7 +442,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               barrierDismissible: true);
                                         },
                                         child: Text(
-                                          widget.myuser.tel,
+                                          widget.myuser.tel == null
+                                              ? 'aucun numero de tel'
+                                              : widget.myuser.tel,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -617,7 +619,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               context);
                                                         },
                                                         child: Text(
-                                                          'annuller',
+                                                          'annuler',
                                                           style: TextStyle(
                                                             fontFamily:
                                                                 'Montserrat',

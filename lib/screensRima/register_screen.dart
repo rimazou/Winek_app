@@ -474,7 +474,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               child: MaterialButton(
 
 
-                                onPressed: () => _testSignInWithGoogle(),
+                                onPressed: () => _registerWithGoogle(),
                                 minWidth: 140.0,
                                 height: 42.0,
                                 child: Text(
@@ -642,7 +642,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   bool loading = false;
 
-  Future<String> _testSignInWithGoogle() async {
+  Future<String> _registerWithGoogle() async {
     try {
       final GoogleSignInAccount googleUser = await authService.googleSignIn
           .signIn();
