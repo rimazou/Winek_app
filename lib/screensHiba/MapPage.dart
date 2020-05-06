@@ -8,7 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:winek/main.dart';
-import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensSoum/friendsListScreen.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
@@ -18,11 +17,16 @@ import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
+import '../screensRima/profile_screen.dart';
+
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+
+
+
 
 //asma's variables
 final _firestore = Firestore.instance;
@@ -41,45 +45,51 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
 
 //google maps stuffs
-GoogleMapController mapController;
+//GoogleMapController mapController;
 String searchAddr;
 
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
-void _onMapCreated(GoogleMapController controller) {
-  mapController = controller;
-}
 
-searchandNavigate() {
-  Geolocator().placemarkFromAddress(searchAddr).then((result) {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target:
-            LatLng(result[0].position.latitude, result[0].position.longitude),
-        zoom: 10.0)));
-  });
+class controllermap extends ChangeNotifier {
+  GoogleMapController mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  searchandNavigate() {
+    Geolocator().placemarkFromAddress(searchAddr).then((result) {
+      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target:
+              LatLng(result[0].position.latitude, result[0].position.longitude),
+          zoom: 10.0)));
+    });
+  }
+
+  Future<Null> displayPredictionRecherche(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail =
+          await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+      //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+      print(lat);
+      print(lng);
+    }
+  }
 }
 
 void onError(PlacesAutocompleteResponse response) {
   homeScaffoldKey.currentState.showSnackBar(
     SnackBar(content: Text(response.errorMessage)),
   );
-}
-
-Future<Null> displayPredictionRecherche(Prediction p) async {
-  if (p != null) {
-    PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
-
-    var placeId = p.placeId;
-    double lat = detail.result.geometry.location.lat;
-    double lng = detail.result.geometry.location.lng;
-
-    var address = await Geocoder.local.findAddressesFromQuery(p.description);
-    //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-    //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
-    print(lat);
-    print(lng);
-  }
 }
 
 class Home extends StatefulWidget {
@@ -140,7 +150,8 @@ class _HomeState extends State<Home> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context, listen: false)
+                ._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -231,7 +242,28 @@ class _HomeState extends State<Home> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -263,11 +295,14 @@ class _HomeState extends State<Home> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser = await AuthService()
-                                        .connectedID();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>
-                                            FriendsListScreen(currentUser)));
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsListScreen(
+                                                    currentUser)));
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -518,7 +553,8 @@ class _HomeState extends State<Home> {
                       components: [Component(Component.country, "DZ")],
                     );
 
-                    displayPredictionRecherche(p);
+                    Provider.of<controllermap>(context, listen: false)
+                        .displayPredictionRecherche(p);
                   },
                   iconSize: 30.0),
             ],
@@ -592,10 +628,13 @@ class _HomeState extends State<Home> {
                 onPressed: () async {
                   Position position = await Geolocator().getCurrentPosition(
                       desiredAccuracy: LocationAccuracy.high);
-                  mapController.animateCamera(CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                          target: LatLng(position.latitude, position.longitude),
-                          zoom: 14.0)));
+                  Provider.of<controllermap>(context, listen: false)
+                      .mapController
+                      .animateCamera(CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                              target:
+                                  LatLng(position.latitude, position.longitude),
+                              zoom: 14.0)));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -706,7 +745,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            GeoPoint point;
+                            CameraUpdate cameraUpdate;
+                            await Firestore.instance
+                                .document(path)
+                                .collection('members')
+                                .document(groupe.membres[i]['id'])
+                                .get()
+                                .then((DocumentSnapshot ds) {
+                              point = ds.data['position']['geopoint'];
+                            });
+                            LatLng latlng =
+                                new LatLng(point.latitude, point.longitude);
+                            cameraUpdate =
+                                CameraUpdate.newLatLngZoom(latlng, 12);
+                            Provider.of<controllermap>(context, listen: false)
+                                .mapController
+                                .animateCamera(cameraUpdate);
                             setState(() {
                               //zoum sur la personne, son id est dans
                               // groupe.membres[i]['id']
@@ -715,8 +771,54 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               membreinfo['image'] = imagesUrl[i];
                               //remplir le reste des champs de memreinfo avec des Text()
                               // membreinfo['vitesse']
+                              membreinfo['vitesse'] = StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  GeoPoint point =
+                                      snapshot.data['location']['geopoint'];
+                                  Position pos = new Position(
+                                    latitude: point.latitude,
+                                    longitude: point.longitude,
+                                    speed: 0,
+                                  );
+                                  double vitesse = 30;
+                                  vitesse = (pos.speed);
+                                  print(vitesse);
+                                  return Text(
+                                    '$vitesse km/h',
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  );
+                                },
+                              );
                               //membreinfo['temps']
+
                               //membreinfo['batterie']
+                              membreinfo['batterie'] = StreamBuilder(
+                                stream: _firestore
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    '${snapshot.data['batterie']}%',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  );
+                                },
+                              );
                               index = 3;
                             });
                           },
@@ -755,7 +857,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context, listen: false)
+                ._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -848,7 +951,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ],
                                 );
 
-                                displayPredictionRecherche(p);
+                                Provider.of<controllermap>(context,
+                                        listen: false)
+                                    .displayPredictionRecherche(p);
                               },
                               iconSize: 30.0),
                         ],
@@ -986,7 +1091,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
-                            setState(() async {});
+                            var vvv = await _firestore.document(groupPath).get();
+                            bool tr = vvv.data['justReceivedAlert'];
+                            _firestore.document(groupPath).updateData({
+                              'justReceivedAlert': !tr,
+                            });
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1258,6 +1367,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         ),
                       ],
                     ),
+                    //indexe3
+                    NotifStream(),
                   ],
                 ),
               ],
@@ -1344,7 +1455,28 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -1376,11 +1508,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser = await AuthService()
-                                        .connectedID();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>
-                                            FriendsListScreen(currentUser)));
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsListScreen(
+                                                    currentUser)));
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -1495,7 +1630,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   setState(() {
                                     index = 0;
                                   });
-
                                   Navigator.pushNamed(context, NvVoyagePage.id);
                                 },
                                 child: Bouton(
@@ -1558,7 +1692,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     height: size.height,
                     width: size.width,
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
+                        GeoPoint point;
+                        CameraUpdate cameraUpdate;
+                        String val = await authService.connectedID();
+                        await Firestore.instance
+                            .document(path)
+                            .collection('members')
+                            .document(val)
+                            .get()
+                            .then((DocumentSnapshot ds) {
+                          point = ds.data['position']['geopoint'];
+                        });
+                        LatLng latlng =
+                            new LatLng(point.latitude, point.longitude);
+                        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                        Provider.of<controllermap>(context, listen: false)
+                            .mapController
+                            .animateCamera(cameraUpdate);
                         setState(() {
                           // pour dezoumer de cette personne
                           // et remettre la cam sur l'utilisateur courrant
@@ -1760,7 +1911,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-            onMapCreated: _onMapCreated,
+            onMapCreated: Provider.of<controllermap>(context, listen: false)
+                ._onMapCreated,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -1852,7 +2004,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ],
                                 );
 
-                                displayPredictionRecherche(p);
+                                Provider.of<controllermap>(context,
+                                        listen: false)
+                                    .displayPredictionRecherche(p);
                               },
                               iconSize: 30.0),
                         ],
@@ -2031,7 +2185,28 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () async {
+                                    String id = await authService.connectedID();
+                                    if (id != null) {
+                                      DocumentSnapshot snapshot =
+                                          await authService.userRef
+                                              .document(id)
+                                              .get();
+
+                                      if (snapshot != null) {
+                                        Utilisateur utilisateur =
+                                            Utilisateur.fromdocSnapshot(
+                                                snapshot);
+                                        //  Navigator.pushNamed(context, Home.id);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        utilisateur)));
+                                      }
+                                    }
+                                  },
                                   leading: Icon(
                                     Icons.playlist_add_check,
                                     color: Colors.white,
@@ -2063,11 +2238,14 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser = await AuthService()
-                                        .connectedID();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>
-                                            FriendsListScreen(currentUser)));
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FriendsListScreen(
+                                                    currentUser)));
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -2362,9 +2540,9 @@ class AlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
-        //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
-        if (isReceived) {
-        } else {
+        if(isReceived){}
+        else{
+          //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
           try {
             final result = await InternetAddress.lookup('google.com');
             var result2 = await Connectivity().checkConnectivity();
@@ -2372,13 +2550,9 @@ class AlertBubble extends StatelessWidget {
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               bool isLocationEnabled =
-                  await Geolocator().isLocationServiceEnabled();
+              await Geolocator().isLocationServiceEnabled();
               if (isLocationEnabled) {
-                //TODO: la notif dayiiiiiiiiiiiiiiiiiiiiiiiiiiii
-
-                var vaaa = _AlertScreenState();
-                vaaa.initState();
-                await vaaa.showNotificationWithDefaultSound();
+                //TODO: je change le just received
 
                 Position position = await Geolocator().getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.medium);
@@ -2402,6 +2576,13 @@ class AlertBubble extends StatelessWidget {
                     'position': geoP.data,
                   });
                 }
+
+                var vvv = await _firestore.document(groupPath).get();
+                bool tr = vvv.data['justReceivedAlert'];
+                _firestore.document(groupPath).updateData({
+                  'justReceivedAlert': !tr,
+                });
+
                 _scaffoldKey.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
@@ -2475,15 +2656,13 @@ class AlertBubble extends StatelessWidget {
           }
         }
 
-        if (currentUser == 'ireumimweo') {
-          //c'est un membre du groupe
-          //TODO : SHOW NOTIF FOR A GROUP
-        }
+        //TODO : SHOW NOTIF FOR A GROUP MEMBRER
+
       },
       padding: const EdgeInsets.all(0),
       child: Card(
         shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
         margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
         color: Colors.white,
         elevation: 5.0,
@@ -2533,43 +2712,7 @@ class AlertBubble extends StatelessWidget {
 class AlertStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Widget> alertList = [
-      AlertBubble(
-        text: 'Accident',
-        icon: Icons.directions_car,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Arrêt',
-        icon: Icons.subway,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Arrivé à destination',
-        icon: Icons.pin_drop,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Embouteillage',
-        icon: Icons.traffic,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Radar',
-        icon: Icons.settings_input_antenna,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Route barrée',
-        icon: Icons.block,
-        isReceived: false,
-      ),
-      AlertBubble(
-        text: 'Station-services',
-        icon: Icons.local_gas_station,
-        isReceived: false,
-      ),
-    ];
+    List<Widget> alertList = [];
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection('Utilisateur').snapshots(),
       builder: (context, snapshot) {
@@ -2581,8 +2724,6 @@ class AlertStream extends StatelessWidget {
           );
         }
 
-        List<Widget> alertBubbles = alertList;
-
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
@@ -2590,7 +2731,7 @@ class AlertStream extends StatelessWidget {
             final List alertText = List.from(alert.data['alertLIST']);
             for (int i = 0; i < alertText.length; i++) {
               int llist = alertList.length;
-              if (llist < (alertText.length + 7)) {
+              if (llist < (alertText.length )) {
                 var alertBubble = AlertBubble(
                   text: alertText[i],
                   icon: Icons.sms_failed,
@@ -2601,8 +2742,113 @@ class AlertStream extends StatelessWidget {
             }
           }
         }
-        return ListView(
-          children: alertBubbles,
+        return SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            children: <Widget>[
+              AlertBubble(
+                text: 'Accident',
+                icon: Icons.directions_car,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Arrêt',
+                icon: Icons.subway,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Arrivé à destination',
+                icon: Icons.pin_drop,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Embouteillage',
+                icon: Icons.traffic,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Réduction de vitesse',
+                icon: Icons.av_timer,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Route barrée',
+                icon: Icons.block,
+                isReceived: false,
+              ),
+              AlertBubble(
+                text: 'Station-services',
+                icon: Icons.local_gas_station,
+                isReceived: false,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6,top: 16),
+                child: Text(
+                  'Vos alertes',
+                  style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 15.0,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: alertList.length,
+                itemBuilder:(context, int index){
+                  return Dismissible(
+                    key: Key(index.toString()),
+                    onDismissed: (direction){
+                      AlertBubble alal = alertList[index];
+                      _firestore.collection('Utilisateur').document(utilisateurID).updateData({
+                        'alertLIST':FieldValue.arrayRemove([alal.text]),
+                      });
+
+                      alertList.removeAt(index);//iciiiiii
+                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                        content: Row(
+                          children: <Widget>[
+                            Text(
+                              'Alerte supprimée !',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.0,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Expanded(
+                              child: SizedBox(),
+                            ),
+                            Icon(
+                              Icons.check,
+                              color: Color(0xFF3b466b),
+                            )
+                          ],
+                        ),
+                      ));
+                      Navigator.pop(context);
+
+
+                    },
+                    background: Container(color: Color(0xB0FF5252),
+                      child: Row(children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal :15.0),
+                          child: Icon(Icons.delete,color: Colors.white,),
+                        ),
+                        Expanded(child: SizedBox(),),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal :15.0),
+                          child: Icon(Icons.delete,color: Colors.white,),
+                        ),
+                      ],),),
+                    child: alertList[index],
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -2631,7 +2877,7 @@ class _AlertScreenState extends State<AlertScreen> {
     debugPrint('payload : $payload');
     //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
     setState(() {
-      stackIndex = 3;
+      stackIndex = 2;
     });
     /*showDialog(
       context: context,
@@ -2715,12 +2961,12 @@ IconData createIcon(String s) {
 
 class ReceivedAlertBubble extends StatelessWidget {
   String sender;
-  AlertBubble alert;
+  AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
 
   ReceivedAlertBubble(
-      {String sender, AlertBubble alert, Timestamp date, GeoPoint geoPoint}) {
+      {String sender, AlertBubbleBox alert, Timestamp date, GeoPoint geoPoint}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
@@ -2731,6 +2977,15 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () {
+
+          MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
+          Marker _marker = Marker(
+            markerId: markerId,
+            position: LatLng(geoPoint.latitude,geoPoint.latitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          );
+          Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
+
           //TODO: je positionne l'alerte sur la map
         },
         padding: const EdgeInsets.all(0),
@@ -2784,10 +3039,9 @@ class ReceivedAlertStream extends StatelessWidget {
           final alertDate = alert.data['envoyeLe'];
           final alertGeoP = alert.data['position']['geopoint'];
 
-          var alertBubble = AlertBubble(
+          var alertBubble = AlertBubbleBox(
             text: alertContent,
             icon: createIcon(alertIconName),
-            isReceived: true,
           );
 
           var receivedAlertBubble = ReceivedAlertBubble(
@@ -2801,8 +3055,128 @@ class ReceivedAlertStream extends StatelessWidget {
 
         return ListView(
           children: alertList,
+          padding: EdgeInsets.all(0),
         );
       },
     );
   }
+}
+
+class AlertBubbleBox extends StatelessWidget {
+  final icon;
+  final text;
+
+  AlertBubbleBox({
+    @required this.icon,
+    @required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return  Card(
+      shape:
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      color: Colors.white,
+      elevation: 5.0,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(11.0),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: <Widget>[
+                Image(
+                  image: AssetImage(
+                    'images/circle.png',
+                  ),
+                  width: 52.0,
+                ),
+                Icon(
+                  icon,
+                  color: Color(0xFF707070),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 25,
+              top: 25,
+              left: 8,
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                  fontSize: 16.0,
+                  color: Color(0xFF707070),
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+void addListnerToNotifier() {
+
+  valueNotifier.addListener(() async {
+    //print('ey tout le monde on a recu une alerte');
+    checkSenderUser();
+
+    var vaaa = _AlertScreenState();
+    vaaa.initState();
+    await vaaa.showNotificationWithDefaultSound();
+
+
+  });
+}
+
+
+class NotifStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore
+          .collection("Voyage")
+          .snapshots(),
+      builder: (context, snapshot) {
+
+        addListnerToNotifier();
+
+        final alerts = snapshot.data.documents;
+        for (var alert in alerts) {
+          var id = alert.documentID;
+          if (id == _firestore.document(groupPath).documentID){
+            print('FOUUUUUUUUUUUUUUUUUUUND');
+            final groupJRA = alert.data['justReceivedAlert'];
+            if (groupJRA != justReceivedAlert){
+              print('SENDEEEEEER $notifSender USEEEEER $currentUser');
+              if (notifSender != currentUser){
+                valueNotifier.notifyListeners();
+
+              }
+              justReceivedAlert = groupJRA;
+
+            }
+          }
+        }
+
+        return Container();
+      },
+    );
+  }
+}
+
+String notifSender;
+
+Future<void> checkSenderUser() async {
+  var ggg = await _firestore.document(groupPath).collection("receivedAlerts").orderBy("envoyeLe", descending: true).getDocuments();
+  List<DocumentSnapshot> ggglist = ggg.documents;
+  notifSender = ggglist[0].data['sender'];
+
 }

@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../UpdateMarkers.dart';
+import 'MapPage.dart';
 
 bool _loading;
 
@@ -129,12 +130,18 @@ class grpTile extends StatelessWidget {
             }
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
-                .UpdateusersLocation(grp_chemin);
+                .UpdateusersLocation(grp_chemin, context);
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
                         MapVoyagePage(g, grp_chemin, images)));
+            //asma initialise
+            groupPath = grp_chemin;
+            utilisateurID = await AuthService().connectedID();
+            currentUser =
+            await AuthService().getPseudo(utilisateurID);
+            stackIndex = 3;
           }
           if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance
@@ -156,7 +163,7 @@ class grpTile extends StatelessWidget {
             }
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
-                .UpdateusersLocation(grp_chemin);
+                .UpdateusersLocation(grp_chemin, context);
             Navigator.push(
                 context,
                 MaterialPageRoute(

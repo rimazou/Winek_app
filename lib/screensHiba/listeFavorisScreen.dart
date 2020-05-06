@@ -121,7 +121,7 @@ Future<Null> displayPrediction(Prediction p) async {
     //final placeDetail=p.result;
     var placeId = p.placeId;
     String placeIdToString = "$placeId";
-    DataBaseFavoris().favorisIdUpdateData(placeIdToString);
+    //DataBaseFavoris().favorisIdUpdateData(placeIdToString);
     print('Place id : $placeId');
 
     double lat = detail.result.geometry.location.lat;

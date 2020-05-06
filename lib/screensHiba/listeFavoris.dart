@@ -70,15 +70,15 @@ class FavorisTile extends StatefulWidget {
 }
 
 class _FavorisTile extends State<FavorisTile> {
-  String addressToPrint = "";
+  String addressToPrint = "  ";
   static Geoflutterfire geo = Geoflutterfire();
   GeoFirePoint geoP;
   static double l1;
   static double l2;
   double lat;
   double long;
-  String placeName;
-  String placeAddress;
+  String placeName = "  ";
+  String placeAddress = "  ";
   String placeid;
   String geohsh;
   @override
