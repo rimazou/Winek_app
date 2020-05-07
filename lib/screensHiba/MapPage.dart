@@ -769,8 +769,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               //remplir le reste des champs de memreinfo avec des Text()
                               // membreinfo['vitesse']
 
-                                // membreinfo['vitesse'] = Text('$speedInMps');
-                              });
                               /* membreinfo['vitesse'] = StreamBuilder(
                                 stream: _firestore
                                     .collection('Utilisateur')
