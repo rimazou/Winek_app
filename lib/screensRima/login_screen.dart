@@ -26,15 +26,19 @@ void getUserLocation() async {
       {
     try {
       var geolocator = Geolocator();
+      Position position;
       var locationOptions = LocationOptions(
           accuracy: LocationAccuracy.high, distanceFilter: 10);
       StreamSubscription<Position> positionStream = geolocator
           .getPositionStream(locationOptions).listen(
-              (Position position) {
+              (position) {
+            double vitesse = position.speed;
+            print('vitess');
+            print(vitesse);
             GeoFirePoint geoFirePoint = authService.geo.point(
                 latitude: position.latitude, longitude: position.longitude);
             authService.userRef.document(val).updateData(
-                {'location': geoFirePoint.data});
+                {'location': geoFirePoint.data, 'vitesse': vitesse});
             print(geoFirePoint.data.toString());
           });
     } catch (e) {
@@ -273,6 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 42,
                               child: Image.asset(
                                   'images/googlelogo.png', fit: BoxFit.fill)),
+
                           Text(
                             'Google',
 
@@ -282,6 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontWeight: FontWeight.bold,
 
                             ),
+
                           ),
                         ],
                       ),

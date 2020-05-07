@@ -1,7 +1,7 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/listeFavorisScreen.dart';
 import 'package:winek/screensRima/firstLoading.dart';
-import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/register_screen.dart';
@@ -13,15 +13,12 @@ import 'UpdateMarkers.dart';
 import 'package:provider/provider.dart';
 import 'screensHiba/MapPage.dart';
 import 'classes.dart';
-import 'dataBasehiba.dart';
-import 'screensSoum/friendRequestScreen.dart';
-import 'screensSoum/friendsListScreen.dart';
 import 'screensHiba/list_grp.dart';
 import 'screensHiba/list_inv_grp.dart';
 import 'screensHiba/nouveau_grp.dart';
 import 'screensRima/welcome_screen.dart';
 
-void main() => runApp(Authentication());
+void main() => runApp(DevicePreview(builder: (context) => Authentication()));
 Color primarycolor = Color(0xff3B466B);
 Color secondarycolor = Color(0xff389490);
 
@@ -42,6 +39,7 @@ class Authentication extends StatelessWidget {
             create: (BuildContext context) => DeviceInformationService()),
       ],
       child: MaterialApp(
+        builder: DevicePreview.appBuilder,
         debugShowCheckedModeBanner: false,
         //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
         initialRoute: WelcomeScreen.id, //FirstLoading.id,
