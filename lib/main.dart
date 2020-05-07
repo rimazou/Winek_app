@@ -1,4 +1,5 @@
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/Aide.dart';
 import 'package:winek/screensHiba/listeFavorisScreen.dart';
 import 'package:winek/screensRima/firstLoading.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
@@ -62,6 +63,7 @@ class Authentication extends StatelessWidget {
           FavoritePlacesScreen.id: (context) => FavoritePlacesScreen(),
           ProfileScreen.id: (context) => ProfileScreen(user),
           FirstLoading.id: (context) => FirstLoading(),
+          AidePage.id: (context) => AidePage(),
         },
       ),
     );

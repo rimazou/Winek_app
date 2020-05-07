@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:winek/main.dart';
+import 'package:winek/screensHiba/Aide.dart';
 import 'package:winek/screensSoum/friendsListScreen.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
@@ -18,15 +19,11 @@ import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
 import '../screensRima/profile_screen.dart';
-
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-
-
-
 
 //asma's variables
 final _firestore = Firestore.instance;
@@ -321,6 +318,9 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AidePage.id);
+                                  },
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -653,7 +653,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-class MapVoyagePage extends StatefulWidget {
+class MapVoyagePage extends StatefulWidget with ChangeNotifier {
   Voyage groupe;
   String path;
   List<String> imagesUrl;
@@ -666,8 +666,7 @@ class MapVoyagePage extends StatefulWidget {
 
 class _MapVoyagePageState extends State<MapVoyagePage> {
   Voyage groupe;
-  String path; // asma u use that path as docref
-  bool _visible = true;
+  String path;
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
@@ -762,13 +761,46 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 .animateCamera(cameraUpdate);
                             setState(() {
                               //zoum sur la personne, son id est dans
+                              // g
                               // groupe.membres[i]['id']
                               membreinfo['pseudo'] =
                                   groupe.membres[i]['pseudo'];
                               membreinfo['image'] = imagesUrl[i];
                               //remplir le reste des champs de memreinfo avec des Text()
                               // membreinfo['vitesse']
-                              membreinfo['vitesse'] = StreamBuilder(
+
+                                // membreinfo['vitesse'] = Text('$speedInMps');
+                              });
+                              /* membreinfo['vitesse'] = StreamBuilder(
+                                stream: _firestore
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    print('hasdataa');
+                                    GeoPoint point =
+                                        snapshot.data['location']['geopoint'];
+                                    Position pos = Position(
+                                        latitude: point.latitude,
+                                        longitude: point.longitude);
+                                    print(pos.speedAccuracy);
+                                    print(pos.speed);
+                                    double vitesse = pos.speed;
+                                    return Text(
+                                      '$vitesse m/s',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    );
+                                  }
+                                  return Text('');
+                                },
+                              );*/
+                              /*   membreinfo['vitesse'] = StreamBuilder(
                                 stream: Firestore.instance
                                     .collection('Utilisateur')
                                     .document(groupe.membres[i]['id'])
@@ -796,6 +828,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   );
                                 },
                               );
+
+                            */
                               //membreinfo['temps']
 
                               //membreinfo['batterie']
@@ -806,7 +840,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   return Text(
-                                    '${snapshot.data['batterie']}%',
+                                    '${snapshot.data['batterie']}',
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: 10,
@@ -1088,7 +1122,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
-                            var vvv = await _firestore.document(groupPath).get();
+                            var vvv =
+                                await _firestore.document(groupPath).get();
                             bool tr = vvv.data['justReceivedAlert'];
                             _firestore.document(groupPath).updateData({
                               'justReceivedAlert': !tr,
@@ -1531,6 +1566,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AidePage.id);
+                                  },
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -2258,6 +2296,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AidePage.id);
+                                  },
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -2531,8 +2572,8 @@ class AlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
-        if(isReceived){}
-        else{
+        if (isReceived) {
+        } else {
           //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
           try {
             final result = await InternetAddress.lookup('google.com');
@@ -2541,7 +2582,7 @@ class AlertBubble extends StatelessWidget {
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               bool isLocationEnabled =
-              await Geolocator().isLocationServiceEnabled();
+                  await Geolocator().isLocationServiceEnabled();
               if (isLocationEnabled) {
                 //TODO: je change le just received
 
@@ -2648,12 +2689,11 @@ class AlertBubble extends StatelessWidget {
         }
 
         //TODO : SHOW NOTIF FOR A GROUP MEMBRER
-
       },
       padding: const EdgeInsets.all(0),
       child: Card(
         shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
         margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
         color: Colors.white,
         elevation: 5.0,
@@ -2722,7 +2762,7 @@ class AlertStream extends StatelessWidget {
             final List alertText = List.from(alert.data['alertLIST']);
             for (int i = 0; i < alertText.length; i++) {
               int llist = alertList.length;
-              if (llist < (alertText.length )) {
+              if (llist < (alertText.length)) {
                 var alertBubble = AlertBubble(
                   text: alertText[i],
                   icon: Icons.sms_failed,
@@ -2773,7 +2813,7 @@ class AlertStream extends StatelessWidget {
                 isReceived: false,
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 6,top: 16),
+                padding: const EdgeInsets.only(bottom: 6, top: 16),
                 child: Text(
                   'Vos alertes',
                   style: TextStyle(
@@ -2787,16 +2827,19 @@ class AlertStream extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: alertList.length,
-                itemBuilder:(context, int index){
+                itemBuilder: (context, int index) {
                   return Dismissible(
                     key: Key(index.toString()),
-                    onDismissed: (direction){
+                    onDismissed: (direction) {
                       AlertBubble alal = alertList[index];
-                      _firestore.collection('Utilisateur').document(utilisateurID).updateData({
-                        'alertLIST':FieldValue.arrayRemove([alal.text]),
+                      _firestore
+                          .collection('Utilisateur')
+                          .document(utilisateurID)
+                          .updateData({
+                        'alertLIST': FieldValue.arrayRemove([alal.text]),
                       });
 
-                      alertList.removeAt(index);//iciiiiii
+                      alertList.removeAt(index); //iciiiiii
                       _scaffoldKey.currentState.showSnackBar(SnackBar(
                         content: Row(
                           children: <Widget>[
@@ -2819,21 +2862,33 @@ class AlertStream extends StatelessWidget {
                         ),
                       ));
                       Navigator.pop(context);
-
-
                     },
-                    background: Container(color: Color(0xB0FF5252),
-                      child: Row(children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal :15.0),
-                          child: Icon(Icons.delete,color: Colors.white,),
-                        ),
-                        Expanded(child: SizedBox(),),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal :15.0),
-                          child: Icon(Icons.delete,color: Colors.white,),
-                        ),
-                      ],),),
+                    background: Container(
+                      color: Color(0xB0FF5252),
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Expanded(
+                            child: SizedBox(),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     child: alertList[index],
                   );
                 },
@@ -2957,7 +3012,10 @@ class ReceivedAlertBubble extends StatelessWidget {
   GeoPoint geoPoint;
 
   ReceivedAlertBubble(
-      {String sender, AlertBubbleBox alert, Timestamp date, GeoPoint geoPoint}) {
+      {String sender,
+      AlertBubbleBox alert,
+      Timestamp date,
+      GeoPoint geoPoint}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
@@ -2968,14 +3026,17 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () {
-
-          MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
+          MarkerId markerId = MarkerId(
+              geoPoint.latitude.toString() + geoPoint.longitude.toString());
           Marker _marker = Marker(
             markerId: markerId,
-            position: LatLng(geoPoint.latitude,geoPoint.latitude),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+            position: LatLng(geoPoint.latitude, geoPoint.latitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueViolet),
           );
-          Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
+          Provider.of<UpdateMarkers>(
+            context,
+          ).markers[markerId] = _marker;
 
           //TODO: je positionne l'alerte sur la map
         },
@@ -3064,9 +3125,8 @@ class AlertBubbleBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Card(
-      shape:
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
       color: Colors.white,
       elevation: 5.0,
@@ -3113,7 +3173,6 @@ class AlertBubbleBox extends StatelessWidget {
 }
 
 void addListnerToNotifier() {
-
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
     checkSenderUser();
@@ -3121,38 +3180,29 @@ void addListnerToNotifier() {
     var vaaa = _AlertScreenState();
     vaaa.initState();
     await vaaa.showNotificationWithDefaultSound();
-
-
   });
 }
-
 
 class NotifStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection("Voyage")
-          .snapshots(),
+      stream: _firestore.collection("Voyage").snapshots(),
       builder: (context, snapshot) {
-
         addListnerToNotifier();
 
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
-          if (id == _firestore.document(groupPath).documentID){
+          if (id == _firestore.document(groupPath).documentID) {
             print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
-            if (groupJRA != justReceivedAlert){
+            if (groupJRA != justReceivedAlert) {
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');
-              if (notifSender != currentUser){
+              if (notifSender != currentUser) {
                 valueNotifier.notifyListeners();
-
               }
               justReceivedAlert = groupJRA;
-
             }
           }
         }
@@ -3166,8 +3216,11 @@ class NotifStream extends StatelessWidget {
 String notifSender;
 
 Future<void> checkSenderUser() async {
-  var ggg = await _firestore.document(groupPath).collection("receivedAlerts").orderBy("envoyeLe", descending: true).getDocuments();
+  var ggg = await _firestore
+      .document(groupPath)
+      .collection("receivedAlerts")
+      .orderBy("envoyeLe", descending: true)
+      .getDocuments();
   List<DocumentSnapshot> ggglist = ggg.documents;
   notifSender = ggglist[0].data['sender'];
-
 }
