@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/register_screen.dart';
+import '../UpdateMarkers.dart';
 import '../classes.dart';
 import 'waitingSignout.dart';
 import 'package:winek/screensRima/profile_screen.dart';
@@ -21,28 +23,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 
 
-void getUserLocation() async {
-  var val = await authService.connectedID();
-  if (val != null) // ca permetra de faire lappel seulement quand le user est co
-      {
-    try {
-      var geolocator = Geolocator();
-      var locationOptions = LocationOptions(
-          accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream = geolocator
-          .getPositionStream(locationOptions).listen(
-              (Position position) {
-            GeoFirePoint geoFirePoint = authService.geo.point(
-                latitude: position.latitude, longitude: position.longitude);
-            authService.userRef.document(val).updateData(
-                {'location': geoFirePoint.data});
-            print(geoFirePoint.data.toString());
-          });
-    } catch (e) {
-      print('ya eu une erreur pour la localisation');
-    }
-  }
-}
+
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
@@ -285,8 +266,9 @@ class _LoginScreenState extends State<LoginScreen> {
           email: mail,
           password: pwd);
       if (user != null) {
-        //getUserLocation();
-
+        authService.getUserLocation();
+        Provider.of<DeviceInformationService>(context, listen: false)
+            .broadcastBatteryLevel(user.user.uid);
         authService.userRef.document(user.user.uid).updateData(
             {'connecte': true});
         DocumentSnapshot snapshot = await authService.userRef.document(

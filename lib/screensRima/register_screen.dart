@@ -7,9 +7,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
 import 'package:winek/screensHiba/MapPage.dart';
+import 'login_screen.dart';
 import 'profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
+import 'package:winek/UpdateMarkers.dart';
 import 'package:path/path.dart' as p ;
 class RegistrationScreen extends StatefulWidget {
   static const String id='register';
@@ -539,7 +542,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             onPressed: () =>
                                 showAlertDialog(
                                     context, "choisissez la source de l'image",
-                                    "chooose"),
+                                    "Source"),
                             // uploadFile();
 
                           ),
@@ -686,6 +689,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         authService.db.collection('Utilisateur').document(user.uid).setData(
             myUser.map);
         print('user CREAAAATEEEEED');
+        authService.getUserLocation();
+        Provider.of<DeviceInformationService>(context, listen: false)
+            .broadcastBatteryLevel(user.uid);
         Navigator.push(context, MaterialPageRoute(
             builder: (context) =>
                 ProfileScreen(myUser)
@@ -732,6 +738,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             myUser.map);
         print('user CREAAAATEEEEED');
         print(newUser.user.uid);
+        authService.getUserLocation();
+        Provider.of<DeviceInformationService>(context, listen: false)
+            .broadcastBatteryLevel(newUser.user.uid);
         Navigator.pushNamed(context, Home.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
