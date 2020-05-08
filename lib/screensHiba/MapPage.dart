@@ -2842,6 +2842,11 @@ class ReceivedAlertBubble extends StatelessWidget {
     this.alert = alert;
     this.geoPoint = geoPoint;
   }
+
+  Future<BitmapDescriptor> createMarkerIc() async {
+    return await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -2850,12 +2855,22 @@ class ReceivedAlertBubble extends StatelessWidget {
 
 
           MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
+          Provider.of<UpdateMarkers>(context,).markers.remove(markerId);
+
           Marker _marker = Marker(
             markerId: markerId,
             position: LatLng(geoPoint.latitude,geoPoint.longitude),
             infoWindow: InfoWindow(title:sender,snippet: alert.text),
 //           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
+//            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
+            icon : await createMarkerIc(),
+          );
+          Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
+          _marker = Marker(
+            markerId: markerId,
+            position: LatLng(geoPoint.latitude,geoPoint.longitude),
+            infoWindow: InfoWindow(title:sender,snippet: alert.text),
+            icon : await createMarkerIc(),
           );
           Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
 

@@ -18,6 +18,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../UpdateMarkers.dart';
 import 'MapPage.dart';
+import 'package:winek/updateMarkers2.dart';
 
 bool _loading;
 
@@ -142,6 +143,8 @@ class grpTile extends StatelessWidget {
             currentUser =
             await AuthService().getPseudo(utilisateurID);
             stackIndex = 3;
+            //asma tentative
+
           }
           if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance

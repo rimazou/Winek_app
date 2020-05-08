@@ -20,7 +20,7 @@ class UpdateMarkers2 extends ChangeNotifier {
 
   void UpdateusersLocation(String path) {
 
-    var collectionReference = _firestore.document(path).collection('members');
+    var collectionReference = _firestore.document(path).collection('receivedAlerts');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
     geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
@@ -129,16 +129,12 @@ class UpdateMarkers2 extends ChangeNotifier {
   Future<void> _addMarker(double lat, double lng, String usrid) async {
     MarkerId id = MarkerId(usrid);
     String url;
-    await _firestore.collection('Utilisateur').document(usrid).get().then((DocumentSnapshot ds)
-    {
-      url=ds.data['photo'];
 
-    });
 
     _marker = Marker(
       markerId: id,
       position: LatLng(lat, lng),
-      icon: await getMarkerIcon(url,Size(200.0, 200.0)),
+      icon: await getMarkerIcon(url,Size(150.0, 150.0)),
       //icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       //infoWindow: InfoWindow(title: 'distance', snippet: '$distance'),
     );
