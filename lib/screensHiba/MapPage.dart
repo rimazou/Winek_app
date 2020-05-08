@@ -2852,9 +2852,9 @@ class ReceivedAlertBubble extends StatelessWidget {
           Marker _marker = Marker(
             markerId: markerId,
             position: LatLng(geoPoint.latitude,geoPoint.longitude),
+            infoWindow: InfoWindow(title:sender,snippet: alert.text),
 //            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
             icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
-            infoWindow: InfoWindow(title:sender,snippet: alert.text),
           );
           Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
 
