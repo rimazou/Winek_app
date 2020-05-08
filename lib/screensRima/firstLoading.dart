@@ -25,10 +25,12 @@ class _FirstLoadingState extends State<FirstLoading> {
     await authService.isLog().then((log) {
       if (log) {
         print('yes log');
+        authService.getUserLocation();
         Navigator.pushNamed(context, Home.id);
       } else {
         print('no log');
-        Navigator.pushNamed(context, WelcomeScreen.id);
+        Navigator.pushNamed(
+            context, WelcomeScreen.id); // va devenir apres loginscreen
       }
     });
   }
@@ -40,7 +42,7 @@ class _FirstLoadingState extends State<FirstLoading> {
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
+              color: Color(0XFF389490),
             ),
           ),
         ),

@@ -689,7 +689,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         authService.db.collection('Utilisateur').document(user.uid).setData(
             myUser.map);
         print('user CREAAAATEEEEED');
-        getUserLocation();
+        authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.uid);
         Navigator.push(context, MaterialPageRoute(
@@ -738,7 +738,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             myUser.map);
         print('user CREAAAATEEEEED');
         print(newUser.user.uid);
-        getUserLocation();
+        authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(newUser.user.uid);
         Navigator.pushNamed(context, Home.id);

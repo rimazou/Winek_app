@@ -199,23 +199,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             _loading = true;
                                                           });
                                                           if (nv_pseudo != '') {
-                                                            await authService
-                                                                .changePseudo(
-                                                                    widget
-                                                                        .myuser
-                                                                        .pseudo,
-                                                                    nv_pseudo);
+                                                            await pseudoExist(
+                                                                nv_pseudo)
+                                                                .then((
+                                                                onValue) {
+                                                              if (onValue) {
+
+                                                              } else {}
+                                                            });
+                                                            {
+                                                              await authService
+                                                                  .changePseudo(
+                                                                  widget
+                                                                      .myuser
+                                                                      .pseudo,
+                                                                  nv_pseudo);
+                                                            }
+                                                            setState(() {
+                                                              _loading = false;
+                                                              widget.myuser
+                                                                  .pseudo =
+                                                                  nv_pseudo;
+                                                            });
+                                                            // nv_nom = _controller.text;
+                                                            // _confirmer = true;
+                                                            Navigator.pop(
+                                                                context);
                                                           }
-                                                          setState(() {
-                                                            _loading = false;
-                                                            widget.myuser
-                                                                    .pseudo =
-                                                                nv_pseudo;
-                                                          });
-                                                          // nv_nom = _controller.text;
-                                                          // _confirmer = true;
-                                                          Navigator.pop(
-                                                              context);
                                                         },
                                                         child: Text(
                                                           'confirmer',
@@ -236,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               context);
                                                         },
                                                         child: Text(
-                                                          'annuller',
+                                                          'annuler',
                                                           style: TextStyle(
                                                             fontFamily:
                                                                 'Montserrat',
@@ -617,7 +627,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               context);
                                                         },
                                                         child: Text(
-                                                          'annuller',
+                                                          'annuler',
                                                           style: TextStyle(
                                                             fontFamily:
                                                                 'Montserrat',
@@ -1025,6 +1035,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
+
+  Future<bool> pseudoExist(String nom) async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('pseudo', isEqualTo: nom)
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length == 1) {
+      print("UserName Already Exits");
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
 
   String mail, pseudo, tel, photo;
 
