@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,30 +21,56 @@ import 'dart:async';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 
-
 void getUserLocation() async {
   var val = await authService.connectedID();
   if (val != null) // ca permetra de faire lappel seulement quand le user est co
-      {
+  {
     try {
       var geolocator = Geolocator();
-      var locationOptions = LocationOptions(
-          accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream = geolocator
-          .getPositionStream(locationOptions).listen(
-              (Position position) {
-            GeoFirePoint geoFirePoint = authService.geo.point(
-                latitude: position.latitude, longitude: position.longitude);
-            authService.userRef.document(val).updateData(
-                {'location': geoFirePoint.data});
-            print(geoFirePoint.data.toString());
-          });
+      Position position;
+      var locationOptions =
+          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream =
+          geolocator.getPositionStream(locationOptions).listen((position) {
+        double vitesse = position.speed;
+        GeoFirePoint geoFirePoint = authService.geo
+            .point(latitude: position.latitude, longitude: position.longitude);
+        authService.userRef
+            .document(val)
+            .updateData({'location': geoFirePoint.data, 'vitesse': vitesse});
+        print(geoFirePoint.data.toString());
+      });
     } catch (e) {
       print('ya eu une erreur pour la localisation');
     }
   }
 }
 
+/*
+void getUserLocation() async {
+  var val = await authService.connectedID();
+  if (val != null) // ca permetra de faire lappel seulement quand le user est co
+  {
+    try {
+      var geolocator = Geolocator();
+      var locationOptions =
+          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator
+          .getPositionStream(locationOptions)
+          .listen((Position position) {
+        GeoFirePoint geoFirePoint = authService.geo
+            .point(latitude: position.latitude, longitude: position.longitude);
+        authService.userRef
+            .document(val)
+            .updateData({'location': geoFirePoint.data});
+        print(geoFirePoint.data.toString());
+      });
+    } catch (e) {
+      print('ya eu une erreur pour la localisation');
+    }
+  }
+}
+*/
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
 
@@ -55,7 +80,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String pwd, mail, errMl, errPwd;
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +96,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 30.0,
                 ),
-
                 Container(
-
                   height: 120.0,
-                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
+                  child: Image.asset(
+                    'images/logo.png',
+                    fit: BoxFit.fill,
+                    height: 120.0,
+                    width: 120.0,
+                  ),
                 ),
                 Text(
                   'Winek',
@@ -84,8 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 26.0,
                     fontWeight: FontWeight.w900,
-                    color:Color(0XFF3B466B),
-
+                    color: Color(0XFF3B466B),
                   ),
                 ),
                 SizedBox(
@@ -97,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 20.0,
                     fontWeight: FontWeight.w900,
-                    color: Color(0XFF389490),//vert
+                    color: Color(0XFF389490), //vert
                   ),
                 ),
                 SizedBox(
@@ -108,11 +134,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     mail = value;
                     setState(() {
-                      !Validator.email(mail) ? errMl = null : errMl =
-                      "Veuillez introduire une adresse valide";
+                      !Validator.email(mail)
+                          ? errMl = null
+                          : errMl = "Veuillez introduire une adresse valide";
                     });
                   },
-
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black87,
@@ -128,10 +154,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     errorStyle: TextStyle(
                         color: Colors.red,
                         fontFamily: 'Montserrat',
-
                         fontWeight: FontWeight.bold),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
@@ -150,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextField(
                   onChanged: (value) {
-                    pwd=value ;
+                    pwd = value;
                     if (pwd.isEmpty) {
                       setState(() {
                         errPwd = 'Veuillez introduire un mot de passe';
@@ -159,7 +184,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   obscureText: true,
                   autocorrect: false,
-
                   style: TextStyle(
                     fontFamily: 'Montserrat',
 
@@ -170,18 +194,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 1.0),
+                          BorderSide(color: Colors.blueGrey, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 2.0),
+                          BorderSide(color: Colors.blueGrey, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
@@ -190,8 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'mot de passe oublie ?',
                     style: TextStyle(
-                      color:Color(0XFF389490),
-
+                      color: Color(0XFF389490),
                     ),
                   ),
                   onPressed: () {
@@ -201,33 +224,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 24.0,
                 ),
-
                 Row(
-                  mainAxisAlignment:MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
-                        color:Color(0XFF3B466B),
-
+                        color: Color(0XFF3B466B),
                         child: MaterialButton(
-
-                          onPressed: () =>
-                              Navigator.pushNamed(
-                                  context, RegistrationScreen.id), //_signInG(),
+                          onPressed: () => Navigator.pushNamed(
+                              context, RegistrationScreen.id), //_signInG(),
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
-
                             "s'inscrire",
-
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              color:Colors.white,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
-
                             ),
                           ),
                         ),
@@ -236,23 +252,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
-                        color:Color(0XFF389490),
-
+                        color: Color(0XFF389490),
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () => connect(),
-
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
                             'Se connecter',
-
                             style: TextStyle(
-                              color: Colors.white ,
+                              color: Colors.white,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -262,7 +274,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
-
           ),
         ),
       ),
@@ -283,17 +294,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   connect() async {
     try {
-      final user = await authService.auth.signInWithEmailAndPassword(
-          email: mail,
-          password: pwd);
+      final user = await authService.auth
+          .signInWithEmailAndPassword(email: mail, password: pwd);
       if (user != null) {
         getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
-        authService.userRef.document(user.user.uid).updateData(
-            {'connecte': true});
-        DocumentSnapshot snapshot = await authService.userRef.document(
-            user.user.uid).get();
+        authService.userRef
+            .document(user.user.uid)
+            .updateData({'connecte': true});
+        DocumentSnapshot snapshot =
+            await authService.userRef.document(user.user.uid).get();
 
         if (snapshot != null) {
           Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
@@ -305,58 +316,51 @@ class _LoginScreenState extends State<LoginScreen> {
           print(utilisateur.tel);
         }
       }
-    }
-    catch (logIn) {
-
-        if (logIn is PlatformException) {
-          if (logIn.code == 'ERROR_USER_NOT_FOUND') {
-            setState(() {
-              errMl = 'Utilisateur inexistant';
-            });
-            print(logIn);
-            print(errMl);
-
-          } else {
-            print(logIn);
-            setState(() {
-              errMl = null;
-            });
-          }
-          if (logIn.code == 'ERROR_INVALID_EMAIL') {
-            print(logIn);
-            setState(() {
-              errMl = "Veuillez introduire une adresse valide";
-            });
-          } else {
-            print(logIn);
-            setState(() {
-              errMl = null;
-            });
-          }
-          if (logIn.code == 'ERROR_WRONG_PASSWORD') {
-            print(logIn);
-            setState(() {
-              errPwd = 'Mot de passe errone';
-              // showAlertDialog(context, errPwd, "heading", "ok");
-
-            });
-          }
-          else {
-            setState(() {
-              errPwd = null;
-            });
-          }
-          if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
-            // erreur reseau internet faire qlq chose
-            print(logIn);
-
-          }
-          else {
-            setState(() {
-              errPwd = null;
-            });
-          }
+    } catch (logIn) {
+      if (logIn is PlatformException) {
+        if (logIn.code == 'ERROR_USER_NOT_FOUND') {
+          setState(() {
+            errMl = 'Utilisateur inexistant';
+          });
+          print(logIn);
+          print(errMl);
+        } else {
+          print(logIn);
+          setState(() {
+            errMl = null;
+          });
         }
+        if (logIn.code == 'ERROR_INVALID_EMAIL') {
+          print(logIn);
+          setState(() {
+            errMl = "Veuillez introduire une adresse valide";
+          });
+        } else {
+          print(logIn);
+          setState(() {
+            errMl = null;
+          });
+        }
+        if (logIn.code == 'ERROR_WRONG_PASSWORD') {
+          print(logIn);
+          setState(() {
+            errPwd = 'Mot de passe errone';
+            // showAlertDialog(context, errPwd, "heading", "ok");
+          });
+        } else {
+          setState(() {
+            errPwd = null;
+          });
+        }
+        if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          // erreur reseau internet faire qlq chose
+          print(logIn);
+        } else {
+          setState(() {
+            errPwd = null;
+          });
+        }
+      }
     }
   }
 
@@ -382,13 +386,11 @@ class _LoginScreenState extends State<LoginScreen> {
       onPressed: () => Navigator.pop(context),
     );
 
-
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(heading),
       content: Text(message),
       actions: [
-
         OKButton,
       ],
     );
@@ -401,5 +403,4 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
-
 }

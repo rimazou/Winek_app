@@ -48,7 +48,8 @@ void createlongterme() async {
     ], // since he's the admin, others have to accept the invitation first
   });
   Geoflutterfire geo = Geoflutterfire();
-  GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
+  GeoFirePoint point =
+      geo.point(latitude: 36.7525, longitude: 3.041969999999992);
 
   await _firestore
       .document(ref.path)
@@ -56,6 +57,26 @@ void createlongterme() async {
       .document(user['id'])
       .setData({
     'position': point.data,
+  });
+  GeoPoint position;
+  GeoFirePoint geoFirePoint;
+//  Geoflutterfire geo = Geoflutterfire();
+  _firestore
+      .collection('Utilisateur')
+      .document(user['id'])
+      .snapshots(includeMetadataChanges: true)
+      .listen((DocumentSnapshot documentSnapshot) {
+    position = documentSnapshot.data['location']['geopoint'];
+    /*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+      position = ds.data['location']['geopoint'];
+    });*/
+    geoFirePoint =
+        geo.point(latitude: position.latitude, longitude: position.longitude);
+    _firestore
+        .document(ref.path)
+        .collection('members')
+        .document(user['id'])
+        .updateData({'position': geoFirePoint.data});
   });
   print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
@@ -310,6 +331,27 @@ void createvoyage() async {
       .document(user['id'])
       .setData({
     'position': point.data,
+  });
+
+  GeoPoint position;
+  GeoFirePoint geoFirePoint;
+//  Geoflutterfire geo = Geoflutterfire();
+  _firestore
+      .collection('Utilisateur')
+      .document(user['id'])
+      .snapshots(includeMetadataChanges: true)
+      .listen((DocumentSnapshot documentSnapshot) {
+    position = documentSnapshot.data['location']['geopoint'];
+    /*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+      position = ds.data['location']['geopoint'];
+    });*/
+    geoFirePoint =
+        geo.point(latitude: position.latitude, longitude: position.longitude);
+    _firestore
+        .document(ref.path)
+        .collection('members')
+        .document(user['id'])
+        .updateData({'position': geoFirePoint.data});
   });
   print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};

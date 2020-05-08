@@ -761,13 +761,42 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 .animateCamera(cameraUpdate);
                             setState(() {
                               //zoum sur la personne, son id est dans
-                              // g
                               // groupe.membres[i]['id']
                               membreinfo['pseudo'] =
                                   groupe.membres[i]['pseudo'];
                               membreinfo['image'] = imagesUrl[i];
-                              //remplir le reste des champs de memreinfo avec des Text()
+
                               // membreinfo['vitesse']
+                              var vitesse;
+                              int vite = 0;
+                              membreinfo['vitesse'] = StreamBuilder(
+                                stream: _firestore
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    vitesse = snapshot.data['vitesse'];
+                                    print('Vitesseeee:$vitesse');
+
+                                    if (vitesse != 0) {
+                                      vite = (vitesse * 3.6).toInt();
+                                    } else {
+                                      vite = 0;
+                                    }
+                                    return Text(
+                                      '$vite Km/h',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    );
+                                  }
+                                  return Text('');
+                                },
+                              );
 
                               /* membreinfo['vitesse'] = StreamBuilder(
                                 stream: _firestore
@@ -829,6 +858,45 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 
                             */
                               //membreinfo['temps']
+                              double temps = 0;
+                              dynamic vts = 0;
+                              GeoPoint point;
+                              double distance;
+                              double t;
+                              int heure = 0;
+                              int min = 0;
+
+                              membreinfo['temps'] = StreamBuilder(
+                                  stream: _firestore
+                                      .collection('Utilisateur')
+                                      .document(groupe.membres[i]['id'])
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    vts = snapshot.data['vitesse'];
+                                    if (vts != 0) {
+                                      point =
+                                          snapshot.data['location']['geopoint'];
+                                      distance =
+                                          UpdateMarkers.calculateDistance(
+                                              point.latitude,
+                                              point.longitude,
+                                              groupe.destination_latitude,
+                                              groupe.destination_longitude);
+                                      temps = (distance * 1000) / vts;
+                                      t = temps / 60;
+                                      heure = (t ~/ 60).toInt();
+                                      min = (t % 60).toInt();
+                                    }
+                                    return Text(
+                                      '$heure h $min min',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    );
+                                  });
 
                               //membreinfo['batterie']
                               membreinfo['batterie'] = StreamBuilder(

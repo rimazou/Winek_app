@@ -36,7 +36,6 @@ class _AidePageState extends State<AidePage> {
       ),
       body: Padding(
         padding: EdgeInsets.all(10),
-
         child: ListView(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
