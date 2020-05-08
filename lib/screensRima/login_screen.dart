@@ -45,7 +45,6 @@ void getUserLocation() async {
     }
   }
 }
-
 /*
 void getUserLocation() async {
   var val = await authService.connectedID();
@@ -71,6 +70,7 @@ void getUserLocation() async {
   }
 }
 */
+
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
 
@@ -297,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await authService.auth
           .signInWithEmailAndPassword(email: mail, password: pwd);
       if (user != null) {
-        getUserLocation();
+        authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
         authService.userRef

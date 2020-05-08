@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:winek/main.dart';
 import 'package:winek/screensHiba/Aide.dart';
+import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensSoum/friendsListScreen.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
@@ -336,7 +337,10 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -1650,7 +1654,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -2380,7 +2387,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,

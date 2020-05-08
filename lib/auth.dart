@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/dataBaseSoum.dart';
 import 'classes.dart';
@@ -105,6 +108,7 @@ class AuthService {
     });
     return name;
   }
+
   Future sendPwdResetEmail(String email) async {
     try {
       final reset = _auth.sendPasswordResetEmail(email: email);
@@ -121,10 +125,33 @@ class AuthService {
     } else {
       return true;
     }
-
-
   }
 
+  void getUserLocation() async {
+    var val = await connectedID();
+    if (val !=
+        null) // ca permetra de faire lappel seulement quand le user est co
+        {
+      try {
+        var geolocator = Geolocator();
+        Position position;
+        var locationOptions = LocationOptions(
+            accuracy: LocationAccuracy.high, distanceFilter: 1);
+        StreamSubscription<Position> positionStream = geolocator
+            .getPositionStream(locationOptions).listen(
+                (position) {
+              double vitesse = position.speed;
+              GeoFirePoint geoFirePoint = authService.geo.point(
+                  latitude: position.latitude, longitude: position.longitude);
+              authService.userRef.document(val).updateData(
+                  {'location': geoFirePoint.data, 'vitesse': vitesse});
+              print(geoFirePoint.data.toString());
+            });
+      } catch (e) {
+        print('ya eu une erreur pour la localisation');
+      }
+    }
+  }
 
   Future<FirebaseUser> getLoggedFirebaseUser() {
     return auth.currentUser();
