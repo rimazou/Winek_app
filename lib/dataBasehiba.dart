@@ -359,6 +359,27 @@ class Databasegrp {
         .setData({
       'position': point.data,
     });
+    GeoPoint position;
+    GeoFirePoint geoFirePoint;
+//  Geoflutterfire geo = Geoflutterfire();
+    Firestore.instance
+        .collection('Utilisateur')
+        .document(id)
+        .snapshots(includeMetadataChanges: true)
+        .listen((DocumentSnapshot documentSnapshot) {
+      position = documentSnapshot.data['location']['geopoint'];
+      /*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+      position = ds.data['location']['geopoint'];
+    });*/
+      geoFirePoint =
+          geo.point(latitude: position.latitude, longitude: position.longitude);
+      Firestore.instance
+          .document(ref)
+          .collection('members')
+          .document(id)
+          .updateData({'position': geoFirePoint.data});
+    });
+    print('member doc added');
   }
 
   Future<List<Map<dynamic, dynamic>>> getListInvitations() async {
