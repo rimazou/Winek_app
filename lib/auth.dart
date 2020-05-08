@@ -53,7 +53,6 @@ class AuthService {
 
   FirebaseAuth get auth => _auth;
 
-
   set loggedIn(FirebaseUser value) {
     _loggedIn = value;
   }
@@ -68,7 +67,8 @@ class AuthService {
   }
 
   getUser(String idDoc) {
-    return Firestore.instance.collection('Utilisateur')
+    return Firestore.instance
+        .collection('Utilisateur')
         .document(idDoc)
         .snapshots();
   }
@@ -100,8 +100,11 @@ class AuthService {
 
   Future<String> getPseudo(String id) async {
     String name = 'marche pas';
-    await authService.db.collection('Utilisateur').document(id).get().then((
-        docSnap) {
+    await authService.db
+        .collection('Utilisateur')
+        .document(id)
+        .get()
+        .then((docSnap) {
       if (docSnap != null) {
         name = docSnap.data['pseudo'];
       }
@@ -131,25 +134,57 @@ class AuthService {
     var val = await connectedID();
     if (val !=
         null) // ca permetra de faire lappel seulement quand le user est co
-        {
+    {
       try {
         var geolocator = Geolocator();
         Position position;
-        var locationOptions = LocationOptions(
-            accuracy: LocationAccuracy.high, distanceFilter: 1);
-        StreamSubscription<Position> positionStream = geolocator
-            .getPositionStream(locationOptions).listen(
-                (position) {
-              double vitesse = position.speed;
-              GeoFirePoint geoFirePoint = authService.geo.point(
-                  latitude: position.latitude, longitude: position.longitude);
-              authService.userRef.document(val).updateData(
-                  {'location': geoFirePoint.data, 'vitesse': vitesse});
-              print(geoFirePoint.data.toString());
-            });
+        var locationOptions =
+            LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 1);
+        StreamSubscription<Position> positionStream =
+            geolocator.getPositionStream(locationOptions).listen((position) {
+          double vitesse = position.speed;
+          GeoFirePoint geoFirePoint = authService.geo.point(
+              latitude: position.latitude, longitude: position.longitude);
+          authService.userRef
+              .document(val)
+              .updateData({'location': geoFirePoint.data, 'vitesse': vitesse});
+          print(geoFirePoint.data.toString());
+        });
       } catch (e) {
         print('ya eu une erreur pour la localisation');
       }
+    }
+  }
+
+  void updategroupelocation() async {
+    String id = await connectedID();
+    DocumentSnapshot querySnapshot =
+        await Firestore.instance.collection('UserGrp').document(id).get();
+    List<Map<dynamic, dynamic>> groupes = List();
+    print(querySnapshot.data.toString());
+    if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
+      groupes = List<Map<dynamic, dynamic>>.from(querySnapshot.data['groupes']);
+    }
+    if (groupes.isNotEmpty) {
+      GeoPoint position;
+      GeoFirePoint geoFirePoint;
+//  Geoflutterfire geo = Geoflutterfire();
+      Firestore.instance
+          .collection('Utilisateur')
+          .document(id)
+          .snapshots(includeMetadataChanges: true)
+          .listen((DocumentSnapshot documentSnapshot) {
+        position = documentSnapshot.data['location']['geopoint'];
+        geoFirePoint = geo.point(
+            latitude: position.latitude, longitude: position.longitude);
+        for (Map grp in groupes) {
+          Firestore.instance
+              .document(grp['chemin'])
+              .collection('members')
+              .document(id)
+              .updateData({'position': geoFirePoint.data});
+        }
+      });
     }
   }
 
@@ -157,8 +192,8 @@ class AuthService {
     return auth.currentUser();
   }
 
-  Future<bool> updategroupemembers(String ref, String mpseudo,
-      String mid) async {
+  Future<bool> updategroupemembers(
+      String ref, String mpseudo, String mid) async {
     Map membre = {'pseudo': mpseudo, 'id': mid};
     bool exist = false;
     DocumentReference groupesReference = Firestore.instance.document(ref);
@@ -189,53 +224,44 @@ class AuthService {
     });
   }
 
-  final CollectionReference userCollection = Firestore.instance.collection(
-      'Utilisateur');
+  final CollectionReference userCollection =
+      Firestore.instance.collection('Utilisateur');
 
   Future<String> getID(String pseudo) async {
     String id;
-    await userCollection
-        .getDocuments()
-        .then((QuerySnapshot data) {
+    await userCollection.getDocuments().then((QuerySnapshot data) {
       data.documents.forEach((doc) {
-        if (doc.data['pseudo'] == pseudo)
-          id = doc.documentID;
-      }
-      );
+        if (doc.data['pseudo'] == pseudo) id = doc.documentID;
+      });
     });
     print(id);
     return id.toString();
   }
 
-
   Future<Null> changePseudo(String oldp, String newp) async {
     String id = await getID(oldp);
     Map fellow = {'pseudo': oldp, 'id': id};
-    await userCollection
-        .getDocuments()
-        .then((QuerySnapshot data) {
+    await userCollection.getDocuments().then((QuerySnapshot data) {
       data.documents.forEach((doc) async {
         if (doc.data['pseudo'] == oldp) {
           await userCollection
               .document(doc.documentID)
-              .updateData(
-              {'pseudo': newp});
-        }
-        else {
-          List<dynamic> list = doc
-              .data['amis']; // Liste amiiiiiiiiiiiiiiiiiiiiiiiis
+              .updateData({'pseudo': newp});
+        } else {
+          List<dynamic> list =
+              doc.data['amis']; // Liste amiiiiiiiiiiiiiiiiiiiiiiiis
           if (list != null) {
             for (var map in list) {
               if (map['id'] == id) {
                 await Database(pseudo: oldp).friendDeleteData(doc.documentID);
-                Database d = await Database().init(
-                    pseudo: newp, id: id, subipseudo: doc.data['pseudo']);
+                Database d = await Database()
+                    .init(pseudo: newp, id: id, subipseudo: doc.data['pseudo']);
                 await d.userUpdateData();
               }
             }
           }
-          List<dynamic> listinvit = doc
-              .data['invitation ']; //Liste inviiiiiiiiiiiiiiiiiiiit
+          List<dynamic> listinvit =
+              doc.data['invitation ']; //Liste inviiiiiiiiiiiiiiiiiiiit
           if (listinvit != null) {
             if (listinvit.contains(oldp)) {
               await Database(pseudo: oldp).userDeleteData(doc.documentID);
@@ -245,35 +271,34 @@ class AuthService {
         }
       });
     }); //**************
-    await authService.db.collection(
-        'UserGrp').getDocuments()
+    await authService.db
+        .collection('UserGrp')
+        .getDocuments()
         .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
-
-      });
+      data.documents.forEach((doc) async {});
     });
-    await db.collection(
-        'UserGrp').document(id).get()
+    await db
+        .collection('UserGrp')
+        .document(id)
+        .get()
         .then((DocumentSnapshot doc) async {
       if (doc.data['pseudo'] == oldp) // Update le pseudo de UserGrp
-          {
-        await db.collection(
-            'UserGrp').document(id)
-            .updateData(
-            {'pseudo': newp});
+      {
+        await db
+            .collection('UserGrp')
+            .document(id)
+            .updateData({'pseudo': newp});
       }
 
       List<dynamic> groupes = doc.data['groupes'];
-      for (var map in groupes) { // On parcourrrs tout les grouuuuuuupes
+      for (var map in groupes) {
+        // On parcourrrs tout les grouuuuuuupes
         String grp = map["chemin"];
 
-        await db.document(grp).get()
-            .then((DocumentSnapshot data) async {
+        await db.document(grp).get().then((DocumentSnapshot data) async {
           if (data.data['admin'] == oldp) // Admiiiiiiiiiiiiiiiiiiiiin
-              {
-            await authService.db.document(grp)
-                .updateData(
-                {'admin': newp});
+          {
+            await authService.db.document(grp).updateData({'admin': newp});
           }
 
           List<dynamic> membres = List.from(data.data['membres']);
@@ -286,16 +311,18 @@ class AuthService {
             }
           }
 
-          try { // Sennnnnnderrrrrrrrrrr
-            await db.document(grp).collection('receivedAlerts').getDocuments()
+          try {
+            // Sennnnnnderrrrrrrrrrr
+            await db
+                .document(grp)
+                .collection('receivedAlerts')
+                .getDocuments()
                 .then((QuerySnapshot data) {
               if (data != null)
                 data.documents.forEach((doc) async {
                   if (doc != null) {
                     if (doc.data['sender'] == oldp) {
-                      await doc.reference
-                          .updateData(
-                          {'sender': newp});
+                      await doc.reference.updateData({'sender': newp});
                     }
                   }
                 });
@@ -307,7 +334,6 @@ class AuthService {
       } // Fin foooooooooooooooooor
     });
   }
-
 }
 
 final AuthService authService = AuthService();

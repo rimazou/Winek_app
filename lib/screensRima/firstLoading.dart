@@ -26,6 +26,7 @@ class _FirstLoadingState extends State<FirstLoading> {
       if (log) {
         print('yes log');
         authService.getUserLocation();
+        authService.updategroupelocation();
         Navigator.pushNamed(context, Home.id);
       } else {
         print('no log');

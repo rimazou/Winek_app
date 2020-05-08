@@ -298,6 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
           .signInWithEmailAndPassword(email: mail, password: pwd);
       if (user != null) {
         authService.getUserLocation();
+        authService.updategroupelocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
         authService.userRef
