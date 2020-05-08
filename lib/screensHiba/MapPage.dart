@@ -1355,7 +1355,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: ReceivedAlertStream(),
+                                    child: ReceivedAlertStream(() {
+                                      setState(() {
+                                        index = 0;
+                                        stackIndex = 0;
+                                      });
+                                    }),
                                   ),
                                 ),
                                 SizedBox(
@@ -3022,16 +3027,19 @@ class ReceivedAlertBubble extends StatelessWidget {
   AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
+  Function _function;
 
   ReceivedAlertBubble(
       {String sender,
       AlertBubbleBox alert,
       Timestamp date,
-      GeoPoint geoPoint}) {
+      GeoPoint geoPoint,
+      Function function}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
     this.geoPoint = geoPoint;
+    this._function = function;
   }
 
   Future<BitmapDescriptor> createMarkerIc() async {
@@ -3044,6 +3052,7 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () async {
+          _function; // la fonction de setState
           MarkerId markerId = MarkerId(
               geoPoint.latitude.toString() + geoPoint.longitude.toString());
           Provider.of<UpdateMarkers>(
@@ -3077,6 +3086,7 @@ class ReceivedAlertBubble extends StatelessWidget {
           Provider.of<controllermap>(context, listen: false)
               .mapController
               .animateCamera(cameraUpdate);
+
           //TODO: je positionne l'alerte sur la map
         },
         padding: const EdgeInsets.all(0),
@@ -3103,6 +3113,10 @@ class ReceivedAlertBubble extends StatelessWidget {
 }
 
 class ReceivedAlertStream extends StatelessWidget {
+  final Function _function;
+
+  ReceivedAlertStream(this._function);
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -3140,6 +3154,7 @@ class ReceivedAlertStream extends StatelessWidget {
             alert: alertBubble,
             date: alertDate,
             geoPoint: alertGeoP,
+            function: _function,
           );
           alertList.add(receivedAlertBubble);
         }
