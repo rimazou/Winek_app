@@ -23,7 +23,32 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 
 
-
+void getUserLocation() async {
+  var val = await authService.connectedID();
+  if (val != null) // ca permetra de faire lappel seulement quand le user est co
+      {
+    try {
+      var geolocator = Geolocator();
+      Position position;
+      var locationOptions = LocationOptions(
+          accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator
+          .getPositionStream(locationOptions).listen(
+              (position) {
+            double vitesse = position.speed;
+            print('vitess');
+            print(vitesse);
+            GeoFirePoint geoFirePoint = authService.geo.point(
+                latitude: position.latitude, longitude: position.longitude);
+            authService.userRef.document(val).updateData(
+                {'location': geoFirePoint.data, 'vitesse': vitesse});
+            print(geoFirePoint.data.toString());
+          });
+    } catch (e) {
+      print('ya eu une erreur pour la localisation');
+    }
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
@@ -35,11 +60,13 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String pwd, mail, errMl, errPwd;
 
-
+  final GlobalKey<ScaffoldState> _loginKey = new GlobalKey<ScaffoldState>();
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _loginKey,
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -200,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 42.0,
                           child: Text(
 
-                            "s'inscrire",
+                            "S'inscrire",
 
                             style: TextStyle(
                               fontFamily: 'Montserrat',
@@ -239,6 +266,42 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
+                  child: Material(
+                    color: Colors.white,
+
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    elevation: 5.0,
+                    child: MaterialButton(
+                      onPressed: () => _signInWithGoogle(),
+
+                      height: 42.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+
+                              height: 42,
+                              child: Image.asset(
+                                  'images/googlelogo.png', fit: BoxFit.fill)),
+
+                          Text(
+                            'Google',
+
+                            style: TextStyle(
+                              color: Color(0XFF707070),
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+
+                            ),
+
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
 
@@ -248,40 +311,98 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-/*  Future<FirebaseUser> _signInG() async {
-    GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final FirebaseUser user = (await authService.auth.signInWithCredential(credential)) as FirebaseUser;
-    print("signed in " + user.displayName);
-    return user;
-  }*/
+  Future<String> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount googleUser = await authService.googleSignIn
+          .signIn();
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final FirebaseUser user = (await authService.auth.signInWithCredential(
+          credential)).user;
+
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+
+      final FirebaseUser currentUser = await authService.auth.currentUser();
+      assert(user.uid == currentUser.uid);
+
+      print('loggein is cette personnnee');
+      print(currentUser.email);
+      if (user != null) {
+        authService.db.collection('Utilisateur').document(user.uid).updateData(
+            {'connecte': true});
+        print('user logged in');
+        // getUserLocation();
+        // Provider.of<DeviceInformationService>(context, listen: false)
+        //   .broadcastBatteryLevel(user.uid);
+      }
+      else {
+        print('failed google authetication');
+      }
+    }
+    catch (logIn) {
+      if (logIn is PlatformException) {
+        if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          _loginKey.currentState.showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Veuillez verifiez votre connexion internet et reessayez',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.0,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600),),
+                duration: Duration(seconds: 5),
+              ));
+        }
+        else {
+          print(logIn);
+        }
+      }
+    }
+  }
 
   connect() async {
     try {
-      final user = await authService.auth.signInWithEmailAndPassword(
-          email: mail,
-          password: pwd);
-      if (user != null) {
-        authService.getUserLocation();
-        Provider.of<DeviceInformationService>(context, listen: false)
-            .broadcastBatteryLevel(user.user.uid);
-        authService.userRef.document(user.user.uid).updateData(
-            {'connecte': true});
-        DocumentSnapshot snapshot = await authService.userRef.document(
-            user.user.uid).get();
+      if (pwd.isEmpty) {
+        _loginKey.currentState.showSnackBar(
+            SnackBar(
+              content: Text('veuillez introduire un mot de passe',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600),),
+              duration: Duration(seconds: 3),
+            ));
+      } else {
+        final user = await authService.auth.signInWithEmailAndPassword(
+            email: mail,
+            password: pwd);
+        if (user != null) {
+          authService.getUserLocation();
+          Provider.of<DeviceInformationService>(context, listen: false)
+              .broadcastBatteryLevel(user.user.uid);
+          authService.userRef.document(user.user.uid).updateData(
+              {'connecte': true});
+          DocumentSnapshot snapshot = await authService.userRef.document(
+              user.user.uid).get();
 
-        if (snapshot != null) {
-          Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
-          Navigator.pushNamed(context, Home.id);
-          /* Navigator.push(context, MaterialPageRoute(
+          if (snapshot != null) {
+            Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
+            Navigator.pushNamed(context, Home.id);
+            /* Navigator.push(context, MaterialPageRoute(
               builder: (context) => ProfileScreen(utilisateur)
           ));*/
-          print(utilisateur.pseudo);
-          print(utilisateur.tel);
+            print(utilisateur.pseudo);
+            print(utilisateur.tel);
+          }
         }
       }
     }
@@ -292,6 +413,24 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               errMl = 'Utilisateur inexistant';
             });
+            _loginKey.currentState.showSnackBar(
+                SnackBar(
+                  content: Text(errMl,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),),
+                  duration: Duration(seconds: 3),
+                ));
+            /*final snackBar = SnackBar(
+                content: Text(errMl),
+                action: SnackBarAction(
+                    label: 'Refresh',
+                    onPressed: () {
+                      Navigator.pushNamed(context, LoginScreen.id);
+                    },));
+            Scaffold.of(context).showSnackBar(snackBar);*/
             print(logIn);
             print(errMl);
 
@@ -306,6 +445,16 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               errMl = "Veuillez introduire une adresse valide";
             });
+            _loginKey.currentState.showSnackBar(
+                SnackBar(
+                  content: Text(errMl,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),),
+                  duration: Duration(seconds: 3),
+                ));
           } else {
             print(logIn);
             setState(() {
@@ -316,9 +465,19 @@ class _LoginScreenState extends State<LoginScreen> {
             print(logIn);
             setState(() {
               errPwd = 'Mot de passe errone';
-              // showAlertDialog(context, errPwd, "heading", "ok");
+
 
             });
+            _loginKey.currentState.showSnackBar(
+                SnackBar(
+                  content: Text(errPwd,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),),
+                  duration: Duration(seconds: 3),
+                ));
           }
           else {
             setState(() {
@@ -326,8 +485,17 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           }
           if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
-            // erreur reseau internet faire qlq chose
-            print(logIn);
+            _loginKey.currentState.showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Veuillez verifiez votre connexion internet et reessayez',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600),),
+                  duration: Duration(seconds: 5),
+                ));
 
           }
           else {
@@ -345,7 +513,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
+              color: Color(0XFF389490),
             ),
           ),
         ),
