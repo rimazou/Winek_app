@@ -2894,6 +2894,7 @@ class _AlertScreenState extends State<AlertScreen> {
   Future onSelectedNotification(String payload) {
     debugPrint('payload : $payload');
     //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
+
     setState(() {
       stackIndex = 2;
     });
@@ -3071,15 +3072,15 @@ class ReceivedAlertBubble extends StatelessWidget {
             context,
           ).markers[markerId] = _marker;
 
-          _marker = Marker(
-            markerId: markerId,
-            position: LatLng(geoPoint.latitude, geoPoint.longitude),
-            infoWindow: InfoWindow(title: sender, snippet: alert.text),
-            icon: await createMarkerIc(),
-          );
-          Provider.of<UpdateMarkers>(
-            context,
-          ).markers[markerId] = _marker;
+//          _marker = Marker(
+//            markerId: markerId,
+//            position: LatLng(geoPoint.latitude, geoPoint.longitude),
+//            infoWindow: InfoWindow(title: sender, snippet: alert.text),
+//            icon: await createMarkerIc(),
+//          );
+//          Provider.of<UpdateMarkers>(
+//            context,
+//          ).markers[markerId] = _marker;
           CameraUpdate cameraUpdate;
           cameraUpdate = CameraUpdate.newLatLngZoom(
               LatLng(geoPoint.latitude, geoPoint.longitude), 10);
