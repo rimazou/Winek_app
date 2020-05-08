@@ -2848,12 +2848,13 @@ class ReceivedAlertBubble extends StatelessWidget {
       child: FlatButton(
         onPressed: () async {
 
+
           MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
           Marker _marker = Marker(
             markerId: markerId,
             position: LatLng(geoPoint.latitude,geoPoint.longitude),
             infoWindow: InfoWindow(title:sender,snippet: alert.text),
-//            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+//           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
             icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
           );
           Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
