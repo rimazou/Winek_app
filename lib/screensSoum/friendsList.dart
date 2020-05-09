@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:winek/screensSoum/profile.dart';
 import 'package:provider/provider.dart';
 import '../classes.dart';
 import 'package:winek/dataBaseSoum.dart';
 import 'package:winek/auth.dart';
+import 'dart:io';
+import 'dart:ui';
 
 class FriendsList extends StatefulWidget {
   @override
@@ -38,7 +41,6 @@ class FriendTile extends StatefulWidget {
   FriendTile({Map id}) {
     this.id = id;
     print('constructooooooooooor');
-
   }
 
   @override
@@ -98,6 +100,25 @@ class _FriendTileState extends State<FriendTile> {
     }
   }
 
+  _showSnackBar(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -114,9 +135,14 @@ class _FriendTileState extends State<FriendTile> {
         leading: photo(),
         trailing: IconButton(
           onPressed: () async {
-            String currentUser = await AuthService().connectedID();
+            try {
+              final result = await InternetAddress.lookup('google.com');
+              var result2 = await Connectivity().checkConnectivity();
+              var b = (result2 != ConnectivityResult.none);
+
+              if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                String currentUser = await AuthService().connectedID();
             String name = await Database().getPseudo(currentUser);
-            print('bouuuuutttooooooooooon current user $currentUser');
             //go to the profile screen
             Navigator.push(
               context,
@@ -124,8 +150,13 @@ class _FriendTileState extends State<FriendTile> {
                   builder: (context) =>
                       ProfileScreen2(
                         friend: id, currentUser: currentUser, name: name,)),
-            ); // call the class and passing arguments
-          },
+            );
+              }
+            } on SocketException catch (_) {
+              _showSnackBar('Vérifiez votre connexion internet', context);
+            }
+          }, // call the class and passing arguments
+
           icon: Icon(Icons.info_outline),
           color: Color(0xff389490),
           iconSize: 30,
@@ -185,6 +216,8 @@ class _UserTileState extends State<UserTile> {
 
   String id;
 
+  bool tap;
+
   _UserTileState({String id}) {
     this.id = id;
 
@@ -233,6 +266,25 @@ class _UserTileState extends State<UserTile> {
       );
     }
   }
+
+  _showSnackBar(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    ));
+  }
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -249,6 +301,12 @@ class _UserTileState extends State<UserTile> {
         leading: photo(),
         trailing: IconButton(
           onPressed: () async {
+            try {
+              final result = await InternetAddress.lookup('google.com');
+              var result2 = await Connectivity().checkConnectivity();
+              var b = (result2 != ConnectivityResult.none);
+
+              if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
             String currentUser = await AuthService().connectedID();
             String name = await Database().getPseudo(currentUser);
             Navigator.push(
@@ -259,6 +317,10 @@ class _UserTileState extends State<UserTile> {
                         currentUser: currentUser,
                         name: name,)),
             ); // call the class and passing arguments
+              }
+            } on SocketException catch (_) {
+              _showSnackBar('Vérifiez votre connexion internet', context);
+            }
           },
           icon: Icon(Icons.info_outline),
           color: Color(0xff389490),

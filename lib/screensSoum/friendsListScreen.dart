@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winek/screensSoum/friendsList.dart';
@@ -8,6 +11,7 @@ import 'friendRequestScreen.dart';
 import 'package:winek/auth.dart';
 
 var _controller = TextEditingController();
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class FriendsListScreen extends StatefulWidget {
   static const String id = 'FriendsListScreen';
@@ -38,11 +42,28 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   Widget build(BuildContext context) {
     init().then((Database result) {
       this.d = result;
-      print('resuuuuuuuuuuuuult');
+
       print(d);
     });
 
-    print('hellevatoooooooooooooooor');
+    _showSnackBar(String value) {
+      final snackBar = new SnackBar(
+        content: new Text(
+          value,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 14.0,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w600),
+        ),
+        duration: new Duration(seconds: 2),
+        //backgroundColor: Colors.green,
+        action: new SnackBarAction(label: 'Ok', onPressed: () {
+          print('press Ok on SnackBar');
+        }),
+      );
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+    }
 
     return StreamProvider<List<dynamic>>.value(
       value: Database(current: this.current).friends,
@@ -55,6 +76,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
           }
         },
         child: Scaffold(
+          key: _scaffoldKey,
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
             backgroundColor: Colors.white30,
@@ -65,11 +87,21 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: () async {
-                  String currentUser = await AuthService().connectedID();
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          FriendRequestListScreen(currentUser)));
-                  //await AuthService().connectedID();
+                  try {
+                    final result = await InternetAddress.lookup('google.com');
+                    var result2 = await Connectivity().checkConnectivity();
+                    var b = (result2 != ConnectivityResult.none);
+
+                    if (b && result.isNotEmpty &&
+                        result[0].rawAddress.isNotEmpty) {
+                      String currentUser = await AuthService().connectedID();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) =>
+                              FriendRequestListScreen(currentUser)));
+                    }
+                  } on SocketException catch (_) {
+                    _showSnackBar('Vérifiez votre connexion internet');
+                  }
                 },
                 icon: Icon(Icons.group_add),
                 color: Color(0xFF3B466B),

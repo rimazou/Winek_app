@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -12,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:winek/main.dart';
+import 'package:winek/screensRima/login_screen.dart';
 import '../classes.dart';
 
 var _controller;
@@ -21,6 +24,7 @@ String nv_pseudo;
 String nv_tel;
 String nv_mail;
 bool _loading;
+final GlobalKey<ScaffoldState> _profilekey = new GlobalKey<ScaffoldState>();
 
 class ProfileScreen extends StatefulWidget {
   static const String id = 'profile';
@@ -34,7 +38,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser loggedInUser;
-  final GlobalKey<ScaffoldState> _profilekey = new GlobalKey<ScaffoldState>();
+
   String errMl, errPs, errTel;
   @override
   void initState() {
@@ -48,6 +52,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _ProfileScreenState(Utilisateur myuser);
+
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    );
+    _profilekey.currentState.showSnackBar(snackBar);
+  }
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -75,7 +98,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 iconTheme: IconThemeData(
                   color: Colors.black54,
                 ),
-
               ),),*/
             body: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
@@ -194,56 +216,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 actions: <Widget>[
                                                   FlatButton(
-                                                    onPressed: () async {
-                                                      nv_pseudo =
-                                                          _controller.text;
-                                                      setState(() {
-                                                        _loading = true;
-                                                      });
-                                                      if (nv_pseudo != '') {
-                                                        await pseudoExist(
-                                                            nv_pseudo)
-                                                            .then((
-                                                            onValue) async {
-                                                          if (onValue) {
-                                                            _profilekey
-                                                                .currentState
-                                                                .showSnackBar(
-                                                                SnackBar(
-                                                                  content: Text(
-                                                                    'Ce pseudo est deja pris ,choisissez un autre',
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontSize: 14.0,
-                                                                        fontFamily: 'Montserrat',
-                                                                        fontWeight: FontWeight
-                                                                            .w600),),
-                                                                  duration: Duration(
-                                                                      seconds: 5),
-                                                                ));
-                                                          } else {
-                                                            await authService
-                                                                .changePseudo(
-                                                                widget
-                                                                    .myuser
-                                                                    .pseudo,
-                                                                nv_pseudo);
-
-                                                            setState(() {
-                                                              _loading = false;
-                                                              widget.myuser
-                                                                  .pseudo =
-                                                                  nv_pseudo;
-                                                            });
-                                                            // nv_nom = _controller.text;
-                                                            // _confirmer = true;
-                                                            Navigator.pop(
-                                                                context);
-                                                          }
-                                                        });
-                                                      }
-                                                    },
+                                                    onPressed: () =>
+                                                        changepseudo(),
                                                     child: Text(
                                                       'Confirmer',
                                                       style: TextStyle(
@@ -290,37 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         ),
                                       ),
-                                      /* TextField(
-                                        enabled: true,
-                                        onChanged: (val) {
-                                          pseudo = val;
-                                        },
 
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontFamily: 'Montserrat',
-
-                                          // decorationColor: Color(0XFFFFCC00),//Font color change
-                                          //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: widget.myuser.pseudo,
-                                          errorText: errPs,
-                                          errorStyle: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 15,
-                                              bottom: 0,
-                                              top: 32,
-                                              right: 15),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),*/
                                     ),
                                     SizedBox(
                                       height: 23,
@@ -366,9 +310,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     content: TextField(
                                                       controller: _controller1,
                                                       maxLines: 1,
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                      ),
                                                       decoration:
                                                       InputDecoration(
                                                         hintText:
@@ -407,59 +348,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     ),
                                                     actions: <Widget>[
                                                       FlatButton(
-                                                        onPressed: () async {
-                                                          nv_tel =
-                                                              _controller1.text;
-                                                          setState(() {
-                                                            _loading = true;
-                                                          });
-                                                          if (nv_tel != '') {
-                                                            if (Validator
-                                                                .number(nv_tel)
-                                                            ) {
-                                                              String id =
-                                                              await authService
-                                                                  .connectedID();
-                                                              await Firestore
-                                                                  .instance
-                                                                  .collection(
-                                                                  'Utilisateur')
-                                                                  .document(id)
-                                                                  .updateData({
-                                                                'tel': nv_tel
-                                                              });
-
-                                                              setState(() {
-                                                                _loading =
-                                                                false;
-                                                                widget.myuser
-                                                                    .tel =
-                                                                    nv_tel;
-                                                              });
-                                                              // nv_nom = _controller.text;
-                                                              // _confirmer = true;
-                                                              Navigator.pop(
-                                                                  context);
-                                                            } else {
-                                                              _profilekey
-                                                                  .currentState
-                                                                  .showSnackBar(
-                                                                  SnackBar(
-                                                                    content: Text(
-                                                                      'veuillez entrer un numero',
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize: 14.0,
-                                                                          fontFamily: 'Montserrat',
-                                                                          fontWeight: FontWeight
-                                                                              .w600),),
-                                                                    duration: Duration(
-                                                                        seconds: 5),
-                                                                  ));
-                                                            }
-                                                          }
-                                                        },
+                                                        onPressed: () =>
+                                                            changetel(),
                                                         child: Text(
                                                           'Confirmer',
                                                           style: TextStyle(
@@ -497,7 +387,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         },
                                         child: Text(
                                           widget.myuser.tel == null
-                                              ? 'aucun numero de tel'
+                                              ? 'aucun numero'
                                               : widget.myuser.tel,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
@@ -508,39 +398,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         ),
                                       ),
-                                      /* TextField(
-                                        enabled: true,
-                                        onChanged: (val) {
-                                          tel = val;
-                                        },
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontFamily: 'Montserrat',
 
-                                          // decorationColor: Color(0XFFFFCC00),//Font color change
-                                          //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: widget.myuser.tel == null
-                                              ? 'aucun numero'
-                                              : widget.myuser.tel,
-                                          errorText: errTel,
-                                          errorStyle: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 15,
-                                              bottom: 0,
-                                              top: 32,
-                                              right: 15),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),*/
                                     ),
                                     SizedBox(
                                       height: 23,
@@ -574,7 +432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 contentPadding:
                                                 EdgeInsets.all(15),
                                                 title: Text(
-                                                  "Changer l'email ",
+                                                  "changer l'email",
                                                   style: TextStyle(
                                                     fontFamily:
                                                     'Montserrat',
@@ -625,69 +483,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 actions: <Widget>[
                                                   FlatButton(
-                                                    onPressed: () async {
-                                                      nv_mail =
-                                                          _controller2.text;
-                                                      setState(() {
-                                                        _loading = true;
-                                                      });
-                                                      if (nv_mail != '') {
-                                                        bool exi = await mailExist(
-                                                            nv_mail);
-                                                        if (exi) {
-                                                          _profilekey
-                                                              .currentState
-                                                              .showSnackBar(
-                                                              SnackBar(
-                                                                content: Text(
-                                                                  'Cette adresse mail existe deja',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize: 14.0,
-                                                                      fontFamily: 'Montserrat',
-                                                                      fontWeight: FontWeight
-                                                                          .w600),),
-                                                                duration: Duration(
-                                                                    seconds: 5),
-                                                              ));
-                                                        } else {
-                                                          print('mail valide');
-                                                          FirebaseUser user =
-                                                          await authService
-                                                              .auth
-                                                              .currentUser();
-
-                                                          if (user != null) {
-                                                            user.updateEmail(
-                                                                nv_mail).then((
-                                                                val) async {
-                                                              await Firestore
-                                                                  .instance
-                                                                  .collection(
-                                                                  'Utilisateur')
-                                                                  .document(
-                                                                  user.uid)
-                                                                  .updateData({
-                                                                'mail': nv_mail
-                                                              });
-
-                                                              setState(() {
-                                                                _loading =
-                                                                false;
-                                                                widget.myuser
-                                                                    .mail =
-                                                                    nv_mail;
-                                                              });
-                                                              // nv_nom = _controller.text;
-                                                              // _confirmer = true;
-                                                              Navigator.pop(
-                                                                  context);
-                                                            });
-                                                          }
-                                                        }
-                                                      }
-                                                    },
+                                                    onPressed: () =>
+                                                        changemail(),
                                                     child: Text(
                                                       'confirmer',
                                                       style: TextStyle(
@@ -707,7 +504,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           context);
                                                     },
                                                     child: Text(
-                                                      'annuler',
+                                                      'annuller',
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
@@ -881,14 +678,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (widget.myuser.photo != null) {
       return Center(
           child: ClipRRect(
-        borderRadius: BorderRadius.circular(17.0),
-        child: Image.network(
-          widget.myuser.photo,
-          height: 110.0,
-          gaplessPlayback: true,
-          fit: BoxFit.fill,
-        ),
-      ));
+            borderRadius: BorderRadius.circular(17.0),
+            child: Image.network(
+              widget.myuser.photo,
+              height: 110.0,
+              gaplessPlayback: true,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Center(
         child: ListView(
@@ -907,6 +704,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+// tester si les chaines de caratceres ne sont pas vides
+
 
   bool isEditable = false;
 
@@ -974,27 +773,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   bool loading = false;
-  modifier() {
 
-    setState(() {
-      loading = true;
-    });
-    print(' debutsignout');
-    authService.auth.currentUser().then((onValue) {
-      authService.userRef.document(onValue.uid).updateData({
-        'mail': widget.myuser.mail,
-        'tel': widget.myuser.tel,
-        'photo': widget.myuser.photo
-      });
-      onValue.updateEmail(widget.myuser.mail).then((onVal) {
-        print('changed mail succeedeed');
-      });
-    });
-    setState(() {
-      loading = false;
-    });
-    print('succeddeed ?');
-  }
 
   showAlertDialog(BuildContext context, String message, String heading) {
     // set up the buttons
@@ -1080,25 +859,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<bool> mailExist(String nom) async {
-    if (!Validator.email(nom)) {
-      _profilekey
-          .currentState
-          .showSnackBar(
-          SnackBar(
-            content: Text(
-              "Cette adresse n'est pas valide",
-              style: TextStyle(
-                  color: Colors
-                      .white,
-                  fontSize: 14.0,
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight
-                      .w600),),
-            duration: Duration(
-                seconds: 5),
-          ));
-    } else {
-      final QuerySnapshot result = await Future.value(authService.db
+    final QuerySnapshot result = await Future.value(authService.db
           .collection('Utilisateur')
           .where('mail', isEqualTo: nom)
           .limit(1)
@@ -1112,8 +873,168 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return false;
       }
     }
+
+  changepseudo() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      var result2 = await Connectivity().checkConnectivity();
+      var b = (result2 != ConnectivityResult.none);
+
+      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        nv_pseudo =
+            _controller.text;
+        setState(() {
+          _loading = true;
+        });
+        if (nv_pseudo != '') {
+          await pseudoExist(nv_pseudo).then((value) async {
+            if (!value) {
+              await authService
+                  .changePseudo(
+                  widget
+                      .myuser
+                      .pseudo,
+                  nv_pseudo);
+            }
+            else {
+              setState(() {
+                _loading = false;
+              });
+              _showSnackBar('Ce pseudo existe deja, reessayez');
+            }
+          });
+        }
+        setState(() {
+          _loading = false;
+          widget.myuser
+              .pseudo =
+              nv_pseudo;
+        });
+        // nv_nom = _controller.text;
+        // _confirmer = true;
+        Navigator.pop(
+            context);
+      }
+    } on SocketException catch (_) {
+      _showSnackBar('Vérifiez votre connexion internet');
+    }
   }
 
+  changetel() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      var result2 = await Connectivity().checkConnectivity();
+      var b = (result2 != ConnectivityResult.none);
+
+      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        nv_tel =
+            _controller1.text;
+        setState(() {
+          _loading = true;
+        });
+        if (nv_tel != '') {
+          if (Validator.number(nv_tel)) {
+            String id =
+            await authService
+                .connectedID();
+
+            if (id != null) {
+              await Firestore
+                  .instance
+                  .collection(
+                  'Utilisateur')
+                  .document(id)
+                  .updateData({
+                'tel': nv_tel
+              });
+            }
+          } else {
+            _showSnackBar('Veuillez introduire un nombre');
+          }
+        }
+        setState(() {
+          _loading = false;
+          widget.myuser.tel =
+              nv_tel;
+        });
+        // nv_nom = _controller.text;
+        // _confirmer = true;
+        Navigator.pop(
+            context);
+      }
+    } on SocketException catch (_) {
+      _showSnackBar('Vérifiez votre connexion internet');
+    }
+  }
+
+  changemail() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      var result2 = await Connectivity().checkConnectivity();
+      var b = (result2 != ConnectivityResult.none);
+
+      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        nv_mail =
+            _controller2.text;
+        setState(() {
+          _loading = true;
+        });
+        if (nv_mail != '') {
+          if (!Validator.email(nv_mail)) {
+            await mailExist(nv_mail).then((value) async {
+              if (!value) {
+                FirebaseUser id =
+                await authService.auth.currentUser();
+                if (id != null) {
+                  await id.updateEmail(nv_mail).then((value) async {
+                    await Firestore
+                        .instance
+                        .collection(
+                        'Utilisateur')
+                        .document(id.uid)
+                        .updateData({
+                      'mail': nv_mail
+                    });
+                  });
+                  setState(() {
+                    _loading = false;
+                    widget.myuser.mail =
+                        nv_mail;
+                  });
+                }
+              } else {
+                setState(() {
+                  _loading = false;
+                });
+                _showSnackBar('Cette adresse mail est deja prise');
+              }
+            });
+          } else {
+            setState(() {
+              _loading = false;
+            });
+            _showSnackBar('Veuillez introduire une adresse mail valide');
+          }
+        }
+
+        // nv_nom = _controller.text;
+        // _confirmer = true;
+        Navigator.pop(
+            context);
+      }
+    } on SocketException catch (_) {
+      _showSnackBar('Vérifiez votre connexion internet');
+    } catch (e) {
+      print(e);
+      if (e is PlatformException) {
+        if (e.code == 'ERROR_REQUIRES_RECENT_LOGIN') {
+          _showSnackBar(
+              'Cette operation requiert une authentification recente , reconnectez-vous puis reessayez');
+          Navigator.pushNamed(context, LoginScreen.id);
+        }
+      }
+    }
+  }
   String mail, pseudo, tel, photo;
 
   Future userID;
