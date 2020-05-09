@@ -33,7 +33,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser loggedInUser;
-
+  final GlobalKey<ScaffoldState> _profilekey = new GlobalKey<ScaffoldState>();
   String errMl, errPs, errTel;
   @override
   void initState() {
@@ -63,6 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         inAsyncCall: _loading,
         child: SafeArea(
           child: Scaffold(
+            key: _profilekey,
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
             /*appBar: PreferredSize(
@@ -130,91 +131,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) =>
-                                                  //   namedialog(groupe.nom),
-                                                  AlertDialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                    contentPadding:
-                                                        EdgeInsets.all(15),
-                                                    title: Text(
-                                                      'changer le pseudo ',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 19,
-                                                        fontWeight:
-                                                            FontWeight.w700,
+                                              //   namedialog(groupe.nom),
+                                              AlertDialog(
+                                                shape:
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        20)),
+                                                contentPadding:
+                                                EdgeInsets.all(15),
+                                                title: Text(
+                                                  'changer le pseudo ',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                    'Montserrat',
+                                                    fontSize: 19,
+                                                    fontWeight:
+                                                    FontWeight.w700,
+                                                    color: primarycolor,
+                                                  ),
+                                                ),
+                                                content: TextField(
+                                                  controller: _controller,
+                                                  maxLines: 1,
+                                                  decoration:
+                                                  InputDecoration(
+                                                    hintText: widget
+                                                        .myuser.pseudo,
+                                                    hintStyle: TextStyle(
+                                                      fontFamily:
+                                                      'Montserrat',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      color:
+                                                      Color(0xff707070),
+                                                    ),
+                                                    enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
                                                         color: primarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    content: TextField(
-                                                      controller: _controller,
-                                                      maxLines: 1,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText: widget
-                                                            .myuser.pseudo,
-                                                        hintStyle: TextStyle(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Color(0xff707070),
-                                                        ),
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color: primarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color:
-                                                                secondarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
+                                                    focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color:
+                                                        secondarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        onPressed: () async {
-                                                          nv_pseudo =
-                                                              _controller.text;
-                                                          setState(() {
-                                                            _loading = true;
-                                                          });
-                                                          if (nv_pseudo != '') {
-                                                            await pseudoExist(
-                                                                nv_pseudo)
-                                                                .then((
-                                                                onValue) {
-                                                              if (onValue) {
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () async {
+                                                      nv_pseudo =
+                                                          _controller.text;
+                                                      setState(() {
+                                                        _loading = true;
+                                                      });
+                                                      if (nv_pseudo != '') {
+                                                        await pseudoExist(
+                                                            nv_pseudo)
+                                                            .then((
+                                                            onValue) async {
+                                                          if (onValue) {
+                                                            _profilekey
+                                                                .currentState
+                                                                .showSnackBar(
+                                                                SnackBar(
+                                                                  content: Text(
+                                                                    '''Ce pseudo est deja pris ,
+                                                                         choisissez un autre''',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize: 14.0,
+                                                                        fontFamily: 'Montserrat',
+                                                                        fontWeight: FontWeight
+                                                                            .w600),),
+                                                                  duration: Duration(
+                                                                      seconds: 5),
+                                                                ));
+                                                          } else {
+                                                            await authService
+                                                                .changePseudo(
+                                                                widget
+                                                                    .myuser
+                                                                    .pseudo,
+                                                                nv_pseudo);
 
-                                                              } else {}
-                                                            });
-                                                            {
-                                                              await authService
-                                                                  .changePseudo(
-                                                                  widget
-                                                                      .myuser
-                                                                      .pseudo,
-                                                                  nv_pseudo);
-                                                            }
                                                             setState(() {
                                                               _loading = false;
                                                               widget.myuser
@@ -226,40 +241,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             Navigator.pop(
                                                                 context);
                                                           }
-                                                        },
-                                                        child: Text(
-                                                          'confirmer',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      'Confirmer',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
                                                       ),
-                                                      FlatButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          'annuler',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context);
+                                                    },
+                                                    child: Text(
+                                                      'Annuler',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                               barrierDismissible: true);
                                         },
                                         child: Text(
@@ -328,21 +345,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               builder: (BuildContext context) =>
                                                   AlertDialog(
                                                     shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            20)),
                                                     contentPadding:
-                                                        EdgeInsets.all(15),
+                                                    EdgeInsets.all(15),
                                                     title: Text(
                                                       'changer le tel ',
                                                       style: TextStyle(
                                                         fontFamily:
-                                                            'Montserrat',
+                                                        'Montserrat',
                                                         fontSize: 19,
                                                         fontWeight:
-                                                            FontWeight.w700,
+                                                        FontWeight.w700,
                                                         color: primarycolor,
                                                       ),
                                                     ),
@@ -350,38 +367,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       controller: _controller1,
                                                       maxLines: 1,
                                                       decoration:
-                                                          InputDecoration(
+                                                      InputDecoration(
                                                         hintText:
-                                                            widget.myuser.tel,
+                                                        widget.myuser.tel,
                                                         hintStyle: TextStyle(
                                                           fontFamily:
-                                                              'Montserrat',
+                                                          'Montserrat',
                                                           fontSize: 14,
                                                           fontWeight:
-                                                              FontWeight.w400,
+                                                          FontWeight.w400,
                                                           color:
-                                                              Color(0xff707070),
+                                                          Color(0xff707070),
                                                         ),
                                                         enabledBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                          BorderSide(
                                                             color: primarycolor,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
+                                                          BorderRadius
+                                                              .circular(50),
                                                         ),
                                                         focusedBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                          BorderSide(
                                                             color:
-                                                                secondarycolor,
+                                                            secondarycolor,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
+                                                          BorderRadius
+                                                              .circular(50),
                                                         ),
                                                       ),
                                                     ),
@@ -395,12 +412,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           });
                                                           if (nv_tel != '') {
                                                             String id =
-                                                                await authService
-                                                                    .connectedID();
+                                                            await authService
+                                                                .connectedID();
                                                             await Firestore
                                                                 .instance
                                                                 .collection(
-                                                                    'Utilisateur')
+                                                                'Utilisateur')
                                                                 .document(id)
                                                                 .updateData({
                                                               'tel': nv_tel
@@ -417,13 +434,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               context);
                                                         },
                                                         child: Text(
-                                                          'confirmer',
+                                                          'Confirmer',
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Montserrat',
+                                                            'Montserrat',
                                                             fontSize: 12,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                            FontWeight.w600,
                                                             color: Color(
                                                                 0xff707070),
                                                           ),
@@ -435,13 +452,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               context);
                                                         },
                                                         child: Text(
-                                                          'annuller',
+                                                          'Annuler',
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Montserrat',
+                                                            'Montserrat',
                                                             fontSize: 12,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                            FontWeight.w600,
                                                             color: Color(
                                                                 0xff707070),
                                                           ),
@@ -519,130 +536,140 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) =>
-                                                  //   namedialog(groupe.nom),
-                                                  AlertDialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                    contentPadding:
-                                                        EdgeInsets.all(15),
-                                                    title: Text(
-                                                      'changer l' 'email ',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 19,
-                                                        fontWeight:
-                                                            FontWeight.w700,
+                                              //   namedialog(groupe.nom),
+                                              AlertDialog(
+                                                shape:
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        20)),
+                                                contentPadding:
+                                                EdgeInsets.all(15),
+                                                title: Text(
+                                                  "Changer l'email ",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                    'Montserrat',
+                                                    fontSize: 19,
+                                                    fontWeight:
+                                                    FontWeight.w700,
+                                                    color: primarycolor,
+                                                  ),
+                                                ),
+                                                content: TextField(
+                                                  controller: _controller2,
+                                                  maxLines: 1,
+                                                  decoration:
+                                                  InputDecoration(
+                                                    hintText:
+                                                    widget.myuser.mail,
+                                                    hintStyle: TextStyle(
+                                                      fontFamily:
+                                                      'Montserrat',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      color:
+                                                      Color(0xff707070),
+                                                    ),
+                                                    enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
                                                         color: primarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    content: TextField(
-                                                      controller: _controller2,
-                                                      maxLines: 1,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            widget.myuser.mail,
-                                                        hintStyle: TextStyle(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Color(0xff707070),
-                                                        ),
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color: primarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color:
-                                                                secondarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
+                                                    focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color:
+                                                        secondarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        onPressed: () async {
-                                                          nv_mail =
-                                                              _controller2.text;
-                                                          setState(() {
-                                                            _loading = true;
-                                                          });
-                                                          if (nv_mail != '') {
-                                                            String id =
-                                                                await authService
-                                                                    .connectedID();
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () async {
+                                                      nv_mail =
+                                                          _controller2.text;
+                                                      setState(() {
+                                                        _loading = true;
+                                                      });
+                                                      if (nv_mail != '') {
+                                                        //todo exceptions trycatch
+                                                        FirebaseUser user =
+                                                        await authService
+                                                            .auth.currentUser();
+                                                        if (user != null) {
+                                                          user.updateEmail(
+                                                              nv_mail).then((
+                                                              val) async {
                                                             await Firestore
                                                                 .instance
                                                                 .collection(
-                                                                    'Utilisateur')
-                                                                .document(id)
+                                                                'Utilisateur')
+                                                                .document(
+                                                                user.uid)
                                                                 .updateData({
                                                               'mail': nv_mail
                                                             });
-                                                          }
-                                                          setState(() {
-                                                            _loading = false;
-                                                            widget.myuser.mail =
-                                                                nv_mail;
+
+                                                            setState(() {
+                                                              _loading = false;
+                                                              widget.myuser
+                                                                  .mail =
+                                                                  nv_mail;
+                                                            });
+                                                            // nv_nom = _controller.text;
+                                                            // _confirmer = true;
+                                                            Navigator.pop(
+                                                                context);
                                                           });
-                                                          // nv_nom = _controller.text;
-                                                          // _confirmer = true;
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          'confirmer',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
+                                                        }
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      'confirmer',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
                                                       ),
-                                                      FlatButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          'annuler',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context);
+                                                    },
+                                                    child: Text(
+                                                      'annuler',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                               barrierDismissible: true);
                                         },
                                         child: Text(
@@ -656,47 +683,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         ),
                                       ),
-                                      /* TextField(
-                                        enabled: true,
-                                        onChanged: (val) {
-                                          mail = val;
-                                        },
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontFamily: 'Montserrat',
 
-                                          // decorationColor: Color(0XFFFFCC00),//Font color change
-                                          //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: widget.myuser.mail,
-                                          errorText: errMl,
-                                          errorStyle: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 15,
-                                              bottom: 0,
-                                              top: 32,
-                                              right: 15),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),*/
                                     ),
-                                    /* Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(Icons.edit),
-                                          onPressed: _edit(),
-                                        ),
-                                      ],
-                                    ),*/
+
                                   ],
                                 ),
 
@@ -760,7 +749,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 boxShadow: <BoxShadow>[
                                   BoxShadow(
                                     color:
-                                        secondarycolor, //Color.fromRGBO(59, 70, 107, 0.3),
+                                    secondarycolor, //Color.fromRGBO(59, 70, 107, 0.3),
                                     blurRadius: 3.0,
                                     offset: Offset(0.0, 0.75),
                                   ),

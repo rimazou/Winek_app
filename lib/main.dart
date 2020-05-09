@@ -18,15 +18,14 @@ import 'screensHiba/list_inv_grp.dart';
 import 'screensHiba/nouveau_grp.dart';
 import 'screensRima/welcome_screen.dart';
 
-void main() => runApp(DevicePreview(builder: (context) => Authentication()));
+void main() => runApp(DevicePreview(builder: (context) => Winek()));
 Color primarycolor = Color(0xff3B466B);
 Color secondarycolor = Color(0xff389490);
 
 Utilisateur user = Utilisateur.fromSnapshot(
     authService.userRef.document(authService.connectedID()));
-bool log = user != null;
 
-class Authentication extends StatelessWidget {
+class Winek extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
