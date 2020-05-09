@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,6 +23,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:path/path.dart' as p ;
+
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class RegistrationScreen extends StatefulWidget {
   static const String id='register';
   @override
@@ -38,6 +41,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   File _image;
   String _uploadedFileURL;
 
+  _showSnackBar(String value ) {
+    final snackBar = new SnackBar(
+      content: new  Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: (){
+        print('press Ok on SnackBar');
+      }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -49,6 +71,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     } else {
       return SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           appBar: PreferredSize(
@@ -474,7 +497,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               child: MaterialButton(
 
 
-                                onPressed: () => _registerWithGoogle(),
+                                onPressed: ()async {
+                                  try {
+                                    final result = await InternetAddress.lookup('google.com');
+                                    var result2 = await Connectivity().checkConnectivity();
+                                    var b = (result2 != ConnectivityResult.none);
+
+                                    if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                                  _registerWithGoogle();
+                                    } }   on SocketException catch (_) {
+                                    _showSnackBar('Vérifiez votre connexion internet');
+                                  }},
                                 minWidth: 140.0,
                                 height: 42.0,
                                 child: Text(
@@ -505,7 +538,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               elevation: 5.0,
                               child: MaterialButton(
 
-                                onPressed: () => _createUser(),
+                                onPressed:  ()async {
+                                    try {
+                                    final result = await InternetAddress.lookup('google.com');
+                                    var result2 = await Connectivity().checkConnectivity();
+                                    var b = (result2 != ConnectivityResult.none);
+
+                                    if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                                  _createUser();  } }   on SocketException catch (_) {
+                              _showSnackBar('Vérifiez votre connexion internet');
+                              }},
                                 minWidth: 140.0,
                                 height: 42.0,
                                 child: Text(
@@ -539,10 +581,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             icon: Icon(
                               Icons.camera_alt,
                               size: 30.0,),
-                            onPressed: () =>
+                            onPressed: () async{
+                              try {
+                                final result = await InternetAddress.lookup('google.com');
+                                var result2 = await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                                 showAlertDialog(
                                     context, "choisissez la source de l'image",
-                                    "Source"),
+                                    "Source");
+                                } }   on SocketException catch (_) {
+                                _showSnackBar('Vérifiez votre connexion internet');
+                              }},
                             // uploadFile();
 
                           ),

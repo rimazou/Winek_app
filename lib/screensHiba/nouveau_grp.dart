@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,10 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'DestinationFromFav.dart';
+import 'dart:io';
+import 'dart:ui';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 Databasegrp data = Databasegrp();
 bool _alerte_nom = false;
@@ -371,11 +376,30 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
     _controller = TextEditingController();
     _loading = false;
   }
+  _showSnackBar(String value ) {
+    final snackBar = new SnackBar(
+      content: new  Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: (){
+        print('press Ok on SnackBar');
+      }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: _loading,
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.white,
         body: Column(
@@ -432,6 +456,12 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                   ),
                   IconButton(
                     onPressed: () async {
+                      try {
+                      final result = await InternetAddress.lookup('google.com');
+                      var result2 = await Connectivity().checkConnectivity();
+                      var b = (result2 != ConnectivityResult.none);
+
+                      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                       // show input autocomplete with selected mode
                       // then get the Prediction selected
                       //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
@@ -465,6 +495,9 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                       }
 
                       print(_destination);
+                      } }   on SocketException catch (_) {
+                        _showSnackBar('Vérifiez votre connexion internet');
+                      }
                     },
                     icon: Icon(Icons.mode_edit),
                     color: Color(0xff707070),

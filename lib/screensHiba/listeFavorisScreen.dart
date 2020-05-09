@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import '../dataBaseDounia.dart';
@@ -10,6 +11,10 @@ import 'package:geocoder/geocoder.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:winek/auth.dart';
+import 'dart:ui';
+import 'dart:io';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
@@ -23,6 +28,25 @@ class FavoritePlacesScreen extends StatefulWidget {
 class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
 //static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
 
+
+  _showSnackBar(String value ) {
+    final snackBar = new SnackBar(
+      content: new  Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: (){
+        print('press Ok on SnackBar');
+      }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<dynamic>>.value(
@@ -37,6 +61,7 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
         },
         child: SafeArea(
           child: Scaffold(
+            key: _scaffoldKey,
             resizeToAvoidBottomInset: false,
             /* appBar: AppBar(
             backgroundColor: Colors.white30,
@@ -87,6 +112,12 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
                     ),
                     iconSize: 35,
                     onPressed: () async {
+                    try {
+                    final result = await InternetAddress.lookup('google.com');
+                    var result2 = await Connectivity().checkConnectivity();
+                    var b = (result2 != ConnectivityResult.none);
+
+                    if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                       // show input autocomplete with selected mode
                       // then get the Prediction selected
                       //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
@@ -100,6 +131,9 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
                       );
 
                       displayPrediction(p);
+                    } }   on SocketException catch (_) {
+                      _showSnackBar('Vérifiez votre connexion internet');
+                    }
                     },
                   ),
                   Spacer(

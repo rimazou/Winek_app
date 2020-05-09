@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'dart:ui';
+import 'dart:io';
 
 GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
@@ -137,6 +140,24 @@ class _FavorisTile extends State<FavorisTile> {
 
     return adr;
   }
+  _showSnackBar(String value , BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar( SnackBar(
+      content: new  Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: (){
+        print('press Ok on SnackBar');
+      }),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,9 +189,18 @@ class _FavorisTile extends State<FavorisTile> {
           size: 30,
         ),
         trailing: IconButton(
-          onPressed: () {
+          onPressed: () async{
+          try {
+          final result = await InternetAddress.lookup('google.com');
+          var result2 = await Connectivity().checkConnectivity();
+          var b = (result2 != ConnectivityResult.none);
+
+          if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
             DataBaseFavoris().favorisDeleteData(this.geoP, this.placeid);
             //DataBaseFavoris().favorisIdDeleteData(this.placeid);
+     } }   on SocketException catch (_) {
+                                      _showSnackBar('Vérifiez votre connexion internet', context);
+                                      }
           },
           icon: Icon(Icons.remove_circle_outline),
           color: Color(0xff389490),

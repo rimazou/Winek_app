@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 import '../dataBaseSoum.dart';
 import 'usersListScreen.dart';
 import 'package:winek/auth.dart';
+import 'package:connectivity/connectivity.dart';
+import 'dart:ui';
+import 'dart:io';
+import 'package:flutter/widgets.dart';
+
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class ProfileScreen2 extends StatefulWidget {
   static const String id = 'profile';
@@ -34,6 +41,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   double size;
   String id;
   Map friend;
+  bool tap=true;
 
   String currentName;
 
@@ -48,7 +56,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     this.currentUser = currentUser;
 
     size = 102;
-    print('hellooooooooooooo');
     userCollection
         .where("pseudo", isEqualTo: this.pseudo)
         .snapshots()
@@ -85,28 +92,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         });
       });
     });
-
-    /* userCollection.document(this.id)
-        .get()
-        .then((DocumentSnapshot data) {
-        setState(() {
-          mail=data.data['mail'];
-          phone=data.data['tel']; });});*/
-
-    /*userCollection.document(id).get().then((docSnap) {
-      mail=docSnap.data['mail'];
-      phone=docSnap.data['tel'];});*/
-    /* Firestore.instance
-        .collection('Utilisateur')
-        .where("pseudo", isEqualTo: id)
-        .snapshots()
-        .listen((data) {
-      data.documents.forEach((doc) {
-        setState(() {
-          mail=doc.data['mail'];
-          phone=doc.data['tel']; });
-      }
-      );});*/
   }
 
   @override
@@ -269,6 +254,27 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     }
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new  Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: (){
+        print('press Ok on SnackBar');
+      }),
+    );
+    //How to display Snackbar ?
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+
   Widget getButton() {
     if (pseudo == currentName) {
       return Container();
@@ -318,6 +324,14 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                           ),
                         ),
                         onPressed: () async {
+                          try{
+                        final result = await InternetAddress.lookup('google.com');
+                        var result2 = await Connectivity().checkConnectivity();
+                        var b = (result2 != ConnectivityResult.none);
+
+                        if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                          if (tap){
+                          setState(() {tap=false;});
                           Database d = await Database().init(
                               pseudo: pseudo,
                               subipseudo: currentName,
@@ -334,8 +348,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                             invit = false;
                             size = 138;
                             who = "Supprimer";
+                            tap=true;
                           });
-                        }),
+                          _showSnackBar('vous et $pseudo êtes désormais amis!');}
+                        }}on SocketException catch (_) {
+                            _showSnackBar('Vérifiez votre connexion internet');
+                            }}),
                     decoration: BoxDecoration(
                       color: Color(0xff389490),
                       border: Border.all(
@@ -364,13 +382,25 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                           ),
                         ),
                         onPressed: () async {
-                          await Database(pseudo: pseudo)
-                              .userDeleteData(currentUser);
+                            try{
+                                  final result = await InternetAddress.lookup('google.com');
+                                  var result2 = await Connectivity().checkConnectivity();
+                                  var b = (result2 != ConnectivityResult.none);
+
+                                  if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                              if (tap){
+                              setState(() {tap=false;});
+                          await Database(pseudo: pseudo).userDeleteData(currentUser);
                           setState(() {
                             invit = false;
                             size = 138;
                             who = "Ajouter";
+                            tap=true;
                           });
+                          _showSnackBar('Invitation supprimée !');}}
+                          }on SocketException catch (_) {
+                            _showSnackBar('Vérifiez votre connexion internet');
+                          }
                         }),
                     decoration: BoxDecoration(
                       color: Colors.red[400],
@@ -418,20 +448,36 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               ),
             ),
             onPressed: () async {
+              try{
+            final result = await InternetAddress.lookup('google.com');
+            var result2 = await Connectivity().checkConnectivity();
+            var b = (result2 != ConnectivityResult.none);
+
+            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                if (tap){
+                setState(() {tap=false;});
+
               if (who == "Ajouter") {
+                await Database(pseudo: currentName).invitUpdateData(id);
                 //envoyer invit
                 setState(() {
                   who = "Annuler l\'invitaion";
                   size = 102;
+                  tap=true;
                 });
-                await Database(pseudo: currentName).invitUpdateData(id);
+
+                _showSnackBar('Invitation envoyée !');
               } else {
+
                 if (who == 'Annuler l\'invitaion') {
+                  await Database(pseudo: currentName).userDeleteData(id);
                   setState(() {
                     who = "Ajouter";
                     size = 138;
+                    tap=true;
                   });
-                  await Database(pseudo: currentName).userDeleteData(id);
+                  _showSnackBar('Invitation annulée!');
+
                 } else {
                   // if who=supprimer
 
@@ -440,12 +486,15 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   setState(() {
                     who = "Ajouter";
                     size = 138;
-                  });
-                  // ami=false ;
-                  // amipseudo=false;
+                    tap=true;
+                  });}
+                  _showSnackBar('Ami supprimé !');
 
                 }
+              }   }}on SocketException catch (_) {
+                _showSnackBar('Vérifiez votre connexion internet');
               }
+
             },
           ),
 
@@ -500,39 +549,11 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       );
     }
   }
-
-  /*Future<Null> checkForChanges() async {//voir si linvit a été accepté
-
-    Firestore.instance
-        .collection('Utilisateur')
-        .where("pseudo", isEqualTo: currentUser)
-        .limit(1)
-        .snapshots()
-        .listen((data) {
-      data.documentChanges.forEach((change) {
-        if ( change.document.data["amis"].contains(id))
-        {setState(() {
-          who='Supprimer'; });
-        }
-        else{
-          Firestore.instance
-              .collection('Utilisateur')
-              .where("pseudo", isEqualTo: id)
-              .limit(1)
-              .snapshots()
-              .listen((data) {
-            data.documentChanges.forEach((change) {
-              setState(() {
-                if ( change.document.data["invitation"].contains(currentUser))// amis*
-                    {setState(() {who='Annuler l\'invitaion';});}
-                else {setState(() {who='Ajouter';});} });}
-            );});}//fin else
-      });});}*/
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: PreferredSize(

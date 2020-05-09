@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:winek/screensSoum/profile.dart';
 import 'package:provider/provider.dart';
 import '../classes.dart';
 import 'package:winek/dataBaseSoum.dart';
 import 'package:winek/auth.dart';
+import 'dart:io';
+import 'dart:ui';
 
 class FriendsList extends StatefulWidget {
   @override
@@ -32,71 +35,84 @@ class _FriendsListState extends State<FriendsList> {
 }
 
 class FriendTile extends StatefulWidget {
-  Map id;
-  String image;
+   Map id;
+   String image ;
 
-  FriendTile({Map id}) {
-    this.id = id;
+  FriendTile({Map id}){
+    this.id =id;
     print('constructooooooooooor');
-
   }
 
   @override
-  _FriendTileState createState() => _FriendTileState(id: id);
+  _FriendTileState createState() => _FriendTileState(id : id);
 }
 
 class _FriendTileState extends State<FriendTile> {
-  String image;
+   String image ;
+   Map id ;
 
-  Map id;
+   _FriendTileState({Map id}){
+     this.id =id;
+     print('constructooooooooooor');
+     Firestore.instance
+         .collection('Utilisateur')
+         .where("pseudo", isEqualTo:  id['pseudo'])
+         .limit(1)
+         .snapshots()
+         .listen((data) {
+       data.documents.forEach((doc) {
+          setState(() {
+         print('entreeeeeee');
+         image = doc.data['photo'];
+         print(image); });
+       }
+       );
 
-  _FriendTileState({Map id}) {
-    this.id = id;
-    print('constructooooooooooor');
-    Firestore.instance
-        .collection('Utilisateur')
-        .where("pseudo", isEqualTo: id['pseudo'])
-        .limit(1)
-        .snapshots()
-        .listen((data) {
-      data.documents.forEach((doc) {
-        setState(() {
-          print('entreeeeeee');
-          image = doc.data['photo'];
-          print(image);
-        });
-      }
-      );
-    });
-  }
+   });}
 
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget photo() {
+   @override
+   void initState() {
+     super.initState();
+   }
+     Widget photo()  {
 
     if (image != null) {
       print('photoooos');
-      return CircleAvatar(
-        radius: 23.0,
-        backgroundImage: NetworkImage(image),
-        backgroundColor: Colors.transparent,
-      );
+     return CircleAvatar(
+       radius: 23.0,
+       backgroundImage: NetworkImage(image),
+       backgroundColor: Colors.transparent,
+     );
 
     }
-    else {
-      print('noooo photoooos');
+    else {print('noooo photoooos');
       return Icon(
-        Icons.people,
-        color: Color(0xff3B466B),
-        size: 32,
+                Icons.people,
+                color: Color(0xff3B466B),
+                size: 32,
 
-      );
+            );
     }
   }
+   _showSnackBar(String value , BuildContext context) {
+     final scaffold = Scaffold.of(context);
+     scaffold.showSnackBar( SnackBar(
+       content: new  Text(
+         value,
+         style: TextStyle(
+             color: Colors.white,
+             fontSize: 14.0,
+             fontFamily: 'Montserrat',
+             fontWeight: FontWeight.w600),
+       ),
+       duration: new Duration(seconds: 2),
+       //backgroundColor: Colors.green,
+       action: new SnackBarAction(label: 'Ok', onPressed: (){
+         print('press Ok on SnackBar');
+       }),
+     ));
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -114,18 +130,23 @@ class _FriendTileState extends State<FriendTile> {
         leading: photo(),
         trailing: IconButton(
           onPressed: () async {
-            String currentUser = await AuthService().connectedID();
+          try {
+          final result = await InternetAddress.lookup('google.com');
+          var result2 = await Connectivity().checkConnectivity();
+          var b = (result2 != ConnectivityResult.none);
+
+          if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            String currentUser= await  AuthService().connectedID() ;
             String name = await Database().getPseudo(currentUser);
-            print('bouuuuutttooooooooooon current user $currentUser');
             //go to the profile screen
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ProfileScreen2(
-                        friend: id, currentUser: currentUser, name: name,)),
-            ); // call the class and passing arguments
-          },
+                  builder: (context) => ProfileScreen2(friend : id,currentUser :  currentUser, name: name,)),
+            ); }  } on SocketException catch (_) {
+            _showSnackBar('Vérifiez votre connexion internet', context);
+            }},// call the class and passing arguments
+
           icon: Icon(Icons.info_outline),
           color: Color(0xff389490),
           iconSize: 30,
@@ -176,30 +197,29 @@ class UserTile extends StatefulWidget {
   UserTile({this.id});
 
   @override
-  _UserTileState createState() => _UserTileState(id: id);
+  _UserTileState createState() => _UserTileState(id : id);
 }
 
 class _UserTileState extends State<UserTile> {
 
-  String image;
+  String image ;
+  String id ;
+  bool tap ;
 
-  String id;
-
-  _UserTileState({String id}) {
-    this.id = id;
+  _UserTileState({String id}){
+    this.id =id;
 
     Firestore.instance
         .collection('Utilisateur')
-        .where("pseudo", isEqualTo: id)
+        .where("pseudo", isEqualTo:  id)
         .limit(1)
         .snapshots()
         .listen((data) {
       data.documents.forEach((doc) {
-        setState(() {
-          print('entreeeeeee');
-          image = doc.data['photo'];
-          print(image);
-        });
+          setState(() {
+        print('entreeeeeee');
+        image = doc.data['photo'];
+        print(image);});
       }
       );
 
@@ -211,8 +231,7 @@ class _UserTileState extends State<UserTile> {
   void initState() {
     super.initState();
   }
-
-  Widget photo() {
+  Widget photo()  {
 
     if (image != null) {
       print('photoooos');
@@ -223,22 +242,40 @@ class _UserTileState extends State<UserTile> {
       );
 
     }
-    else {
-      print('noooo photoooos');
-      return Icon(
-        Icons.people,
-        color: Color(0xff3B466B),
-        size: 32,
+    else {print('noooo photoooos');
+    return Icon(
+      Icons.people,
+      color: Color(0xff3B466B),
+      size: 32,
 
-      );
+    );
     }
+  }
+
+  _showSnackBar(String value , BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar( SnackBar(
+      content: new  Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: (){
+        print('press Ok on SnackBar');
+      }),
+    ));
   }
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-          widget.id,
+         widget.id,
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'Montserrat',
@@ -248,18 +285,27 @@ class _UserTileState extends State<UserTile> {
         ),
         leading: photo(),
         trailing: IconButton(
-          onPressed: () async {
+          onPressed: () async{
+
+            try {
+            final result = await InternetAddress.lookup('google.com');
+            var result2 = await Connectivity().checkConnectivity();
+            var b = (result2 != ConnectivityResult.none);
+
+            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
             String currentUser = await AuthService().connectedID();
             String name = await Database().getPseudo(currentUser);
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ProfileScreen2(pseudo: widget.id,
-                        currentUser: currentUser,
-                        name: name,)),
+            context,
+            MaterialPageRoute(
+            builder: (context) =>
+            ProfileScreen2(pseudo: widget.id,
+            currentUser: currentUser,
+            name: name,)),
             ); // call the class and passing arguments
-          },
+            }  } on SocketException catch (_) {
+            _showSnackBar('Vérifiez votre connexion internet', context);
+            }},
           icon: Icon(Icons.info_outline),
           color: Color(0xff389490),
           iconSize: 30,
