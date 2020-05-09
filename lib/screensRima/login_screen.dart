@@ -9,20 +9,19 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/register_screen.dart';
 import '../UpdateMarkers.dart';
 import '../classes.dart';
-import 'waitingSignout.dart';
-import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
-import 'profile_screen.dart';
 import 'resetmail.dart';
 import '../auth.dart';
 import 'dart:async';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:winek/UpdateMarkers.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -372,6 +371,9 @@ class _LoginScreenState extends State<LoginScreen> {
           email: mail,
           password: pwd);
       if (user != null) {
+        //getUserLocation();
+        //Provider.of<DeviceInformationService>(context,listen:false).broadcastBatteryLevel(user.user.uid);
+
         getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
