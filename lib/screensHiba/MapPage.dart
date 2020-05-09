@@ -680,8 +680,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 
   //asma variables2
   String alertePerso;
-
   final _controller = TextEditingController();
+
+  void setStateIndex(int iint){//asma
+    setState(() {
+      stackIndex = iint;
+    });
+  }
   //-----------------------
 
   @override
@@ -1355,12 +1360,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: ReceivedAlertStream(() {
-                                      setState(() {
-                                        index = 0;
-                                        stackIndex = 0;
-                                      });
-                                    }),
+                                    child: ReceivedAlertStream((){
+//                                      setState(() {
+//                                        print('stackIndex1 === $stackIndex');
+//
+//                                        stackIndex=0;
+//                                        print('stackIndex2 === $stackIndex');
+//                                      });
+                                    },),
                                   ),
                                 ),
                                 SizedBox(
@@ -3053,7 +3060,7 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () async {
-          _function; // la fonction de setState
+          //_function; // la fonction de setState
           MarkerId markerId = MarkerId(
               geoPoint.latitude.toString() + geoPoint.longitude.toString());
           Provider.of<UpdateMarkers>(
@@ -3087,6 +3094,7 @@ class ReceivedAlertBubble extends StatelessWidget {
           Provider.of<controllermap>(context, listen: false)
               .mapController
               .animateCamera(cameraUpdate);
+          _function;
 
           //TODO: je positionne l'alerte sur la map
         },
