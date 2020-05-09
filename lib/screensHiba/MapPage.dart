@@ -1978,7 +1978,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 setState(() {
                                   _loading = true;
                                 });
-                                await data.fermergroupe(path, groupe.nom);
+                                DocumentSnapshot doc = await Firestore.instance
+                                    .document(path)
+                                    .get();
+                                if (doc.exists) {
+                                  await data.fermergroupe(path, groupe.nom);
+                                }
                                 setState(() {
                                   _loading = false;
                                 });
