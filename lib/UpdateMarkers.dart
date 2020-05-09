@@ -15,6 +15,7 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 class UpdateMarkers extends ChangeNotifier {
+  String groupepath;
   Firestore _firestore = Firestore.instance;
   Geoflutterfire geo = Geoflutterfire();
   StreamSubscription<List<DocumentSnapshot>> stream;
@@ -27,6 +28,7 @@ class UpdateMarkers extends ChangeNotifier {
   var val;
 
   void UpdateusersLocation(String path, BuildContext context) async {
+    groupepath = path;
     await Future.delayed(Duration(seconds: 1));
     mapcontext = context;
     val = await authService.connectedID();
@@ -46,9 +48,9 @@ class UpdateMarkers extends ChangeNotifier {
   }
 
   void marker_dest(String chemin) async {
-   String destination;
+    String destination;
     await _firestore.document(chemin).get().then((DocumentSnapshot doc) {
-       destination = doc.data['destination']['adresse'];
+      destination = doc.data['destination']['adresse'];
     });
     await _firestore.document(chemin).get().then((DocumentSnapshot ds) {
       dest_lat = ds.data['destination']['latitude'];
@@ -71,20 +73,65 @@ class UpdateMarkers extends ChangeNotifier {
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
     LatLng latlng;
     CameraUpdate cameraUpdate;
-
-    documentList.forEach((DocumentSnapshot document) async {
-      String userid = document.documentID;
-      markers.remove(MarkerId(userid));
-      GeoPoint point = document.data['position']['geopoint'];
-      if (val == userid) {
-        latlng = new LatLng(point.latitude, point.longitude);
-        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-        Provider.of<controllermap>(mapcontext, listen: false)
-            .mapController
-            .animateCamera(cameraUpdate);
-      }
-      _addMarker(point.latitude, point.longitude, userid);
+    bool arret;
+    await Firestore.instance
+        .document(groupepath)
+        .collection('fermeture')
+        .document('fermeture')
+        .get()
+        .then((DocumentSnapshot ds) {
+      arret = ds.data['fermer'];
     });
+    if (arret == false) {
+      bool arrived;
+      bool fermer = true;
+      documentList.forEach((DocumentSnapshot document) async {
+        String userid = document.documentID;
+        markers.remove(MarkerId(userid));
+        GeoPoint point = document.data['position']['geopoint'];
+        await Firestore.instance
+            .document(groupepath)
+            .collection('members')
+            .document(userid)
+            .get()
+            .then((DocumentSnapshot ds) {
+          arrived = ds.data['arrive'];
+        });
+        if (!arrived) {
+          if (val == userid) {
+            double distanceInMeters = await Geolocator().distanceBetween(
+                point.latitude, point.longitude, dest_lat, dest_lng);
+            if (distanceInMeters <= 100) {
+              Firestore.instance
+                  .document(groupepath)
+                  .collection('members')
+                  .document(userid)
+                  .updateData({'arrive': true});
+            } else {
+              fermer = false;
+            }
+          } else {
+            fermer = false;
+          }
+        }
+
+        if (val == userid) {
+          latlng = new LatLng(point.latitude, point.longitude);
+          cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+          Provider.of<controllermap>(mapcontext, listen: false)
+              .mapController
+              .animateCamera(cameraUpdate);
+        }
+        _addMarker(point.latitude, point.longitude, userid);
+      });
+      if (fermer) {
+        await Firestore.instance
+            .document(groupepath)
+            .collection('fermeture')
+            .document('fermeture')
+            .updateData({'fermer': true});
+      }
+    }
   }
 
   Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size) async {
@@ -174,33 +221,34 @@ class UpdateMarkers extends ChangeNotifier {
         .get()
         .then((DocumentSnapshot ds) {
       url = ds.data['photo'];
-    });    
+    });
 
-     await _firestore
+    await _firestore
         .collection('Utilisateur')
         .document(usrid)
         .get()
         .then((DocumentSnapshot ds) {
-      pseudo= ds.data['pseudo'];
-    });   
-           
+      pseudo = ds.data['pseudo'];
+    });
+
     _marker = Marker(
       markerId: id,
       position: LatLng(lat, lng),
       icon: await getMarkerIcon(url, Size(200.0, 200.0)),
-      infoWindow: InfoWindow( snippet: '$pseudo'),
+      infoWindow: InfoWindow(snippet: '$pseudo'),
     );
     markers[id] = _marker;
     notifyListeners();
   }
-  double calculateDistance(lat1, lon1, lat2, lon2){
-var p = 0.017453292519943295;
-var c = cos;
-var a = 0.5 - c((lat2 - lat1) * p)/2 +
-c(lat1 * p) * c(lat2 * p) *
-(1 - c((lon2 - lon1) * p))/2;
-return 12742 * asin(sqrt(a));
-}
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
 }
 
 class DeviceInformationService extends ChangeNotifier {
@@ -225,5 +273,3 @@ class DeviceInformationService extends ChangeNotifier {
     _broadcastBattery = false;
   }
 }
-
-

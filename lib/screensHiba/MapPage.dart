@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:winek/main.dart';
 import 'package:winek/screensHiba/Aide.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
@@ -657,7 +658,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-class MapVoyagePage extends StatefulWidget with ChangeNotifier {
+class MapVoyagePage extends StatefulWidget {
   Voyage groupe;
   String path;
   List<String> imagesUrl;
@@ -678,15 +679,16 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   List<String> imagesUrl;
   Map membreinfo;
   _MapVoyagePageState(this.groupe, this.path, this.imagesUrl);
-
+  bool fermeture;
   //asma variables2
   String alertePerso;
-
+  bool _loading;
   final _controller = TextEditingController();
   //-----------------------
 
   @override
   void initState() {
+    _loading = false;
     index = 0;
     Username = '';
     Userimage = '';
@@ -723,6 +725,19 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         ),
       ),
     };
+    Firestore.instance
+        .document(path)
+        .collection('fermeture')
+        .document('fermeture')
+        .snapshots(includeMetadataChanges: true)
+        .listen((DocumentSnapshot documentSnapshot) {
+      fermeture = documentSnapshot.data['fermer'];
+      if (fermeture) {
+        setState(() {
+          index = 4;
+        });
+      }
+    });
   }
 
   @override
@@ -880,8 +895,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     if (vts != 0) {
                                       point =
                                           snapshot.data['location']['geopoint'];
-                                      distance =
-                                          Provider.of<UpdateMarkers>(context, listen: false).calculateDistance(
+                                      distance = Provider.of<UpdateMarkers>(
+                                              context,
+                                              listen: false)
+                                          .calculateDistance(
                                               point.latitude,
                                               point.longitude,
                                               groupe.destination_latitude,
@@ -947,984 +964,1033 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         ),
       );
     }
-    return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomPadding: true,
-      resizeToAvoidBottomInset: true,
-      key: _scaffoldKey,
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(
-            zoomGesturesEnabled: true,
-            scrollGesturesEnabled: true,
-            mapToolbarEnabled: true,
-            onMapCreated: Provider.of<controllermap>(context, listen: false)
-                ._onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: LatLng(36.7525000, 3.0419700),
-              zoom: 11.0,
+    return ModalProgressHUD(
+      inAsyncCall: _loading,
+      child: Scaffold(
+        extendBody: true,
+        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            GoogleMap(
+              zoomGesturesEnabled: true,
+              scrollGesturesEnabled: true,
+              mapToolbarEnabled: true,
+              onMapCreated: Provider.of<controllermap>(context, listen: false)
+                  ._onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(36.7525000, 3.0419700),
+                zoom: 11.0,
+              ),
+              markers: Set<Marker>.of(
+                  Provider.of<UpdateMarkers>(context).markers.values),
             ),
-            markers: Set<Marker>.of(
-                Provider.of<UpdateMarkers>(context).markers.values),
-          ),
-          IndexedStack(index: index, children: <Widget>[
-            //index = 0 :
-            Stack(
-              children: <Widget>[
-                //recherche barre
-                Positioned(
-                  left: size.width * 0.075,
-                  top: size.height * 0.04,
-                  // child: AnimatedOpacity(
-                  // opacity: _visible ? 1.0 : 0.0,
-                  //duration: Duration(milliseconds: 500),
-                  child: Container(
-                      height: size.height * 0.07,
-                      width: size.width * 0.85,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40.0),
-                          color: Colors.white),
-                      child: Row(
-                        children: <Widget>[
-                          IconButton(
-                              icon: Icon(
-                                Icons.menu,
-                                color: Color(0xFF3B466B),
-                              ),
-                              onPressed: () async {
-                                String id = await authService.connectedID();
-                                String pseudo = await Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(id)
-                                    .get()
-                                    .then((doc) {
-                                  return doc.data['pseudo'];
-                                });
-                                String image = await Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(id)
-                                    .get()
-                                    .then((doc) {
-                                  return doc.data['photo'];
-                                });
-                                // _openDrawer(context);
-                                setState(() {
-                                  Username = pseudo;
-                                  Userimage = image;
-                                  index = 1;
-                                  // _visible = !_visible;
-                                });
-                              },
-                              iconSize: 30.0),
-                          Spacer(
-                            flex: 1,
-                          ),
-                          Center(
-                            child: Text(
-                              'Recherche',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Montserrat',
-                                fontSize: 15,
-                                color: Color(0xff707070),
+            IndexedStack(index: index, children: <Widget>[
+              //index = 0 :
+              Stack(
+                children: <Widget>[
+                  //recherche barre
+                  Positioned(
+                    left: size.width * 0.075,
+                    top: size.height * 0.04,
+                    // child: AnimatedOpacity(
+                    // opacity: _visible ? 1.0 : 0.0,
+                    //duration: Duration(milliseconds: 500),
+                    child: Container(
+                        height: size.height * 0.07,
+                        width: size.width * 0.85,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40.0),
+                            color: Colors.white),
+                        child: Row(
+                          children: <Widget>[
+                            IconButton(
+                                icon: Icon(
+                                  Icons.menu,
+                                  color: Color(0xFF3B466B),
+                                ),
+                                onPressed: () async {
+                                  String id = await authService.connectedID();
+                                  String pseudo = await Firestore.instance
+                                      .collection('Utilisateur')
+                                      .document(id)
+                                      .get()
+                                      .then((doc) {
+                                    return doc.data['pseudo'];
+                                  });
+                                  String image = await Firestore.instance
+                                      .collection('Utilisateur')
+                                      .document(id)
+                                      .get()
+                                      .then((doc) {
+                                    return doc.data['photo'];
+                                  });
+                                  // _openDrawer(context);
+                                  setState(() {
+                                    Username = pseudo;
+                                    Userimage = image;
+                                    index = 1;
+                                    // _visible = !_visible;
+                                  });
+                                },
+                                iconSize: 30.0),
+                            Spacer(
+                              flex: 1,
+                            ),
+                            Center(
+                              child: Text(
+                                'Recherche',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 15,
+                                  color: Color(0xff707070),
+                                ),
                               ),
                             ),
-                          ),
-                          Spacer(
-                            flex: 1,
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.search,
-                                color: Color(0xFF3B466B),
-                              ),
-                              onPressed: () async {
-                                // show input autocomplete with selected mode
-                                // then get the Prediction selected
-                                Prediction p = await PlacesAutocomplete.show(
-                                  context: context,
-                                  apiKey: kGoogleApiKey,
-                                  onError: onError,
-                                  mode: Mode.overlay,
-                                  language: "fr",
-                                  components: [
-                                    Component(Component.country, "DZ")
-                                  ],
-                                );
-
-                                Provider.of<controllermap>(context,
-                                        listen: false)
-                                    .displayPredictionRecherche(p);
-                              },
-                              iconSize: 30.0),
-                        ],
-                      )),
-                ),
-                //liste of members
-                Positioned(
-                  bottom: 4,
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  child: Column(
-                    children: <Widget>[
-                      FlatButton(
-                        //HEEEEre grey container
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Color(0xFF7888a0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blueGrey,
-                                blurRadius: 3.0,
-                                spreadRadius: 0.5,
-                                offset: Offset(0.0, 2.0),
-                              )
-                            ],
-                          ),
-                          child: SizedBox(
-                            height: 10.0,
-                            width: 60.0,
-                          ),
-                        ),
-                        onPressed: () async {
-                          utilisateurID = await AuthService().connectedID();
-                          currentUser =
-                              await AuthService().getPseudo(utilisateurID);
-                          groupPath = path;
-                          showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              context: context,
-                              builder: (context) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      color: Color(0xB07888a0),
-                                      borderRadius: BorderRadius.only(
-                                        topRight: const Radius.circular(10),
-                                        topLeft: const Radius.circular(10),
-                                      )),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Column(
-                                            children: <Widget>[
-                                              RoundedButton(
-                                                  title: 'Personnaliser',
-                                                  colour: Color(0xFF389490),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      stackIndex = 1;
-                                                      Navigator.pop(context);
-                                                    });
-                                                  }),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          //height: 338,
-                                          child: AlertStream(),
-                                        ),
-                                      ),
+                            Spacer(
+                              flex: 1,
+                            ),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.search,
+                                  color: Color(0xFF3B466B),
+                                ),
+                                onPressed: () async {
+                                  // show input autocomplete with selected mode
+                                  // then get the Prediction selected
+                                  Prediction p = await PlacesAutocomplete.show(
+                                    context: context,
+                                    apiKey: kGoogleApiKey,
+                                    onError: onError,
+                                    mode: Mode.overlay,
+                                    language: "fr",
+                                    components: [
+                                      Component(Component.country, "DZ")
                                     ],
-                                  ),
-                                );
-                              });
-                        },
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        height: MediaQuery.of(context).size.height * 0.10,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(33.0),
-                          color: Color(0xFF3B466B),
-                          //color:Color.fromRGBO(59, 70, 150, 0.8),
-                        ),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: liste,
-                          shrinkWrap: false,
-                        ),
-                      ),
-                    ],
+                                  );
+
+                                  Provider.of<controllermap>(context,
+                                          listen: false)
+                                      .displayPredictionRecherche(p);
+                                },
+                                iconSize: 30.0),
+                          ],
+                        )),
                   ),
-                ),
-                //nom groupe
-                Positioned(
-                  bottom: 60,
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: primarycolor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blueGrey,
-                            blurRadius: 3.0,
-                            spreadRadius: 0.1,
-                            offset: Offset(0.0, 1.0),
-                          )
-                        ],
-                      ),
-                      child: Text(
-                        groupe.nom,
-                        style: TextStyle(
-                          color: myWhite,
-                          fontSize: 12,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )),
-                ),
-                //floationg butons asma
-                Positioned(
-                  right: 5,
-                  //MediaQuery.of(context).size.width*0.05,
-                  bottom: MediaQuery.of(context).size.height * 0.15,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () async {
-                            var vvv =
-                                await _firestore.document(groupPath).get();
-                            bool tr = vvv.data['justReceivedAlert'];
-                            _firestore.document(groupPath).updateData({
-                              'justReceivedAlert': !tr,
-                            });
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.free_breakfast,
-                            size: 20,
+                  //liste of members
+                  Positioned(
+                    bottom: 4,
+                    left: MediaQuery.of(context).size.width * 0.025,
+                    child: Column(
+                      children: <Widget>[
+                        FlatButton(
+                          //HEEEEre grey container
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFF7888a0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueGrey,
+                                  blurRadius: 3.0,
+                                  spreadRadius: 0.5,
+                                  offset: Offset(0.0, 2.0),
+                                )
+                              ],
+                            ),
+                            child: SizedBox(
+                              height: 10.0,
+                              width: 60.0,
+                            ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        //asma boite reception
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
                           onPressed: () async {
                             utilisateurID = await AuthService().connectedID();
                             currentUser =
                                 await AuthService().getPseudo(utilisateurID);
-                            setState(() {
-                              groupPath = path;
-                              stackIndex = 2;
-                            });
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.message,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            Navigator.pushNamed(context, ListGrpPage.id);
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.group,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            setState(() {
-                              index = 2;
-                            });
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.group_add,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                //la fenetre personnaliser asma
-                IndexedStack(
-                  index: stackIndex,
-                  children: <Widget>[
-                    Container(),
-                    Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        child: Stack(
-                          alignment: AlignmentDirectional.center,
-                          children: <Widget>[
-                            FlatButton(
-                                padding: EdgeInsets.all(0),
-                                child: Container(
-                                  color: Color(0x99707070),
-                                  height: double.infinity,
-                                  width: double.infinity,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    stackIndex = 0;
-                                  });
-                                }),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: 380,
-                                height: 280,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Color(0xFFd0d8e8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.blueGrey,
-                                      blurRadius: 3.0,
-                                      spreadRadius: 1.0,
-                                      offset: Offset(0.0, 2.0),
-                                    )
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Personnaliser une alerte',
-                                      style: TextStyle(
-                                          color: Color(0xFF707070),
-                                          fontSize: 18.0,
-                                          fontFamily: 'Montserrat',
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(height: 15.0),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(32.0)),
-                                        color: Colors.white,
-                                        elevation: 5.0,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              alertePerso = value;
-                                            },
-                                            style: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Color(0xFF707070),
-                                              fontWeight: FontWeight.w600,
+                            groupPath = path;
+                            showModalBottomSheet(
+                                backgroundColor: Colors.transparent,
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                        color: Color(0xB07888a0),
+                                        borderRadius: BorderRadius.only(
+                                          topRight: const Radius.circular(10),
+                                          topLeft: const Radius.circular(10),
+                                        )),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Column(
+                                              children: <Widget>[
+                                                RoundedButton(
+                                                    title: 'Personnaliser',
+                                                    colour: Color(0xFF389490),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        stackIndex = 1;
+                                                        Navigator.pop(context);
+                                                      });
+                                                    }),
+                                              ],
                                             ),
-                                            decoration: InputDecoration(
-                                              prefixIcon: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.sms_failed,
-                                                  color: Color(0xFF707070),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            //height: 338,
+                                            child: AlertStream(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                });
+                          },
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          height: MediaQuery.of(context).size.height * 0.10,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(33.0),
+                            color: Color(0xFF3B466B),
+                            //color:Color.fromRGBO(59, 70, 150, 0.8),
+                          ),
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: liste,
+                            shrinkWrap: false,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //nom groupe
+                  Positioned(
+                    bottom: 60,
+                    left: MediaQuery.of(context).size.width * 0.025,
+                    child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: primarycolor,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blueGrey,
+                              blurRadius: 3.0,
+                              spreadRadius: 0.1,
+                              offset: Offset(0.0, 1.0),
+                            )
+                          ],
+                        ),
+                        child: Text(
+                          groupe.nom,
+                          style: TextStyle(
+                            color: myWhite,
+                            fontSize: 12,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
+                  ),
+                  //floationg butons asma
+                  Positioned(
+                    right: 5,
+                    //MediaQuery.of(context).size.width*0.05,
+                    bottom: MediaQuery.of(context).size.height * 0.15,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () async {
+                              var vvv =
+                                  await _firestore.document(groupPath).get();
+                              bool tr = vvv.data['justReceivedAlert'];
+                              _firestore.document(groupPath).updateData({
+                                'justReceivedAlert': !tr,
+                              });
+                            },
+                            backgroundColor: Color(0xFF389490),
+                            foregroundColor: Color(0xFFFFFFFF),
+                            child: Icon(
+                              Icons.free_breakfast,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          //asma boite reception
+                          padding: EdgeInsets.all(3),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () async {
+                              utilisateurID = await AuthService().connectedID();
+                              currentUser =
+                                  await AuthService().getPseudo(utilisateurID);
+                              setState(() {
+                                groupPath = path;
+                                stackIndex = 2;
+                              });
+                            },
+                            backgroundColor: Color(0xFF389490),
+                            foregroundColor: Color(0xFFFFFFFF),
+                            child: Icon(
+                              Icons.message,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () {
+                              Navigator.pushNamed(context, ListGrpPage.id);
+                            },
+                            backgroundColor: Color(0xFF389490),
+                            foregroundColor: Color(0xFFFFFFFF),
+                            child: Icon(
+                              Icons.group,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () {
+                              setState(() {
+                                index = 2;
+                              });
+                            },
+                            backgroundColor: Color(0xFF389490),
+                            foregroundColor: Color(0xFFFFFFFF),
+                            child: Icon(
+                              Icons.group_add,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //la fenetre personnaliser asma
+                  IndexedStack(
+                    index: stackIndex,
+                    children: <Widget>[
+                      Container(),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          child: Stack(
+                            alignment: AlignmentDirectional.center,
+                            children: <Widget>[
+                              FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    color: Color(0x99707070),
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      stackIndex = 0;
+                                    });
+                                  }),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  width: 380,
+                                  height: 280,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xFFd0d8e8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.blueGrey,
+                                        blurRadius: 3.0,
+                                        spreadRadius: 1.0,
+                                        offset: Offset(0.0, 2.0),
+                                      )
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        'Personnaliser une alerte',
+                                        style: TextStyle(
+                                            color: Color(0xFF707070),
+                                            fontSize: 18.0,
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      SizedBox(height: 15.0),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(32.0)),
+                                          color: Colors.white,
+                                          elevation: 5.0,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                alertePerso = value;
+                                              },
+                                              style: TextStyle(
+                                                fontFamily: 'Montserrat',
+                                                color: Color(0xFF707070),
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              decoration: InputDecoration(
+                                                prefixIcon: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Icon(
+                                                    Icons.sms_failed,
+                                                    color: Color(0xFF707070),
+                                                  ),
+                                                ),
+                                                labelText:
+                                                    'Contenu de l\'alerte',
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 20.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              32.0)),
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xd03b466b),
+                                                      width: 1.0),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              32.0)),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xd03b466b),
+                                                      width: 2.0),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              32.0)),
+                                                ),
+                                                labelStyle: TextStyle(
+                                                  color: Color(0xd03b466b),
                                                 ),
                                               ),
-                                              labelText: 'Contenu de l\'alerte',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 10.0,
-                                                      horizontal: 20.0),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(32.0)),
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Color(0xd03b466b),
-                                                    width: 1.0),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(32.0)),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Color(0xd03b466b),
-                                                    width: 2.0),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(32.0)),
-                                              ),
-                                              labelStyle: TextStyle(
-                                                color: Color(0xd03b466b),
-                                              ),
+                                              maxLength: 30,
                                             ),
-                                            maxLength: 30,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 10.0),
-                                    RoundedButton(
-                                      title: 'Ok',
-                                      colour: Color(0xd03b466b),
-                                      onPressed: () async {
-                                        if (alertePerso != null) {
-                                          /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
-                                          List<DocumentSnapshot> fff=result.documents;
-                                          DocumentSnapshot fff1=fff[0];*/
-                                          _firestore
-                                              .collection('Utilisateur')
-                                              .document(utilisateurID)
-                                              .updateData({
-                                            'alertLIST': FieldValue.arrayUnion(
-                                                [alertePerso]),
+                                      SizedBox(height: 10.0),
+                                      RoundedButton(
+                                        title: 'Ok',
+                                        colour: Color(0xd03b466b),
+                                        onPressed: () async {
+                                          if (alertePerso != null) {
+                                            /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
+                                            List<DocumentSnapshot> fff=result.documents;
+                                            DocumentSnapshot fff1=fff[0];*/
+                                            _firestore
+                                                .collection('Utilisateur')
+                                                .document(utilisateurID)
+                                                .updateData({
+                                              'alertLIST':
+                                                  FieldValue.arrayUnion(
+                                                      [alertePerso]),
+                                            });
+                                            alertePerso = null;
+                                          }
+                                          setState(() {
+                                            stackIndex = 0;
+                                            _controller.clear();
+                                            FocusScope.of(context)
+                                                .requestFocus(FocusNode());
                                           });
-                                          alertePerso = null;
-                                        }
-                                        setState(() {
-                                          stackIndex = 0;
-                                          _controller.clear();
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                        });
-                                      },
-                                    ),
-                                  ],
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: <Widget>[
+                          FlatButton(
+                              padding: EdgeInsets.all(0),
+                              child: Container(
+                                color: Color(0x99707070),
+                                height: double.infinity,
+                                width: double.infinity,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  stackIndex = 0;
+                                });
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 150.0, horizontal: 8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Color(0xFFd0d8e8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blueGrey,
+                                    blurRadius: 3.0,
+                                    spreadRadius: 1.0,
+                                    offset: Offset(0.0, 2.0),
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Text(
+                                      'Boite de recécption',
+                                      style: TextStyle(
+                                          letterSpacing: 2,
+                                          color: Color(0xFF3b466b),
+                                          fontSize: 18.0,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w800),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      child: ReceivedAlertStream(),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10.0,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      //indexe3
+                      NotifStream(),
+                    ],
+                  ),
+                ],
+              ),
+              // the drawer, index=1
+              Container(
+                width: size.width,
+                height: size.height,
+                color: Color.fromRGBO(255, 255, 255, 0.5),
+                child: Column(
+                  children: <Widget>[
+                    Spacer(
+                      flex: 1,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        MaterialButton(
+                          onPressed: () {
+                            // _closeDrawer(context);
+                            setState(() {
+                              index = 0;
+                            });
+                          },
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Spacer(
+                          flex: 1,
+                        ),
+                      ],
+                    ),
+                    Spacer(
+                      flex: 2,
+                    ),
+                    Center(
+                      child: Container(
+                        height: 450,
+                        width: 280,
+                        //margin: EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Spacer(
+                              flex: 1,
+                            ),
+                            Container(
+                              height: 80,
+                              // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                              width: 80,
+                              // MediaQuery.of(context).size.height * 0.1 * 0.65,
+                              margin: EdgeInsets.symmetric(horizontal: 4),
+                              child: CircleAvatar(
+                                backgroundColor: Color(0xFFFFFFFF),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(Userimage)),
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                Username,
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    color: Colors.white),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 1,
+                            ),
+                            Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  ListTile(
+                                    onTap: () async {
+                                      String id =
+                                          await authService.connectedID();
+                                      if (id != null) {
+                                        DocumentSnapshot snapshot =
+                                            await authService.userRef
+                                                .document(id)
+                                                .get();
+
+                                        if (snapshot != null) {
+                                          Utilisateur utilisateur =
+                                              Utilisateur.fromdocSnapshot(
+                                                  snapshot);
+                                          //  Navigator.pushNamed(context, Home.id);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen(
+                                                          utilisateur)));
+                                        }
+                                      }
+                                    },
+                                    leading: Icon(
+                                      Icons.playlist_add_check,
+                                      color: Colors.white,
+                                    ),
+                                    title: Text(
+                                      "Compte",
+                                      //strutStyle: ,
+                                      style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600,
+                                          color: myWhite,
+                                          fontSize: 15),
+                                    ),
+                                  ),
+                                  ListTile(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, FavoritePlacesScreen.id);
+                                    },
+                                    leading: Icon(Icons.star, color: myWhite),
+                                    title: Text(
+                                      "Favoris",
+                                      style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600,
+                                          color: myWhite,
+                                          fontSize: 15),
+                                    ),
+                                  ),
+                                  ListTile(
+                                    onTap: () async {
+                                      String currentUser =
+                                          await AuthService().connectedID();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FriendsListScreen(
+                                                      currentUser)));
+                                    },
+                                    leading: Icon(
+                                      Icons.group,
+                                      color: myWhite,
+                                    ),
+                                    title: Text(
+                                      "Liste d'amis",
+                                      textAlign: TextAlign.left,
+                                      overflow: TextOverflow.visible,
+                                      style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600,
+                                          color: myWhite,
+                                          fontSize: 15),
+                                      //strutStyle: ,
+                                    ),
+                                  ),
+                                  ListTile(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, AidePage.id);
+                                    },
+                                    leading: Icon(
+                                      Icons.build,
+                                      color: myWhite,
+                                    ),
+                                    title: Text(
+                                      "Aide",
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w600,
+                                        color: myWhite,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                  ListTile(
+                                    onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignoutWait())),
+                                    leading: Icon(
+                                      Icons.directions_run,
+                                      color: Colors.white,
+                                    ),
+                                    title: Text(
+                                      "Déconnecter",
+                                      //strutStyle: ,
+                                      style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w600,
+                                          color: myWhite,
+                                          fontSize: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Spacer(
+                              flex: 1,
                             ),
                           ],
                         ),
                       ),
                     ),
-                    Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: <Widget>[
-                        FlatButton(
-                            padding: EdgeInsets.all(0),
-                            child: Container(
-                              color: Color(0x99707070),
-                              height: double.infinity,
-                              width: double.infinity,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                stackIndex = 0;
-                              });
-                            }),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 150.0, horizontal: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
+                    Spacer(
+                      flex: 5,
+                    ),
+                  ],
+                ),
+              ),
+              //index = 2 : choix de groupe
+              Stack(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        //  _visible = !_visible;
+                        index = 0;
+                      });
+                    },
+                    child: Container(
+                      height: size.height,
+                      width: size.width,
+                      color: Color.fromRGBO(255, 255, 255, 0.2),
+                    ),
+                  ),
+                  Container(
+                      width: size.width,
+                      height: size.height,
+                      child: Center(
+                        child: Container(
+                          height: 370,
+                          width: 266,
+                          decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Color(0xFFd0d8e8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blueGrey,
-                                  blurRadius: 3.0,
-                                  spreadRadius: 1.0,
-                                  offset: Offset(0.0, 2.0),
-                                )
-                              ],
-                            ),
+                              color: Color.fromRGBO(59, 70, 107, 0.5)),
+                          child: Center(
                             child: Column(
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Text(
-                                    'Boite de recécption',
+                                Spacer(
+                                  flex: 1,
+                                ),
+                                Text("Créer un groupe ",
                                     style: TextStyle(
-                                        letterSpacing: 2,
-                                        color: Color(0xFF3b466b),
-                                        fontSize: 18.0,
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w800),
+                                      fontSize: 17,
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w600,
+                                      color: Color.fromRGBO(255, 255, 255, 1),
+                                    )),
+                                Spacer(
+                                  flex: 1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      index = 0;
+                                    });
+                                    Navigator.pushNamed(
+                                        context, NvVoyagePage.id);
+                                  },
+                                  child: Bouton(
+                                    icon: Icon(
+                                      Icons.directions_bus,
+                                      color: Color(0xff707070),
+                                      size: 75,
+                                    ),
+                                    contenu: Text(
+                                      "de voyage",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Montserrat',
+                                          color: Color(0xff707070)),
+                                    ),
                                   ),
                                 ),
-                                Expanded(
-                                  child: Container(
-                                    child: ReceivedAlertStream(),
+                                Spacer(
+                                  flex: 1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      index = 0;
+                                    });
+                                    Navigator.pushNamed(
+                                        context, NvLongTermePage.id);
+                                  },
+                                  child: Bouton(
+                                    icon: Icon(
+                                      Icons.people,
+                                      color: Color(0xff707070),
+                                      size: 75,
+                                    ),
+                                    contenu: Text(
+                                      "a long terme",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Montserrat',
+                                          color: Color(0xff707070)),
+                                    ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 10.0,
-                                ),
+                                Spacer(
+                                  flex: 1,
+                                )
                               ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    //indexe3
-                    NotifStream(),
-                  ],
-                ),
-              ],
-            ),
-            // the drawer, index=1
-            Container(
-              width: size.width,
-              height: size.height,
-              color: Color.fromRGBO(255, 255, 255, 0.5),
-              child: Column(
+                      )),
+                ],
+              ),
+              //index =3 : barre d'info
+              Stack(
                 children: <Widget>[
-                  Spacer(
-                    flex: 1,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      MaterialButton(
-                        onPressed: () {
-                          // _closeDrawer(context);
+                  Container(
+                      height: size.height,
+                      width: size.width,
+                      child: GestureDetector(
+                        onTap: () async {
+                          GeoPoint point;
+                          CameraUpdate cameraUpdate;
+                          String val = await authService.connectedID();
+                          await Firestore.instance
+                              .document(path)
+                              .collection('members')
+                              .document(val)
+                              .get()
+                              .then((DocumentSnapshot ds) {
+                            point = ds.data['position']['geopoint'];
+                          });
+                          LatLng latlng =
+                              new LatLng(point.latitude, point.longitude);
+                          cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                          Provider.of<controllermap>(context, listen: false)
+                              .mapController
+                              .animateCamera(cameraUpdate);
                           setState(() {
+                            // pour dezoumer de cette personne
+                            // et remettre la cam sur l'utilisateur courrant
                             index = 0;
                           });
                         },
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                    ],
-                  ),
-                  Spacer(
-                    flex: 2,
-                  ),
-                  Center(
+                      )),
+                  Positioned(
+                    bottom: 4,
+                    left: MediaQuery.of(context).size.width * 0.025,
                     child: Container(
-                      height: 450,
-                      width: 280,
-                      //margin: EdgeInsets.symmetric(vertical: 5),
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      height: MediaQuery.of(context).size.height * 0.10,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
+                        borderRadius: BorderRadius.circular(33.0),
+                        color: Color(0xFF3B466B),
+                        //color:Color.fromRGBO(59, 70, 150, 0.8),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Row(
                         children: <Widget>[
                           Spacer(
                             flex: 1,
                           ),
-                          Container(
-                            height: 80,
-                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
-                            width: 80,
-                            // MediaQuery.of(context).size.height * 0.1 * 0.65,
-                            margin: EdgeInsets.symmetric(horizontal: 4),
-                            child: CircleAvatar(
-                              backgroundColor: Color(0xFFFFFFFF),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.network(Userimage)),
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              Username,
-                              textDirection: TextDirection.rtl,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          Spacer(
-                            flex: 1,
-                          ),
-                          Center(
+                          Padding(
+                            padding: EdgeInsets.all(7),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              // crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
-                                ListTile(
-                                  onTap: () async {
-                                    String id = await authService.connectedID();
-                                    if (id != null) {
-                                      DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
-
-                                      if (snapshot != null) {
-                                        Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
-                                        //  Navigator.pushNamed(context, Home.id);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProfileScreen(
-                                                        utilisateur)));
-                                      }
-                                    }
-                                  },
-                                  leading: Icon(
-                                    Icons.playlist_add_check,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                    "Compte",
-                                    //strutStyle: ,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
+                                Container(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.1 *
+                                      0.65,
+                                  width: MediaQuery.of(context).size.height *
+                                      0.1 *
+                                      0.65,
+                                  margin: EdgeInsets.symmetric(horizontal: 4),
+                                  child: CircleAvatar(
+                                    backgroundColor: Color(0xFFFFFFFF),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child:
+                                            Image.network(membreinfo['image'])),
                                   ),
                                 ),
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, FavoritePlacesScreen.id);
-                                  },
-                                  leading: Icon(Icons.star, color: myWhite),
-                                  title: Text(
-                                    "Favoris",
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
-                                  ),
-                                ),
-                                ListTile(
-                                  onTap: () async {
-                                    String currentUser =
-                                        await AuthService().connectedID();
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FriendsListScreen(
-                                                    currentUser)));
-                                  },
-                                  leading: Icon(
-                                    Icons.group,
-                                    color: myWhite,
-                                  ),
-                                  title: Text(
-                                    "Liste d'amis",
-                                    textAlign: TextAlign.left,
-                                    overflow: TextOverflow.visible,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
-                                    //strutStyle: ,
-                                  ),
-                                ),
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, AidePage.id);
-                                  },
-                                  leading: Icon(
-                                    Icons.build,
-                                    color: myWhite,
-                                  ),
-                                  title: Text(
-                                    "Aide",
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w600,
-                                      color: myWhite,
-                                      fontSize: 15,
+                                Expanded(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 6),
+                                    child: Text(
+                                      membreinfo['pseudo'],
+                                      style: TextStyle(
+                                        fontFamily: 'MontSerrat',
+                                        fontSize: 10,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                ListTile(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SignoutWait())),
-                                  leading: Icon(
-                                    Icons.directions_run,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                    "Déconnecter",
-                                    //strutStyle: ,
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        color: myWhite,
-                                        fontSize: 15),
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          //distance restante restant
                           Spacer(
                             flex: 1,
                           ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              child: membreinfo['vitesse'],
+                            ),
+                          ),
+                          Spacer(flex: 1),
+                          //temps restant
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              child: membreinfo['temps'],
+                            ),
+                          ),
+                          //niveau de batterie
+                          Spacer(flex: 1),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              child: Column(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.battery_std,
+                                    color: Color(0xFFFFFFFF),
+                                    semanticLabel: '30%',
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  membreinfo['batterie'],
+                                ],
+                              ),
+                            ),
+                          ),
+                          Spacer(flex: 1),
                         ],
                       ),
                     ),
                   ),
-                  Spacer(
-                    flex: 5,
-                  ),
                 ],
               ),
-            ),
-            //index = 2 : choix de groupe
-            Stack(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      //  _visible = !_visible;
-                      index = 0;
-                    });
-                  },
+              //index= 4 msg fermeture:
+              Center(
                   child: Container(
-                    height: size.height,
-                    width: size.width,
-                    color: Color.fromRGBO(255, 255, 255, 0.2),
-                  ),
-                ),
-                Container(
-                    width: size.width,
-                    height: size.height,
-                    child: Center(
-                      child: Container(
-                        height: 370,
-                        width: 266,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Color.fromRGBO(59, 70, 107, 0.5)),
-                        child: Center(
-                          child: Column(
-                            children: <Widget>[
-                              Spacer(
-                                flex: 1,
-                              ),
-                              Text("Créer un groupe ",
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromRGBO(255, 255, 255, 1),
-                                  )),
-                              Spacer(
-                                flex: 1,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    index = 0;
-                                  });
-                                  Navigator.pushNamed(context, NvVoyagePage.id);
-                                },
-                                child: Bouton(
-                                  icon: Icon(
-                                    Icons.directions_bus,
-                                    color: Color(0xff707070),
-                                    size: 75,
-                                  ),
-                                  contenu: Text(
-                                    "de voyage",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'Montserrat',
-                                        color: Color(0xff707070)),
-                                  ),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 1,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    index = 0;
-                                  });
-                                  Navigator.pushNamed(
-                                      context, NvLongTermePage.id);
-                                },
-                                child: Bouton(
-                                  icon: Icon(
-                                    Icons.people,
-                                    color: Color(0xff707070),
-                                    size: 75,
-                                  ),
-                                  contenu: Text(
-                                    "a long terme",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'Montserrat',
-                                        color: Color(0xff707070)),
-                                  ),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 1,
-                              )
-                            ],
-                          ),
-                        ),
+                      width: 300,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
                       ),
-                    )),
-              ],
-            ),
-            //index =3 : barre d'info
-            Stack(
-              children: <Widget>[
-                Container(
-                    height: size.height,
-                    width: size.width,
-                    child: GestureDetector(
-                      onTap: () async {
-                        GeoPoint point;
-                        CameraUpdate cameraUpdate;
-                        String val = await authService.connectedID();
-                        await Firestore.instance
-                            .document(path)
-                            .collection('members')
-                            .document(val)
-                            .get()
-                            .then((DocumentSnapshot ds) {
-                          point = ds.data['position']['geopoint'];
-                        });
-                        LatLng latlng =
-                            new LatLng(point.latitude, point.longitude);
-                        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-                        Provider.of<controllermap>(context, listen: false)
-                            .mapController
-                            .animateCamera(cameraUpdate);
-                        setState(() {
-                          // pour dezoumer de cette personne
-                          // et remettre la cam sur l'utilisateur courrant
-                          index = 0;
-                        });
-                      },
-                    )),
-                Positioned(
-                  bottom: 4,
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    height: MediaQuery.of(context).size.height * 0.10,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(33.0),
-                      color: Color(0xFF3B466B),
-                      //color:Color.fromRGBO(59, 70, 150, 0.8),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Spacer(
-                          flex: 1,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(7),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                height: MediaQuery.of(context).size.height *
-                                    0.1 *
-                                    0.65,
-                                width: MediaQuery.of(context).size.height *
-                                    0.1 *
-                                    0.65,
-                                margin: EdgeInsets.symmetric(horizontal: 4),
-                                child: CircleAvatar(
-                                  backgroundColor: Color(0xFFFFFFFF),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(50),
-                                      child:
-                                          Image.network(membreinfo['image'])),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 6),
-                                  child: Text(
-                                    membreinfo['pseudo'],
-                                    style: TextStyle(
-                                      fontFamily: 'MontSerrat',
-                                      fontSize: 10,
-                                      color: Color(0xFFFFFFFF),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        //distance restante restant
-                        Spacer(
-                          flex: 1,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            child: membreinfo['vitesse'],
-                          ),
-                        ),
-                        Spacer(flex: 1),
-                        //temps restant
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            child: membreinfo['temps'],
-                          ),
-                        ),
-                        //niveau de batterie
-                        Spacer(flex: 1),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            child: Column(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.battery_std,
-                                  color: Color(0xFFFFFFFF),
-                                  semanticLabel: '30%',
-                                  textDirection: TextDirection.rtl,
-                                ),
-                                membreinfo['batterie'],
-                              ],
+                      child: Column(
+                        children: <Widget>[
+                          Center(
+                            child: MaterialButton(
+                              child: Text('fermer',
+                                  style: TextStyle(
+                                    color: primarycolor,
+                                  )),
+                              onPressed: () async {
+                                setState(() {
+                                  _loading = true;
+                                });
+                                await data.fermergroupe(path, groupe.nom);
+                                setState(() {
+                                  _loading = false;
+                                });
+                                Navigator.pop(context);
+                              },
                             ),
                           ),
-                        ),
-                        Spacer(flex: 1),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ]),
-        ],
+                        ],
+                      )))
+            ]),
+          ],
+        ),
       ),
     );
   }
@@ -3271,7 +3337,7 @@ class NotifStream extends StatelessWidget {
         for (var alert in alerts) {
           var id = alert.documentID;
           if (id == _firestore.document(groupPath).documentID) {
-            print('FOUUUUUUUUUUUUUUUUUUUND');
+            //   print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
             if (groupJRA != justReceivedAlert) {
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');

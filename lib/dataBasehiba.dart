@@ -358,6 +358,7 @@ class Databasegrp {
         .document(id)
         .setData({
       'position': point.data,
+      'arrive': false,
     });
     GeoPoint position;
     GeoFirePoint geoFirePoint;

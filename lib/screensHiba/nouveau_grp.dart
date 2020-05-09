@@ -331,6 +331,7 @@ void createvoyage() async {
       .document(user['id'])
       .setData({
     'position': point.data,
+    'arrive': false,
   });
 
   GeoPoint position;
@@ -354,6 +355,12 @@ void createvoyage() async {
         .updateData({'position': geoFirePoint.data});
   });
   print('member doc added');
+  await _firestore
+      .document(ref.path)
+      .collection('fermeture')
+      .document('fermeture')
+      .setData({'fermer': false});
+
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   // adding that grp to member's invitations liste:
   for (Map m in membres) {
