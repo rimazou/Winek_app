@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -210,8 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                 .showSnackBar(
                                                                 SnackBar(
                                                                   content: Text(
-                                                                    '''Ce pseudo est deja pris ,
-                                                                         choisissez un autre''',
+                                                                    'Ce pseudo est deja pris ,choisissez un autre',
                                                                     style: TextStyle(
                                                                         color: Colors
                                                                             .white,
@@ -366,6 +366,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     content: TextField(
                                                       controller: _controller1,
                                                       maxLines: 1,
+                                                      keyboardType: TextInputType
+                                                          .numberWithOptions(
+                                                      ),
                                                       decoration:
                                                       InputDecoration(
                                                         hintText:
@@ -411,27 +414,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             _loading = true;
                                                           });
                                                           if (nv_tel != '') {
-                                                            String id =
-                                                            await authService
-                                                                .connectedID();
-                                                            await Firestore
-                                                                .instance
-                                                                .collection(
-                                                                'Utilisateur')
-                                                                .document(id)
-                                                                .updateData({
-                                                              'tel': nv_tel
-                                                            });
+                                                            if (Validator
+                                                                .number(nv_tel)
+                                                            ) {
+                                                              String id =
+                                                              await authService
+                                                                  .connectedID();
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                  'Utilisateur')
+                                                                  .document(id)
+                                                                  .updateData({
+                                                                'tel': nv_tel
+                                                              });
+
+                                                              setState(() {
+                                                                _loading =
+                                                                false;
+                                                                widget.myuser
+                                                                    .tel =
+                                                                    nv_tel;
+                                                              });
+                                                              // nv_nom = _controller.text;
+                                                              // _confirmer = true;
+                                                              Navigator.pop(
+                                                                  context);
+                                                            } else {
+                                                              _profilekey
+                                                                  .currentState
+                                                                  .showSnackBar(
+                                                                  SnackBar(
+                                                                    content: Text(
+                                                                      'veuillez entrer un numero',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontSize: 14.0,
+                                                                          fontFamily: 'Montserrat',
+                                                                          fontWeight: FontWeight
+                                                                              .w600),),
+                                                                    duration: Duration(
+                                                                        seconds: 5),
+                                                                  ));
+                                                            }
                                                           }
-                                                          setState(() {
-                                                            _loading = false;
-                                                            widget.myuser.tel =
-                                                                nv_tel;
-                                                          });
-                                                          // nv_nom = _controller.text;
-                                                          // _confirmer = true;
-                                                          Navigator.pop(
-                                                              context);
                                                         },
                                                         child: Text(
                                                           'Confirmer',
@@ -605,35 +632,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         _loading = true;
                                                       });
                                                       if (nv_mail != '') {
-                                                        //todo exceptions trycatch
-                                                        FirebaseUser user =
-                                                        await authService
-                                                            .auth.currentUser();
-                                                        if (user != null) {
-                                                          user.updateEmail(
-                                                              nv_mail).then((
-                                                              val) async {
-                                                            await Firestore
-                                                                .instance
-                                                                .collection(
-                                                                'Utilisateur')
-                                                                .document(
-                                                                user.uid)
-                                                                .updateData({
-                                                              'mail': nv_mail
-                                                            });
+                                                        bool exi = await mailExist(
+                                                            nv_mail);
+                                                        if (exi) {
+                                                          _profilekey
+                                                              .currentState
+                                                              .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'Cette adresse mail existe deja',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: 14.0,
+                                                                      fontFamily: 'Montserrat',
+                                                                      fontWeight: FontWeight
+                                                                          .w600),),
+                                                                duration: Duration(
+                                                                    seconds: 5),
+                                                              ));
+                                                        } else {
+                                                          print('mail valide');
+                                                          FirebaseUser user =
+                                                          await authService
+                                                              .auth
+                                                              .currentUser();
 
-                                                            setState(() {
-                                                              _loading = false;
-                                                              widget.myuser
-                                                                  .mail =
-                                                                  nv_mail;
+                                                          if (user != null) {
+                                                            user.updateEmail(
+                                                                nv_mail).then((
+                                                                val) async {
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                  'Utilisateur')
+                                                                  .document(
+                                                                  user.uid)
+                                                                  .updateData({
+                                                                'mail': nv_mail
+                                                              });
+
+                                                              setState(() {
+                                                                _loading =
+                                                                false;
+                                                                widget.myuser
+                                                                    .mail =
+                                                                    nv_mail;
+                                                              });
+                                                              // nv_nom = _controller.text;
+                                                              // _confirmer = true;
+                                                              Navigator.pop(
+                                                                  context);
                                                             });
-                                                            // nv_nom = _controller.text;
-                                                            // _confirmer = true;
-                                                            Navigator.pop(
-                                                                context);
-                                                          });
+                                                          }
                                                         }
                                                       }
                                                     },
@@ -859,21 +910,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool isEditable = false;
 
-  _edit() {
-    modifier();
-  }
 
-  modifmail() {
-    if (mail != null) {
-      widget.myuser.mail = mail;
-    }
-  }
-
-  modiftel() {
-    if (tel != null) {
-      widget.myuser.tel = tel;
-    }
-  }
 
   File _image;
   String _uploadedFileURL;
@@ -938,8 +975,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool loading = false;
   modifier() {
-    modifmail();
-    modiftel();
+
     setState(() {
       loading = true;
     });
@@ -1043,6 +1079,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<bool> mailExist(String nom) async {
+    if (!Validator.email(nom)) {
+      _profilekey
+          .currentState
+          .showSnackBar(
+          SnackBar(
+            content: Text(
+              "Cette adresse n'est pas valide",
+              style: TextStyle(
+                  color: Colors
+                      .white,
+                  fontSize: 14.0,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight
+                      .w600),),
+            duration: Duration(
+                seconds: 5),
+          ));
+    } else {
+      final QuerySnapshot result = await Future.value(authService.db
+          .collection('Utilisateur')
+          .where('mail', isEqualTo: nom)
+          .limit(1)
+          .getDocuments());
+      final List<DocumentSnapshot> documents = result.documents;
+      if (documents.length == 1) {
+        print("email Already Exits");
+        return true;
+      } else {
+        print("email is Available");
+        return false;
+      }
+    }
+  }
 
   String mail, pseudo, tel, photo;
 

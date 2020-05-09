@@ -28,5 +28,7 @@ class SizeConfig {
     textMultiplier = _blockSizeVertical;
     imageSizeMultiplier = _blockSizeHorizontal;
     heightMultiplier = _blockSizeVertical;
+    print(_blockSizeVertical);
+    print(_blockSizeHorizontal);
   }
 }

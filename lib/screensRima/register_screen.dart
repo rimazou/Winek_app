@@ -465,31 +465,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 70, vertical: 20),
                             child: Material(
-                              color: Color(0XFF3B466B),
+                              color: Colors.white,
+
                               borderRadius: BorderRadius.all(
                                   Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
-
-
                                 onPressed: () => _registerWithGoogle(),
-                                minWidth: 140.0,
-                                height: 42.0,
-                                child: Text(
-                                  "Google",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.bold,
 
-                                  ),
+                                height: 42.0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceEvenly,
+                                  children: <Widget>[
+                                    Container(
+
+                                        height: 42,
+                                        child: Image.asset(
+                                            'images/googlelogo.png',
+                                            fit: BoxFit.fill)),
+
+                                    Text(
+                                      'Google',
+
+                                      style: TextStyle(
+                                        color: Color(0XFF707070),
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.bold,
+
+                                      ),
+
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-
 
                           SizedBox(
                             width: 30,
@@ -867,14 +881,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   mailExist() async {
     final QuerySnapshot result = await Future.value(authService.db
         .collection('Utilisateur')
-        .where('pseudo', isEqualTo: email)
+        .where('mail', isEqualTo: email)
         .limit(1)
         .getDocuments());
     final List<DocumentSnapshot> documents = result.documents;
     if (documents.length == 1) {
       print("UserName Already Exits");
       setState(() {
-        errMl = 'Ce pseudo est deja pris';
+        errMl = 'Cet adresse mail est deja prise';
       });
     } else {
       print("UserName is Available");

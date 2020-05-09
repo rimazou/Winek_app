@@ -182,9 +182,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () async {
-                            await authService.connectedID().then((onVal) {
+                            await authService.connectedID().then((onVal) async {
                               if (onVal != null) {
-                                authService.getPseudo(onVal).then((val) {
+                                await authService.getPseudo(onVal).then((val) {
                                   print(val);
                                 });
                               }
