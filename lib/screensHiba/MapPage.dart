@@ -881,7 +881,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       point =
                                           snapshot.data['location']['geopoint'];
                                       distance =
-                                          UpdateMarkers.calculateDistance(
+                                          Provider.of<UpdateMarkers>(context, listen: false).calculateDistance(
                                               point.latitude,
                                               point.longitude,
                                               groupe.destination_latitude,

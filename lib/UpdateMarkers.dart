@@ -11,6 +11,7 @@ import 'auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:provider/provider.dart';
 import 'package:battery/battery.dart';
+import 'package:geolocator/geolocator.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 class UpdateMarkers extends ChangeNotifier {
@@ -24,15 +25,6 @@ class UpdateMarkers extends ChangeNotifier {
   double dest_lng;
   BuildContext mapcontext;
   var val;
-
-  static double calculateDistance(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
-  }
 
   void UpdateusersLocation(String path, BuildContext context) async {
     await Future.delayed(Duration(seconds: 1));
@@ -54,6 +46,10 @@ class UpdateMarkers extends ChangeNotifier {
   }
 
   void marker_dest(String chemin) async {
+   String destination;
+    await _firestore.document(chemin).get().then((DocumentSnapshot doc) {
+       destination = doc.data['destination']['adresse'];
+    });
     await _firestore.document(chemin).get().then((DocumentSnapshot ds) {
       dest_lat = ds.data['destination']['latitude'];
     });
@@ -65,7 +61,7 @@ class UpdateMarkers extends ChangeNotifier {
       markerId: id,
       position: LatLng(dest_lat, dest_lng),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      infoWindow: InfoWindow(title: 'destination'),
+      infoWindow: InfoWindow(snippet: '$destination'),
     );
 
     markers[id] = _marker;
@@ -171,25 +167,40 @@ class UpdateMarkers extends ChangeNotifier {
     MarkerId id = MarkerId(usrid);
 
     String url;
+    String pseudo;
     await _firestore
         .collection('Utilisateur')
         .document(usrid)
         .get()
         .then((DocumentSnapshot ds) {
       url = ds.data['photo'];
-    });
+    });    
 
+     await _firestore
+        .collection('Utilisateur')
+        .document(usrid)
+        .get()
+        .then((DocumentSnapshot ds) {
+      pseudo= ds.data['pseudo'];
+    });   
+           
     _marker = Marker(
       markerId: id,
       position: LatLng(lat, lng),
       icon: await getMarkerIcon(url, Size(200.0, 200.0)),
-      //icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      //infoWindow: InfoWindow(title: 'distance', snippet: '$distance'),
+      infoWindow: InfoWindow( snippet: '$pseudo'),
     );
-
     markers[id] = _marker;
     notifyListeners();
   }
+  double calculateDistance(lat1, lon1, lat2, lon2){
+var p = 0.017453292519943295;
+var c = cos;
+var a = 0.5 - c((lat2 - lat1) * p)/2 +
+c(lat1 * p) * c(lat2 * p) *
+(1 - c((lon2 - lon1) * p))/2;
+return 12742 * asin(sqrt(a));
+}
 }
 
 class DeviceInformationService extends ChangeNotifier {
@@ -215,38 +226,4 @@ class DeviceInformationService extends ChangeNotifier {
   }
 }
 
-// body:Text('${Provider.of<DeviceInformationService>(context).batteryLvl}'),
-/* body:StreamBuilder(
-         stream:_firestore.collection('Utilisateur').document().snapshots(),
-         builder:(context,snapshot){
-           if(!snapshot.hasData)
-           return Text('Loading data ... please wait');
-           return Text('Le niveau de batterie est : ${snapshot.data['baterie']}');
-         } ,
-         ),*/
-/*
-Future<double> getDistance(Position position, LatLng dest)async{
-  double distanced= await Geolocator().distanceBetween(position.latitude, position.longitude,dest.latitude, dest.longitude);
-  return distanced;
-}
 
-double getSpeed(String groupeid, String id) {
-  StreamBuilder(
-    stream:
-        Firestore.instance.collection('Utilisateur').document(id).snapshots(),
-    builder: (context, snapshot) {
-      return Text(
-        '${snapshot.data['batterie']}%',
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFFFFFFFF),
-        ),
-      );
-    },
-  );
-  double speed = position.speed;
-  return speed;
-}
-*/

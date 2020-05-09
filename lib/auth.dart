@@ -1,18 +1,19 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:winek/dataBaseSoum.dart';
 import 'classes.dart';
 
-class AuthService {
+
+class AuthService extends ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-
+ StreamSubscription<Position> positionStream ;
   Geoflutterfire geo = Geoflutterfire();
   FirebaseUser _loggedIn;
 
@@ -139,8 +140,8 @@ class AuthService {
         var geolocator = Geolocator();
         Position position;
         var locationOptions =
-            LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 1);
-        StreamSubscription<Position> positionStream =
+            LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+         positionStream =
             geolocator.getPositionStream(locationOptions).listen((position) {
           double vitesse = position.speed;
           GeoFirePoint geoFirePoint = authService.geo.point(

@@ -41,6 +41,8 @@ class Authentication extends StatelessWidget {
             create: (BuildContext context) => controllermap()),
         ChangeNotifierProvider(
             create: (BuildContext context) => DeviceInformationService()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => AuthService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
