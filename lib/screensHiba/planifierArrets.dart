@@ -68,21 +68,10 @@ class PlanifierArrets {
         .snapshots(includeMetadataChanges: true)
         .listen((DocumentSnapshot documentSnapshot) async {
 
-
-      /*Firestore.instance.document(path_groupe)
-        .snapshots(includeMetadataChanges: true)
-        .listen((DocumentSnapshot documentSnapshot) async {*/
-
-      /*  documentSnapshot.data.forEach((key, value) {
-        print(key);
-        print(value);
-      });
-    });*/
-
       print("object3");
       if (documentSnapshot.data != null) {
         if (documentSnapshot.data.containsKey('planArrets')) {
-          List<dynamic> list = documentSnapshot.data['planArrets'];
+          List<dynamic> list = await documentSnapshot.data['planArrets'];
           print(list);
 
           print('markers');

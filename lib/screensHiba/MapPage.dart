@@ -1234,10 +1234,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
    // var address = await Geocoder.local.findAddressesFromQuery(p.description);
     //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
     //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-    PlanifierArrets().getChanges(context, path);
+
     PlanifierArrets().addArretsToSubCol(path, lat, lng);
     print("arret added");
-
+    PlanifierArrets().getChanges(context, path);
 
     /*Provider.of<controllermap>(context,
     listen: false).mapController.animateCamera(CameraUpdate.newCameraPosition(
