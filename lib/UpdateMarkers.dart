@@ -158,9 +158,9 @@ class UpdateMarkers extends ChangeNotifier {
       if (val == userid) {
         latlng = new LatLng(point.latitude, point.longitude);
         cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-        Provider.of<controllermap>(mapcontext, listen: false)
+       /* Provider.of<controllermap>(mapcontext, listen: false)
             .mapController
-            .animateCamera(cameraUpdate);
+            .animateCamera(cameraUpdate);*/
       }
       _addMarker(point.latitude, point.longitude, userid);
     });

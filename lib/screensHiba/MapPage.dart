@@ -1212,12 +1212,45 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           child: FloatingActionButton(
                             heroTag: null,
                             onPressed: () async {
-                              var vvv =
+                                // show input autocomplete with selected mode
+                                // then get the Prediction selected
+                                Prediction p = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey: kGoogleApiKey,
+                                  onError: onError,
+                                  mode: Mode.overlay,
+                                  language: "fr",
+                                  components: [
+                                    Component(Component.country, "DZ")
+                                  ],
+                                );
+    if (p != null) {
+    PlacesDetailsResponse detail =
+    await _places.getDetailsByPlaceId(p.placeId);
+
+    var placeId = p.placeId;
+    double lat = detail.result.geometry.location.lat;
+    double lng = detail.result.geometry.location.lng;
+
+    var address = await Geocoder.local.findAddressesFromQuery(p.description);
+    //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+    //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+    Provider.of<controllermap>(context,
+    listen: false).mapController.animateCamera(CameraUpdate.newCameraPosition(
+    CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+    print(lat);
+    print(lng);
+    }
+
+
+
+
+                             /* var vvv =
                                   await _firestore.document(groupPath).get();
                               bool tr = vvv.data['justReceivedAlert'];
                               _firestore.document(groupPath).updateData({
                                 'justReceivedAlert': !tr,
-                              });
+                              });*/
                             },
                             backgroundColor: Color(0xFF389490),
                             foregroundColor: Color(0xFFFFFFFF),

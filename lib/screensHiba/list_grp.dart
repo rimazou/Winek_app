@@ -18,7 +18,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../UpdateMarkers.dart';
 import 'MapPage.dart';
-
+import 'planifierArrets.dart';
 bool _loading;
 
 class ListGrpPage extends StatefulWidget {
@@ -131,11 +131,13 @@ class grpTile extends StatelessWidget {
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
                 .UpdateusersLocation(grp_chemin, context);
+            PlanifierArrets().getChanges(context, grp_chemin);
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
                         MapVoyagePage(g, grp_chemin, images)));
+
             //asma initialise
             groupPath = grp_chemin;
             utilisateurID = await AuthService().connectedID();
