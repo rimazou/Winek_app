@@ -1,4 +1,5 @@
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/Aide.dart';
 import 'package:winek/screensHiba/listeFavorisScreen.dart';
 import 'package:winek/screensRima/firstLoading.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
@@ -40,11 +41,14 @@ class Authentication extends StatelessWidget {
             create: (BuildContext context) => controllermap()),
         ChangeNotifierProvider(
             create: (BuildContext context) => DeviceInformationService()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => AuthService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-        initialRoute: WelcomeScreen.id, //FirstLoading.id,
+        initialRoute: FirstLoading.id,
+        //WelcomeScreen.id, //FirstLoading.id,
         routes: {
           Home.id: (BuildContext context) => Home(), // la map
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -62,6 +66,7 @@ class Authentication extends StatelessWidget {
           FavoritePlacesScreen.id: (context) => FavoritePlacesScreen(),
           ProfileScreen.id: (context) => ProfileScreen(user),
           FirstLoading.id: (context) => FirstLoading(),
+          AidePage.id: (context) => AidePage(),
         },
       ),
     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensRima/welcome_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:winek/UpdateMarkers.dart';
 
 class SignoutWait extends StatefulWidget {
   @override
@@ -29,6 +31,8 @@ print('avant singnout');
 
     await authService.connectedID().then((val) {
       print(val);
+      Provider.of<AuthService>(context, listen: false).positionStream.cancel();
+      //  Provider.of<DeviceInformationService>(context, listen: false).stopBroadcast();
       authService.auth.signOut();
       authService.userRef.document(val).updateData({'connecte': false});
       print('plus d user');

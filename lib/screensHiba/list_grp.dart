@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../UpdateMarkers.dart';
+import 'MapPage.dart';
 
 bool _loading;
 
@@ -135,6 +136,12 @@ class grpTile extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) =>
                         MapVoyagePage(g, grp_chemin, images)));
+            //asma initialise
+            groupPath = grp_chemin;
+            utilisateurID = await AuthService().connectedID();
+            currentUser =
+            await AuthService().getPseudo(utilisateurID);
+            stackIndex = 3;
           }
           if (grp_chemin.startsWith('LongTerme')) {
             await Firestore.instance
