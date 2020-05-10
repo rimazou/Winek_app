@@ -27,6 +27,7 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
   Widget build(BuildContext context) {
     return StreamProvider<List<dynamic>>.value(
       value: DataBaseFavoris().getlistfavoris,
+      catchError: (_, err) => null,
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
