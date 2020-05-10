@@ -67,12 +67,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _profilekey.currentState.showSnackBar(snackBar);
   }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -92,49 +95,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
             key: _profilekey,
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
-
             body: Padding(
-                padding: EdgeInsets.symmetric(horizontal: responsivewidth(0.0),
+                padding: EdgeInsets.symmetric(
+                    horizontal: responsivewidth(0.0),
                     vertical: responsiveheight(0.0)),
                 child: Container(
                   child: SingleChildScrollView(
                     child: Stack(
                       children: <Widget>[
-
-                        Center(
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: responsiveheight(180),
-                              ),
-                              Container(
+                        Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: responsiveheight(180),
+                            ),
+                            Container(
+                              // carre principal
+                              child: Container(
+                                height: 600,
                                 // carre principal
-                                height: responsiveheight(380.0),
-                                width: responsivewidth(320.0),
                                 child: Column(
                                   children: <Widget>[
-                                    SizedBox(
-                                      height: responsiveheight(70),
-                                    ),
-                                    SizedBox(
-                                      height: responsiveheight(26),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: responsivewidth(30.0)),
-                                      child: Container(
-                                        height: responsiveheight(1.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                    ),
+                                    SizedBox(height: 140,),
+
                                     Container(
-                                      padding: EdgeInsets.only(
-                                          left: responsivewidth(40.0),
-//                                          right: responsivewidth(30.0),
-                                          top: responsiveheight(15.0)),
+//                                      padding: EdgeInsets.only(
+//                                        left: responsivewidth(50.0),
+//                                      ),
                                       child: FlatButton(
+                                        padding: EdgeInsets.all(0),
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
@@ -154,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     vertical: responsivewidth(
                                                         15)),
                                                 title: Text(
-                                                  'changer le pseudo ',
+                                                  'Changer le pseudo ',
                                                   style: TextStyle(
                                                     fontFamily:
                                                     'Montserrat',
@@ -246,45 +234,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                               barrierDismissible: true);
                                         },
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(Icons.account_box, color: Color(0xFF3b466b),),
-                                            SizedBox(width: 20,),
-                                            Text(
-                                              widget.myuser.pseudo,
-                                              textAlign: TextAlign.center,
+                                        child: Card(
+                                          color: Colors.white,
+                                          margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.account_box,
+                                              color: Color(0xFF3b466b),
+                                              size: 25.0,
+                                            ),
+                                            title: Text(widget.myuser.pseudo,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: 'Montserrat',
-                                                fontSize: responsivetext(15),
+                                                fontSize: responsivetext(18),
                                                 color: Color(0xff707070),
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
 
                                     ),
-                                    SizedBox(
-                                      height: responsiveheight(23),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: responsivewidth(30)),
-                                      child: Container(
-                                        height: responsiveheight(1),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                    ),
+                                    //le trait
+//                                        Padding(
+//                                          padding: EdgeInsets.symmetric(
+//                                              horizontal: responsivewidth(30.0)),
+//                                          child: Container(
+//                                            height: responsiveheight(1.0),
+//                                            decoration: BoxDecoration(
+//                                              color: Colors.blueGrey,
+//                                            ),
+//                                          ),
+//                                        ),
                                     Container(
-                                      padding: EdgeInsets.only(
-                                          top: responsiveheight(15),
-                                          left: responsivewidth(40.0),
-//                                          right: responsivewidth(10.0)
-                                      ),
+//
                                       child: FlatButton(
+                                        padding: EdgeInsets.all( 0),
+
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
@@ -395,47 +382,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   ),
                                               barrierDismissible: true);
                                         },
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(Icons.phone, color: Color(0xFF3b466b),),
-                                            SizedBox(width: 20,),
-                                            Text(
+                                        child: Card(
+                                          color: Colors.white,
+                                          margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.phone,
+                                              color: Color(0xFF3b466b),
+                                              size: 25.0,
+                                            ),
+                                            title: Text(
                                               widget.myuser.tel == null
                                                   ? 'aucun numero'
                                                   : widget.myuser.tel,
-                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: 'Montserrat',
-                                                fontSize: responsivetext(15),
+                                                fontSize: responsivetext(18),
                                                 color: Color(0xff707070),
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
 
                                     ),
-                                    SizedBox(
-                                      height: responsiveheight(23),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: responsivewidth(30)),
-                                      child: Container(
-                                        height: responsiveheight(1),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                    ),
                                     Container(
-                                      padding: EdgeInsets.only(
-                                          top: responsiveheight(15),
-                                          left: responsivewidth(40.0),
-//                                          right: responsivewidth(30.0)
-                                      ),
+
                                       child: FlatButton(
+                                        padding: EdgeInsets.all(0),
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
@@ -547,48 +522,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                               barrierDismissible: true);
                                         },
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(Icons.mail, color: Color(0xFF3b466b),),
-                                            SizedBox(width: 20,),
-                                            Text(
+                                        child: Card(
+                                          color: Colors.white,
+                                          margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.mail,
+                                              color: Color(0xFF3b466b),
+                                              size: 25.0,
+                                            ),
+                                            title: Text(
                                               widget.myuser.mail,
-                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: 'Montserrat',
-                                                fontSize: responsivetext(15),
+                                                fontSize: responsivetext(18),
                                                 color: Color(0xff707070),
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
-
-                                    ),
-
-                                  ],
-                                ),
-
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey[300],
-                                    width: responsivewidth(3),
-                                  ),
-                                  boxShadow: [
-                                    new BoxShadow(
-                                      color: Colors.grey[200],
-                                      blurRadius: 20.0,
                                     ),
                                   ],
-                                  borderRadius: BorderRadius.circular(
-                                      responsiveradius(20, 1)),
                                 ),
                               ),
-                            ],
-                          ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFd0d8e2),
+                                borderRadius: BorderRadius.only(
+                                  topRight: const Radius.circular(20),
+                                  topLeft: const Radius.circular(20),
+                                ),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.blueGrey,
+                                      blurRadius: 3.0,
+                                      offset: Offset(responsivewidth(0.0),
+                                          responsiveheight(0.75))
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                        //la photo
                         Center(
                           child: Column(
                             //photos
@@ -599,8 +576,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Center(
                                 child: Container(
-                                  height: responsiveheight(100),
-                                  width: responsiveheight(100),
+                                  height: responsiveheight(130),
+                                  width: responsiveheight(130),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
@@ -622,12 +599,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
+                        //changer la photo
                         Positioned(
                           top: responsiveheight(110),
-                          left: (MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.5) - responsivewidth(47) * 0.5 +
+                          left: (MediaQuery.of(context).size.width * 0.5) -
+                              responsivewidth(47) * 0.5 +
                               responsiveheight(100) * 0.5,
                           // left: responsivewidth(203),
                           child: Container(
@@ -639,14 +615,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 // border: Border.all(color: secondarycolor, width: 1),
                                 boxShadow: <BoxShadow>[
                                   BoxShadow(
-                                      color:
-                                      secondarycolor,
+                                      color: secondarycolor,
                                       //Color.fromRGBO(59, 70, 107, 0.3),
                                       blurRadius: 3.0,
                                       //offset: Offset(0.0, 0.75),
                                       offset: Offset(responsivewidth(0.0),
-                                          responsiveheight(0.75))
-                                  ),
+                                          responsiveheight(0.75))),
                                 ],
                                 borderRadius: BorderRadius.circular(
                                     responsiveradius(50, 1))),
@@ -667,12 +641,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Column(
                           children: <Widget>[
+                            SizedBox(height: 20,),
                             Center(
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    height: responsivewidth(60.0),
-                                    width: responsivewidth(60.0),
+                                    height: responsivewidth(30.0),
+                                    width: responsivewidth(30.0),
                                     child: Image.asset(
                                       'images/logo.png',
                                       fit: BoxFit.fill,
@@ -680,11 +655,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       width: responsivewidth(120.0),
                                     ),
                                   ),
+                                  SizedBox(width: 2,),
                                   Text(
                                     'inek',
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
-                                      fontSize: responsivetext(25.0),
+                                      fontSize: responsivetext(20.0),
                                       fontWeight: FontWeight.w900,
                                       color: Color(0XFF3B466B),
                                     ),
@@ -700,16 +676,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: responsivetext(30.0),
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w600,
                                   color: Color(0XFF389490), //vert
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
-                        SizedBox(
-                          height: responsiveheight(50),
-                        ),
+
                       ],
                     ),
                   ),
@@ -725,14 +699,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (widget.myuser.photo != null) {
       return Center(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(responsiveradius(17.0, 110)),
-            child: Image.network(
-              widget.myuser.photo,
-              height: responsiveheight(110),
-              gaplessPlayback: true,
-              fit: BoxFit.fill,
-            ),
-          ));
+        borderRadius: BorderRadius.circular(responsiveradius(17.0, 110)),
+        child: Image.network(
+          widget.myuser.photo,
+          height: responsiveheight(140),
+          gaplessPlayback: true,
+          fit: BoxFit.fill,
+        ),
+      ));
     } else {
       return Center(
         child: ListView(
@@ -753,10 +727,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 // tester si les chaines de caratceres ne sont pas vides
 
-
   bool isEditable = false;
-
-
 
   File _image;
   String _uploadedFileURL;
@@ -821,7 +792,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool loading = false;
 
-
   showAlertDialog(BuildContext context, String message, String heading) {
     // set up the buttons
     Widget GalleryButton = FlatButton(
@@ -873,7 +843,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       content: Text(message),
       backgroundColor: Colors.white,
       shape:
-      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
       actions: [
         GalleryButton,
         CameraButton,
@@ -899,8 +869,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (documents.length == 1) {
       print("UserName Already Exits");
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -928,31 +897,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       var b = (result2 != ConnectivityResult.none);
 
       if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        nv_pseudo =
-            _controller.text;
+        nv_pseudo = _controller.text;
         setState(() {
           _loading = true;
         });
         if (nv_pseudo != '') {
           await pseudoExist(nv_pseudo).then((value) async {
             if (!value) {
-              await authService
-                  .changePseudo(
-                  widget
-                      .myuser
-                      .pseudo,
-                  nv_pseudo);
-              Navigator.pop(
-                  context);
+              await authService.changePseudo(widget.myuser.pseudo, nv_pseudo);
+              Navigator.pop(context);
               setState(() {
                 _loading = false;
-                widget.myuser.pseudo =
-                    nv_pseudo;
+                widget.myuser.pseudo = nv_pseudo;
               });
-            }
-            else {
-              Navigator.pop(
-                  context);
+            } else {
+              Navigator.pop(context);
               setState(() {
                 _loading = false;
               });
@@ -982,43 +941,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
       var b = (result2 != ConnectivityResult.none);
 
       if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        nv_tel =
-            _controller1.text;
+        nv_tel = _controller1.text;
         setState(() {
           _loading = true;
         });
         if (nv_tel != '') {
           if (!Validator.number(nv_tel)) {
-            String id =
-            await authService
-                .connectedID();
+            String id = await authService.connectedID();
 
             if (id != null) {
-              await Firestore
-                  .instance
-                  .collection(
-                  'Utilisateur')
+              await Firestore.instance
+                  .collection('Utilisateur')
                   .document(id)
-                  .updateData({
-                'tel': nv_tel
-              });
+                  .updateData({'tel': nv_tel});
               setState(() {
                 _loading = false;
-                widget.myuser.tel =
-                    nv_tel;
+                widget.myuser.tel = nv_tel;
               });
-              Navigator.pop(
-                  context);
+              Navigator.pop(context);
             }
           } else {
-            Navigator.pop(
-                context);
+            Navigator.pop(context);
             _showSnackBar('Veuillez introduire un nombre');
           }
         }
         setState(() {
           _loading = false;
-
         });
         // nv_nom = _controller.text;
         // _confirmer = true;
@@ -1036,8 +984,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       var b = (result2 != ConnectivityResult.none);
 
       if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        nv_mail =
-            _controller2.text;
+        nv_mail = _controller2.text;
         setState(() {
           _loading = true;
         });
@@ -1045,30 +992,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (!Validator.email(nv_mail)) {
             await mailExist(nv_mail).then((value) async {
               if (!value) {
-                FirebaseUser id =
-                await authService.auth.currentUser();
+                FirebaseUser id = await authService.auth.currentUser();
                 if (id != null) {
                   await id.updateEmail(nv_mail).then((value) async {
-                    await Firestore
-                        .instance
-                        .collection(
-                        'Utilisateur')
+                    await Firestore.instance
+                        .collection('Utilisateur')
                         .document(id.uid)
-                        .updateData({
-                      'mail': nv_mail
-                    });
+                        .updateData({'mail': nv_mail});
                   });
                   setState(() {
                     _loading = false;
-                    widget.myuser.mail =
-                        nv_mail;
+                    widget.myuser.mail = nv_mail;
                   });
-                  Navigator.pop(
-                      context);
+                  Navigator.pop(context);
                 }
               } else {
-                Navigator.pop(
-                    context);
+                Navigator.pop(context);
                 setState(() {
                   _loading = false;
                 });
@@ -1076,8 +1015,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
             });
           } else {
-            Navigator.pop(
-                context);
+            Navigator.pop(context);
             setState(() {
               _loading = false;
             });
@@ -1089,8 +1027,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // _confirmer = true;
       }
     } on SocketException catch (_) {
-      Navigator.pop(
-          context);
+      Navigator.pop(context);
       _showSnackBar('Vérifiez votre connexion internet');
     } catch (e) {
       print(e);
@@ -1103,6 +1040,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
   }
+
   String mail, pseudo, tel, photo;
 
   double responsivetext(double siz) {
@@ -1120,5 +1058,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   double responsiveradius(double rad, double height) {
     return (rad / height) * responsiveheight(height);
   }
+
   Future userID;
 }
