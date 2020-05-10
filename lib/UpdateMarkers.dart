@@ -105,7 +105,7 @@ class UpdateMarkers extends ChangeNotifier {
             print('connecteeeeeeeeeeeeeeeeeed USERRR');
             double distanceInMeters = await Geolocator().distanceBetween(
                 point.latitude, point.longitude, dest_lat, dest_lng);
-            if (distanceInMeters <= 100) {
+            if (distanceInMeters <= 20) {
               Firestore.instance
                   .document(groupepath)
                   .collection('members')
