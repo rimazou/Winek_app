@@ -71,8 +71,8 @@ class UpdateMarkers extends ChangeNotifier {
   }
 
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
-    LatLng latlng;
-    CameraUpdate cameraUpdate;
+    //  LatLng latlng;
+    //  CameraUpdate cameraUpdate;
     bool arret;
     await Firestore.instance
         .document(groupepath)
