@@ -129,6 +129,7 @@ class UpdateMarkers extends ChangeNotifier {
         _addMarker(point.latitude, point.longitude, userid);
       });
       //TODO: ENLEVER CE DELAYED
+      /*
       await Future.delayed(Duration(seconds: 15));
       if (fermer) {
         print('fermeeeeeeeeeeeer $fermer');
@@ -140,6 +141,8 @@ class UpdateMarkers extends ChangeNotifier {
         print(
             'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
       }
+
+       */
     }
   }
 
