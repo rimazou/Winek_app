@@ -19,28 +19,34 @@ class _SignoutWaitState extends State<SignoutWait> {
   }
 
   _signOut() async {
-    print(' debutsignout');
-    /*print(authService.connectedID());
-     authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
-print('avant singnout');
-    authService.auth.signOut();
-    print('apres signout');
-    authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
-
-     // authService.googleSignIn.signOut();*/
-
-    await authService.connectedID().then((val) {
-      print(val);
-      Provider.of<AuthService>(context, listen: false).positionStream.cancel();
-      //  Provider.of<DeviceInformationService>(context, listen: false).stopBroadcast();
+    try {
+      print(' debutsignout');
+      /*print(authService.connectedID());
+       authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
+      print('avant singnout');
       authService.auth.signOut();
-      authService.userRef.document(val).updateData({'connecte': false});
-      print('plus d user');
-    }).catchError((onError) {
-      print('an error occured ');
-    });
-    print(' fin signout');
-    Navigator.pushNamed(context, WelcomeScreen.id);
+      print('apres signout');
+      authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
+
+       // authService.googleSignIn.signOut();*/
+      Provider.of<AuthService>(context, listen: false).positionStream.cancel();
+      Provider.of<DeviceInformationService>(context, listen: false)
+          .stopBroadcast();
+      await authService.connectedID().then((val) {
+        print(val);
+        //  Provider.of<AuthService>(context, listen: false).positionStream.cancel();
+        //  Provider.of<DeviceInformationService>(context, listen: false).stopBroadcast();
+        authService.auth.signOut();
+        authService.userRef.document(val).updateData({'connecte': false});
+        print('plus d user');
+      }).catchError((onError) {
+        print('an error occured ');
+      });
+      print(' fin signout');
+      Navigator.pushNamed(context, WelcomeScreen.id);
+    } on Exception catch (e) {
+      print(e.toString());
+    }
 
     // await authService.userRef.document('').updateData({'connecte':false}) ;
     /*authService.auth.signOut().then((onValue) {
