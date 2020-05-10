@@ -13,6 +13,7 @@ class AuthService {
   final Firestore _db = Firestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
+
   Geoflutterfire geo = Geoflutterfire();
   FirebaseUser _loggedIn;
 
