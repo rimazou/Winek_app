@@ -3052,32 +3052,32 @@ class ReceivedAlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: FlatButton(
-        onPressed: () {
-//          MarkerId markerId = MarkerId(
-//              geoPoint.latitude.toString() + geoPoint.longitude.toString());
-//          Provider.of<UpdateMarkers>(
-//            context,
-//          ).markers.remove(markerId);
-//
-//          Marker _marker = Marker(
-//            markerId: markerId,
-//            position: LatLng(geoPoint.latitude, geoPoint.longitude),
-//            infoWindow: InfoWindow(title: sender, snippet: alert.text),
-////           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-////            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
-//            icon: await createMarkerIc(),
-//          );
-//          Provider.of<UpdateMarkers>(
-//            context,
-//          ).markers[markerId] = _marker;
+        onPressed: () async {
+          MarkerId markerId = MarkerId(
+              geoPoint.latitude.toString() + geoPoint.longitude.toString());
+          Provider.of<UpdateMarkers>(
+            context,
+          ).markers.remove(markerId);
+
+          Marker _marker = Marker(
+            markerId: markerId,
+            position: LatLng(geoPoint.latitude, geoPoint.longitude),
+            infoWindow: InfoWindow(title: sender, snippet: alert.text),
+//           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+//            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
+            icon: await createMarkerIc(),
+          );
+          Provider.of<UpdateMarkers>(
+            context,
+          ).markers[markerId] = _marker;
 
 
-//          CameraUpdate cameraUpdate;
-//          cameraUpdate = CameraUpdate.newLatLngZoom(
-//              LatLng(geoPoint.latitude, geoPoint.longitude), 10);
-//          Provider.of<controllermap>(context, listen: false)
-//              .mapController
-//              .animateCamera(cameraUpdate);
+          CameraUpdate cameraUpdate;
+          cameraUpdate = CameraUpdate.newLatLngZoom(
+              LatLng(geoPoint.latitude, geoPoint.longitude), 10);
+          Provider.of<controllermap>(context, listen: false)
+              .mapController
+              .animateCamera(cameraUpdate);
 
         settingindex();
           //TODO: je positionne l'alerte sur la map
