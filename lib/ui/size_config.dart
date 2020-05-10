@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:winek/enums/device_screen_type.dart';
 
 class SizeConfig {
-  static double _screenWidth;
+  static double screenWidth;
 
-  static double _screenHeight;
+  static double screenHeight;
 
   static double _blockSizeHorizontal = 0;
   static double _blockSizeVertical = 0;
@@ -16,14 +16,14 @@ class SizeConfig {
 
   void init(BoxConstraints constraints, Orientation orientation) {
     if (orientation == Orientation.portrait) {
-      _screenWidth = constraints.maxWidth;
-      _screenHeight = constraints.maxHeight;
+      screenWidth = constraints.maxWidth;
+      screenHeight = constraints.maxHeight;
     } else {
-      _screenWidth = constraints.maxHeight;
-      _screenHeight = constraints.maxWidth;
+      screenWidth = constraints.maxHeight;
+      screenHeight = constraints.maxWidth;
     }
-    _blockSizeHorizontal = _screenWidth / 100;
-    _blockSizeVertical = _screenHeight / 100;
+    _blockSizeHorizontal = screenWidth / 100;
+    _blockSizeVertical = screenHeight / 100;
 
     textMultiplier = _blockSizeVertical;
     imageSizeMultiplier = _blockSizeHorizontal;

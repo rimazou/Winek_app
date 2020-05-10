@@ -19,15 +19,8 @@ class _SignoutWaitState extends State<SignoutWait> {
 
   _signOut() async {
     print(' debutsignout');
-    /*print(authService.connectedID());
-     authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
-print('avant singnout');
-    authService.auth.signOut();
-    print('apres signout');
-    authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
 
-     // authService.googleSignIn.signOut();*/
-
+    try {
     await authService.connectedID().then((val) {
       print(val);
       authService.auth.signOut();
@@ -39,14 +32,10 @@ print('avant singnout');
     print(' fin signout');
     Navigator.pushNamed(context, LoginScreen.id);
 
-    // await authService.userRef.document('').updateData({'connecte':false}) ;
-    /*authService.auth.signOut().then((onValue) {
-      print(authService.isLog());
-      authService.connectedID() != null
-          ? print('theres is a user connected')
-          : print('pas de uuser ');
-    });*/
-    //  authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
+  }
+    catch (e) {
+      print(e);
+    }
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:winek/main.dart';
 import 'package:winek/screensRima/login_screen.dart';
+import 'package:winek/ui/size_config.dart';
 import '../classes.dart';
 
 var _controller;
@@ -59,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -90,65 +92,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
             key: _profilekey,
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
-            /*appBar: PreferredSize(
-              preferredSize: Size.fromHeight(28.0),
-              child: AppBar(
-                backgroundColor: Colors.white30,
-                elevation: 0.0,
-                iconTheme: IconThemeData(
-                  color: Colors.black54,
-                ),
-              ),),*/
+
             body: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                padding: EdgeInsets.symmetric(horizontal: responsivewidth(0.0),
+                    vertical: responsiveheight(0.0)),
                 child: Container(
                   child: SingleChildScrollView(
                     child: Stack(
                       children: <Widget>[
-                        /*  Center(
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 140,
-                              ),
-                              Container(
-                                height: 500.0,
-                                width: 320.0,
-                              ),
-                            ],
-                          ),
-                        ),*/
+
                         Center(
                           child: Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 180,
+                                height: responsiveheight(180),
                               ),
                               Container(
                                 // carre principal
-                                height: 380.0,
-                                width: 320.0,
+                                height: responsiveheight(380.0),
+                                width: responsivewidth(320.0),
                                 child: Column(
                                   children: <Widget>[
                                     SizedBox(
-                                      height: 70,
+                                      height: responsiveheight(70),
                                     ),
                                     SizedBox(
-                                      height: 26,
+                                      height: responsiveheight(26),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: responsivewidth(30.0)),
                                       child: Container(
-                                        height: 1.0,
+                                        height: responsiveheight(1.0),
                                         decoration: BoxDecoration(
                                           color: Colors.blueGrey,
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0, top: 15.0),
+                                      padding: EdgeInsets.only(
+                                          left: responsivewidth(30.0),
+                                          right: responsivewidth(30.0),
+                                          top: responsiveheight(15.0)),
                                       child: FlatButton(
                                         onPressed: () async {
                                           showDialog(
@@ -163,13 +148,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         .circular(
                                                         20)),
                                                 contentPadding:
-                                                EdgeInsets.all(15),
+                                                EdgeInsets.symmetric(
+                                                    horizontal: responsiveheight(
+                                                        15),
+                                                    vertical: responsivewidth(
+                                                        15)),
                                                 title: Text(
                                                   'changer le pseudo ',
                                                   style: TextStyle(
                                                     fontFamily:
                                                     'Montserrat',
-                                                    fontSize: 19,
+                                                    fontSize: responsivetext(
+                                                        19),
                                                     fontWeight:
                                                     FontWeight.w700,
                                                     color: primarycolor,
@@ -185,7 +175,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     hintStyle: TextStyle(
                                                       fontFamily:
                                                       'Montserrat',
-                                                      fontSize: 14,
+                                                      fontSize: responsivetext(
+                                                          14),
                                                       fontWeight:
                                                       FontWeight.w400,
                                                       color:
@@ -223,7 +214,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
-                                                        fontSize: 12,
+                                                        fontSize: responsivetext(
+                                                            12),
                                                         fontWeight:
                                                         FontWeight.w600,
                                                         color: Color(
@@ -241,7 +233,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
-                                                        fontSize: 12,
+                                                        fontSize: responsivetext(
+                                                            12),
                                                         fontWeight:
                                                         FontWeight.w600,
                                                         color: Color(
@@ -259,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'Montserrat',
-                                            fontSize: 15,
+                                            fontSize: responsivetext(15),
                                             color: Color(0xff707070),
                                           ),
                                         ),
@@ -267,21 +260,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                                     ),
                                     SizedBox(
-                                      height: 23,
+                                      height: responsiveheight(23),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: responsivewidth(30)),
                                       child: Container(
-                                        height: 1.0,
+                                        height: responsiveheight(1),
                                         decoration: BoxDecoration(
                                           color: Colors.blueGrey,
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 15, left: 20.0, right: 10.0),
+                                      padding: EdgeInsets.only(
+                                          top: responsiveheight(15),
+                                          left: responsivewidth(20.0),
+                                          right: responsivewidth(10.0)),
                                       child: FlatButton(
                                         onPressed: () async {
                                           showDialog(
@@ -295,13 +290,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             .circular(
                                                             20)),
                                                     contentPadding:
-                                                    EdgeInsets.all(15),
+                                                    EdgeInsets.symmetric(
+                                                        vertical: responsiveheight(
+                                                            15),
+                                                        horizontal: responsivewidth(
+                                                            15)),
                                                     title: Text(
                                                       'changer le tel ',
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
-                                                        fontSize: 19,
+                                                        fontSize: responsivetext(
+                                                            19),
                                                         fontWeight:
                                                         FontWeight.w700,
                                                         color: primarycolor,
@@ -317,7 +317,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         hintStyle: TextStyle(
                                                           fontFamily:
                                                           'Montserrat',
-                                                          fontSize: 14,
+                                                          fontSize: responsivetext(
+                                                              14),
                                                           fontWeight:
                                                           FontWeight.w400,
                                                           color:
@@ -355,7 +356,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           style: TextStyle(
                                                             fontFamily:
                                                             'Montserrat',
-                                                            fontSize: 12,
+                                                            fontSize: responsivetext(
+                                                                12),
                                                             fontWeight:
                                                             FontWeight.w600,
                                                             color: Color(
@@ -373,7 +375,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           style: TextStyle(
                                                             fontFamily:
                                                             'Montserrat',
-                                                            fontSize: 12,
+                                                            fontSize: responsivetext(
+                                                                12),
                                                             fontWeight:
                                                             FontWeight.w600,
                                                             color: Color(
@@ -393,7 +396,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'Montserrat',
-                                            fontSize: 15,
+                                            fontSize: responsivetext(15),
                                             color: Color(0xff707070),
                                           ),
                                         ),
@@ -401,21 +404,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                                     ),
                                     SizedBox(
-                                      height: 23,
+                                      height: responsiveheight(23),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: responsivewidth(30)),
                                       child: Container(
-                                        height: 1.0,
+                                        height: responsiveheight(1),
                                         decoration: BoxDecoration(
                                           color: Colors.blueGrey,
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 15, left: 40.0, right: 30.0),
+                                      padding: EdgeInsets.only(
+                                          top: responsiveheight(15),
+                                          left: responsivewidth(40.0),
+                                          right: responsivewidth(30.0)),
                                       child: FlatButton(
                                         onPressed: () async {
                                           showDialog(
@@ -430,13 +435,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         .circular(
                                                         20)),
                                                 contentPadding:
-                                                EdgeInsets.all(15),
+                                                EdgeInsets.symmetric(
+                                                    horizontal: responsivewidth(
+                                                        15),
+                                                    vertical: responsiveheight(
+                                                        15)),
                                                 title: Text(
                                                   "changer l'email",
                                                   style: TextStyle(
                                                     fontFamily:
                                                     'Montserrat',
-                                                    fontSize: 19,
+                                                    fontSize: responsivetext(
+                                                        19),
                                                     fontWeight:
                                                     FontWeight.w700,
                                                     color: primarycolor,
@@ -452,7 +462,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     hintStyle: TextStyle(
                                                       fontFamily:
                                                       'Montserrat',
-                                                      fontSize: 14,
+                                                      fontSize: responsivetext(
+                                                          14),
                                                       fontWeight:
                                                       FontWeight.w400,
                                                       color:
@@ -490,7 +501,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
-                                                        fontSize: 12,
+                                                        fontSize: responsivetext(
+                                                            12),
                                                         fontWeight:
                                                         FontWeight.w600,
                                                         color: Color(
@@ -508,7 +520,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
-                                                        fontSize: 12,
+                                                        fontSize: responsivetext(
+                                                            12),
                                                         fontWeight:
                                                         FontWeight.w600,
                                                         color: Color(
@@ -526,7 +539,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'Montserrat',
-                                            fontSize: 15,
+                                            fontSize: responsivetext(15),
                                             color: Color(0xff707070),
                                           ),
                                         ),
@@ -541,7 +554,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: Colors.white,
                                   border: Border.all(
                                     color: Colors.grey[300],
-                                    width: 3,
+                                    width: responsivewidth(3),
                                   ),
                                   boxShadow: [
                                     new BoxShadow(
@@ -549,7 +562,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       blurRadius: 20.0,
                                     ),
                                   ],
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(
+                                      responsiveradius(20, 1)),
                                 ),
                               ),
                             ],
@@ -561,23 +575,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             children: <Widget>[
                               SizedBox(
-                                height: 130,
+                                height: responsiveheight(130),
                               ),
                               Center(
                                 child: Container(
-                                  height: 100.0,
-                                  width: 100.0,
+                                  height: responsiveheight(100),
+                                  width: responsiveheight(100),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
                                       color: Colors.grey[300],
-                                      width: 3,
+                                      width: responsivewidth(3),
                                     ),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(
+                                        responsiveradius(20, 100)),
                                     boxShadow: [
                                       new BoxShadow(
                                         color: Colors.grey[200],
-                                        blurRadius: 20.0,
+                                        blurRadius: responsiveradius(20.0, 1),
                                       ),
                                     ],
                                   ),
@@ -588,27 +603,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         Positioned(
-                          top: 110,
-                          left: 200,
+                          top: responsiveheight(110),
+                          left: (MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.5) - responsivewidth(47) * 0.5 +
+                              responsiveheight(100) * 0.5,
+                          // left: responsivewidth(203),
                           child: Container(
+                            //padding: EdgeInsets.all(1),
+                            width: responsivewidth(47),
+                            height: responsivewidth(47),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 // border: Border.all(color: secondarycolor, width: 1),
                                 boxShadow: <BoxShadow>[
                                   BoxShadow(
-                                    color:
-                                    secondarycolor, //Color.fromRGBO(59, 70, 107, 0.3),
-                                    blurRadius: 3.0,
-                                    offset: Offset(0.0, 0.75),
+                                      color:
+                                      secondarycolor,
+                                      //Color.fromRGBO(59, 70, 107, 0.3),
+                                      blurRadius: 3.0,
+                                      //offset: Offset(0.0, 0.75),
+                                      offset: Offset(responsivewidth(0.0),
+                                          responsiveheight(0.75))
                                   ),
                                 ],
-                                borderRadius: BorderRadius.circular(50)),
+                                borderRadius: BorderRadius.circular(
+                                    responsiveradius(50, 1))),
                             child: Padding(
-                              padding: EdgeInsets.all(0),
+                              padding: EdgeInsets.all(responsivewidth(0.1)),
                               child: IconButton(
                                 icon: Icon(
                                   Icons.camera_alt,
-                                  size: 30.0,
+                                  size: responsivewidth(30),
                                 ),
                                 onPressed: () => showAlertDialog(
                                     context,
@@ -624,20 +651,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    height: 60.0,
-                                    width: 60.0,
+                                    height: responsivewidth(60.0),
+                                    width: responsivewidth(60.0),
                                     child: Image.asset(
                                       'images/logo.png',
                                       fit: BoxFit.fill,
-                                      height: 120.0,
-                                      width: 120.0,
+                                      height: responsivewidth(120.0),
+                                      width: responsivewidth(120.0),
                                     ),
                                   ),
                                   Text(
                                     'inek',
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
-                                      fontSize: 25.0,
+                                      fontSize: responsivetext(25.0),
                                       fontWeight: FontWeight.w900,
                                       color: Color(0XFF3B466B),
                                     ),
@@ -652,7 +679,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'Compte',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 30.0,
+                                  fontSize: responsivetext(30.0),
                                   fontWeight: FontWeight.w900,
                                   color: Color(0XFF389490), //vert
                                 ),
@@ -661,7 +688,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         SizedBox(
-                          height: 50,
+                          height: responsiveheight(50),
                         ),
                       ],
                     ),
@@ -678,10 +705,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (widget.myuser.photo != null) {
       return Center(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(17.0),
+            borderRadius: BorderRadius.circular(responsiveradius(17.0, 110)),
             child: Image.network(
               widget.myuser.photo,
-              height: 110.0,
+              height: responsiveheight(110),
               gaplessPlayback: true,
               fit: BoxFit.fill,
             ),
@@ -692,12 +719,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           //photos
           children: <Widget>[
             SizedBox(
-              height: 16,
+              height: responsiveheight(16),
             ),
             Icon(
               Icons.person,
               color: Color(0xFF5B5050),
-              size: 105.0,
+              size: responsivewidth(105),
             ),
           ],
         ),
@@ -725,8 +752,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         sourcePath: _image.path,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 100,
-        maxHeight: 110,
-        maxWidth: 110,
+        maxHeight: responsiveheight(110).toInt(),
+        maxWidth: responsiveheight(110).toInt(),
         compressFormat: ImageCompressFormat.jpg,
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Rogner',
@@ -826,7 +853,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       content: Text(message),
       backgroundColor: Colors.white,
       shape:
-          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
+      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
       actions: [
         GalleryButton,
         CameraButton,
@@ -860,19 +887,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<bool> mailExist(String nom) async {
     final QuerySnapshot result = await Future.value(authService.db
-          .collection('Utilisateur')
-          .where('mail', isEqualTo: nom)
-          .limit(1)
-          .getDocuments());
-      final List<DocumentSnapshot> documents = result.documents;
-      if (documents.length == 1) {
-        print("email Already Exits");
-        return true;
-      } else {
-        print("email is Available");
-        return false;
-      }
+        .collection('Utilisateur')
+        .where('mail', isEqualTo: nom)
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length == 1) {
+      print("email Already Exits");
+      return true;
+    } else {
+      print("email is Available");
+      return false;
     }
+  }
 
   changepseudo() async {
     try {
@@ -895,8 +922,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .myuser
                       .pseudo,
                   nv_pseudo);
+              Navigator.pop(
+                  context);
+              setState(() {
+                _loading = false;
+                widget.myuser.pseudo =
+                    nv_pseudo;
+              });
             }
             else {
+              Navigator.pop(
+                  context);
               setState(() {
                 _loading = false;
               });
@@ -906,16 +942,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         setState(() {
           _loading = false;
-          widget.myuser
-              .pseudo =
-              nv_pseudo;
         });
         // nv_nom = _controller.text;
         // _confirmer = true;
-        Navigator.pop(
-            context);
+
       }
     } on SocketException catch (_) {
+      setState(() {
+        _loading = false;
+      });
       _showSnackBar('Vérifiez votre connexion internet');
     }
   }
@@ -933,7 +968,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _loading = true;
         });
         if (nv_tel != '') {
-          if (Validator.number(nv_tel)) {
+          if (!Validator.number(nv_tel)) {
             String id =
             await authService
                 .connectedID();
@@ -947,20 +982,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   .updateData({
                 'tel': nv_tel
               });
+              setState(() {
+                _loading = false;
+                widget.myuser.tel =
+                    nv_tel;
+              });
+              Navigator.pop(
+                  context);
             }
           } else {
+            Navigator.pop(
+                context);
             _showSnackBar('Veuillez introduire un nombre');
           }
         }
         setState(() {
           _loading = false;
-          widget.myuser.tel =
-              nv_tel;
+
         });
         // nv_nom = _controller.text;
         // _confirmer = true;
-        Navigator.pop(
-            context);
+
       }
     } on SocketException catch (_) {
       _showSnackBar('Vérifiez votre connexion internet');
@@ -1001,8 +1043,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     widget.myuser.mail =
                         nv_mail;
                   });
+                  Navigator.pop(
+                      context);
                 }
               } else {
+                Navigator.pop(
+                    context);
                 setState(() {
                   _loading = false;
                 });
@@ -1010,6 +1056,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
             });
           } else {
+            Navigator.pop(
+                context);
             setState(() {
               _loading = false;
             });
@@ -1019,10 +1067,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         // nv_nom = _controller.text;
         // _confirmer = true;
-        Navigator.pop(
-            context);
       }
     } on SocketException catch (_) {
+      Navigator.pop(
+          context);
       _showSnackBar('Vérifiez votre connexion internet');
     } catch (e) {
       print(e);
@@ -1037,5 +1085,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   String mail, pseudo, tel, photo;
 
+  double responsivetext(double siz) {
+    return (siz / 6.92) * SizeConfig.textMultiplier;
+  }
+
+  double responsiveheight(double height) {
+    return (height / 6.92) * SizeConfig.heightMultiplier;
+  }
+
+  double responsivewidth(double width) {
+    return (width / 3.6) * SizeConfig.imageSizeMultiplier;
+  }
+
+  double responsiveradius(double rad, double height) {
+    return (rad / height) * responsiveheight(height);
+  }
   Future userID;
 }
