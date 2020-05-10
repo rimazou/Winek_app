@@ -86,9 +86,10 @@ class UpdateMarkers extends ChangeNotifier {
     if (arret == false) {
       bool arrived;
 
-      documentList.forEach((DocumentSnapshot document) async {
+      for (DocumentSnapshot document in documentList) {
         print('fermer -----------------$fermer');
         String userid = document.documentID;
+        print('documet: $userid');
         markers.remove(MarkerId(userid));
         GeoPoint point = document.data['position']['geopoint'];
         await Firestore.instance
@@ -119,6 +120,7 @@ class UpdateMarkers extends ChangeNotifier {
             print('not curent useeeeeeeeeeeeeerrr $fermer');
           }
         }
+        /*
         if (val == userid) {
           latlng = new LatLng(point.latitude, point.longitude);
           cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
@@ -126,10 +128,10 @@ class UpdateMarkers extends ChangeNotifier {
               .mapController
               .animateCamera(cameraUpdate);
         }
+*/
         _addMarker(point.latitude, point.longitude, userid);
-      });
-      //TODO: ENLEVER CE DELAYED
-      await Future.delayed(Duration(seconds: 15));
+      }
+
       if (fermer) {
         print('fermeeeeeeeeeeeer $fermer');
         await Firestore.instance

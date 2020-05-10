@@ -338,10 +338,22 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SignoutWait())),
+                                  onTap: () {
+                                    /*    Provider.of<AuthService>(context,
+                                            listen: false)
+                                        .positionStream
+                                        .cancel();
+                                    Provider.of<DeviceInformationService>(
+                                            context,
+                                            listen: false)
+                                        .stopBroadcast();
+*/
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignoutWait()));
+                                  },
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -1685,11 +1697,23 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     ),
                                   ),
                                   ListTile(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SignoutWait())),
+                                    onTap: () {
+                                      /*  Provider.of<AuthService>(context,
+                                              listen: false)
+                                          .positionStream
+                                          .cancel();
+                                      Provider.of<DeviceInformationService>(
+                                              context,
+                                              listen: false)
+                                          .stopBroadcast();
+*/
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SignoutWait()));
+                                      print('frinaha provider');
+                                    },
                                     leading: Icon(
                                       Icons.directions_run,
                                       color: Colors.white,
@@ -2498,10 +2522,24 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SignoutWait())),
+                                  onTap: () {
+                                    /*      Provider.of<AuthService>(context,
+                                            listen: false)
+                                        .positionStream
+                                        .cancel();
+                                    Provider.of<DeviceInformationService>(
+                                            context,
+                                            listen: false)
+                                        .stopBroadcast();
+                                    print('frinaha provider');
+
+                               */
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignoutWait()));
+                                  },
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,

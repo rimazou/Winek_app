@@ -20,7 +20,8 @@ import '../auth.dart';
 import 'dart:async';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
-
+/*
+StreamSubscription<Position> positionStream;
 void getUserLocation() async {
   var val = await authService.connectedID();
   if (val != null) // ca permetra de faire lappel seulement quand le user est co
@@ -30,7 +31,7 @@ void getUserLocation() async {
       Position position;
       var locationOptions =
           LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream =
+      positionStream =
           geolocator.getPositionStream(locationOptions).listen((position) {
         double vitesse = position.speed;
         GeoFirePoint geoFirePoint = authService.geo
@@ -45,6 +46,8 @@ void getUserLocation() async {
     }
   }
 }
+
+ */
 /*
 void getUserLocation() async {
   var val = await authService.connectedID();

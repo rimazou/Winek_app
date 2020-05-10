@@ -29,13 +29,10 @@ class _SignoutWaitState extends State<SignoutWait> {
       authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
 
        // authService.googleSignIn.signOut();*/
-      Provider.of<AuthService>(context, listen: false).positionStream.cancel();
-      Provider.of<DeviceInformationService>(context, listen: false)
-          .stopBroadcast();
+      // Provider.of<AuthService>(context, listen: false).positionStream.cancel();
+      // Provider.of<DeviceInformationService>(context, listen: false).stopBroadcast();
       await authService.connectedID().then((val) {
         print(val);
-        //  Provider.of<AuthService>(context, listen: false).positionStream.cancel();
-        //  Provider.of<DeviceInformationService>(context, listen: false).stopBroadcast();
         authService.auth.signOut();
         authService.userRef.document(val).updateData({'connecte': false});
         print('plus d user');
