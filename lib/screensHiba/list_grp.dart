@@ -131,6 +131,7 @@ class grpTile extends StatelessWidget {
             Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
             Provider.of<UpdateMarkers>(context, listen: false)
                 .UpdateusersLocation(grp_chemin, context);
+
             PlanifierArrets().getChanges(context, grp_chemin);
             Navigator.push(
                 context,
