@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Container(
                                       padding: EdgeInsets.only(
                                           left: responsivewidth(30.0),
-                                          right: responsivewidth(30.0),
+//                                          right: responsivewidth(30.0),
                                           top: responsiveheight(15.0)),
                                       child: FlatButton(
                                         onPressed: () async {
@@ -246,15 +246,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                               barrierDismissible: true);
                                         },
-                                        child: Text(
-                                          widget.myuser.pseudo,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: responsivetext(15),
-                                            color: Color(0xff707070),
-                                          ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(Icons.account_box, color: Color(0xFF3b466b),),
+                                            SizedBox(width: 20,),
+                                            Text(
+                                              widget.myuser.pseudo,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: responsivetext(15),
+                                                color: Color(0xff707070),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
 
@@ -275,8 +281,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Container(
                                       padding: EdgeInsets.only(
                                           top: responsiveheight(15),
-                                          left: responsivewidth(20.0),
-                                          right: responsivewidth(10.0)),
+                                          left: responsivewidth(30.0),
+//                                          right: responsivewidth(10.0)
+                                      ),
                                       child: FlatButton(
                                         onPressed: () async {
                                           showDialog(
@@ -388,17 +395,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   ),
                                               barrierDismissible: true);
                                         },
-                                        child: Text(
-                                          widget.myuser.tel == null
-                                              ? 'aucun numero'
-                                              : widget.myuser.tel,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: responsivetext(15),
-                                            color: Color(0xff707070),
-                                          ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(Icons.phone, color: Color(0xFF3b466b),),
+                                            SizedBox(width: 20,),
+                                            Text(
+                                              widget.myuser.tel == null
+                                                  ? 'aucun numero'
+                                                  : widget.myuser.tel,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: responsivetext(15),
+                                                color: Color(0xff707070),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
 
@@ -419,8 +432,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Container(
                                       padding: EdgeInsets.only(
                                           top: responsiveheight(15),
-                                          left: responsivewidth(40.0),
-                                          right: responsivewidth(30.0)),
+                                          left: responsivewidth(30.0),
+//                                          right: responsivewidth(30.0)
+                                      ),
                                       child: FlatButton(
                                         onPressed: () async {
                                           showDialog(
@@ -533,15 +547,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                               barrierDismissible: true);
                                         },
-                                        child: Text(
-                                          widget.myuser.mail,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: responsivetext(15),
-                                            color: Color(0xff707070),
-                                          ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(Icons.mail, color: Color(0xFF3b466b),),
+                                            SizedBox(width: 20,),
+                                            Text(
+                                              widget.myuser.mail,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: responsivetext(15),
+                                                color: Color(0xff707070),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
 
