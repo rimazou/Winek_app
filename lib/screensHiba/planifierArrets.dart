@@ -63,10 +63,7 @@ class PlanifierArrets {
     String pseud=await Database().getPseudo(id);
     print('path');
     print(path_groupe);
-    final String colPath=path_groupe+'/PlanifierArrets';
-    print(colPath);
-    final String docPath=path_groupe+'/PlanifierArrets'+'/Arrets';
-    print(docPath);
+
     Firestore.instance.document(path_groupe).collection('PlanifierArrets').document('Arrets')
         .snapshots(includeMetadataChanges: true)
         .listen((DocumentSnapshot documentSnapshot) async {
@@ -83,8 +80,8 @@ class PlanifierArrets {
     });*/
 
       print("object3");
-    /*  if (documentSnapshot.data != null) {
-        if (documentSnapshot.data.containsKey('planArrets')) {*/
+      if (documentSnapshot.data != null) {
+        if (documentSnapshot.data.containsKey('planArrets')) {
           List<dynamic> list = documentSnapshot.data['planArrets'];
           print(list);
 
@@ -109,7 +106,7 @@ class PlanifierArrets {
             );
             print("object4");
             Provider.of<UpdateMarkers>(context).markers[markerid] = _marker;
-            Provider.of<controllermap>(context,listen: false).mapController.animateCamera(CameraUpdate.newCameraPosition(
+            Provider.of<controllermap>(context).mapController.animateCamera(CameraUpdate.newCameraPosition(
                 CameraPosition(target: LatLng(map['latitude'], map['longitude']),
                     zoom: 14.0)));
             // bool nouvelArret = documentSnapshot.data['planArret'];
@@ -127,8 +124,8 @@ class PlanifierArrets {
 
           print("object5");
 
-       // }
-      //}
+        }
+      }
     }
 
     );

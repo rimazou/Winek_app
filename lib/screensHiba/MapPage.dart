@@ -26,7 +26,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-
+import 'planifierArrets.dart';
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -1225,19 +1225,23 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ],
                                 );
     if (p != null) {
-    PlacesDetailsResponse detail =
-    await _places.getDetailsByPlaceId(p.placeId);
+    PlacesDetailsResponse detail =await _places.getDetailsByPlaceId(p.placeId);
 
-    var placeId = p.placeId;
+    //var placeId = p.placeId;
     double lat = detail.result.geometry.location.lat;
     double lng = detail.result.geometry.location.lng;
 
-    var address = await Geocoder.local.findAddressesFromQuery(p.description);
+   // var address = await Geocoder.local.findAddressesFromQuery(p.description);
     //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
     //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-    Provider.of<controllermap>(context,
+    PlanifierArrets().getChanges(context, path);
+    PlanifierArrets().addArretsToSubCol(path, lat, lng);
+    print("arret added");
+
+
+    /*Provider.of<controllermap>(context,
     listen: false).mapController.animateCamera(CameraUpdate.newCameraPosition(
-    CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+    CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));*/
     print(lat);
     print(lng);
     }
