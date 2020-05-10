@@ -105,7 +105,7 @@ class PlanifierArrets {
               icon: BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueCyan),
               infoWindow: InfoWindow(
-                  title: map['pseudo'] + " a planifié un arret ici"),
+                  title: map['pseudo'] + " a planifié(e) un arret ici"),
             );
             print("object4");
             Provider.of<UpdateMarkers>(context).markers[markerid] = _marker;
