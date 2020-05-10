@@ -131,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     Container(
                                       padding: EdgeInsets.only(
-                                          left: responsivewidth(30.0),
+                                          left: responsivewidth(40.0),
 //                                          right: responsivewidth(30.0),
                                           top: responsiveheight(15.0)),
                                       child: FlatButton(
@@ -281,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Container(
                                       padding: EdgeInsets.only(
                                           top: responsiveheight(15),
-                                          left: responsivewidth(30.0),
+                                          left: responsivewidth(40.0),
 //                                          right: responsivewidth(10.0)
                                       ),
                                       child: FlatButton(
@@ -432,7 +432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Container(
                                       padding: EdgeInsets.only(
                                           top: responsiveheight(15),
-                                          left: responsivewidth(30.0),
+                                          left: responsivewidth(40.0),
 //                                          right: responsivewidth(30.0)
                                       ),
                                       child: FlatButton(
