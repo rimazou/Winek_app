@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:winek/screensRima/profile_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -8,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:winek/main.dart';
+import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensSoum/friendsListScreen.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
@@ -215,11 +217,12 @@ class _HomeState extends State<Home> {
                   ),
                   Center(
                     child: Container(
-                      height: 450,
-                      width: 280,
+                      height: responsiveheight(450),
+                      width: responsivewidth(280),
                       //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(responsiveradius(
+                            20, 1)),
                         color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
@@ -387,7 +390,10 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () =>
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => SignoutWait()
+                                      )),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -1899,7 +1905,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: null,
+
+                                  onTap: () =>
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -2746,7 +2758,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: null,
+                                  onTap: () =>
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => SignoutWait()
+                                      )),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,

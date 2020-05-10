@@ -1105,20 +1105,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   String mail, pseudo, tel, photo;
 
-  double responsivetext(double siz) {
-    return (siz / 6.92) * SizeConfig.textMultiplier;
-  }
 
-  double responsiveheight(double height) {
-    return (height / 6.92) * SizeConfig.heightMultiplier;
-  }
-
-  double responsivewidth(double width) {
-    return (width / 3.6) * SizeConfig.imageSizeMultiplier;
-  }
-
-  double responsiveradius(double rad, double height) {
-    return (rad / height) * responsiveheight(height);
-  }
   Future userID;
 }

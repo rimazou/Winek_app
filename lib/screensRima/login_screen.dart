@@ -269,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 42.0,
                           child: Text(
 
-                            "s'inscrire",
+                            "S'inscrire",
 
                             style: TextStyle(
                               fontFamily: 'Montserrat',
@@ -324,6 +324,40 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
+                  child: Material(
+                    color: Colors.white,
+
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    elevation: 5.0,
+                    child: MaterialButton(
+                      onPressed: () => _signInWithGoogle(),
+
+                      height: 42.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+
+                              height: 42,
+                              child: Image.asset(
+                                  'images/googlelogo.png', fit: BoxFit.fill)),
+                          Text(
+                            'Google',
+
+                            style: TextStyle(
+                              color: Color(0XFF707070),
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
 
@@ -333,18 +367,53 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-/*  Future<FirebaseUser> _signInG() async {
-    GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final FirebaseUser user = (await authService.auth.signInWithCredential(credential)) as FirebaseUser;
-    print("signed in " + user.displayName);
-    return user;
-  }*/
+  Future<String> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount googleUser = await authService.googleSignIn
+          .signIn();
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final FirebaseUser user = (await authService.auth.signInWithCredential(
+          credential)).user;
 
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      final FirebaseUser currentUser = await authService.auth.currentUser();
+      assert(user.uid == currentUser.uid);
+
+      print('loggein is cette personnnee');
+      print(currentUser.email);
+      if (user != null) {
+        authService.db.collection('Utilisateur').document(user.uid).updateData(
+            {'connecte': true});
+        print('user logged in');
+        // getUserLocation();
+        // Provider.of<DeviceInformationService>(context, listen: false)
+        //   .broadcastBatteryLevel(user.uid);
+      }
+      else {
+        print('failed google authetication');
+      }
+    }
+    catch (logIn) {
+      if (logIn is PlatformException) {
+        if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          showSnackBar(
+              'Veuillez verifiez votre connexion internet et reessayez',
+              context);
+        }
+        else {
+          print(logIn);
+        }
+      }
+    }
+  }
   showSnackBar(String value, BuildContext context) {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(SnackBar(
@@ -418,7 +487,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
+              color: Color(0XFF389490),
             ),
           ),
         ),
