@@ -82,10 +82,12 @@ class UpdateMarkers extends ChangeNotifier {
         .then((DocumentSnapshot ds) {
       arret = ds.data['fermer'];
     });
+    bool fermer = true;
     if (arret == false) {
       bool arrived;
-      bool fermer = true;
+
       documentList.forEach((DocumentSnapshot document) async {
+        print('fermer -----------------$fermer');
         String userid = document.documentID;
         markers.remove(MarkerId(userid));
         GeoPoint point = document.data['position']['geopoint'];
@@ -96,9 +98,11 @@ class UpdateMarkers extends ChangeNotifier {
             .get()
             .then((DocumentSnapshot ds) {
           arrived = ds.data['arrive'];
+          print('arrived $arrived');
         });
         if (!arrived) {
           if (val == userid) {
+            print('connecteeeeeeeeeeeeeeeeeed USERRR');
             double distanceInMeters = await Geolocator().distanceBetween(
                 point.latitude, point.longitude, dest_lat, dest_lng);
             if (distanceInMeters <= 100) {
@@ -112,9 +116,9 @@ class UpdateMarkers extends ChangeNotifier {
             }
           } else {
             fermer = false;
+            print('not curent useeeeeeeeeeeeeerrr $fermer');
           }
         }
-
         if (val == userid) {
           latlng = new LatLng(point.latitude, point.longitude);
           cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
@@ -124,12 +128,17 @@ class UpdateMarkers extends ChangeNotifier {
         }
         _addMarker(point.latitude, point.longitude, userid);
       });
+      //TODO: ENLEVER CE DELAYED
+      await Future.delayed(Duration(seconds: 15));
       if (fermer) {
+        print('fermeeeeeeeeeeeer $fermer');
         await Firestore.instance
             .document(groupepath)
             .collection('fermeture')
             .document('fermeture')
             .updateData({'fermer': true});
+        print(
+            'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
       }
     }
   }

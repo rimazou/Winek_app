@@ -774,7 +774,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             LatLng latlng =
                                 new LatLng(point.latitude, point.longitude);
                             cameraUpdate =
-                                CameraUpdate.newLatLngZoom(latlng, 12);
+                                CameraUpdate.newLatLngZoom(latlng, 15);
                             Provider.of<controllermap>(context, listen: false)
                                 .mapController
                                 .animateCamera(cameraUpdate);
@@ -1967,12 +1967,29 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         color: Colors.white,
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Text(
+                                'Tous les membres sont arrivés à destination. Ce voyage est terminé.',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff707070),
+                                )),
+                          ),
+                          Spacer(flex: 1),
                           Center(
                             child: MaterialButton(
-                              child: Text('fermer',
+                              child: Text('OK',
                                   style: TextStyle(
-                                    color: primarycolor,
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: secondarycolor,
                                   )),
                               onPressed: () async {
                                 setState(() {
@@ -2033,7 +2050,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
     Size size = MediaQuery.of(context).size;
     List<Widget> liste = new List();
     //  var it = groupe.membres.iterator;
-    for (int index = 0; index < groupe.membres.length; index++) {
+    for (int i = 0; i < groupe.membres.length; i++) {
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
@@ -2050,14 +2067,37 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     backgroundColor: Color(0xFFFFFFFF),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(50),
-                        child: Image.network(imagesUrl[index])),
+                        child: GestureDetector(
+                            onTap: () async {
+                              GeoPoint point;
+                              CameraUpdate cameraUpdate;
+                              await Firestore.instance
+                                  .document(path)
+                                  .collection('members')
+                                  .document(groupe.membres[i]['id'])
+                                  .get()
+                                  .then((DocumentSnapshot ds) {
+                                point = ds.data['position']['geopoint'];
+                              });
+                              LatLng latlng =
+                                  new LatLng(point.latitude, point.longitude);
+                              cameraUpdate =
+                                  CameraUpdate.newLatLngZoom(latlng, 15);
+                              Provider.of<controllermap>(context, listen: false)
+                                  .mapController
+                                  .animateCamera(cameraUpdate);
+                              setState(() {
+                                index = 3;
+                              });
+                            },
+                            child: Image.network(imagesUrl[i]))),
                   ),
                 ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      groupe.membres[index]['pseudo'],
+                      groupe.membres[i]['pseudo'],
                       //overflow:TextOverflow.fade,
 
                       //textScaleFactor: 0.4,
@@ -2496,7 +2536,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             GestureDetector(
               onTap: () {
                 setState(() {
-                  _visible = !_visible;
+                  // _visible = !_visible;
                   index = 0;
                 });
               },
@@ -2586,6 +2626,221 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     ),
                   )),
             ),
+            //index= 3: zoum et dezoum
+            Stack(
+              children: <Widget>[
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: GestureDetector(
+                    onTap: () async {
+                      GeoPoint point;
+                      CameraUpdate cameraUpdate;
+                      String val = await authService.connectedID();
+                      await Firestore.instance
+                          .document(path)
+                          .collection('members')
+                          .document(val)
+                          .get()
+                          .then((DocumentSnapshot ds) {
+                        point = ds.data['position']['geopoint'];
+                      });
+                      LatLng latlng =
+                          new LatLng(point.latitude, point.longitude);
+                      cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                      Provider.of<controllermap>(context, listen: false)
+                          .mapController
+                          .animateCamera(cameraUpdate);
+                      setState(() {
+                        index = 0;
+                      });
+                    },
+                  ),
+                ),
+                Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: size.width * 0.075,
+                      top: size.height * 0.04,
+                      // child: AnimatedOpacity(
+                      // opacity: _visible ? 1.0 : 0.0,
+                      //duration: Duration(milliseconds: 500),
+                      child: Container(
+                          height: size.height * 0.07,
+                          width: size.width * 0.85,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(40.0),
+                              color: Colors.white),
+                          child: Row(
+                            children: <Widget>[
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.menu,
+                                    color: Color(0xFF3B466B),
+                                  ),
+                                  onPressed: () async {
+                                    String id = await authService.connectedID();
+                                    String pseudo = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['pseudo'];
+                                    });
+                                    String image = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['photo'];
+                                    });
+                                    // _openDrawer(context);
+                                    setState(() {
+                                      Username = pseudo;
+                                      Userimage = image;
+                                      index = 1;
+                                      // _visible = !_visible;
+                                    });
+                                  },
+                                  iconSize: 30.0),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              Center(
+                                child: Text(
+                                  'Recherche',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 15,
+                                    color: Color(0xff707070),
+                                  ),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: Color(0xFF3B466B),
+                                  ),
+                                  onPressed: () async {
+                                    // show input autocomplete with selected mode
+                                    // then get the Prediction selected
+                                    Prediction p =
+                                        await PlacesAutocomplete.show(
+                                      context: context,
+                                      apiKey: kGoogleApiKey,
+                                      onError: onError,
+                                      mode: Mode.overlay,
+                                      language: "fr",
+                                      components: [
+                                        Component(Component.country, "DZ")
+                                      ],
+                                    );
+
+                                    Provider.of<controllermap>(context,
+                                            listen: false)
+                                        .displayPredictionRecherche(p);
+                                  },
+                                  iconSize: 30.0),
+                            ],
+                          )),
+                    ),
+                    //liste of members
+                    Positioned(
+                      bottom: 5,
+                      left: MediaQuery.of(context).size.width * 0.025,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        height: MediaQuery.of(context).size.height * 0.10,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(33.0),
+                          color: Color(0xFF3B466B),
+                          //color:Color.fromRGBO(59, 70, 150, 0.8),
+                        ),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: liste,
+                          shrinkWrap: false,
+                        ),
+                      ),
+                    ),
+                    //nom groupe
+                    Positioned(
+                      bottom: 65,
+                      left: MediaQuery.of(context).size.width * 0.025,
+                      child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: primarycolor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blueGrey,
+                                blurRadius: 3.0,
+                                spreadRadius: 0.1,
+                                offset: Offset(0.0, 1.0),
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            groupe.nom,
+                            style: TextStyle(
+                              color: myWhite,
+                              fontSize: 12,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )),
+                    ),
+                    //floationg butons
+                    Positioned(
+                      right: 5,
+                      //MediaQuery.of(context).size.width*0.05,
+                      bottom: MediaQuery.of(context).size.height * 0.15,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                Navigator.pushNamed(context, ListGrpPage.id);
+                              },
+                              backgroundColor: Color(0xFF389490),
+                              foregroundColor: Color(0xFFFFFFFF),
+                              child: Icon(
+                                Icons.group,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                setState(() {
+                                  index = 2;
+                                });
+                              },
+                              backgroundColor: Color(0xFF389490),
+                              foregroundColor: Color(0xFFFFFFFF),
+                              child: Icon(
+                                Icons.group_add,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
           ]),
         ],
       ),
