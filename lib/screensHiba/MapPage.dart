@@ -682,9 +682,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   String alertePerso;
   final _controller = TextEditingController();
 
-  void setStateIndex(int iint){//asma
+  void setStateIndex(){//asma
     setState(() {
-      stackIndex = iint;
+      stackIndex = 0;
     });
   }
   //-----------------------
@@ -1360,14 +1360,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: ReceivedAlertStream((){
-//                                      setState(() {
-//                                        print('stackIndex1 === $stackIndex');
-//
-//                                        stackIndex=0;
-//                                        print('stackIndex2 === $stackIndex');
-//                                      });
-                                    },),
+                                    child: ReceivedAlertStream(settingindex: setStateIndex),
                                   ),
                                 ),
                                 SizedBox(
@@ -3035,19 +3028,19 @@ class ReceivedAlertBubble extends StatelessWidget {
   AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
-  Function _function;
+  Function settingindex = (){print('heeeeeeeeeeeeeeeeeeeeey');} ;
 
   ReceivedAlertBubble(
       {String sender,
       AlertBubbleBox alert,
       Timestamp date,
       GeoPoint geoPoint,
-      Function function}) {
+      Function settingindex}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
     this.geoPoint = geoPoint;
-    this._function = function;
+    this.settingindex = settingindex;
   }
 
   Future<BitmapDescriptor> createMarkerIc() async {
@@ -3059,43 +3052,34 @@ class ReceivedAlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: FlatButton(
-        onPressed: () async {
-          //_function; // la fonction de setState
-          MarkerId markerId = MarkerId(
-              geoPoint.latitude.toString() + geoPoint.longitude.toString());
-          Provider.of<UpdateMarkers>(
-            context,
-          ).markers.remove(markerId);
-
-          Marker _marker = Marker(
-            markerId: markerId,
-            position: LatLng(geoPoint.latitude, geoPoint.longitude),
-            infoWindow: InfoWindow(title: sender, snippet: alert.text),
-//           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-//            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
-            icon: await createMarkerIc(),
-          );
-          Provider.of<UpdateMarkers>(
-            context,
-          ).markers[markerId] = _marker;
-
-//          _marker = Marker(
+        onPressed: () {
+//          MarkerId markerId = MarkerId(
+//              geoPoint.latitude.toString() + geoPoint.longitude.toString());
+//          Provider.of<UpdateMarkers>(
+//            context,
+//          ).markers.remove(markerId);
+//
+//          Marker _marker = Marker(
 //            markerId: markerId,
 //            position: LatLng(geoPoint.latitude, geoPoint.longitude),
 //            infoWindow: InfoWindow(title: sender, snippet: alert.text),
+////           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+////            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
 //            icon: await createMarkerIc(),
 //          );
 //          Provider.of<UpdateMarkers>(
 //            context,
 //          ).markers[markerId] = _marker;
-          CameraUpdate cameraUpdate;
-          cameraUpdate = CameraUpdate.newLatLngZoom(
-              LatLng(geoPoint.latitude, geoPoint.longitude), 10);
-          Provider.of<controllermap>(context, listen: false)
-              .mapController
-              .animateCamera(cameraUpdate);
-          _function;
 
+
+//          CameraUpdate cameraUpdate;
+//          cameraUpdate = CameraUpdate.newLatLngZoom(
+//              LatLng(geoPoint.latitude, geoPoint.longitude), 10);
+//          Provider.of<controllermap>(context, listen: false)
+//              .mapController
+//              .animateCamera(cameraUpdate);
+
+        settingindex();
           //TODO: je positionne l'alerte sur la map
         },
         padding: const EdgeInsets.all(0),
@@ -3122,9 +3106,9 @@ class ReceivedAlertBubble extends StatelessWidget {
 }
 
 class ReceivedAlertStream extends StatelessWidget {
-  final Function _function;
+  Function settingindex;
 
-  ReceivedAlertStream(this._function);
+  ReceivedAlertStream({this.settingindex});
 
   @override
   Widget build(BuildContext context) {
@@ -3163,7 +3147,7 @@ class ReceivedAlertStream extends StatelessWidget {
             alert: alertBubble,
             date: alertDate,
             geoPoint: alertGeoP,
-            function: _function,
+            settingindex: settingindex,
           );
           alertList.add(receivedAlertBubble);
         }
