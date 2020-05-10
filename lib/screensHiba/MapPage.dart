@@ -40,6 +40,7 @@ ValueNotifier valueNotifier = ValueNotifier(justReceivedAlert);
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldKeyAsma = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
 
@@ -1373,7 +1374,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       ],
                     ),
                     //indexe3
-                    NotifStream(),
+                    NotifStream(ffunction: (){
+                      setState(() {
+                        stackIndex = 2;
+                      });
+                    }),
                   ],
                 ),
               ],
@@ -1909,7 +1914,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
       extendBody: true,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -2587,7 +2591,7 @@ class AlertBubble extends StatelessWidget {
                   'justReceivedAlert': !tr,
                 });
 
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -2611,7 +2615,7 @@ class AlertBubble extends StatelessWidget {
                 Navigator.pop(context);
               } else {
                 Navigator.pop(context);
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -2636,7 +2640,7 @@ class AlertBubble extends StatelessWidget {
             }
           } on SocketException catch (_) {
             Navigator.pop(context);
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
+            _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
               content: Row(
                 children: <Widget>[
                   Text(
@@ -2812,7 +2816,7 @@ class AlertStream extends StatelessWidget {
                       });
 
                       alertList.removeAt(index); //iciiiiii
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                      _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
                         content: Row(
                           children: <Widget>[
                             Text(
@@ -2875,11 +2879,16 @@ class AlertStream extends StatelessWidget {
 
 class AlertScreen extends StatefulWidget {
   @override
-  _AlertScreenState createState() => _AlertScreenState();
+  _AlertScreenState createState() => _AlertScreenState((){});
 }
 
 class _AlertScreenState extends State<AlertScreen> {
+
+  final Function onTouched;
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  _AlertScreenState(this.onTouched);
   @override
   void initState() {
     super.initState();
@@ -2895,9 +2904,7 @@ class _AlertScreenState extends State<AlertScreen> {
     debugPrint('payload : $payload');
     //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
 
-    setState(() {
-      stackIndex = 2;
-    });
+    onTouched();
     /*showDialog(
       context: context,
       builder: (_) {
@@ -3219,12 +3226,12 @@ class AlertBubbleBox extends StatelessWidget {
   }
 }
 
-void addListnerToNotifier() {
+void addListnerToNotifier(Function ffunction) {
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
     checkSenderUser();
     if (currentUser != notifSender) {
-      var vaaa = _AlertScreenState();
+      var vaaa = _AlertScreenState(ffunction);
       vaaa.initState();
       await vaaa.showNotificationWithDefaultSound();
     }
@@ -3232,12 +3239,14 @@ void addListnerToNotifier() {
 }
 
 class NotifStream extends StatelessWidget {
+  Function ffunction;
+  NotifStream({this.ffunction});
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection("Voyage").snapshots(),
       builder: (context, snapshot) {
-        addListnerToNotifier();
+        addListnerToNotifier(ffunction);
 
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
