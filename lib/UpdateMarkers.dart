@@ -70,6 +70,7 @@ class UpdateMarkers extends ChangeNotifier {
     notifyListeners();
   }
 
+/*
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
     LatLng latlng;
     CameraUpdate cameraUpdate;
@@ -129,7 +130,7 @@ class UpdateMarkers extends ChangeNotifier {
         _addMarker(point.latitude, point.longitude, userid);
       });
       //TODO: ENLEVER CE DELAYED
-      /*
+
       await Future.delayed(Duration(seconds: 15));
       if (fermer) {
         print('fermeeeeeeeeeeeer $fermer');
@@ -142,8 +143,27 @@ class UpdateMarkers extends ChangeNotifier {
             'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
       }
 
-       */
+
     }
+  }
+*/
+  void _updateMarkers(List<DocumentSnapshot> documentList) async {
+    LatLng latlng;
+    CameraUpdate cameraUpdate;
+
+    documentList.forEach((DocumentSnapshot document) async {
+      String userid = document.documentID;
+      markers.remove(MarkerId(userid));
+      GeoPoint point = document.data['position']['geopoint'];
+      if (val == userid) {
+        latlng = new LatLng(point.latitude, point.longitude);
+        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+        Provider.of<controllermap>(mapcontext, listen: false)
+            .mapController
+            .animateCamera(cameraUpdate);
+      }
+      _addMarker(point.latitude, point.longitude, userid);
+    });
   }
 
   Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size) async {
