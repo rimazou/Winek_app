@@ -4255,12 +4255,12 @@ class AlertBubbleBox extends StatelessWidget {
 
 void addListnerToNotifier(Function ffunction) {
   valueNotifier.addListener(() async {
-    //checkSenderUser();
-    //if (currentUser != notifSender) {
+//    checkSenderUser();
+//    if (currentUser != notifSender) {
       var vaaa = _AlertScreenState(ffunction);
       vaaa.initState();
       await vaaa.showNotificationWithDefaultSound();
-    //}
+//    }
   });
 }
 
@@ -4278,8 +4278,9 @@ class NotifStream extends StatelessWidget {
         for (var alert in alerts) {
           var id = alert.documentID;
           if (id == _firestore.document(groupPath).documentID) {
-            print('FOUUUUUUUUUUUUUUUUUUUND');
+            print('je recupere le just received alerte');
             final groupJRA = alert.data['justReceivedAlert'];
+            print('justReceived BDD = $groupJRA et le local = $justReceivedAlert');
             if (groupJRA != justReceivedAlert) {
               checkSenderUser();
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');
@@ -4308,4 +4309,5 @@ Future<void> checkSenderUser() async {
       .getDocuments();
   List<DocumentSnapshot> ggglist = ggg.documents;
   notifSender = ggglist[0].data['sender'];
+  print('le dernier sender de la notif est $notifSender');
 }
