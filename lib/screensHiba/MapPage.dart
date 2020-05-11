@@ -4309,5 +4309,6 @@ Future<void> checkSenderUser() async {
       .getDocuments();
   List<DocumentSnapshot> ggglist = ggg.documents;
   notifSender = ggglist[0].data['sender'];
+  //var cont = ggglist[0].data['']
   print('le dernier sender de la notif est $notifSender');
 }

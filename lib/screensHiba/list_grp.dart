@@ -222,8 +222,8 @@ class grpTile extends StatelessWidget {
                 currentUser =
                 await AuthService().getPseudo(utilisateurID);
                 stackIndex = 3;
-                checkSenderUser();
-                print('HEEEEEEEEEEEEEEEY$notifSender');
+                //checkSenderUser();
+                //print('HEEEEEEEEEEEEEEEY$notifSender');
               }
               if (grp_chemin.startsWith('LongTerme')) {
                 await Firestore.instance
