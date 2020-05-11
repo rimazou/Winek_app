@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,9 +20,9 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../UpdateMarkers.dart';
 import 'MapPage.dart';
-import 'package:winek/updateMarkers2.dart';
 
 bool _loading;
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class ListGrpPage extends StatefulWidget {
   @override
@@ -35,11 +37,33 @@ class _ListGrpPageState extends State<ListGrpPage> {
     _loading = false;
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: _loading,
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.white,
         body: Center(
           child: Column(
@@ -53,8 +77,21 @@ class _ListGrpPageState extends State<ListGrpPage> {
                     flex: 1,
                   ),
                   IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, InvitationGrpPage.id);
+                    onPressed: () async {
+                      try {
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        var result2 = await Connectivity().checkConnectivity();
+                        var b = (result2 != ConnectivityResult.none);
+
+                        if (b &&
+                            result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          Navigator.pushNamed(context, InvitationGrpPage.id);
+                        }
+                      } on SocketException catch (_) {
+                        _showSnackBar('Vérifiez votre connexion internet');
+                      }
                     },
                     icon: Icon(Icons.supervised_user_circle),
                     color: primarycolor,
@@ -104,74 +141,106 @@ class grpTile extends StatelessWidget {
 
   grpTile({@required this.grp_nom, @required this.grp_chemin});
 
+  _showSnackBar(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         onTap: () async {
-          Groupe g = Voyage();
-          if (grp_chemin.startsWith('Voyage')) {
-            await Firestore.instance
-                .document(grp_chemin)
-                .get()
-                .then((DocumentSnapshot doc) {
-              g = Voyage.fromMap(doc.data);
-              //print(g.membres);
-            });
-            List<String> images = List();
-            for (Map member in g.membres) {
-              String url = await Firestore.instance
-                  .collection('Utilisateur')
-                  .document(member['id'])
-                  .get()
-                  .then((doc) {
-                return doc.data['photo'].toString();
-              });
-              images.add(url);
-            }
-            Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
-            Provider.of<UpdateMarkers>(context, listen: false)
-                .UpdateusersLocation(grp_chemin, context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        MapVoyagePage(g, grp_chemin, images)));
-            //asma initialise
-            groupPath = grp_chemin;
-            utilisateurID = await AuthService().connectedID();
-            currentUser =
-            await AuthService().getPseudo(utilisateurID);
-            stackIndex = 3;
-            //asma tentative
+          try {
+            final result = await InternetAddress.lookup('google.com');
+            var result2 = await Connectivity().checkConnectivity();
+            var b = (result2 != ConnectivityResult.none);
 
-          }
-          if (grp_chemin.startsWith('LongTerme')) {
-            await Firestore.instance
-                .document(grp_chemin)
-                .get()
-                .then((DocumentSnapshot doc) {
-              g = LongTerme.fromMap(doc.data);
-            });
-            List<String> images = List();
-            for (Map member in g.membres) {
-              String url = await Firestore.instance
-                  .collection('Utilisateur')
-                  .document(member['id'])
-                  .get()
-                  .then((doc) {
-                return doc.data['photo'].toString();
-              });
-              images.add(url);
+            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              Groupe g = Voyage();
+              if (grp_chemin.startsWith('Voyage')) {
+                await Firestore.instance
+                    .document(grp_chemin)
+                    .get()
+                    .then((DocumentSnapshot doc) {
+                  g = Voyage.fromMap(doc.data);
+                  //print(g.membres);
+                });
+                List<String> images = List();
+                for (Map member in g.membres) {
+                  String url = await Firestore.instance
+                      .collection('Utilisateur')
+                      .document(member['id'])
+                      .get()
+                      .then((doc) {
+                    return doc.data['photo'].toString();
+                  });
+                  images.add(url);
+                }
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .markers
+                    .clear();
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .UpdateusersLocation(grp_chemin, context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MapVoyagePage(g, grp_chemin, images)));
+                //asma initialise
+                groupPath = grp_chemin;
+                utilisateurID = await AuthService().connectedID();
+                currentUser = await AuthService().getPseudo(utilisateurID);
+                stackIndex = 3;
+              }
+              if (grp_chemin.startsWith('LongTerme')) {
+                await Firestore.instance
+                    .document(grp_chemin)
+                    .get()
+                    .then((DocumentSnapshot doc) {
+                  g = LongTerme.fromMap(doc.data);
+                });
+                List<String> images = List();
+                for (Map member in g.membres) {
+                  String url = await Firestore.instance
+                      .collection('Utilisateur')
+                      .document(member['id'])
+                      .get()
+                      .then((doc) {
+                    return doc.data['photo'].toString();
+                  });
+                  images.add(url);
+                }
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .markers
+                    .clear();
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .UpdateusersLocation(grp_chemin, context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MapLongTermePage(g, grp_chemin, images)));
+              }
             }
-            Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
-            Provider.of<UpdateMarkers>(context, listen: false)
-                .UpdateusersLocation(grp_chemin, context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        MapLongTermePage(g, grp_chemin, images)));
+          } on SocketException catch (_) {
+            _showSnackBar('Vérifiez votre connexion internet', context);
           }
         },
         title: Text(
@@ -190,41 +259,51 @@ class grpTile extends StatelessWidget {
         ),
         trailing: IconButton(
           onPressed: () async {
-            String id = await authService.connectedID();
-            String pseudo = await Firestore.instance
-                .collection('Utilisateur')
-                .document(id)
-                .get()
-                .then((doc) {
-              return doc.data['pseudo'];
-            });
+            try {
+              final result = await InternetAddress.lookup('google.com');
+              var result2 = await Connectivity().checkConnectivity();
+              var b = (result2 != ConnectivityResult.none);
 
-            print("current user :$pseudo");
-            Groupe g = Voyage();
-            if (grp_chemin.startsWith('Voyage')) {
-              await Firestore.instance
-                  .document(grp_chemin)
-                  .get()
-                  .then((DocumentSnapshot doc) {
-                g = Voyage.fromMap(doc.data);
-              });
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ParamVoyagePage(g, grp_chemin, pseudo)));
-            } else {
-              await Firestore.instance
-                  .document(grp_chemin)
-                  .get()
-                  .then((DocumentSnapshot doc) {
-                g = LongTerme.fromMap(doc.data);
-              });
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ParamLongTermePage(g, grp_chemin, pseudo)));
+              if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                String id = await authService.connectedID();
+                String pseudo = await Firestore.instance
+                    .collection('Utilisateur')
+                    .document(id)
+                    .get()
+                    .then((doc) {
+                  return doc.data['pseudo'];
+                });
+
+                print("current user :$pseudo");
+                Groupe g = Voyage();
+                if (grp_chemin.startsWith('Voyage')) {
+                  await Firestore.instance
+                      .document(grp_chemin)
+                      .get()
+                      .then((DocumentSnapshot doc) {
+                    g = Voyage.fromMap(doc.data);
+                  });
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ParamVoyagePage(g, grp_chemin, pseudo)));
+                } else {
+                  await Firestore.instance
+                      .document(grp_chemin)
+                      .get()
+                      .then((DocumentSnapshot doc) {
+                    g = LongTerme.fromMap(doc.data);
+                  });
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ParamLongTermePage(g, grp_chemin, pseudo)));
+                }
+              }
+            } on SocketException catch (_) {
+              _showSnackBar('Vérifiez votre connexion internet', context);
             }
           },
           icon: Icon(Icons.info_outline),

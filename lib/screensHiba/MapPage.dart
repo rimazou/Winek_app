@@ -1,5 +1,7 @@
+import 'package:winek/updateMarkers2.dart';
 import 'dart:io';
 import 'dart:ui';
+import 'package:winek/screensRima/profile_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -10,7 +12,6 @@ import 'package:geocoder/geocoder.dart';
 import 'package:winek/main.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensSoum/friendsListScreen.dart';
-import 'package:winek/updateMarkers2.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
 import 'nouveau_grp.dart';
@@ -19,8 +20,8 @@ import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
-import 'package:winek/updateMarkers2.dart';
 import '../screensRima/profile_screen.dart';
+
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -132,14 +133,36 @@ class _HomeState extends State<Home> {
     index = 0;
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
       extendBody: true,
+      key: _scaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
       bottomNavigationBar: bottomNavBar,
       floatingActionButton: flaotButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -194,11 +217,12 @@ class _HomeState extends State<Home> {
                   ),
                   Center(
                     child: Container(
-                      height: 450,
-                      width: 280,
+                      height: responsiveheight(450),
+                      width: responsivewidth(280),
                       //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius:
+                            BorderRadius.circular(responsiveradius(20, 1)),
                         color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
@@ -243,25 +267,43 @@ class _HomeState extends State<Home> {
                               children: <Widget>[
                                 ListTile(
                                   onTap: () async {
-                                    String id = await authService.connectedID();
-                                    if (id != null) {
-                                      DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
+                                    try {
+                                      final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
+                                      var result2 = await Connectivity()
+                                          .checkConnectivity();
+                                      var b =
+                                          (result2 != ConnectivityResult.none);
 
-                                      if (snapshot != null) {
-                                        Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
-                                        //  Navigator.pushNamed(context, Home.id);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProfileScreen(
-                                                        utilisateur)));
+                                      if (b &&
+                                          result.isNotEmpty &&
+                                          result[0].rawAddress.isNotEmpty) {
+                                        String id =
+                                            await authService.connectedID();
+                                        if (id != null) {
+                                          DocumentSnapshot snapshot =
+                                              await authService.userRef
+                                                  .document(id)
+                                                  .get();
+
+                                          if (snapshot != null) {
+                                            Utilisateur utilisateur =
+                                                Utilisateur.fromdocSnapshot(
+                                                    snapshot);
+                                            //  Navigator.pushNamed(context, Home.id);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileScreen(
+                                                            utilisateur)));
+                                          }
+                                        }
                                       }
+                                    } on SocketException catch (_) {
+                                      _showSnackBar(
+                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -295,14 +337,31 @@ class _HomeState extends State<Home> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser =
-                                        await AuthService().connectedID();
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FriendsListScreen(
-                                                    currentUser)));
+                                    try {
+                                      final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
+                                      var result2 = await Connectivity()
+                                          .checkConnectivity();
+                                      var b =
+                                          (result2 != ConnectivityResult.none);
+
+                                      if (b &&
+                                          result.isNotEmpty &&
+                                          result[0].rawAddress.isNotEmpty) {
+                                        String currentUser =
+                                            await AuthService().connectedID();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    FriendsListScreen(
+                                                        currentUser)));
+                                      }
+                                    } on SocketException catch (_) {
+                                      _showSnackBar(
+                                          'Vérifiez votre connexion internet');
+                                    }
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -410,12 +469,27 @@ class _HomeState extends State<Home> {
                             flex: 1,
                           ),
                           GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                index = 0;
-                              });
+                            onTap: () async {
+                              try {
+                                final result =
+                                    await InternetAddress.lookup('google.com');
+                                var result2 =
+                                    await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
 
-                              Navigator.pushNamed(context, NvVoyagePage.id);
+                                if (b &&
+                                    result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  setState(() {
+                                    index = 0;
+                                  });
+
+                                  Navigator.pushNamed(context, NvVoyagePage.id);
+                                }
+                              } on SocketException catch (_) {
+                                _showSnackBar(
+                                    'Vérifiez votre connexion internet');
+                              }
                             },
                             child: Bouton(
                               icon: Icon(
@@ -437,11 +511,27 @@ class _HomeState extends State<Home> {
                             flex: 1,
                           ),
                           GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                index = 0;
-                              });
-                              Navigator.pushNamed(context, NvLongTermePage.id);
+                            onTap: () async {
+                              try {
+                                final result =
+                                    await InternetAddress.lookup('google.com');
+                                var result2 =
+                                    await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b &&
+                                    result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  setState(() {
+                                    index = 0;
+                                  });
+                                  Navigator.pushNamed(
+                                      context, NvLongTermePage.id);
+                                }
+                              } on SocketException catch (_) {
+                                _showSnackBar(
+                                    'Vérifiez votre connexion internet');
+                              }
                             },
                             child: Bouton(
                               icon: Icon(
@@ -495,28 +585,40 @@ class _HomeState extends State<Home> {
                     color: Color(0xFF3B466B),
                   ),
                   onPressed: () async {
-                    String id = await authService.connectedID();
-                    String pseudo = await Firestore.instance
-                        .collection('Utilisateur')
-                        .document(id)
-                        .get()
-                        .then((doc) {
-                      return doc.data['pseudo'];
-                    });
-                    String image = await Firestore.instance
-                        .collection('Utilisateur')
-                        .document(id)
-                        .get()
-                        .then((doc) {
-                      return doc.data['photo'];
-                    });
-                    // _openDrawer(context);
-                    setState(() {
-                      Username = pseudo;
-                      Userimage = image;
-                      index = 1;
-                      // _visible = !_visible;
-                    });
+                    try {
+                      final result = await InternetAddress.lookup('google.com');
+                      var result2 = await Connectivity().checkConnectivity();
+                      var b = (result2 != ConnectivityResult.none);
+
+                      if (b &&
+                          result.isNotEmpty &&
+                          result[0].rawAddress.isNotEmpty) {
+                        String id = await authService.connectedID();
+                        String pseudo = await Firestore.instance
+                            .collection('Utilisateur')
+                            .document(id)
+                            .get()
+                            .then((doc) {
+                          return doc.data['pseudo'];
+                        });
+                        String image = await Firestore.instance
+                            .collection('Utilisateur')
+                            .document(id)
+                            .get()
+                            .then((doc) {
+                          return doc.data['photo'];
+                        });
+                        // _openDrawer(context);
+                        setState(() {
+                          Username = pseudo;
+                          Userimage = image;
+                          index = 1;
+                          // _visible = !_visible;
+                        });
+                      }
+                    } on SocketException catch (_) {
+                      _showSnackBar('Vérifiez votre connexion internet');
+                    }
                   },
                   iconSize: 30.0),
               Spacer(
@@ -542,19 +644,31 @@ class _HomeState extends State<Home> {
                     color: Color(0xFF3B466B),
                   ),
                   onPressed: () async {
-                    // show input autocomplete with selected mode
-                    // then get the Prediction selected
-                    Prediction p = await PlacesAutocomplete.show(
-                      context: context,
-                      apiKey: kGoogleApiKey,
-                      onError: onError,
-                      mode: Mode.overlay,
-                      language: "fr",
-                      components: [Component(Component.country, "DZ")],
-                    );
+                    try {
+                      final result = await InternetAddress.lookup('google.com');
+                      var result2 = await Connectivity().checkConnectivity();
+                      var b = (result2 != ConnectivityResult.none);
 
-                    Provider.of<controllermap>(context, listen: false)
-                        .displayPredictionRecherche(p);
+                      if (b &&
+                          result.isNotEmpty &&
+                          result[0].rawAddress.isNotEmpty) {
+                        // show input autocomplete with selected mode
+                        // then get the Prediction selected
+                        Prediction p = await PlacesAutocomplete.show(
+                          context: context,
+                          apiKey: kGoogleApiKey,
+                          onError: onError,
+                          mode: Mode.overlay,
+                          language: "fr",
+                          components: [Component(Component.country, "DZ")],
+                        );
+
+                        Provider.of<controllermap>(context, listen: false)
+                            .displayPredictionRecherche(p);
+                      }
+                    } on SocketException catch (_) {
+                      _showSnackBar('Vérifiez votre connexion internet');
+                    }
                   },
                   iconSize: 30.0),
             ],
@@ -611,11 +725,24 @@ class _HomeState extends State<Home> {
                       size: 32.0,
                       color: Colors.white,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        index = 0;
-                      });
-                      Navigator.pushNamed(context, ListGrpPage.id);
+                    onPressed: () async {
+                      try {
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        var result2 = await Connectivity().checkConnectivity();
+                        var b = (result2 != ConnectivityResult.none);
+
+                        if (b &&
+                            result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          setState(() {
+                            index = 0;
+                          });
+                          Navigator.pushNamed(context, ListGrpPage.id);
+                        }
+                      } on SocketException catch (_) {
+                        _showSnackBar('Vérifiez votre connexion internet');
+                      }
                     },
                   ),
                 ],
@@ -626,15 +753,27 @@ class _HomeState extends State<Home> {
               MaterialButton(
                 minWidth: 40,
                 onPressed: () async {
-                  Position position = await Geolocator().getCurrentPosition(
-                      desiredAccuracy: LocationAccuracy.high);
-                  Provider.of<controllermap>(context, listen: false)
-                      .mapController
-                      .animateCamera(CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                              target:
-                                  LatLng(position.latitude, position.longitude),
-                              zoom: 14.0)));
+                  try {
+                    final result = await InternetAddress.lookup('google.com');
+                    var result2 = await Connectivity().checkConnectivity();
+                    var b = (result2 != ConnectivityResult.none);
+
+                    if (b &&
+                        result.isNotEmpty &&
+                        result[0].rawAddress.isNotEmpty) {
+                      Position position = await Geolocator().getCurrentPosition(
+                          desiredAccuracy: LocationAccuracy.high);
+                      Provider.of<controllermap>(context, listen: false)
+                          .mapController
+                          .animateCamera(CameraUpdate.newCameraPosition(
+                              CameraPosition(
+                                  target: LatLng(
+                                      position.latitude, position.longitude),
+                                  zoom: 14.0)));
+                    }
+                  } on SocketException catch (_) {
+                    _showSnackBar('Vérifiez votre connexion internet');
+                  }
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -670,7 +809,7 @@ class MapVoyagePage extends StatefulWidget {
 class _MapVoyagePageState extends State<MapVoyagePage> {
   Voyage groupe;
   String path; // asma u use that path as docref
-  //bool _visible = true;
+  bool _visible = true;
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
@@ -681,9 +820,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 
   //asma variables2
   String alertePerso;
-  final _controller = TextEditingController();
 
-  void setStateIndex(){//asma
+  final _controller = TextEditingController();
+  void setStateIndex() {
+    //asma
     setState(() {
       stackIndex = 0;
     });
@@ -730,6 +870,50 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     };
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  _showSnackBar2(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -751,81 +935,97 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       borderRadius: BorderRadius.circular(50),
                       child: GestureDetector(
                           onTap: () async {
-                            GeoPoint point;
-                            CameraUpdate cameraUpdate;
-                            await Firestore.instance
-                                .document(path)
-                                .collection('members')
-                                .document(groupe.membres[i]['id'])
-                                .get()
-                                .then((DocumentSnapshot ds) {
-                              point = ds.data['position']['geopoint'];
-                            });
-                            LatLng latlng =
-                                new LatLng(point.latitude, point.longitude);
-                            cameraUpdate =
-                                CameraUpdate.newLatLngZoom(latlng, 12);
-                            Provider.of<controllermap>(context, listen: false)
-                                .mapController
-                                .animateCamera(cameraUpdate);
-                            setState(() {
-                              //zoum sur la personne, son id est dans
-                              // groupe.membres[i]['id']
-                              membreinfo['pseudo'] =
-                                  groupe.membres[i]['pseudo'];
-                              membreinfo['image'] = imagesUrl[i];
-                              //remplir le reste des champs de memreinfo avec des Text()
-                              // membreinfo['vitesse']
-                              membreinfo['vitesse'] = StreamBuilder(
-                                stream: Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(groupe.membres[i]['id'])
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  GeoPoint point =
-                                      snapshot.data['location']['geopoint'];
-                                  Position pos = new Position(
-                                    latitude: point.latitude,
-                                    longitude: point.longitude,
-                                    speed: 0,
-                                  );
-                                  double vitesse = 30;
-                                  vitesse = (pos.speed);
-                                  print(vitesse);
-                                  return Text(
-                                    '$vitesse km/h',
-                                    overflow: TextOverflow.clip,
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFFFFFFF),
-                                    ),
-                                  );
-                                },
-                              );
-                              //membreinfo['temps']
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
 
-                              //membreinfo['batterie']
-                              membreinfo['batterie'] = StreamBuilder(
-                                stream: _firestore
-                                    .collection('Utilisateur')
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                GeoPoint point;
+                                CameraUpdate cameraUpdate;
+                                await Firestore.instance
+                                    .document(path)
+                                    .collection('members')
                                     .document(groupe.membres[i]['id'])
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  return Text(
-                                    '${snapshot.data['batterie']}%',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFFFFFFF),
-                                    ),
+                                    .get()
+                                    .then((DocumentSnapshot ds) {
+                                  point = ds.data['position']['geopoint'];
+                                });
+                                LatLng latlng =
+                                    new LatLng(point.latitude, point.longitude);
+                                cameraUpdate =
+                                    CameraUpdate.newLatLngZoom(latlng, 12);
+                                Provider.of<controllermap>(context,
+                                        listen: false)
+                                    .mapController
+                                    .animateCamera(cameraUpdate);
+                                setState(() {
+                                  //zoum sur la personne, son id est dans
+                                  // groupe.membres[i]['id']
+                                  membreinfo['pseudo'] =
+                                      groupe.membres[i]['pseudo'];
+                                  membreinfo['image'] = imagesUrl[i];
+                                  //remplir le reste des champs de memreinfo avec des Text()
+                                  // membreinfo['vitesse']
+                                  membreinfo['vitesse'] = StreamBuilder(
+                                    stream: Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(groupe.membres[i]['id'])
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      GeoPoint point =
+                                          snapshot.data['location']['geopoint'];
+                                      Position pos = new Position(
+                                        latitude: point.latitude,
+                                        longitude: point.longitude,
+                                        speed: 0,
+                                      );
+                                      double vitesse = 30;
+                                      vitesse = (pos.speed);
+                                      print(vitesse);
+                                      return Text(
+                                        '$vitesse km/h',
+                                        overflow: TextOverflow.clip,
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFFFFFFFF),
+                                        ),
+                                      );
+                                    },
                                   );
-                                },
-                              );
-                              index = 3;
-                            });
+                                  //membreinfo['temps']
+
+                                  //membreinfo['batterie']
+                                  membreinfo['batterie'] = StreamBuilder(
+                                    stream: _firestore
+                                        .collection('Utilisateur')
+                                        .document(groupe.membres[i]['id'])
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      return Text(
+                                        '${snapshot.data['batterie']}%',
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFFFFFFFF),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  index = 3;
+                                });
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar2(
+                                  'Vérifiez votre connexion internet', context);
+                            }
                           },
                           child: Image.network(imagesUrl[i]))),
                 ),
@@ -853,9 +1053,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     }
     return Scaffold(
       extendBody: true,
+      key: _scaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -896,28 +1096,43 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 color: Color(0xFF3B466B),
                               ),
                               onPressed: () async {
-                                String id = await authService.connectedID();
-                                String pseudo = await Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(id)
-                                    .get()
-                                    .then((doc) {
-                                  return doc.data['pseudo'];
-                                });
-                                String image = await Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(id)
-                                    .get()
-                                    .then((doc) {
-                                  return doc.data['photo'];
-                                });
-                                // _openDrawer(context);
-                                setState(() {
-                                  Username = pseudo;
-                                  Userimage = image;
-                                  index = 1;
-                                  // _visible = !_visible;
-                                });
+                                try {
+                                  final result = await InternetAddress.lookup(
+                                      'google.com');
+                                  var result2 =
+                                      await Connectivity().checkConnectivity();
+                                  var b = (result2 != ConnectivityResult.none);
+
+                                  if (b &&
+                                      result.isNotEmpty &&
+                                      result[0].rawAddress.isNotEmpty) {
+                                    String id = await authService.connectedID();
+                                    String pseudo = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['pseudo'];
+                                    });
+                                    String image = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['photo'];
+                                    });
+                                    // _openDrawer(context);
+                                    setState(() {
+                                      Username = pseudo;
+                                      Userimage = image;
+                                      index = 1;
+                                      // _visible = !_visible;
+                                    });
+                                  }
+                                } on SocketException catch (_) {
+                                  _showSnackBar(
+                                      'Vérifiez votre connexion internet');
+                                }
                               },
                               iconSize: 30.0),
                           Spacer(
@@ -943,22 +1158,38 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 color: Color(0xFF3B466B),
                               ),
                               onPressed: () async {
-                                // show input autocomplete with selected mode
-                                // then get the Prediction selected
-                                Prediction p = await PlacesAutocomplete.show(
-                                  context: context,
-                                  apiKey: kGoogleApiKey,
-                                  onError: onError,
-                                  mode: Mode.overlay,
-                                  language: "fr",
-                                  components: [
-                                    Component(Component.country, "DZ")
-                                  ],
-                                );
+                                try {
+                                  final result = await InternetAddress.lookup(
+                                      'google.com');
+                                  var result2 =
+                                      await Connectivity().checkConnectivity();
+                                  var b = (result2 != ConnectivityResult.none);
 
-                                Provider.of<controllermap>(context,
-                                        listen: false)
-                                    .displayPredictionRecherche(p);
+                                  if (b &&
+                                      result.isNotEmpty &&
+                                      result[0].rawAddress.isNotEmpty) {
+                                    // show input autocomplete with selected mode
+                                    // then get the Prediction selected
+                                    Prediction p =
+                                        await PlacesAutocomplete.show(
+                                      context: context,
+                                      apiKey: kGoogleApiKey,
+                                      onError: onError,
+                                      mode: Mode.overlay,
+                                      language: "fr",
+                                      components: [
+                                        Component(Component.country, "DZ")
+                                      ],
+                                    );
+
+                                    Provider.of<controllermap>(context,
+                                            listen: false)
+                                        .displayPredictionRecherche(p);
+                                  }
+                                } on SocketException catch (_) {
+                                  _showSnackBar(
+                                      'Vérifiez votre connexion internet');
+                                }
                               },
                               iconSize: 30.0),
                         ],
@@ -991,52 +1222,69 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           ),
                         ),
                         onPressed: () async {
-                          utilisateurID = await AuthService().connectedID();
-                          currentUser =
-                              await AuthService().getPseudo(utilisateurID);
-                          groupPath = path;
-                          showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              context: context,
-                              builder: (context) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      color: Color(0xB07888a0),
-                                      borderRadius: BorderRadius.only(
-                                        topRight: const Radius.circular(10),
-                                        topLeft: const Radius.circular(10),
-                                      )),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Column(
-                                            children: <Widget>[
-                                              RoundedButton(
-                                                  title: 'Personnaliser',
-                                                  colour: Color(0xFF389490),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      stackIndex = 1;
-                                                      Navigator.pop(context);
-                                                    });
-                                                  }),
-                                            ],
+                          try {
+                            final result =
+                                await InternetAddress.lookup('google.com');
+                            var result2 =
+                                await Connectivity().checkConnectivity();
+                            var b = (result2 != ConnectivityResult.none);
+
+                            if (b &&
+                                result.isNotEmpty &&
+                                result[0].rawAddress.isNotEmpty) {
+                              utilisateurID = await AuthService().connectedID();
+                              currentUser =
+                                  await AuthService().getPseudo(utilisateurID);
+                              groupPath = path;
+                              showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                          color: Color(0xB07888a0),
+                                          borderRadius: BorderRadius.only(
+                                            topRight: const Radius.circular(10),
+                                            topLeft: const Radius.circular(10),
+                                          )),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  RoundedButton(
+                                                      title: 'Personnaliser',
+                                                      colour: Color(0xFF389490),
+                                                      onPressed: () async {
+                                                        setState(() {
+                                                          stackIndex = 1;
+                                                          Navigator.pop(
+                                                              context);
+                                                        });
+                                                      }),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          Expanded(
+                                            child: Container(
+                                              //height: 338,
+                                              child: AlertStream(),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Expanded(
-                                        child: Container(
-                                          //height: 338,
-                                          child: AlertStream(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              });
+                                    );
+                                  });
+                            }
+                          } on SocketException catch (_) {
+                            _showSnackBar('Vérifiez votre connexion internet');
+                          }
                         },
                       ),
                       Container(
@@ -1096,12 +1344,27 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
-                            var vvv =
-                                await _firestore.document(groupPath).get();
-                            bool tr = vvv.data['justReceivedAlert'];
-                            _firestore.document(groupPath).updateData({
-                              'justReceivedAlert': !tr,
-                            });
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                var vvv =
+                                    await _firestore.document(groupPath).get();
+                                bool tr = vvv.data['justReceivedAlert'];
+                                _firestore.document(groupPath).updateData({
+                                  'justReceivedAlert': !tr,
+                                });
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1117,13 +1380,29 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
-                            utilisateurID = await AuthService().connectedID();
-                            currentUser =
-                                await AuthService().getPseudo(utilisateurID);
-                            setState(() {
-                              groupPath = path;
-                              stackIndex = 2;
-                            });
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                utilisateurID =
+                                    await AuthService().connectedID();
+                                currentUser = await AuthService()
+                                    .getPseudo(utilisateurID);
+                                setState(() {
+                                  groupPath = path;
+                                  stackIndex = 2;
+                                });
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1137,8 +1416,23 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
-                          onPressed: () {
-                            Navigator.pushNamed(context, ListGrpPage.id);
+                          onPressed: () async {
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                Navigator.pushNamed(context, ListGrpPage.id);
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1186,10 +1480,26 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   height: double.infinity,
                                   width: double.infinity,
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    stackIndex = 0;
-                                  });
+                                onPressed: () async {
+                                  try {
+                                    final result = await InternetAddress.lookup(
+                                        'google.com');
+                                    var result2 = await Connectivity()
+                                        .checkConnectivity();
+                                    var b =
+                                        (result2 != ConnectivityResult.none);
+
+                                    if (b &&
+                                        result.isNotEmpty &&
+                                        result[0].rawAddress.isNotEmpty) {
+                                      setState(() {
+                                        stackIndex = 0;
+                                      });
+                                    }
+                                  } on SocketException catch (_) {
+                                    _showSnackBar(
+                                        'Vérifiez votre connexion internet');
+                                  }
                                 }),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -1285,25 +1595,43 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       title: 'Ok',
                                       colour: Color(0xd03b466b),
                                       onPressed: () async {
-                                        if (alertePerso != null) {
-                                          /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
+                                        try {
+                                          final result =
+                                              await InternetAddress.lookup(
+                                                  'google.com');
+                                          var result2 = await Connectivity()
+                                              .checkConnectivity();
+                                          var b = (result2 !=
+                                              ConnectivityResult.none);
+
+                                          if (b &&
+                                              result.isNotEmpty &&
+                                              result[0].rawAddress.isNotEmpty) {
+                                            if (alertePerso != null) {
+                                              /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
                                           List<DocumentSnapshot> fff=result.documents;
                                           DocumentSnapshot fff1=fff[0];*/
-                                          _firestore
-                                              .collection('Utilisateur')
-                                              .document(utilisateurID)
-                                              .updateData({
-                                            'alertLIST': FieldValue.arrayUnion(
-                                                [alertePerso]),
-                                          });
-                                          alertePerso = null;
+                                              _firestore
+                                                  .collection('Utilisateur')
+                                                  .document(utilisateurID)
+                                                  .updateData({
+                                                'alertLIST':
+                                                    FieldValue.arrayUnion(
+                                                        [alertePerso]),
+                                              });
+                                              alertePerso = null;
+                                            }
+                                            setState(() {
+                                              stackIndex = 0;
+                                              _controller.clear();
+                                              FocusScope.of(context)
+                                                  .requestFocus(FocusNode());
+                                            });
+                                          }
+                                        } on SocketException catch (_) {
+                                          _showSnackBar(
+                                              'Vérifiez votre connexion internet');
                                         }
-                                        setState(() {
-                                          stackIndex = 0;
-                                          _controller.clear();
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                        });
                                       },
                                     ),
                                   ],
@@ -1324,10 +1652,25 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               height: double.infinity,
                               width: double.infinity,
                             ),
-                            onPressed: () {
-                              setState(() {
-                                stackIndex = 0;
-                              });
+                            onPressed: () async {
+                              try {
+                                final result =
+                                    await InternetAddress.lookup('google.com');
+                                var result2 =
+                                    await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b &&
+                                    result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  setState(() {
+                                    stackIndex = 0;
+                                  });
+                                }
+                              } on SocketException catch (_) {
+                                _showSnackBar(
+                                    'Vérifiez votre connexion internet');
+                              }
                             }),
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -1361,7 +1704,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: ReceivedAlertStream(settingindex: setStateIndex),
+                                    child: ReceivedAlertStream(),
                                   ),
                                 ),
                                 SizedBox(
@@ -1374,7 +1717,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       ],
                     ),
                     //indexe3
-                    NotifStream(ffunction: (){
+                    NotifStream(ffunction: () {
                       setState(() {
                         stackIndex = 2;
                       });
@@ -1396,11 +1739,25 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   Row(
                     children: <Widget>[
                       MaterialButton(
-                        onPressed: () {
-                          // _closeDrawer(context);
-                          setState(() {
-                            index = 0;
-                          });
+                        onPressed: () async {
+                          try {
+                            final result =
+                                await InternetAddress.lookup('google.com');
+                            var result2 =
+                                await Connectivity().checkConnectivity();
+                            var b = (result2 != ConnectivityResult.none);
+
+                            if (b &&
+                                result.isNotEmpty &&
+                                result[0].rawAddress.isNotEmpty) {
+                              // _closeDrawer(context);
+                              setState(() {
+                                index = 0;
+                              });
+                            }
+                          } on SocketException catch (_) {
+                            _showSnackBar('Vérifiez votre connexion internet');
+                          }
                         },
                         child: Icon(
                           Icons.arrow_back_ios,
@@ -1466,25 +1823,43 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               children: <Widget>[
                                 ListTile(
                                   onTap: () async {
-                                    String id = await authService.connectedID();
-                                    if (id != null) {
-                                      DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
+                                    try {
+                                      final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
+                                      var result2 = await Connectivity()
+                                          .checkConnectivity();
+                                      var b =
+                                          (result2 != ConnectivityResult.none);
 
-                                      if (snapshot != null) {
-                                        Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
-                                        //  Navigator.pushNamed(context, Home.id);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProfileScreen(
-                                                        utilisateur)));
+                                      if (b &&
+                                          result.isNotEmpty &&
+                                          result[0].rawAddress.isNotEmpty) {
+                                        String id =
+                                            await authService.connectedID();
+                                        if (id != null) {
+                                          DocumentSnapshot snapshot =
+                                              await authService.userRef
+                                                  .document(id)
+                                                  .get();
+
+                                          if (snapshot != null) {
+                                            Utilisateur utilisateur =
+                                                Utilisateur.fromdocSnapshot(
+                                                    snapshot);
+                                            //  Navigator.pushNamed(context, Home.id);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileScreen(
+                                                            utilisateur)));
+                                          }
+                                        }
                                       }
+                                    } on SocketException catch (_) {
+                                      _showSnackBar(
+                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -1518,14 +1893,31 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 ListTile(
                                   onTap: () async {
-                                    String currentUser =
-                                        await AuthService().connectedID();
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FriendsListScreen(
-                                                    currentUser)));
+                                    try {
+                                      final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
+                                      var result2 = await Connectivity()
+                                          .checkConnectivity();
+                                      var b =
+                                          (result2 != ConnectivityResult.none);
+
+                                      if (b &&
+                                          result.isNotEmpty &&
+                                          result[0].rawAddress.isNotEmpty) {
+                                        String currentUser =
+                                            await AuthService().connectedID();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    FriendsListScreen(
+                                                        currentUser)));
+                                      }
+                                    } on SocketException catch (_) {
+                                      _showSnackBar(
+                                          'Vérifiez votre connexion internet');
+                                    }
                                   },
                                   leading: Icon(
                                     Icons.group,
@@ -1703,28 +2095,43 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     width: size.width,
                     child: GestureDetector(
                       onTap: () async {
-                        GeoPoint point;
-                        CameraUpdate cameraUpdate;
-                        String val = await authService.connectedID();
-                        await Firestore.instance
-                            .document(path)
-                            .collection('members')
-                            .document(val)
-                            .get()
-                            .then((DocumentSnapshot ds) {
-                          point = ds.data['position']['geopoint'];
-                        });
-                        LatLng latlng =
-                            new LatLng(point.latitude, point.longitude);
-                        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-                        Provider.of<controllermap>(context, listen: false)
-                            .mapController
-                            .animateCamera(cameraUpdate);
-                        setState(() {
-                          // pour dezoumer de cette personne
-                          // et remettre la cam sur l'utilisateur courrant
-                          index = 0;
-                        });
+                        try {
+                          final result =
+                              await InternetAddress.lookup('google.com');
+                          var result2 =
+                              await Connectivity().checkConnectivity();
+                          var b = (result2 != ConnectivityResult.none);
+
+                          if (b &&
+                              result.isNotEmpty &&
+                              result[0].rawAddress.isNotEmpty) {
+                            GeoPoint point;
+                            CameraUpdate cameraUpdate;
+                            String val = await authService.connectedID();
+                            await Firestore.instance
+                                .document(path)
+                                .collection('members')
+                                .document(val)
+                                .get()
+                                .then((DocumentSnapshot ds) {
+                              point = ds.data['position']['geopoint'];
+                            });
+                            LatLng latlng =
+                                new LatLng(point.latitude, point.longitude);
+                            cameraUpdate =
+                                CameraUpdate.newLatLngZoom(latlng, 12);
+                            Provider.of<controllermap>(context, listen: false)
+                                .mapController
+                                .animateCamera(cameraUpdate);
+                            setState(() {
+                              // pour dezoumer de cette personne
+                              // et remettre la cam sur l'utilisateur courrant
+                              index = 0;
+                            });
+                          }
+                        } on SocketException catch (_) {
+                          _showSnackBar('Vérifiez votre connexion internet');
+                        }
                       },
                     )),
                 Positioned(
@@ -1862,6 +2269,28 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
     index = 0;
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -1912,8 +2341,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 
     return Scaffold(
       extendBody: true,
+      key: _scaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
+      // key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -1953,28 +2384,43 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 color: Color(0xFF3B466B),
                               ),
                               onPressed: () async {
-                                String id = await authService.connectedID();
-                                String pseudo = await Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(id)
-                                    .get()
-                                    .then((doc) {
-                                  return doc.data['pseudo'];
-                                });
-                                String image = await Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(id)
-                                    .get()
-                                    .then((doc) {
-                                  return doc.data['photo'];
-                                });
-                                // _openDrawer(context);
-                                setState(() {
-                                  Username = pseudo;
-                                  Userimage = image;
-                                  index = 1;
-                                  // _visible = !_visible;
-                                });
+                                try {
+                                  final result = await InternetAddress.lookup(
+                                      'google.com');
+                                  var result2 =
+                                      await Connectivity().checkConnectivity();
+                                  var b = (result2 != ConnectivityResult.none);
+
+                                  if (b &&
+                                      result.isNotEmpty &&
+                                      result[0].rawAddress.isNotEmpty) {
+                                    String id = await authService.connectedID();
+                                    String pseudo = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['pseudo'];
+                                    });
+                                    String image = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['photo'];
+                                    });
+                                    // _openDrawer(context);
+                                    setState(() {
+                                      Username = pseudo;
+                                      Userimage = image;
+                                      index = 1;
+                                      // _visible = !_visible;
+                                    });
+                                  }
+                                } on SocketException catch (_) {
+                                  _showSnackBar(
+                                      'Vérifiez votre connexion internet');
+                                }
                               },
                               iconSize: 30.0),
                           Spacer(
@@ -2000,22 +2446,38 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 color: Color(0xFF3B466B),
                               ),
                               onPressed: () async {
-                                // show input autocomplete with selected mode
-                                // then get the Prediction selected
-                                Prediction p = await PlacesAutocomplete.show(
-                                  context: context,
-                                  apiKey: kGoogleApiKey,
-                                  onError: onError,
-                                  mode: Mode.overlay,
-                                  language: "fr",
-                                  components: [
-                                    Component(Component.country, "DZ")
-                                  ],
-                                );
+                                try {
+                                  final result = await InternetAddress.lookup(
+                                      'google.com');
+                                  var result2 =
+                                      await Connectivity().checkConnectivity();
+                                  var b = (result2 != ConnectivityResult.none);
 
-                                Provider.of<controllermap>(context,
-                                        listen: false)
-                                    .displayPredictionRecherche(p);
+                                  if (b &&
+                                      result.isNotEmpty &&
+                                      result[0].rawAddress.isNotEmpty) {
+                                    // show input autocomplete with selected mode
+                                    // then get the Prediction selected
+                                    Prediction p =
+                                        await PlacesAutocomplete.show(
+                                      context: context,
+                                      apiKey: kGoogleApiKey,
+                                      onError: onError,
+                                      mode: Mode.overlay,
+                                      language: "fr",
+                                      components: [
+                                        Component(Component.country, "DZ")
+                                      ],
+                                    );
+
+                                    Provider.of<controllermap>(context,
+                                            listen: false)
+                                        .displayPredictionRecherche(p);
+                                  }
+                                } on SocketException catch (_) {
+                                  _showSnackBar(
+                                      'Vérifiez votre connexion internet');
+                                }
                               },
                               iconSize: 30.0),
                         ],
@@ -2079,8 +2541,23 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
-                          onPressed: () {
-                            Navigator.pushNamed(context, ListGrpPage.id);
+                          onPressed: () async {
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                Navigator.pushNamed(context, ListGrpPage.id);
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -2094,10 +2571,25 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                         padding: EdgeInsets.all(3),
                         child: FloatingActionButton(
                           heroTag: null,
-                          onPressed: () {
-                            setState(() {
-                              index = 2;
-                            });
+                          onPressed: () async {
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                setState(() {
+                                  index = 2;
+                                });
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -2125,11 +2617,25 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                   Row(
                     children: <Widget>[
                       MaterialButton(
-                        onPressed: () {
-                          // _closeDrawer(context);
-                          setState(() {
-                            index = 0;
-                          });
+                        onPressed: () async {
+                          try {
+                            final result =
+                                await InternetAddress.lookup('google.com');
+                            var result2 =
+                                await Connectivity().checkConnectivity();
+                            var b = (result2 != ConnectivityResult.none);
+
+                            if (b &&
+                                result.isNotEmpty &&
+                                result[0].rawAddress.isNotEmpty) {
+                              // _closeDrawer(context);
+                              setState(() {
+                                index = 0;
+                              });
+                            }
+                          } on SocketException catch (_) {
+                            _showSnackBar('Vérifiez votre connexion internet');
+                          }
                         },
                         child: Icon(
                           Icons.arrow_back_ios,
@@ -2195,25 +2701,43 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               children: <Widget>[
                                 ListTile(
                                   onTap: () async {
-                                    String id = await authService.connectedID();
-                                    if (id != null) {
-                                      DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
+                                    try {
+                                      final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
+                                      var result2 = await Connectivity()
+                                          .checkConnectivity();
+                                      var b =
+                                          (result2 != ConnectivityResult.none);
 
-                                      if (snapshot != null) {
-                                        Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
-                                        //  Navigator.pushNamed(context, Home.id);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProfileScreen(
-                                                        utilisateur)));
+                                      if (b &&
+                                          result.isNotEmpty &&
+                                          result[0].rawAddress.isNotEmpty) {
+                                        String id =
+                                            await authService.connectedID();
+                                        if (id != null) {
+                                          DocumentSnapshot snapshot =
+                                              await authService.userRef
+                                                  .document(id)
+                                                  .get();
+
+                                          if (snapshot != null) {
+                                            Utilisateur utilisateur =
+                                                Utilisateur.fromdocSnapshot(
+                                                    snapshot);
+                                            //  Navigator.pushNamed(context, Home.id);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileScreen(
+                                                            utilisateur)));
+                                          }
+                                        }
                                       }
+                                    } on SocketException catch (_) {
+                                      _showSnackBar(
+                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -2567,7 +3091,8 @@ class AlertBubble extends StatelessWidget {
                     desiredAccuracy: LocationAccuracy.medium);
                 Geoflutterfire geo = Geoflutterfire();
                 GeoFirePoint geoP = geo.point(
-                    latitude: position.latitude, longitude: position.longitude);
+                    latitude: position.longitude,
+                    longitude: position.longitude);
 
                 if (text != null &&
                     icon != null &&
@@ -2591,7 +3116,7 @@ class AlertBubble extends StatelessWidget {
                   'justReceivedAlert': !tr,
                 });
 
-                _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -2615,7 +3140,7 @@ class AlertBubble extends StatelessWidget {
                 Navigator.pop(context);
               } else {
                 Navigator.pop(context);
-                _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -2640,7 +3165,7 @@ class AlertBubble extends StatelessWidget {
             }
           } on SocketException catch (_) {
             Navigator.pop(context);
-            _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Row(
                 children: <Widget>[
                   Text(
@@ -2789,7 +3314,7 @@ class AlertStream extends StatelessWidget {
                 isReceived: false,
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 8, top: 8),
+                padding: const EdgeInsets.only(bottom: 6, top: 16),
                 child: Text(
                   'Vos alertes',
                   style: TextStyle(
@@ -2816,7 +3341,7 @@ class AlertStream extends StatelessWidget {
                       });
 
                       alertList.removeAt(index); //iciiiiii
-                      _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+                      _scaffoldKey.currentState.showSnackBar(SnackBar(
                         content: Row(
                           children: <Widget>[
                             Text(
@@ -2879,15 +3404,12 @@ class AlertStream extends StatelessWidget {
 
 class AlertScreen extends StatefulWidget {
   @override
-  _AlertScreenState createState() => _AlertScreenState((){});
+  _AlertScreenState createState() => _AlertScreenState(() {});
 }
 
 class _AlertScreenState extends State<AlertScreen> {
-
   final Function onTouched;
-
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
   _AlertScreenState(this.onTouched);
   @override
   void initState() {
@@ -2903,7 +3425,6 @@ class _AlertScreenState extends State<AlertScreen> {
   Future onSelectedNotification(String payload) {
     debugPrint('payload : $payload');
     //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
-
     onTouched();
     /*showDialog(
       context: context,
@@ -2969,7 +3490,7 @@ IconData createIcon(String s) {
       break;
     case 'IconData(U+0E8BF)':
       {
-        return Icons.av_timer;
+        return Icons.settings_input_antenna;
       }
       break;
     case 'IconData(U+0E56F)':
@@ -3035,7 +3556,9 @@ class ReceivedAlertBubble extends StatelessWidget {
   AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
-  Function settingindex = (){print('heeeeeeeeeeeeeeeeeeeeey');} ;
+  Function settingindex = () {
+    print('heeeeeeeeeeeeeeeeeeeeey');
+  };
 
   ReceivedAlertBubble(
       {String sender,
@@ -3050,9 +3573,26 @@ class ReceivedAlertBubble extends StatelessWidget {
     this.settingindex = settingindex;
   }
 
-  Future<BitmapDescriptor> createMarkerIc() async {
-    return await UpdateMarkers2().getMarkerIcon(
-        createIconPicture(alert.icon.toString()), Size(150, 150));
+  _showSnackBar(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    ));
   }
 
   @override
@@ -3060,34 +3600,44 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () async {
-          MarkerId markerId = MarkerId(
-              geoPoint.latitude.toString() + geoPoint.longitude.toString());
-          Provider.of<UpdateMarkers>(
-            context,
-          ).markers.remove(markerId);
+          try {
+            final result = await InternetAddress.lookup('google.com');
+            var result2 = await Connectivity().checkConnectivity();
+            var b = (result2 != ConnectivityResult.none);
 
-          Marker _marker = Marker(
-            markerId: markerId,
-            position: LatLng(geoPoint.latitude, geoPoint.longitude),
-            infoWindow: InfoWindow(title: sender, snippet: alert.text),
+            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              MarkerId markerId = MarkerId(
+                  geoPoint.latitude.toString() + geoPoint.longitude.toString());
+              Provider.of<UpdateMarkers>(
+                context,
+              ).markers.remove(markerId);
+
+              Marker _marker = Marker(
+                markerId: markerId,
+                position: LatLng(geoPoint.latitude, geoPoint.longitude),
+                infoWindow: InfoWindow(title: sender, snippet: alert.text),
 //           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
 //            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
-            icon: await createMarkerIc(),
-          );
-          Provider.of<UpdateMarkers>(
-            context,
-          ).markers[markerId] = _marker;
+                icon: await createMarkerIc(),
+              );
+              Provider.of<UpdateMarkers>(
+                context,
+              ).markers[markerId] = _marker;
 
+              CameraUpdate cameraUpdate;
+              cameraUpdate = CameraUpdate.newLatLngZoom(
+                  LatLng(geoPoint.latitude, geoPoint.longitude), 10);
+              Provider.of<controllermap>(context, listen: false)
+                  .mapController
+                  .animateCamera(cameraUpdate);
 
-          CameraUpdate cameraUpdate;
-          cameraUpdate = CameraUpdate.newLatLngZoom(
-              LatLng(geoPoint.latitude, geoPoint.longitude), 10);
-          Provider.of<controllermap>(context, listen: false)
-              .mapController
-              .animateCamera(cameraUpdate);
+              settingindex();
+//TODO: je positionne l'alerte sur la map
 
-        settingindex();
-          //TODO: je positionne l'alerte sur la map
+            }
+          } on SocketException catch (_) {
+            _showSnackBar('Vérifiez votre connexion internet', context);
+          }
         },
         padding: const EdgeInsets.all(0),
         child: Column(
@@ -3116,7 +3666,6 @@ class ReceivedAlertStream extends StatelessWidget {
   Function settingindex;
 
   ReceivedAlertStream({this.settingindex});
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -3226,15 +3775,14 @@ class AlertBubbleBox extends StatelessWidget {
   }
 }
 
-void addListnerToNotifier(Function ffunction) {
+void addListnerToNotifier() {
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
     checkSenderUser();
-    if (currentUser != notifSender) {
-      var vaaa = _AlertScreenState(ffunction);
-      vaaa.initState();
-      await vaaa.showNotificationWithDefaultSound();
-    }
+
+    var vaaa = _AlertScreenState(() {});
+    vaaa.initState();
+    await vaaa.showNotificationWithDefaultSound();
   });
 }
 

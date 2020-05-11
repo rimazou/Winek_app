@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,10 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'DestinationFromFav.dart';
+import 'dart:io';
+import 'dart:ui';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 Databasegrp data = Databasegrp();
 bool _alerte_nom = false;
@@ -25,7 +30,7 @@ List<Map<dynamic, dynamic>> membres;
 bool _loading;
 final _firestore = Firestore.instance;
 GoogleMapsPlaces _places =
-    GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
+GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 void createlongterme() async {
   // get the current user info
@@ -63,7 +68,7 @@ void createlongterme() async {
   // adding that grp to member's invitations liste.
   for (Map m in membres) {
     DocumentSnapshot doc =
-        await Firestore.instance.collection('UserGrp').document(m['id']).get();
+    await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -83,7 +88,7 @@ void createlongterme() async {
   }
   //adding the grp into the admin list of grp
   DocumentSnapshot userdoc =
-      await Firestore.instance.collection('UserGrp').document(user['id']).get();
+  await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
     if (userdoc.data.containsKey('groupes')) {
       userdoc.reference.updateData({
@@ -316,7 +321,7 @@ void createvoyage() async {
   // adding that grp to member's invitations liste:
   for (Map m in membres) {
     DocumentSnapshot doc =
-        await Firestore.instance.collection('UserGrp').document(m['id']).get();
+    await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -337,7 +342,7 @@ void createvoyage() async {
   print('invitations sent');
   //adding it to admin list of grp
   DocumentSnapshot userdoc =
-      await Firestore.instance.collection('UserGrp').document(user['id']).get();
+  await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
     if (userdoc.data.containsKey('groupes')) {
       userdoc.reference.updateData({
@@ -372,10 +377,30 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
     _loading = false;
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: _loading,
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.white,
         body: Column(
@@ -432,39 +457,51 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      // show input autocomplete with selected mode
-                      // then get the Prediction selected
-                      //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
-                      Prediction p = await PlacesAutocomplete.show(
-                        context: context,
-                        apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
-                        onError: onError,
-                        mode: Mode.overlay,
-                        language: "fr",
-                        components: [Component(Component.country, "DZ")],
-                      );
-                      if (p != null) {
-                        PlacesDetailsResponse detail =
-                            await _places.getDetailsByPlaceId(p.placeId);
-                        var placeId = p.placeId;
-                        String placeIdToString = "$placeId";
-                        double lat = detail.result.geometry.location.lat;
-                        double lng = detail.result.geometry.location.lng;
-                        PlacesDetailsResponse place =
-                            await _places.getDetailsByPlaceId(placeIdToString);
-                        final placeDetail = place.result;
-                        setState(() {
-                          _destinationAdr = placeDetail.formattedAddress;
-                          print(_destinationAdr);
-                          _destination = {
-                            'latitude': lat,
-                            'longitude': lng,
-                            'adresse': _destinationAdr
-                          };
-                        });
-                      }
+                      try {
+                        final result = await InternetAddress.lookup(
+                            'google.com');
+                        var result2 = await Connectivity().checkConnectivity();
+                        var b = (result2 != ConnectivityResult.none);
 
-                      print(_destination);
+                        if (b && result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          // show input autocomplete with selected mode
+                          // then get the Prediction selected
+                          //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
+                          Prediction p = await PlacesAutocomplete.show(
+                            context: context,
+                            apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
+                            onError: onError,
+                            mode: Mode.overlay,
+                            language: "fr",
+                            components: [Component(Component.country, "DZ")],
+                          );
+                          if (p != null) {
+                            PlacesDetailsResponse detail =
+                            await _places.getDetailsByPlaceId(p.placeId);
+                            var placeId = p.placeId;
+                            String placeIdToString = "$placeId";
+                            double lat = detail.result.geometry.location.lat;
+                            double lng = detail.result.geometry.location.lng;
+                            PlacesDetailsResponse place =
+                            await _places.getDetailsByPlaceId(placeIdToString);
+                            final placeDetail = place.result;
+                            setState(() {
+                              _destinationAdr = placeDetail.formattedAddress;
+                              print(_destinationAdr);
+                              _destination = {
+                                'latitude': lat,
+                                'longitude': lng,
+                                'adresse': _destinationAdr
+                              };
+                            });
+                          }
+
+                          print(_destination);
+                        }
+                      } on SocketException catch (_) {
+                        _showSnackBar('Vérifiez votre connexion internet');
+                      }
                     },
                     icon: Icon(Icons.mode_edit),
                     color: Color(0xff707070),
@@ -698,15 +735,15 @@ class _FriendsListState extends State<FriendsList> {
             ),
             trailing: membres.contains(friends[index])
                 ? Icon(
-                    Icons.done,
-                    color: secondarycolor,
-                    size: 30,
-                  )
+              Icons.done,
+              color: secondarycolor,
+              size: 30,
+            )
                 : Icon(
-                    Icons.add_circle_outline,
-                    color: secondarycolor,
-                    size: 30,
-                  ),
+              Icons.add_circle_outline,
+              color: secondarycolor,
+              size: 30,
+            ),
           ),
         );
       },

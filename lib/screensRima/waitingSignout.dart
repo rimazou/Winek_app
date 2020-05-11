@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/screensRima/welcome_screen.dart';
 
 class SignoutWait extends StatefulWidget {
@@ -18,15 +19,8 @@ class _SignoutWaitState extends State<SignoutWait> {
 
   _signOut() async {
     print(' debutsignout');
-    /*print(authService.connectedID());
-     authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
-print('avant singnout');
-    authService.auth.signOut();
-    print('apres signout');
-    authService.connectedID()!='noUser'? print('theres is a user connected') : print ('pas de uuser ') ;
 
-     // authService.googleSignIn.signOut();*/
-
+    try {
     await authService.connectedID().then((val) {
       print(val);
       authService.auth.signOut();
@@ -36,16 +30,12 @@ print('avant singnout');
       print('an error occured ');
     });
     print(' fin signout');
-    Navigator.pushNamed(context, WelcomeScreen.id);
+    Navigator.pushNamed(context, LoginScreen.id);
 
-    // await authService.userRef.document('').updateData({'connecte':false}) ;
-    /*authService.auth.signOut().then((onValue) {
-      print(authService.isLog());
-      authService.connectedID() != null
-          ? print('theres is a user connected')
-          : print('pas de uuser ');
-    });*/
-    //  authService.connectedID()!=null? print('theres is a user connected') : print ('pas de uuser ') ;
+  }
+    catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -55,7 +45,7 @@ print('avant singnout');
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
+              color: Color(0xFF3B466B),
             ),
           ),
         ),

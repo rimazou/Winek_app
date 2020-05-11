@@ -16,7 +16,6 @@ class Database {
    String subipseudo ;
 
    List<dynamic> _modifiedUsersInterested;
-
    // static final  currentUser =  AuthService().connectedID().toString() ;
    String currentUser;
 
@@ -37,9 +36,6 @@ class Database {
 
     print(_modifiedUsersInterested);
     print(this.pseudo);
-
-
-
   }
 
 
@@ -47,7 +43,9 @@ class Database {
        {String pseudo, String id, String subiid, String subipseudo, String currentid}) async {
      String currentUser = currentid;
 
-currentName = await getPseudo(currentUser);
+     await getPseudo(currentUser).then((docSnap) {
+       currentName = docSnap;
+     });
        print(currentName);
 
      this.pseudo = pseudo != null ? pseudo : currentName;
@@ -86,7 +84,6 @@ currentName = await getPseudo(currentUser);
   Future userUpdateData( { String name} ) async {
     // ajouter un amis a la liste de current
     Map map ;
-
     print(this.id);
     print(this.pseudo);
     print(this.subiid);
@@ -101,10 +98,7 @@ currentName = await getPseudo(currentUser);
     _modifiedUsersInterested= [];
     _modifiedUsersInterested.add(map);
     }
-      /* map =({'pseudo': nom, 'id': idd});
-    print(map);
-    _modifiedUsersInterested =new List.of(map.values);
-  }*/
+
     return await userCollection
         .document(subiid)
         .updateData(
@@ -130,7 +124,7 @@ currentName = await getPseudo(currentUser);
 if (_modifiedUsersInterested!=null){
     print(_modifiedUsersInterested);
     for (var map in _modifiedUsersInterested) {
-      if (map["id"] == id) {
+      if (map["pseudo"] == this.pseudo) {
         _modifiedUsersInterested.remove(map);
 
       }}}
@@ -191,7 +185,7 @@ else{
 
 
    Stream<List<String>> get friendRequest {
-    return userCollection.document(currentUser).snapshots().map((snap) {
+     return userCollection.document(this.currentUser).snapshots().map((snap) {
       List<String> invit ;
       if (snap.data['invitation ']!=null)
         {invit = snap.data['invitation '].cast<String>();
@@ -264,7 +258,7 @@ else{
      return friendlist;
    }
 
-   Future<String> getPseudo(String id) async {
+   /* Future<String> getPseudo(String id) async {
      String pseudo;
     await Firestore.instance
          .collection('Utilisateur')
@@ -274,7 +268,19 @@ else{
        print(pseudo);
 
      });
-     return pseudo.toString();}
+     return pseudo.toString();}*/
+
+   Future<String> getPseudo(String id) async {
+     String name = 'marche pas';
+     await Firestore.instance.collection('Utilisateur').document(id)
+         .get()
+         .then((docSnap) {
+       if (docSnap.data != null) {
+         name = docSnap.data['pseudo'];
+       }
+     });
+     return name;
+   }
 
    Future<String> getPhoto(String pseudo) async {
      String image;
@@ -371,8 +377,10 @@ else{
                .data['invitation ']; //Liste inviiiiiiiiiiiiiiiiiiiit
            if (listinvit != null) {
              if (listinvit.contains(oldp)) {
+
                await Database(pseudo: oldp).userDeleteData(doc.documentID);
                await Database(pseudo: newp).invitUpdateData(doc.documentID);
+
              }
            }
          }
@@ -420,7 +428,8 @@ else{
            }
 
            try { // Sennnnnnderrrrrrrrrrr
-             await Firestore.instance.document(grp).collection('receivedAlerts')
+             await Firestore.instance.document(grp)
+                 .collection('receivedAlerts')
                  .getDocuments()
                  .then((QuerySnapshot data) {
                if (data != null)

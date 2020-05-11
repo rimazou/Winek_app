@@ -1,5 +1,7 @@
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,23 +9,44 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/register_screen.dart';
 import '../UpdateMarkers.dart';
 import '../classes.dart';
-import 'waitingSignout.dart';
-import 'package:winek/screensRima/profile_screen.dart';
 import 'package:winek/screensRima/resetmail.dart';
-import 'profile_screen.dart';
 import 'resetmail.dart';
 import '../auth.dart';
 import 'dart:async';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:winek/UpdateMarkers.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-
+void getUserLocation() async {
+  var val = await authService.connectedID();
+  if (val != null) // ca permetra de faire lappel seulement quand le user est co
+      {
+    try {
+      var geolocator = Geolocator();
+      var locationOptions = LocationOptions(
+          accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator
+          .getPositionStream(locationOptions).listen(
+              (Position position) {
+            GeoFirePoint geoFirePoint = authService.geo.point(
+                latitude: position.latitude, longitude: position.longitude);
+            authService.userRef.document(val).updateData(
+                {'location': geoFirePoint.data});
+            print(geoFirePoint.data.toString());
+          });
+    } catch (e) {
+      print('ya eu une erreur pour la localisation');
+    }
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
@@ -34,13 +57,33 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String pwd, mail, errMl, errPwd;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
           child: SingleChildScrollView(
@@ -173,8 +216,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, ResetMailScreen.id);
+                  onPressed: () async {
+                    try {
+                      final result = await InternetAddress.lookup('google.com');
+                      var result2 = await Connectivity().checkConnectivity();
+                      var b = (result2 != ConnectivityResult.none);
+
+                      if (b && result.isNotEmpty &&
+                          result[0].rawAddress.isNotEmpty) {
+                        Navigator.pushNamed(context, ResetMailScreen.id);
+                      }
+                    } on SocketException catch (_) {
+                      _showSnackBar('Vérifiez votre connexion internet');
+                    }
                   },
                 ),
                 SizedBox(
@@ -193,14 +247,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         child: MaterialButton(
 
-                          onPressed: () =>
-                              Navigator.pushNamed(
-                                  context, RegistrationScreen.id), //_signInG(),
+                          onPressed: () async {
+                            try {
+                              final result = await InternetAddress.lookup(
+                                  'google.com');
+                              var result2 = await Connectivity()
+                                  .checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b && result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                Navigator.pushNamed(
+                                    context, RegistrationScreen.id);
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
+                          }, //_signInG(),
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
 
-                            "s'inscrire",
+                            "S'inscrire",
 
                             style: TextStyle(
                               fontFamily: 'Montserrat',
@@ -220,7 +289,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
-                          onPressed: () => connect(),
+                          onPressed: () async {
+                            try {
+                              final result = await InternetAddress.lookup(
+                                  'google.com');
+                              var result2 = await Connectivity()
+                                  .checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b && result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                connect();
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
+                          },
 
                           minWidth: 140.0,
                           height: 42.0,
@@ -239,6 +324,40 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
+                  child: Material(
+                    color: Colors.white,
+
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    elevation: 5.0,
+                    child: MaterialButton(
+                      onPressed: () => _signInWithGoogle(),
+
+                      height: 42.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+
+                              height: 42,
+                              child: Image.asset(
+                                  'images/googlelogo.png', fit: BoxFit.fill)),
+                          Text(
+                            'Google',
+
+                            style: TextStyle(
+                              color: Color(0XFF707070),
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
 
@@ -248,17 +367,72 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-/*  Future<FirebaseUser> _signInG() async {
-    GoogleSignInAccount googleUser = await authService.googleSignIn.signIn();
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final FirebaseUser user = (await authService.auth.signInWithCredential(credential)) as FirebaseUser;
-    print("signed in " + user.displayName);
-    return user;
-  }*/
+  Future<String> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount googleUser = await authService.googleSignIn
+          .signIn();
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final FirebaseUser user = (await authService.auth.signInWithCredential(
+          credential)).user;
+
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      final FirebaseUser currentUser = await authService.auth.currentUser();
+      assert(user.uid == currentUser.uid);
+
+      print('loggein is cette personnnee');
+      print(currentUser.email);
+      if (user != null) {
+        authService.db.collection('Utilisateur').document(user.uid).updateData(
+            {'connecte': true});
+        print('user logged in');
+        // getUserLocation();
+        // Provider.of<DeviceInformationService>(context, listen: false)
+        //   .broadcastBatteryLevel(user.uid);
+      }
+      else {
+        print('failed google authetication');
+      }
+    }
+    catch (logIn) {
+      if (logIn is PlatformException) {
+        if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          showSnackBar(
+              'Veuillez verifiez votre connexion internet et reessayez',
+              context);
+        }
+        else {
+          print(logIn);
+        }
+      }
+    }
+  }
+  showSnackBar(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    ));
+  }
+
 
   connect() async {
     try {
@@ -266,7 +440,10 @@ class _LoginScreenState extends State<LoginScreen> {
           email: mail,
           password: pwd);
       if (user != null) {
-        authService.getUserLocation();
+        //getUserLocation();
+        //Provider.of<DeviceInformationService>(context,listen:false).broadcastBatteryLevel(user.user.uid);
+
+        getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
         authService.userRef.document(user.user.uid).updateData(
@@ -286,56 +463,21 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
     catch (logIn) {
-
-        if (logIn is PlatformException) {
-          if (logIn.code == 'ERROR_USER_NOT_FOUND') {
-            setState(() {
-              errMl = 'Utilisateur inexistant';
-            });
-            print(logIn);
-            print(errMl);
-
-          } else {
-            print(logIn);
-            setState(() {
-              errMl = null;
-            });
-          }
-          if (logIn.code == 'ERROR_INVALID_EMAIL') {
-            print(logIn);
-            setState(() {
-              errMl = "Veuillez introduire une adresse valide";
-            });
-          } else {
-            print(logIn);
-            setState(() {
-              errMl = null;
-            });
-          }
-          if (logIn.code == 'ERROR_WRONG_PASSWORD') {
-            print(logIn);
-            setState(() {
-              errPwd = 'Mot de passe errone';
-              // showAlertDialog(context, errPwd, "heading", "ok");
-
-            });
-          }
-          else {
-            setState(() {
-              errPwd = null;
-            });
-          }
-          if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
-            // erreur reseau internet faire qlq chose
-            print(logIn);
-
-          }
-          else {
-            setState(() {
-              errPwd = null;
-            });
-          }
+      if (logIn is PlatformException) {
+        if (logIn.code == 'ERROR_USER_NOT_FOUND') {
+          showSnackBar('Utilisateur inexistant', context);
         }
+        if (logIn.code == 'ERROR_INVALID_EMAIL') {
+          showSnackBar("Veuillez introduire une adresse valide", context);
+        }
+        if (logIn.code == 'ERROR_WRONG_PASSWORD') {
+          showSnackBar('Mot de passe errone', context);
+        }
+
+        if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          showSnackBar('Vérifiez votre connexion internet', context);
+        }
+      }
     }
   }
 
@@ -345,7 +487,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
+              color: Color(0XFF389490),
             ),
           ),
         ),
