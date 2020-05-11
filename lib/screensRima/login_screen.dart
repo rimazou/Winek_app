@@ -25,28 +25,59 @@ import 'package:winek/UpdateMarkers.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+/*
+StreamSubscription<Position> positionStream;
 void getUserLocation() async {
   var val = await authService.connectedID();
   if (val != null) // ca permetra de faire lappel seulement quand le user est co
-      {
+  {
     try {
       var geolocator = Geolocator();
-      var locationOptions = LocationOptions(
-          accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream = geolocator
-          .getPositionStream(locationOptions).listen(
-              (Position position) {
-            GeoFirePoint geoFirePoint = authService.geo.point(
-                latitude: position.latitude, longitude: position.longitude);
-            authService.userRef.document(val).updateData(
-                {'location': geoFirePoint.data});
-            print(geoFirePoint.data.toString());
-          });
+      Position position;
+      var locationOptions =
+          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+      positionStream =
+          geolocator.getPositionStream(locationOptions).listen((position) {
+        double vitesse = position.speed;
+        GeoFirePoint geoFirePoint = authService.geo
+            .point(latitude: position.latitude, longitude: position.longitude);
+        authService.userRef
+            .document(val)
+            .updateData({'location': geoFirePoint.data, 'vitesse': vitesse});
+        print(geoFirePoint.data.toString());
+      });
     } catch (e) {
       print('ya eu une erreur pour la localisation');
     }
   }
 }
+
+ */
+/*
+void getUserLocation() async {
+  var val = await authService.connectedID();
+  if (val != null) // ca permetra de faire lappel seulement quand le user est co
+  {
+    try {
+      var geolocator = Geolocator();
+      var locationOptions =
+          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+      StreamSubscription<Position> positionStream = geolocator
+          .getPositionStream(locationOptions)
+          .listen((Position position) {
+        GeoFirePoint geoFirePoint = authService.geo
+            .point(latitude: position.latitude, longitude: position.longitude);
+        authService.userRef
+            .document(val)
+            .updateData({'location': geoFirePoint.data});
+        print(geoFirePoint.data.toString());
+      });
+    } catch (e) {
+      print('ya eu une erreur pour la localisation');
+    }
+  }
+}
+*/
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
@@ -71,9 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
@@ -94,11 +127,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 30.0,
                 ),
-
                 Container(
-
                   height: 120.0,
-                  child: Image.asset('images/logo.png', fit: BoxFit.fill,height: 120.0,width: 120.0,),
+                  child: Image.asset(
+                    'images/logo.png',
+                    fit: BoxFit.fill,
+                    height: 120.0,
+                    width: 120.0,
+                  ),
                 ),
                 Text(
                   'Winek',
@@ -106,8 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 26.0,
                     fontWeight: FontWeight.w900,
-                    color:Color(0XFF3B466B),
-
+                    color: Color(0XFF3B466B),
                   ),
                 ),
                 SizedBox(
@@ -119,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'Montserrat',
                     fontSize: 20.0,
                     fontWeight: FontWeight.w900,
-                    color: Color(0XFF389490),//vert
+                    color: Color(0XFF389490), //vert
                   ),
                 ),
                 SizedBox(
@@ -130,11 +165,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     mail = value;
                     setState(() {
-                      !Validator.email(mail) ? errMl = null : errMl =
-                      "Veuillez introduire une adresse valide";
+                      !Validator.email(mail)
+                          ? errMl = null
+                          : errMl = "Veuillez introduire une adresse valide";
                     });
                   },
-
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black87,
@@ -150,7 +185,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     errorStyle: TextStyle(
                         color: Colors.red,
                         fontFamily: 'Montserrat',
-
                         fontWeight: FontWeight.bold),
                     contentPadding:
                     EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -172,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextField(
                   onChanged: (value) {
-                    pwd=value ;
+                    pwd = value;
                     if (pwd.isEmpty) {
                       setState(() {
                         errPwd = 'Veuillez introduire un mot de passe';
@@ -181,7 +215,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   obscureText: true,
                   autocorrect: false,
-
                   style: TextStyle(
                     fontFamily: 'Montserrat',
 
@@ -212,8 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'mot de passe oublie ?',
                     style: TextStyle(
-                      color:Color(0XFF389490),
-
+                      color: Color(0XFF389490),
                     ),
                   ),
                   onPressed: () async {
@@ -222,7 +254,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       var result2 = await Connectivity().checkConnectivity();
                       var b = (result2 != ConnectivityResult.none);
 
-                      if (b && result.isNotEmpty &&
+                      if (b &&
+                          result.isNotEmpty &&
                           result[0].rawAddress.isNotEmpty) {
                         Navigator.pushNamed(context, ResetMailScreen.id);
                       }
@@ -234,28 +267,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 24.0,
                 ),
-
                 Row(
-                  mainAxisAlignment:MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
-                        color:Color(0XFF3B466B),
-
+                        color: Color(0XFF3B466B),
                         child: MaterialButton(
-
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
                                 Navigator.pushNamed(
                                     context, RegistrationScreen.id);
@@ -268,14 +299,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
-
                             "S'inscrire",
-
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              color:Colors.white,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
-
                             ),
                           ),
                         ),
@@ -284,20 +312,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Material(
-                        color:Color(0XFF389490),
-
+                        color: Color(0XFF389490),
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
                                 connect();
                               }
@@ -306,17 +334,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Vérifiez votre connexion internet');
                             }
                           },
-
                           minWidth: 140.0,
                           height: 42.0,
                           child: Text(
                             'Se connecter',
-
                             style: TextStyle(
-                              color: Colors.white ,
+                              color: Colors.white,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold ,
-
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -328,29 +353,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
                   child: Material(
                     color: Colors.white,
-
                     borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     elevation: 5.0,
                     child: MaterialButton(
                       onPressed: () => _signInWithGoogle(),
-
                       height: 42.0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Container(
-
                               height: 42,
-                              child: Image.asset(
-                                  'images/googlelogo.png', fit: BoxFit.fill)),
+                              child: Image.asset('images/googlelogo.png',
+                                  fit: BoxFit.fill)),
                           Text(
                             'Google',
-
                             style: TextStyle(
                               color: Color(0XFF707070),
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.bold,
-
                             ),
                           ),
                         ],
@@ -360,7 +380,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
-
           ),
         ),
       ),
@@ -369,16 +388,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<String> _signInWithGoogle() async {
     try {
-      final GoogleSignInAccount googleUser = await authService.googleSignIn
-          .signIn();
+      final GoogleSignInAccount googleUser =
+      await authService.googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
       await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final FirebaseUser user = (await authService.auth.signInWithCredential(
-          credential)).user;
+      final FirebaseUser user =
+          (await authService.auth.signInWithCredential(credential)).user;
 
       assert(user.email != null);
       assert(user.displayName != null);
@@ -390,30 +409,30 @@ class _LoginScreenState extends State<LoginScreen> {
       print('loggein is cette personnnee');
       print(currentUser.email);
       if (user != null) {
-        authService.db.collection('Utilisateur').document(user.uid).updateData(
-            {'connecte': true});
+        authService.db
+            .collection('Utilisateur')
+            .document(user.uid)
+            .updateData({'connecte': true});
         print('user logged in');
         // getUserLocation();
         // Provider.of<DeviceInformationService>(context, listen: false)
         //   .broadcastBatteryLevel(user.uid);
-      }
-      else {
+      } else {
         print('failed google authetication');
       }
-    }
-    catch (logIn) {
+    } catch (logIn) {
       if (logIn is PlatformException) {
         if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
           showSnackBar(
               'Veuillez verifiez votre connexion internet et reessayez',
               context);
-        }
-        else {
+        } else {
           print(logIn);
         }
       }
     }
   }
+
   showSnackBar(String value, BuildContext context) {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(SnackBar(
@@ -427,29 +446,33 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
 
-
   connect() async {
     try {
-      final user = await authService.auth.signInWithEmailAndPassword(
-          email: mail,
-          password: pwd);
+      final user = await authService.auth
+          .signInWithEmailAndPassword(email: mail, password: pwd);
       if (user != null) {
         //getUserLocation();
         //Provider.of<DeviceInformationService>(context,listen:false).broadcastBatteryLevel(user.user.uid);
 
-        getUserLocation();
+        authService.getUserLocation();
+        authService.updategroupelocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
-        authService.userRef.document(user.user.uid).updateData(
-            {'connecte': true});
-        DocumentSnapshot snapshot = await authService.userRef.document(
-            user.user.uid).get();
+        Provider.of<DeviceInformationService>(context, listen: false)
+            .broadcastBatteryLevel(user.user.uid);
+        authService.userRef
+            .document(user.user.uid)
+            .updateData({'connecte': true});
+        DocumentSnapshot snapshot =
+        await authService.userRef.document(user.user.uid).get();
 
         if (snapshot != null) {
           Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
@@ -461,8 +484,7 @@ class _LoginScreenState extends State<LoginScreen> {
           print(utilisateur.tel);
         }
       }
-    }
-    catch (logIn) {
+    } catch (logIn) {
       if (logIn is PlatformException) {
         if (logIn.code == 'ERROR_USER_NOT_FOUND') {
           showSnackBar('Utilisateur inexistant', context);
@@ -503,13 +525,11 @@ class _LoginScreenState extends State<LoginScreen> {
       onPressed: () => Navigator.pop(context),
     );
 
-
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(heading),
       content: Text(message),
       actions: [
-
         OKButton,
       ],
     );
@@ -522,5 +542,4 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
-
 }

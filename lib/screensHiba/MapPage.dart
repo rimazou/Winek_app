@@ -20,16 +20,13 @@ import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
 import '../screensRima/profile_screen.dart';
-
 import 'composants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-
-
-
-
+import 'Aide.dart';
+import 'planifierArrets.dart';
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -147,9 +144,11 @@ class _HomeState extends State<Home> {
       duration: new Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
@@ -221,8 +220,8 @@ class _HomeState extends State<Home> {
                       width: responsivewidth(280),
                       //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(responsiveradius(
-                            20, 1)),
+                        borderRadius:
+                        BorderRadius.circular(responsiveradius(20, 1)),
                         color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
@@ -268,16 +267,19 @@ class _HomeState extends State<Home> {
                                 ListTile(
                                   onTap: () async {
                                     try {
-                                      final result = await InternetAddress
-                                          .lookup('google.com');
+                                      final result =
+                                      await InternetAddress.lookup(
+                                          'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
-                                      var b = (result2 !=
-                                          ConnectivityResult.none);
+                                      var b =
+                                      (result2 != ConnectivityResult.none);
 
-                                      if (b && result.isNotEmpty &&
+                                      if (b &&
+                                          result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
-                                        String id = await authService.connectedID();
+                                        String id =
+                                        await authService.connectedID();
                                         if (id != null) {
                                           DocumentSnapshot snapshot =
                                           await authService.userRef
@@ -335,14 +337,16 @@ class _HomeState extends State<Home> {
                                 ListTile(
                                   onTap: () async {
                                     try {
-                                      final result = await InternetAddress
-                                          .lookup('google.com');
+                                      final result =
+                                      await InternetAddress.lookup(
+                                          'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
-                                      var b = (result2 !=
-                                          ConnectivityResult.none);
+                                      var b =
+                                      (result2 != ConnectivityResult.none);
 
-                                      if (b && result.isNotEmpty &&
+                                      if (b &&
+                                          result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String currentUser =
                                         await AuthService().connectedID();
@@ -375,6 +379,9 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AidePage.id);
+                                  },
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -390,10 +397,22 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () => //todo desactiver le stream
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => SignoutWait()
-                                      )),
+                                  onTap: () {
+/*    Provider.of<AuthService>(context,
+                                            listen: false)
+                                        .positionStream
+                                        .cancel();
+                                    Provider.of<DeviceInformationService>(
+                                            context,
+                                            listen: false)
+                                        .stopBroadcast();
+*/
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignoutWait()));
+                                  },
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -466,20 +485,20 @@ class _HomeState extends State<Home> {
                           GestureDetector(
                             onTap: () async {
                               try {
-                                final result = await InternetAddress.lookup(
-                                    'google.com');
-                                var result2 = await Connectivity()
-                                    .checkConnectivity();
+                                final result =
+                                await InternetAddress.lookup('google.com');
+                                var result2 =
+                                await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
-                                if (b && result.isNotEmpty &&
+                                if (b &&
+                                    result.isNotEmpty &&
                                     result[0].rawAddress.isNotEmpty) {
+                                  setState(() {
+                                    index = 0;
+                                  });
 
-                              setState(() {
-                                index = 0;
-                              });
-
-                              Navigator.pushNamed(context, NvVoyagePage.id);
+                                  Navigator.pushNamed(context, NvVoyagePage.id);
                                 }
                               } on SocketException catch (_) {
                                 _showSnackBar(
@@ -508,18 +527,20 @@ class _HomeState extends State<Home> {
                           GestureDetector(
                             onTap: () async {
                               try {
-                                final result = await InternetAddress.lookup(
-                                    'google.com');
-                                var result2 = await Connectivity()
-                                    .checkConnectivity();
+                                final result =
+                                await InternetAddress.lookup('google.com');
+                                var result2 =
+                                await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
-                                if (b && result.isNotEmpty &&
+                                if (b &&
+                                    result.isNotEmpty &&
                                     result[0].rawAddress.isNotEmpty) {
-                              setState(() {
-                                index = 0;
-                              });
-                              Navigator.pushNamed(context, NvLongTermePage.id);
+                                  setState(() {
+                                    index = 0;
+                                  });
+                                  Navigator.pushNamed(
+                                      context, NvLongTermePage.id);
                                 }
                               } on SocketException catch (_) {
                                 _showSnackBar(
@@ -583,7 +604,8 @@ class _HomeState extends State<Home> {
                       var result2 = await Connectivity().checkConnectivity();
                       var b = (result2 != ConnectivityResult.none);
 
-                      if (b && result.isNotEmpty &&
+                      if (b &&
+                          result.isNotEmpty &&
                           result[0].rawAddress.isNotEmpty) {
                         String id = await authService.connectedID();
                         String pseudo = await Firestore.instance
@@ -641,7 +663,8 @@ class _HomeState extends State<Home> {
                       var result2 = await Connectivity().checkConnectivity();
                       var b = (result2 != ConnectivityResult.none);
 
-                      if (b && result.isNotEmpty &&
+                      if (b &&
+                          result.isNotEmpty &&
                           result[0].rawAddress.isNotEmpty) {
                         // show input autocomplete with selected mode
                         // then get the Prediction selected
@@ -718,13 +741,14 @@ class _HomeState extends State<Home> {
                         ),
                         onPressed: () async {
                           try {
-                            final result = await InternetAddress.lookup(
-                                'google.com');
+                            final result =
+                            await InternetAddress.lookup('google.com');
                             var result2 = await Connectivity()
                                 .checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
-                            if (b && result.isNotEmpty &&
+                            if (b &&
+                                result.isNotEmpty &&
                                 result[0].rawAddress.isNotEmpty) {
                               setState(() {
                                 index = 0;
@@ -750,7 +774,8 @@ class _HomeState extends State<Home> {
                         var result2 = await Connectivity().checkConnectivity();
                         var b = (result2 != ConnectivityResult.none);
 
-                        if (b && result.isNotEmpty &&
+                        if (b &&
+                            result.isNotEmpty &&
                             result[0].rawAddress.isNotEmpty) {
                           Position position = await Geolocator()
                               .getCurrentPosition(
@@ -760,8 +785,8 @@ class _HomeState extends State<Home> {
                               .mapController
                               .animateCamera(CameraUpdate.newCameraPosition(
                               CameraPosition(
-                                  target:
-                                  LatLng(position.latitude, position.longitude),
+                                  target: LatLng(
+                                      position.latitude, position.longitude),
                                   zoom: 14.0)));
                         }
                       } on SocketException catch (_) {
@@ -802,7 +827,6 @@ class MapVoyagePage extends StatefulWidget {
 class _MapVoyagePageState extends State<MapVoyagePage> {
   Voyage groupe;
   String path; // asma u use that path as docref
-  bool _visible = true;
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
@@ -811,9 +835,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   Map membreinfo;
   _MapVoyagePageState(this.groupe, this.path, this.imagesUrl);
 
-  //asma variables2
-  String alertePerso;
+  bool fermeture;
 
+//asma variables2
+  String alertePerso;
+  bool _loading;
   final _controller = TextEditingController();
   //-----------------------
 
@@ -855,6 +881,19 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         ),
       ),
     };
+    Firestore.instance
+        .document(path)
+        .collection('fermeture')
+        .document('fermeture')
+        .snapshots(includeMetadataChanges: true)
+        .listen((DocumentSnapshot documentSnapshot) {
+      fermeture = documentSnapshot.data['fermer'];
+      if (fermeture) {
+        setState(() {
+          index = 4;
+        });
+      }
+    });
   }
 
   _showSnackBar(String value) {
@@ -870,9 +909,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
       duration: new Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
@@ -891,11 +932,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
       duration: new Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -918,13 +962,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       child: GestureDetector(
                           onTap: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
                                 GeoPoint point;
                                 CameraUpdate cameraUpdate;
@@ -939,49 +984,154 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 LatLng latlng =
                                 new LatLng(point.latitude, point.longitude);
                                 cameraUpdate =
-                                    CameraUpdate.newLatLngZoom(latlng, 12);
-                                Provider.of<controllermap>(context, listen: false)
+                                    CameraUpdate.newLatLngZoom(latlng, 15);
+                                Provider
+                                    .of<controllermap>(context,
+                                    listen: false)
                                     .mapController
                                     .animateCamera(cameraUpdate);
                                 setState(() {
-                                  //zoum sur la personne, son id est dans
-                                  // groupe.membres[i]['id']
+//zoum sur la personne, son id est dans
+// groupe.membres[i]['id']
                                   membreinfo['pseudo'] =
                                   groupe.membres[i]['pseudo'];
                                   membreinfo['image'] = imagesUrl[i];
-                                  //remplir le reste des champs de memreinfo avec des Text()
-                                  // membreinfo['vitesse']
+
+// membreinfo['vitesse']
+                                  var vitesse;
+                                  int vite = 0;
                                   membreinfo['vitesse'] = StreamBuilder(
-                                    stream: Firestore.instance
+                                    stream: _firestore
                                         .collection('Utilisateur')
                                         .document(groupe.membres[i]['id'])
                                         .snapshots(),
                                     builder: (context, snapshot) {
-                                      GeoPoint point =
-                                      snapshot.data['location']['geopoint'];
-                                      Position pos = new Position(
-                                        latitude: point.latitude,
-                                        longitude: point.longitude,
-                                        speed: 0,
-                                      );
-                                      double vitesse = 30;
-                                      vitesse = (pos.speed);
-                                      print(vitesse);
-                                      return Text(
-                                        '$vitesse km/h',
-                                        overflow: TextOverflow.clip,
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFFFFFFFF),
-                                        ),
-                                      );
+                                      if (snapshot.hasData) {
+                                        vitesse = snapshot.data['vitesse'];
+                                        print('Vitesseeee:$vitesse');
+
+                                        if (vitesse != 0) {
+                                          vite = (vitesse * 3.6).toInt();
+                                        } else {
+                                          vite = 0;
+                                        }
+                                        return Text(
+                                          '$vite Km/h',
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFFFFFFFF),
+                                          ),
+                                        );
+                                      }
+                                      return Text('');
                                     },
                                   );
-                                  //membreinfo['temps']
 
-                                  //membreinfo['batterie']
+/* membreinfo['vitesse'] = StreamBuilder(
+                                stream: _firestore
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    print('hasdataa');
+                                    GeoPoint point =
+                                        snapshot.data['location']['geopoint'];
+                                    Position pos = Position(
+                                        latitude: point.latitude,
+                                        longitude: point.longitude);
+                                    print(pos.speedAccuracy);
+                                    print(pos.speed);
+                                    double vitesse = pos.speed;
+                                    return Text(
+                                      '$vitesse m/s',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    );
+                                  }
+                                  return Text('');
+                                },
+                              );*/
+/*   membreinfo['vitesse'] = StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('Utilisateur')
+                                    .document(groupe.membres[i]['id'])
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  GeoPoint point =
+                                      snapshot.data['location']['geopoint'];
+                                  Position pos = new Position(
+                                    latitude: point.latitude,
+                                    longitude: point.longitude,
+                                    speed: 0,
+                                  );
+                                  double vitesse = 30;
+                                  vitesse = (pos.speed);
+                                  print(vitesse);
+                                  return Text(
+                                    '$vitesse km/h',
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  );
+                                },
+                              );
+
+                            */
+//membreinfo['temps']
+                                  double temps = 0;
+                                  dynamic vts = 0;
+                                  GeoPoint point;
+                                  double distance;
+                                  double t;
+                                  int heure = 0;
+                                  int min = 0;
+
+                                  membreinfo['temps'] = StreamBuilder(
+                                      stream: _firestore
+                                          .collection('Utilisateur')
+                                          .document(groupe.membres[i]['id'])
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        vts = snapshot.data['vitesse'];
+                                        if (vts != 0) {
+                                          point = snapshot.data['location']
+                                          ['geopoint'];
+                                          distance = Provider.of<UpdateMarkers>(
+                                              context,
+                                              listen: false)
+                                              .calculateDistance(
+                                              point.latitude,
+                                              point.longitude,
+                                              groupe.destination_latitude,
+                                              groupe.destination_longitude);
+                                          temps = (distance * 1000) / vts;
+                                          t = temps / 60;
+                                          heure = (t ~/ 60).toInt();
+                                          min = (t % 60).toInt();
+                                        }
+                                        return Text(
+                                          '$heure h $min min',
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFFFFFFFF),
+                                          ),
+                                        );
+                                      });
+
+//membreinfo['batterie']
                                   membreinfo['batterie'] = StreamBuilder(
                                     stream: _firestore
                                         .collection('Utilisateur')
@@ -989,7 +1139,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       return Text(
-                                        '${snapshot.data['batterie']}%',
+                                        '${snapshot.data['batterie']}',
                                         style: TextStyle(
                                           fontFamily: 'Montserrat',
                                           fontSize: 10,
@@ -1036,7 +1186,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
       key: _scaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -1080,11 +1229,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 try {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
-                                  var result2 = await Connectivity()
-                                      .checkConnectivity();
+                                  var result2 =
+                                  await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
-                                  if (b && result.isNotEmpty &&
+                                  if (b &&
+                                      result.isNotEmpty &&
                                       result[0].rawAddress.isNotEmpty) {
                                     String id = await authService.connectedID();
                                     String pseudo = await Firestore.instance
@@ -1141,15 +1291,17 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 try {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
-                                  var result2 = await Connectivity()
-                                      .checkConnectivity();
+                                  var result2 =
+                                  await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
-                                  if (b && result.isNotEmpty &&
+                                  if (b &&
+                                      result.isNotEmpty &&
                                       result[0].rawAddress.isNotEmpty) {
                                     // show input autocomplete with selected mode
                                     // then get the Prediction selected
-                                    Prediction p = await PlacesAutocomplete.show(
+                                    Prediction p =
+                                    await PlacesAutocomplete.show(
                                       context: context,
                                       apiKey: kGoogleApiKey,
                                       onError: onError,
@@ -1201,13 +1353,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         ),
                         onPressed: () async {
                           try {
-                            final result = await InternetAddress.lookup(
-                                'google.com');
-                            var result2 = await Connectivity()
-                                .checkConnectivity();
+                            final result =
+                            await InternetAddress.lookup('google.com');
+                            var result2 =
+                            await Connectivity().checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
-                            if (b && result.isNotEmpty &&
+                            if (b &&
+                                result.isNotEmpty &&
                                 result[0].rawAddress.isNotEmpty) {
                               utilisateurID = await AuthService().connectedID();
                               currentUser =
@@ -1225,11 +1378,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                             topLeft: const Radius.circular(10),
                                           )),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
                                         children: <Widget>[
                                           Container(
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                              const EdgeInsets.all(10.0),
                                               child: Column(
                                                 children: <Widget>[
                                                   RoundedButton(
@@ -1238,7 +1393,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                                       onPressed: () async {
                                                         setState(() {
                                                           stackIndex = 1;
-                                                          Navigator.pop(context);
+                                                          Navigator.pop(
+                                                              context);
                                                         });
                                                       }),
                                                 ],
@@ -1319,24 +1475,60 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           heroTag: null,
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                                var vvv = await _firestore.document(groupPath).get();
+                                var vvv =
+                                await _firestore.document(groupPath).get();
                                 bool tr = vvv.data['justReceivedAlert'];
                                 _firestore.document(groupPath).updateData({
                                   'justReceivedAlert': !tr,
                                 });
                               }
+
+
+                              // show input autocomplete with selected mode
+                              // then get the Prediction selected
+                              Prediction p = await PlacesAutocomplete.show(
+                                context: context,
+                                apiKey: kGoogleApiKey,
+                                onError: onError,
+                                mode: Mode.overlay,
+                                language: "fr",
+                                components: [
+                                  Component(Component.country, "DZ")
+                                ],
+                              );
+                              if (p != null) {
+                                PlacesDetailsResponse detail = await _places
+                                    .getDetailsByPlaceId(p.placeId);
+                                print(
+                                    'heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeeee');
+                                //var placeId = p.placeId;
+                                double lat = detail.result.geometry.location
+                                    .lat;
+                                double lng = detail.result.geometry.location
+                                    .lng;
+                                //PlanifierArrets().getChanges(context, path);
+                                PlanifierArrets().addArretsToSubCol(
+                                    path, lat, lng);
+                                print("arret added");
+                                //PlanifierArrets().getChanges(context, path);
+                                print(lat);
+                                print(lng);
+                              };
+
                             } on SocketException catch (_) {
                               _showSnackBar(
                                   'Vérifiez votre connexion internet');
                             }
+
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1353,17 +1545,19 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           heroTag: null,
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                                utilisateurID = await AuthService().connectedID();
-                                currentUser =
-                                await AuthService().getPseudo(utilisateurID);
+                                utilisateurID =
+                                await AuthService().connectedID();
+                                currentUser = await AuthService()
+                                    .getPseudo(utilisateurID);
                                 setState(() {
                                   groupPath = path;
                                   stackIndex = 2;
@@ -1388,15 +1582,16 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           heroTag: null,
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                            Navigator.pushNamed(context, ListGrpPage.id);
+                                Navigator.pushNamed(context, ListGrpPage.id);
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
@@ -1455,14 +1650,15 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         'google.com');
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
-                                    var b = (result2 !=
-                                        ConnectivityResult.none);
+                                    var b =
+                                    (result2 != ConnectivityResult.none);
 
-                                    if (b && result.isNotEmpty &&
+                                    if (b &&
+                                        result.isNotEmpty &&
                                         result[0].rawAddress.isNotEmpty) {
-                                  setState(() {
-                                    stackIndex = 0;
-                                  });
+                                      setState(() {
+                                        stackIndex = 0;
+                                      });
                                     }
                                   } on SocketException catch (_) {
                                     _showSnackBar(
@@ -1564,14 +1760,16 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       colour: Color(0xd03b466b),
                                       onPressed: () async {
                                         try {
-                                          final result = await InternetAddress
-                                              .lookup('google.com');
+                                          final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
                                           var result2 = await Connectivity()
                                               .checkConnectivity();
                                           var b = (result2 !=
                                               ConnectivityResult.none);
 
-                                          if (b && result.isNotEmpty &&
+                                          if (b &&
+                                              result.isNotEmpty &&
                                               result[0].rawAddress.isNotEmpty) {
                                             if (alertePerso != null) {
                                               /*final QuerySnapshot result = await Future.value(_firestore.collection('Utilisateur').where('pseudo',isEqualTo: currentUser).getDocuments()) ;
@@ -1581,7 +1779,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                                   .collection('Utilisateur')
                                                   .document(utilisateurID)
                                                   .updateData({
-                                                'alertLIST': FieldValue.arrayUnion(
+                                                'alertLIST':
+                                                FieldValue.arrayUnion(
                                                     [alertePerso]),
                                               });
                                               alertePerso = null;
@@ -1619,17 +1818,18 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             ),
                             onPressed: () async {
                               try {
-                                final result = await InternetAddress.lookup(
-                                    'google.com');
-                                var result2 = await Connectivity()
-                                    .checkConnectivity();
+                                final result =
+                                await InternetAddress.lookup('google.com');
+                                var result2 =
+                                await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
-                                if (b && result.isNotEmpty &&
+                                if (b &&
+                                    result.isNotEmpty &&
                                     result[0].rawAddress.isNotEmpty) {
-                              setState(() {
-                                stackIndex = 0;
-                              });
+                                  setState(() {
+                                    stackIndex = 0;
+                                  });
                                 }
                               } on SocketException catch (_) {
                                 _showSnackBar(
@@ -1701,18 +1901,19 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       MaterialButton(
                         onPressed: () async {
                           try {
-                            final result = await InternetAddress.lookup(
-                                'google.com');
-                            var result2 = await Connectivity()
-                                .checkConnectivity();
+                            final result =
+                            await InternetAddress.lookup('google.com');
+                            var result2 =
+                            await Connectivity().checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
-                            if (b && result.isNotEmpty &&
+                            if (b &&
+                                result.isNotEmpty &&
                                 result[0].rawAddress.isNotEmpty) {
-                          // _closeDrawer(context);
-                          setState(() {
-                            index = 0;
-                          });
+                              // _closeDrawer(context);
+                              setState(() {
+                                index = 0;
+                              });
                             }
                           } on SocketException catch (_) {
                             _showSnackBar('Vérifiez votre connexion internet');
@@ -1783,16 +1984,19 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ListTile(
                                   onTap: () async {
                                     try {
-                                      final result = await InternetAddress
-                                          .lookup('google.com');
+                                      final result =
+                                      await InternetAddress.lookup(
+                                          'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
-                                      var b = (result2 !=
-                                          ConnectivityResult.none);
+                                      var b =
+                                      (result2 != ConnectivityResult.none);
 
-                                      if (b && result.isNotEmpty &&
+                                      if (b &&
+                                          result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
-                                        String id = await authService.connectedID();
+                                        String id =
+                                        await authService.connectedID();
                                         if (id != null) {
                                           DocumentSnapshot snapshot =
                                           await authService.userRef
@@ -1850,14 +2054,16 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ListTile(
                                   onTap: () async {
                                     try {
-                                      final result = await InternetAddress
-                                          .lookup('google.com');
+                                      final result =
+                                      await InternetAddress.lookup(
+                                          'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
-                                      var b = (result2 !=
-                                          ConnectivityResult.none);
+                                      var b =
+                                      (result2 != ConnectivityResult.none);
 
-                                      if (b && result.isNotEmpty &&
+                                      if (b &&
+                                          result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String currentUser =
                                         await AuthService().connectedID();
@@ -1890,6 +2096,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AidePage.id);
+                                  },
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -1905,7 +2114,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-
                                   onTap: () =>
                                       Navigator.push(
                                           context,
@@ -2053,13 +2261,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     child: GestureDetector(
                       onTap: () async {
                         try {
-                          final result = await InternetAddress.lookup(
-                              'google.com');
-                          var result2 = await Connectivity()
-                              .checkConnectivity();
+                          final result =
+                          await InternetAddress.lookup('google.com');
+                          var result2 =
+                          await Connectivity().checkConnectivity();
                           var b = (result2 != ConnectivityResult.none);
 
-                          if (b && result.isNotEmpty &&
+                          if (b &&
+                              result.isNotEmpty &&
                               result[0].rawAddress.isNotEmpty) {
                             GeoPoint point;
                             CameraUpdate cameraUpdate;
@@ -2074,7 +2283,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             });
                             LatLng latlng =
                             new LatLng(point.latitude, point.longitude);
-                            cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                            cameraUpdate =
+                                CameraUpdate.newLatLngZoom(latlng, 12);
                             Provider.of<controllermap>(context, listen: false)
                                 .mapController
                                 .animateCamera(cameraUpdate);
@@ -2190,6 +2400,58 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                 ),
               ],
             ),
+//index= 4 msg fermeture:
+            Center(
+                child: Container(
+                    width: 300,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Text(
+                              'Tous les membres sont arrivés à destination. Ce voyage est terminé.',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff707070),
+                              )),
+                        ),
+                        Spacer(flex: 1),
+                        Center(
+                          child: MaterialButton(
+                            child: Text('OK',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: secondarycolor,
+                                )),
+                            onPressed: () async {
+                              setState(() {
+                                _loading = true;
+                              });
+                              DocumentSnapshot doc =
+                              await Firestore.instance.document(path).get();
+                              if (doc.exists) {
+                                await data.fermergroupe(path, groupe.nom);
+                              }
+                              setState(() {
+                                _loading = false;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ],
+                    )))
           ]),
         ],
       ),
@@ -2237,26 +2499,27 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
       duration: new Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
-
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     List<Widget> liste = new List();
     //  var it = groupe.membres.iterator;
-    for (int index = 0; index < groupe.membres.length; index++) {
+    for (int i = 0; i < groupe.membres.length; i++) {
       liste.add(
         Padding(
           padding: EdgeInsets.all(7),
           child: InkWell(
-            //onPressed: null,
-            //minWidth: 85,
+//onPressed: null,
+//minWidth: 85,
             child: Column(
               children: <Widget>[
                 Container(
@@ -2267,17 +2530,41 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     backgroundColor: Color(0xFFFFFFFF),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(50),
-                        child: Image.network(imagesUrl[index])),
+                        child: GestureDetector(
+                            onTap: () async {
+                              GeoPoint point;
+                              CameraUpdate cameraUpdate;
+                              await Firestore.instance
+                                  .document(path)
+                                  .collection('members')
+                                  .document(groupe.membres[i]['id'])
+                                  .get()
+                                  .then((DocumentSnapshot ds) {
+                                point = ds.data['position']['geopoint'];
+                              });
+                              LatLng latlng =
+                              new LatLng(point.latitude, point.longitude);
+                              cameraUpdate =
+                                  CameraUpdate.newLatLngZoom(latlng, 15);
+                              Provider
+                                  .of<controllermap>(context, listen: false)
+                                  .mapController
+                                  .animateCamera(cameraUpdate);
+                              setState(() {
+                                index = 3;
+                              });
+                            },
+                            child: Image.network(imagesUrl[i]))),
                   ),
                 ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
-                      groupe.membres[index]['pseudo'],
-                      //overflow:TextOverflow.fade,
+                      groupe.membres[i]['pseudo'],
+//overflow:TextOverflow.fade,
 
-                      //textScaleFactor: 0.4,
+//textScaleFactor: 0.4,
                       style: TextStyle(
                         fontFamily: 'MontSerrat',
                         fontSize: 10,
@@ -2341,11 +2628,12 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 try {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
-                                  var result2 = await Connectivity()
-                                      .checkConnectivity();
+                                  var result2 =
+                                  await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
-                                  if (b && result.isNotEmpty &&
+                                  if (b &&
+                                      result.isNotEmpty &&
                                       result[0].rawAddress.isNotEmpty) {
                                     String id = await authService.connectedID();
                                     String pseudo = await Firestore.instance
@@ -2402,15 +2690,17 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 try {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
-                                  var result2 = await Connectivity()
-                                      .checkConnectivity();
+                                  var result2 =
+                                  await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
-                                  if (b && result.isNotEmpty &&
+                                  if (b &&
+                                      result.isNotEmpty &&
                                       result[0].rawAddress.isNotEmpty) {
                                     // show input autocomplete with selected mode
                                     // then get the Prediction selected
-                                    Prediction p = await PlacesAutocomplete.show(
+                                    Prediction p =
+                                    await PlacesAutocomplete.show(
                                       context: context,
                                       apiKey: kGoogleApiKey,
                                       onError: onError,
@@ -2494,15 +2784,16 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                           heroTag: null,
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                            Navigator.pushNamed(context, ListGrpPage.id);
+                                Navigator.pushNamed(context, ListGrpPage.id);
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
@@ -2523,17 +2814,18 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                           heroTag: null,
                           onPressed: () async {
                             try {
-                              final result = await InternetAddress.lookup(
-                                  'google.com');
-                              var result2 = await Connectivity()
-                                  .checkConnectivity();
+                              final result =
+                              await InternetAddress.lookup('google.com');
+                              var result2 =
+                              await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
-                              if (b && result.isNotEmpty &&
+                              if (b &&
+                                  result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                            setState(() {
-                              index = 2;
-                            });
+                                setState(() {
+                                  index = 2;
+                                });
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
@@ -2568,18 +2860,19 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                       MaterialButton(
                         onPressed: () async {
                           try {
-                            final result = await InternetAddress.lookup(
-                                'google.com');
-                            var result2 = await Connectivity()
-                                .checkConnectivity();
+                            final result =
+                            await InternetAddress.lookup('google.com');
+                            var result2 =
+                            await Connectivity().checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
-                            if (b && result.isNotEmpty &&
+                            if (b &&
+                                result.isNotEmpty &&
                                 result[0].rawAddress.isNotEmpty) {
-                          // _closeDrawer(context);
-                          setState(() {
-                            index = 0;
-                          });
+                              // _closeDrawer(context);
+                              setState(() {
+                                index = 0;
+                              });
                             }
                           } on SocketException catch (_) {
                             _showSnackBar('Vérifiez votre connexion internet');
@@ -2650,16 +2943,19 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 ListTile(
                                   onTap: () async {
                                     try {
-                                      final result = await InternetAddress
-                                          .lookup('google.com');
+                                      final result =
+                                      await InternetAddress.lookup(
+                                          'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
-                                      var b = (result2 !=
-                                          ConnectivityResult.none);
+                                      var b =
+                                      (result2 != ConnectivityResult.none);
 
-                                      if (b && result.isNotEmpty &&
+                                      if (b &&
+                                          result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
-                                        String id = await authService.connectedID();
+                                        String id =
+                                        await authService.connectedID();
                                         if (id != null) {
                                           DocumentSnapshot snapshot =
                                           await authService.userRef
@@ -2684,7 +2980,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                       _showSnackBar(
                                           'Vérifiez votre connexion internet');
                                     }
-
                                   },
                                   leading: Icon(
                                     Icons.playlist_add_check,
@@ -2743,6 +3038,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AidePage.id);
+                                  },
                                   leading: Icon(
                                     Icons.build,
                                     color: myWhite,
@@ -2759,9 +3057,11 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 ),
                                 ListTile(
                                   onTap: () =>
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => SignoutWait()
-                                      )),
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -2886,6 +3186,236 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     ),
                   )),
             ),
+            Stack(
+              children: <Widget>[
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: GestureDetector(
+                    onTap: () async {
+                      GeoPoint point;
+                      CameraUpdate cameraUpdate;
+                      String val = await authService.connectedID();
+                      await Firestore.instance
+                          .document(path)
+                          .collection('members')
+                          .document(val)
+                          .get()
+                          .then((DocumentSnapshot ds) {
+                        point = ds.data['position']['geopoint'];
+                      });
+                      LatLng latlng =
+                      new LatLng(point.latitude, point.longitude);
+                      cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                      Provider
+                          .of<controllermap>(context, listen: false)
+                          .mapController
+                          .animateCamera(cameraUpdate);
+                      setState(() {
+                        index = 0;
+                      });
+                    },
+                  ),
+                ),
+                Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: size.width * 0.075,
+                      top: size.height * 0.04,
+// child: AnimatedOpacity(
+// opacity: _visible ? 1.0 : 0.0,
+//duration: Duration(milliseconds: 500),
+                      child: Container(
+                          height: size.height * 0.07,
+                          width: size.width * 0.85,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(40.0),
+                              color: Colors.white),
+                          child: Row(
+                            children: <Widget>[
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.menu,
+                                    color: Color(0xFF3B466B),
+                                  ),
+                                  onPressed: () async {
+                                    String id = await authService.connectedID();
+                                    String pseudo = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['pseudo'];
+                                    });
+                                    String image = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(id)
+                                        .get()
+                                        .then((doc) {
+                                      return doc.data['photo'];
+                                    });
+// _openDrawer(context);
+                                    setState(() {
+                                      Username = pseudo;
+                                      Userimage = image;
+                                      index = 1;
+// _visible = !_visible;
+                                    });
+                                  },
+                                  iconSize: 30.0),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              Center(
+                                child: Text(
+                                  'Recherche',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 15,
+                                    color: Color(0xff707070),
+                                  ),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: Color(0xFF3B466B),
+                                  ),
+                                  onPressed: () async {
+// show input autocomplete with selected mode
+// then get the Prediction selected
+                                    Prediction p =
+                                    await PlacesAutocomplete.show(
+                                      context: context,
+                                      apiKey: kGoogleApiKey,
+                                      onError: onError,
+                                      mode: Mode.overlay,
+                                      language: "fr",
+                                      components: [
+                                        Component(Component.country, "DZ")
+                                      ],
+                                    );
+
+                                    Provider.of<controllermap>(context,
+                                        listen: false)
+                                        .displayPredictionRecherche(p);
+                                  },
+                                  iconSize: 30.0),
+                            ],
+                          )),
+                    ),
+//liste of members
+                    Positioned(
+                      bottom: 5,
+                      left: MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.025,
+                      child: Container(
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.95,
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * 0.10,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(33.0),
+                          color: Color(0xFF3B466B),
+//color:Color.fromRGBO(59, 70, 150, 0.8),
+                        ),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: liste,
+                          shrinkWrap: false,
+                        ),
+                      ),
+                    ),
+//nom groupe
+                    Positioned(
+                      bottom: 65,
+                      left: MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.025,
+                      child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: primarycolor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blueGrey,
+                                blurRadius: 3.0,
+                                spreadRadius: 0.1,
+                                offset: Offset(0.0, 1.0),
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            groupe.nom,
+                            style: TextStyle(
+                              color: myWhite,
+                              fontSize: 12,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )),
+                    ),
+//floationg butons
+                    Positioned(
+                      right: 5,
+//MediaQuery.of(context).size.width*0.05,
+                      bottom: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.15,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                Navigator.pushNamed(context, ListGrpPage.id);
+                              },
+                              backgroundColor: Color(0xFF389490),
+                              foregroundColor: Color(0xFFFFFFFF),
+                              child: Icon(
+                                Icons.group,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                setState(() {
+                                  index = 2;
+                                });
+                              },
+                              backgroundColor: Color(0xFF389490),
+                              foregroundColor: Color(0xFFFFFFFF),
+                              child: Icon(
+                                Icons.group_add,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
           ]),
         ],
       ),
@@ -3019,9 +3549,7 @@ class AlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
-
-        if(isReceived){}
-        else{
+        if (isReceived) {} else {
           //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
           try {
             final result = await InternetAddress.lookup('google.com');
@@ -3137,7 +3665,6 @@ class AlertBubble extends StatelessWidget {
         }
 
         //TODO : SHOW NOTIF FOR A GROUP MEMBRER
-
       },
       padding: const EdgeInsets.all(0),
       child: Card(
@@ -3211,7 +3738,7 @@ class AlertStream extends StatelessWidget {
             final List alertText = List.from(alert.data['alertLIST']);
             for (int i = 0; i < alertText.length; i++) {
               int llist = alertList.length;
-              if (llist < (alertText.length )) {
+              if (llist < (alertText.length)) {
                 var alertBubble = AlertBubble(
                   text: alertText[i],
                   icon: Icons.sms_failed,
@@ -3262,7 +3789,7 @@ class AlertStream extends StatelessWidget {
                 isReceived: false,
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 6,top: 16),
+                padding: const EdgeInsets.only(bottom: 6, top: 16),
                 child: Text(
                   'Vos alertes',
                   style: TextStyle(
@@ -3276,16 +3803,19 @@ class AlertStream extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: alertList.length,
-                itemBuilder:(context, int index){
+                itemBuilder: (context, int index) {
                   return Dismissible(
                     key: Key(index.toString()),
-                    onDismissed: (direction){
+                    onDismissed: (direction) {
                       AlertBubble alal = alertList[index];
-                      _firestore.collection('Utilisateur').document(utilisateurID).updateData({
-                        'alertLIST':FieldValue.arrayRemove([alal.text]),
+                      _firestore
+                          .collection('Utilisateur')
+                          .document(utilisateurID)
+                          .updateData({
+                        'alertLIST': FieldValue.arrayRemove([alal.text]),
                       });
 
-                      alertList.removeAt(index);//iciiiiii
+                      alertList.removeAt(index); //iciiiiii
                       _scaffoldKey.currentState.showSnackBar(SnackBar(
                         content: Row(
                           children: <Widget>[
@@ -3308,21 +3838,33 @@ class AlertStream extends StatelessWidget {
                         ),
                       ));
                       Navigator.pop(context);
-
-
                     },
-                    background: Container(color: Color(0xB0FF5252),
-                      child: Row(children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal :15.0),
-                          child: Icon(Icons.delete,color: Colors.white,),
-                        ),
-                        Expanded(child: SizedBox(),),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal :15.0),
-                          child: Icon(Icons.delete,color: Colors.white,),
-                        ),
-                      ],),),
+                    background: Container(
+                      color: Color(0xB0FF5252),
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Expanded(
+                            child: SizedBox(),
+                          ),
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     child: alertList[index],
                   );
                 },
@@ -3445,8 +3987,10 @@ class ReceivedAlertBubble extends StatelessWidget {
   DateTime date;
   GeoPoint geoPoint;
 
-  ReceivedAlertBubble(
-      {String sender, AlertBubbleBox alert, Timestamp date, GeoPoint geoPoint}) {
+  ReceivedAlertBubble({String sender,
+    AlertBubbleBox alert,
+    Timestamp date,
+    GeoPoint geoPoint}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
@@ -3467,11 +4011,14 @@ class ReceivedAlertBubble extends StatelessWidget {
       duration: new Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -3483,16 +4030,21 @@ class ReceivedAlertBubble extends StatelessWidget {
             var b = (result2 != ConnectivityResult.none);
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              MarkerId markerId = MarkerId(
+                  geoPoint.latitude.toString() + geoPoint.longitude.toString());
+              Marker _marker = Marker(
+                markerId: markerId,
+                position: LatLng(geoPoint.latitude, geoPoint.latitude),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueViolet),
+              );
+              Provider
+                  .of<UpdateMarkers>(
+                context,
+              )
+                  .markers[markerId] = _marker;
 
-          MarkerId markerId = MarkerId(geoPoint.latitude.toString()+geoPoint.longitude.toString());
-          Marker _marker = Marker(
-            markerId: markerId,
-            position: LatLng(geoPoint.latitude,geoPoint.latitude),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-          );
-          Provider.of<UpdateMarkers>(context,).markers[markerId] = _marker;
-
-          //TODO: je positionne l'alerte sur la map
+              //TODO: je positionne l'alerte sur la map
             }
           } on SocketException catch (_) {
             _showSnackBar('Vérifiez votre connexion internet', context);
@@ -3583,9 +4135,8 @@ class AlertBubbleBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Card(
-      shape:
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
       color: Colors.white,
       elevation: 5.0,
@@ -3632,7 +4183,6 @@ class AlertBubbleBox extends StatelessWidget {
 }
 
 void addListnerToNotifier() {
-
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
     checkSenderUser();
@@ -3640,38 +4190,31 @@ void addListnerToNotifier() {
     var vaaa = _AlertScreenState();
     vaaa.initState();
     await vaaa.showNotificationWithDefaultSound();
-
-
   });
 }
-
 
 class NotifStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection("Voyage")
-          .snapshots(),
+      stream: _firestore.collection("Voyage").snapshots(),
       builder: (context, snapshot) {
-
         addListnerToNotifier();
 
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
-          if (id == _firestore.document(groupPath).documentID){
+          if (id == _firestore
+              .document(groupPath)
+              .documentID) {
             print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
-            if (groupJRA != justReceivedAlert){
+            if (groupJRA != justReceivedAlert) {
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');
-              if (notifSender != currentUser){
+              if (notifSender != currentUser) {
                 valueNotifier.notifyListeners();
-
               }
               justReceivedAlert = groupJRA;
-
             }
           }
         }
@@ -3685,8 +4228,11 @@ class NotifStream extends StatelessWidget {
 String notifSender;
 
 Future<void> checkSenderUser() async {
-  var ggg = await _firestore.document(groupPath).collection("receivedAlerts").orderBy("envoyeLe", descending: true).getDocuments();
+  var ggg = await _firestore
+      .document(groupPath)
+      .collection("receivedAlerts")
+      .orderBy("envoyeLe", descending: true)
+      .getDocuments();
   List<DocumentSnapshot> ggglist = ggg.documents;
   notifSender = ggglist[0].data['sender'];
-
 }

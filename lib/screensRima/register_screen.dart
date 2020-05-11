@@ -22,11 +22,12 @@ import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:winek/UpdateMarkers.dart';
-import 'package:path/path.dart' as p ;
+import 'package:path/path.dart' as p;
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 class RegistrationScreen extends StatefulWidget {
-  static const String id='register';
+  static const String id = 'register';
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -37,7 +38,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       pwd,
       pseudo,
       tel,
-      pic = "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+      pic =
+          "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
   File _image;
   String _uploadedFileURL;
 
@@ -53,9 +55,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
@@ -66,8 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return Center(
           child: SpinKitChasingDots(
             color: Colors.deepPurpleAccent,
-          )
-      );
+          ));
     } else {
       return SafeArea(
         child: Scaffold(
@@ -82,19 +85,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               iconTheme: IconThemeData(
                 color: Colors.black54,
               ),
-
-            ),),
+            ),
+          ),
           body: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
               child: Container(
                 child: Stack(
                   children: <Widget>[
-
                     Center(
-
                       child: Column(
-
                         children: <Widget>[
                           SizedBox(
                             height: 140,
@@ -103,9 +103,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             height: 800.0,
                             width: 320.0,
                           ),
-                        ],),
+                        ],
+                      ),
                     ),
-
                     Center(
                       child: Column(
                         children: <Widget>[
@@ -119,24 +119,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               color: Colors.white,
                               border: Border.all(
                                 color: Colors.grey[300],
-                                width: 3,),
+                                width: 3,
+                              ),
                               boxShadow: [
                                 new BoxShadow(
                                   color: Colors.grey[200],
-                                  blurRadius: 20.0,),
+                                  blurRadius: 20.0,
+                                ),
                               ],
-                              borderRadius: BorderRadius.circular(20),),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                             child: Column(
                               children: <Widget>[
-
-
                                 SizedBox(
                                   height: 80.0,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       left: 20.0, right: 20.0),
-                                  child: Container(height: 38,
+                                  child: Container(
+                                    height: 38,
                                     child: TextField(
                                       onChanged: (value) {
                                         pseudo = value;
@@ -152,16 +154,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       ),
                                       decoration: InputDecoration(
                                         labelText: 'Pseudo',
-
                                         errorText: errPs,
                                         errorStyle: TextStyle(
                                             fontFamily: 'Montserrat',
-
-
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold),
-                                        contentPadding:
-                                        EdgeInsets.symmetric(
+                                        contentPadding: EdgeInsets.symmetric(
                                             vertical: 10.0, horizontal: 20.0),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -191,7 +189,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       left: 20.0, right: 20.0),
-                                  child: Container(height: 38,
+                                  child: Container(
+                                    height: 38,
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       onChanged: (value) {
@@ -204,7 +203,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           mailExist();
                                         });
                                       },
-
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.black87,
@@ -220,10 +218,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         errorStyle: TextStyle(
                                             color: Colors.red,
                                             fontFamily: 'Montserrat',
-
                                             fontWeight: FontWeight.bold),
-                                        contentPadding:
-                                        EdgeInsets.symmetric(
+                                        contentPadding: EdgeInsets.symmetric(
                                             vertical: 10.0, horizontal: 20.0),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -253,7 +249,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       left: 20.0, right: 20.0),
-                                  child: Container(height: 38,
+                                  child: Container(
+                                    height: 38,
                                     child: TextField(
                                       onChanged: (value) {
                                         tel = value;
@@ -265,11 +262,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         });
                                       },
                                       textAlign: TextAlign.center,
-
-                                      keyboardType: TextInputType
-                                          .numberWithOptions(
-
-                                      ),
+                                      keyboardType:
+                                      TextInputType.numberWithOptions(),
                                       style: TextStyle(
                                         color: Colors.black87,
                                         fontFamily: 'Montserrat',
@@ -283,11 +277,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         errorText: errTel,
                                         errorStyle: TextStyle(
                                             fontFamily: 'Montserrat',
-
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold),
-                                        contentPadding:
-                                        EdgeInsets.symmetric(
+                                        contentPadding: EdgeInsets.symmetric(
                                             vertical: 10.0, horizontal: 20.0),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -324,13 +316,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       onChanged: (value) {
                                         setState(() {
                                           pwd = value;
-                                          double strength = estimatePasswordStrength(
-                                              pwd);
+                                          double strength =
+                                          estimatePasswordStrength(pwd);
 
                                           if (strength < 0.3) {
                                             errPwd = 'Mot de passe faible';
-                                          }
-                                          else {
+                                          } else {
                                             errPwd = null;
                                           }
                                         });
@@ -347,16 +338,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       ),
                                       decoration: InputDecoration(
                                         labelText: 'Mot de passe',
-
                                         hoverColor: Colors.black87,
                                         errorText: errPwd,
                                         errorStyle: TextStyle(
                                             fontFamily: 'Montserrat',
-
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold),
-                                        contentPadding:
-                                        EdgeInsets.symmetric(
+                                        contentPadding: EdgeInsets.symmetric(
                                             vertical: 10.0, horizontal: 20.0),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -392,7 +380,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       // obscureText: true,
                                         autocorrect: false,
                                         textAlign: TextAlign.center,
-
                                         onChanged: (value) {
                                           pw = value;
                                           match();
@@ -404,17 +391,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           // decorationColor: Color(0XFFFFCC00),//Font color change
                                           //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                                         ),
-                                        decoration:
-                                        InputDecoration(
-                                          labelText: 'Confirmer le mot de passe',
+                                        decoration: InputDecoration(
+                                          labelText:
+                                          'Confirmer le mot de passe',
                                           errorText: errPw,
                                           errorStyle: TextStyle(
                                               fontFamily: 'Montserrat',
-
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold),
-                                          contentPadding:
-                                          EdgeInsets.symmetric(
+                                          contentPadding: EdgeInsets.symmetric(
                                               vertical: 10.0, horizontal: 20.0),
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.all(
@@ -434,51 +419,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(32.0)),
                                           ),
-                                        )
-
-
-                                    ),
+                                        )),
                                   ),
                                 ),
-
-                              ],),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Center(
-                      child: Column( //photos
-
+                      child: Column(
+                        //photos
 
                         children: <Widget>[
                           SizedBox(
                             height: 140,
                           ),
-
                           Center(
                             child: Container(
                               height: 100.0,
                               width: 100.0,
-
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(
                                   color: Colors.grey[300],
-                                  width: 3,),
+                                  width: 3,
+                                ),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   new BoxShadow(
                                     color: Colors.grey[200],
-                                    blurRadius: 20.0,),
+                                    blurRadius: 20.0,
+                                  ),
                                 ],
                               ),
                               child: photoWig(),
                             ),
                           ),
-
-
                         ],
-
                       ),
                     ),
                     Positioned(
@@ -492,9 +471,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 horizontal: 70, vertical: 20),
                             child: Material(
                               color: Colors.white,
-
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(30.0)),
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
                                 onPressed: () async {
@@ -503,10 +481,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         'google.com');
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
-                                    var b = (result2 !=
-                                        ConnectivityResult.none);
+                                    var b =
+                                    (result2 != ConnectivityResult.none);
 
-                                    if (b && result.isNotEmpty &&
+                                    if (b &&
+                                        result.isNotEmpty &&
                                         result[0].rawAddress.isNotEmpty) {
                                       _registerWithGoogle();
                                     }
@@ -515,26 +494,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         'Vérifiez votre connexion internet');
                                   }
                                 },
-
                                 height: 42.0,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     Container(
-
                                         height: 42,
                                         child: Image.asset(
                                             'images/googlelogo.png',
                                             fit: BoxFit.fill)),
                                     Text(
                                       'Google',
-
                                       style: TextStyle(
                                         color: Color(0XFF707070),
                                         fontFamily: 'Montserrat',
                                         fontWeight: FontWeight.bold,
-
                                       ),
                                     ),
                                   ],
@@ -542,32 +517,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                             ),
                           ),
-
-
                           SizedBox(
                             width: 30,
                           ),
-
-
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
                             child: Material(
                               color: Color(0XFF389490), //vert
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(30.0)),
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
-
                                 onPressed: () async {
                                   try {
                                     final result = await InternetAddress.lookup(
                                         'google.com');
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
-                                    var b = (result2 !=
-                                        ConnectivityResult.none);
+                                    var b =
+                                    (result2 != ConnectivityResult.none);
 
-                                    if (b && result.isNotEmpty &&
+                                    if (b &&
+                                        result.isNotEmpty &&
                                         result[0].rawAddress.isNotEmpty) {
                                       _createUser();
                                     }
@@ -584,7 +555,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     color: Colors.white,
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.bold,
-
                                   ),
                                 ),
                               ),
@@ -602,22 +572,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         padding: EdgeInsets.only(bottom: 0, right: 3),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                          color: Colors.white,),
+                          color: Colors.white,
+                        ),
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 0, right: 3),
                           child: IconButton(
                             icon: Icon(
                               Icons.camera_alt,
-                              size: 30.0,),
+                              size: 30.0,
+                            ),
                             onPressed: () async {
                               try {
-                                final result = await InternetAddress.lookup(
-                                    'google.com');
-                                var result2 = await Connectivity()
-                                    .checkConnectivity();
+                                final result =
+                                await InternetAddress.lookup('google.com');
+                                var result2 =
+                                await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
-                                if (b && result.isNotEmpty &&
+                                if (b &&
+                                    result.isNotEmpty &&
                                     result[0].rawAddress.isNotEmpty) {
                                   showAlertDialog(
                                       context,
@@ -630,10 +603,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               }
                             },
                             // uploadFile();
-
                           ),
                         ),
-                      ),),
+                      ),
+                    ),
                     Positioned(
                       left: 157.5,
                       top: 50,
@@ -644,16 +617,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           fontSize: 12.0,
                           fontWeight: FontWeight.w900,
                           color: Color(0XFF3B466B),
-
                         ),
                       ),
                     ),
-
                     Positioned(
                       left: 96,
                       top: 70,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 20, bottom: 20,),
+                        padding: EdgeInsets.only(
+                          top: 20,
+                          bottom: 20,
+                        ),
                         child: Text(
                           'Inscription',
                           style: TextStyle(
@@ -668,16 +642,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     SizedBox(
                       height: 50,
                     ),
-
                     Positioned(
                       left: 149,
                       child: Container(
-
                         height: 60.0,
                         width: 60.0,
-                        child: Image.asset('images/logo.png', fit: BoxFit.fill,
+                        child: Image.asset(
+                          'images/logo.png',
+                          fit: BoxFit.fill,
                           height: 120.0,
-                          width: 120.0,),
+                          width: 120.0,
+                        ),
                       ),
                     ),
                   ],
@@ -685,7 +660,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
           ),
-
         ),
       );
     }
@@ -696,23 +670,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(17.0),
-
-            child: Image.network(_uploadedFileURL,
+            child: Image.network(
+              _uploadedFileURL,
               height: 100.0,
-
               gaplessPlayback: true,
               fit: BoxFit.fill,
             ),
-          )
-      );
-    }
-    else {
-      return
-        Center(
-            child: SpinKitChasingDots(
-              color: Colors.deepPurpleAccent,
-            )
-        );
+          ));
+    } else {
+      return Center(
+          child: SpinKitChasingDots(
+            color: Colors.deepPurpleAccent,
+          ));
       /*ListView( //photos
             children: <Widget>[
               SizedBox(
@@ -730,16 +699,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future<String> _registerWithGoogle() async {
     try {
-      final GoogleSignInAccount googleUser = await authService.googleSignIn
-          .signIn();
+      final GoogleSignInAccount googleUser =
+      await authService.googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
       await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final FirebaseUser user = (await authService.auth.signInWithCredential(
-          credential)).user;
+      final FirebaseUser user =
+          (await authService.auth.signInWithCredential(credential)).user;
 
       assert(user.email != null);
       assert(user.displayName != null);
@@ -750,11 +719,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       assert(user.uid == currentUser.uid);
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
-      GeoFirePoint pt = geo.point(
-          latitude: lt.latitude, longitude: lt.longitude);
+      GeoFirePoint pt =
+      geo.point(latitude: lt.latitude, longitude: lt.longitude);
       print(currentUser.email);
       if (user != null) {
-        var pic = "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+        var pic =
+            "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
         if (googleUser.photoUrl.isNotEmpty) {
           pic = googleUser.photoUrl;
         }
@@ -772,22 +742,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
         // authService.db.collection('Utilisateur').add(myUser.map);
         //authService..add(myUser.map);
-        authService.db.collection('Utilisateur').document(user.uid).setData(
-            myUser.map);
+        authService.db
+            .collection('Utilisateur')
+            .document(user.uid)
+            .setData(myUser.map);
         print('user CREAAAATEEEEED');
         authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.uid);
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) =>
-                ProfileScreen(myUser)
-        ));
-      }
-      else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ProfileScreen(myUser)));
+      } else {
         print('failed google authetication');
       }
-    }
-    catch (e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -805,9 +773,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
 
@@ -819,10 +789,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print('creaaation bdaaat ');
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
-      GeoFirePoint pt = geo.point(latitude: lt.latitude, longitude: lt.longitude) ;
-      final newUser = await authService.auth.createUserWithEmailAndPassword(
-          email: email,
-          password: pwd);
+      GeoFirePoint pt =
+      geo.point(latitude: lt.latitude, longitude: lt.longitude);
+      final newUser = await authService.auth
+          .createUserWithEmailAndPassword(email: email, password: pwd);
       if (newUser != null) {
         Utilisateur myUser = Utilisateur(
           pseudo: pseudo,
@@ -838,8 +808,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
         // authService.db.collection('Utilisateur').add(myUser.map);
         //authService..add(myUser.map);
-        authService.db.collection('Utilisateur').document(newUser.user.uid).setData(
-            myUser.map);
+        authService.db
+            .collection('Utilisateur')
+            .document(newUser.user.uid)
+            .setData(myUser.map);
         print('user CREAAAATEEEEED');
         print(newUser.user.uid);
         authService.getUserLocation();
@@ -848,52 +820,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         Navigator.pushNamed(context, Home.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
-      }else {
-        print ('pas de creaaaation');
+      } else {
+        print('pas de creaaaation');
         setState(() {
           loading = false;
-        }
-        );
+        });
       }
-    }
-    catch (signUpError) {
-
-      if (signUpError is  PlatformException  ) {
+    } catch (signUpError) {
+      if (signUpError is PlatformException) {
         if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
           showSnackBar('Cet email est deja utilise', context);
         }
         if (signUpError.code == 'ERROR_INVALID_EMAIL') {
           showSnackBar("Veuillez introduire une adresse valide", context);
-
         }
         if (signUpError.code == 'ERROR_WEAK_PASSWORD') {
           showSnackBar('Mot de passe faible', context);
         }
       }
-    }
-    catch(e)
-    {
+    } catch (e) {
       print(e);
     }
-
   }
+
   String errTel;
 
-  String errPwd, errMl ,errPs, errPw ;
+  String errPwd, errMl, errPs, errPw;
   void match() {
     setState(() {
-
       if (pw != pwd) {
-        errPw='Veuillez introduire le meme mot de passe';
+        errPw = 'Veuillez introduire le meme mot de passe';
       } else {
-        errPw=null;
+        errPw = null;
       }
     });
   }
 
   Future chooseFile(ImageSource source) async {
     File cropped;
-    print('choooose file') ;
+    print('choooose file');
     _image = await ImagePicker.pickImage(source: source);
 
     if (_image != null) {
@@ -909,8 +874,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             toolbarColor: Color(0XFF389490), //vert
             statusBarColor: Colors.white,
             backgroundColor: Colors.white),
-
-
       );
     }
     if (cropped != null) {
@@ -918,11 +881,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _image = cropped;
       });
     }
-    print('uploaaaaaaaaaadfile') ;
+    print('uploaaaaaaaaaadfile');
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('photos/${p.basename(_image.path)}}');
-    _uploadedFileURL="https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+    _uploadedFileURL =
+    "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
 
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
@@ -933,7 +897,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       });
     });
   }
-
 
   pseudoExist() async {
     final QuerySnapshot result = await Future.value(authService.db
@@ -973,9 +936,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         errMl = null;
       });
     }
-
   }
-
 
   showAlertDialog(BuildContext context, String message, String heading) {
     // set up the buttons
@@ -983,16 +944,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       color: Color(0XFF389490),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
-          side: BorderSide(color: Color(0XFF389490),
+          side: BorderSide(
+            color: Color(0XFF389490),
             //vert
-          )
+          )),
+      child: Text(
+        'Gallerie',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+        ),
       ),
-      child: Text('Gallerie', style: TextStyle(
-        fontFamily: 'Montserrat',
-
-        fontWeight: FontWeight.w900,
-        color: Colors.white,
-      ),),
       onPressed: () {
         Navigator.pop(context);
         chooseFile(ImageSource.gallery);
@@ -1002,16 +965,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       color: Color(0XFF3B466B),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
-          side: BorderSide(color: Color(0XFF3B466B),
+          side: BorderSide(
+            color: Color(0XFF3B466B),
 //vert
-          )
+          )),
+      child: Text(
+        'Camera',
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+        ),
       ),
-      child: Text('Camera', style: TextStyle(
-        fontFamily: 'Montserrat',
-
-        fontWeight: FontWeight.w900,
-        color: Colors.white,
-      ),),
       onPressed: () {
         Navigator.pop(context);
         chooseFile(ImageSource.camera);
@@ -1026,10 +991,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       shape:
       RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
       actions: [
-
         GalleryButton,
         CameraButton,
-
       ],
     );
 
@@ -1042,5 +1005,3 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 }
-
-

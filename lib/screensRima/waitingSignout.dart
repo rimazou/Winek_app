@@ -21,19 +21,17 @@ class _SignoutWaitState extends State<SignoutWait> {
     print(' debutsignout');
 
     try {
-    await authService.connectedID().then((val) {
-      print(val);
-      authService.auth.signOut();
-      authService.userRef.document(val).updateData({'connecte': false});
-      print('plus d user');
-    }).catchError((onError) {
-      print('an error occured ');
-    });
-    print(' fin signout');
-    Navigator.pushNamed(context, LoginScreen.id);
-
-  }
-    catch (e) {
+      await authService.connectedID().then((val) {
+        print(val);
+        authService.auth.signOut();
+        authService.userRef.document(val).updateData({'connecte': false});
+        print('plus d user');
+      }).catchError((onError) {
+        print('an error occured ');
+      });
+      print(' fin signout');
+      Navigator.pushNamed(context, LoginScreen.id);
+    } catch (e) {
       print(e);
     }
   }

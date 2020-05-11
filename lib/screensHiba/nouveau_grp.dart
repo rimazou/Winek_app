@@ -33,7 +33,7 @@ GoogleMapsPlaces _places =
 GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 void createlongterme() async {
-  // get the current user info
+// get the current user info
   Map<String, String> user = {'pseudo': '', 'id': ''};
   user['id'] = await authService.connectedID();
   user['pseudo'] = await Firestore.instance
@@ -44,7 +44,7 @@ void createlongterme() async {
     return Doc.data['pseudo'];
   });
   print("user:$user");
-  // creationg the doc of the grp
+// creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('LongTerme').add({
     'nom': nom_grp,
     'admin': user['pseudo'],
@@ -53,7 +53,8 @@ void createlongterme() async {
     ], // since he's the admin, others have to accept the invitation first
   });
   Geoflutterfire geo = Geoflutterfire();
-  GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
+  GeoFirePoint point =
+  geo.point(latitude: 36.7525, longitude: 3.041969999999992);
 
   await _firestore
       .document(ref.path)
@@ -62,10 +63,30 @@ void createlongterme() async {
       .setData({
     'position': point.data,
   });
+  GeoPoint position;
+  GeoFirePoint geoFirePoint;
+//  Geoflutterfire geo = Geoflutterfire();
+  _firestore
+      .collection('Utilisateur')
+      .document(user['id'])
+      .snapshots(includeMetadataChanges: true)
+      .listen((DocumentSnapshot documentSnapshot) {
+    position = documentSnapshot.data['location']['geopoint'];
+/*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+      position = ds.data['location']['geopoint'];
+    });*/
+    geoFirePoint =
+        geo.point(latitude: position.latitude, longitude: position.longitude);
+    _firestore
+        .document(ref.path)
+        .collection('members')
+        .document(user['id'])
+        .updateData({'position': geoFirePoint.data});
+  });
   print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   print(grp);
-  // adding that grp to member's invitations liste.
+// adding that grp to member's invitations liste.
   for (Map m in membres) {
     DocumentSnapshot doc =
     await Firestore.instance.collection('UserGrp').document(m['id']).get();
@@ -86,7 +107,7 @@ void createlongterme() async {
       });
     }
   }
-  //adding the grp into the admin list of grp
+//adding the grp into the admin list of grp
   DocumentSnapshot userdoc =
   await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
@@ -285,7 +306,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
 
 //----------------------------------------------------------------------------------//
 void createvoyage() async {
-  // creationg the doc of the grp
+// creationg the doc of the grp
   Map user = {'pseudo': '', 'id': ''};
   user['id'] = await authService.connectedID();
   user['pseudo'] = await Firestore.instance
@@ -295,17 +316,17 @@ void createvoyage() async {
       .then((Doc) {
     return Doc.data['pseudo'];
   });
-  // creationg the doc of the grp
+// creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('Voyage').add({
     'nom': nom_grp,
     'admin': user['pseudo'],
     'destination': _destination,
     'membres': [user],
     'justReceivedAlert': false,
-    // since he's the admin, others have to accept the invitation first
+// since he's the admin, others have to accept the invitation first
   });
   print('voyage cree');
-  //creating the subcollection doc for location
+//creating the subcollection doc for location
   Geoflutterfire geo = Geoflutterfire();
   GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
 
@@ -315,10 +336,38 @@ void createvoyage() async {
       .document(user['id'])
       .setData({
     'position': point.data,
+    'arrive': false,
+  });
+
+  GeoPoint position;
+  GeoFirePoint geoFirePoint;
+//  Geoflutterfire geo = Geoflutterfire();
+  _firestore
+      .collection('Utilisateur')
+      .document(user['id'])
+      .snapshots(includeMetadataChanges: true)
+      .listen((DocumentSnapshot documentSnapshot) {
+    position = documentSnapshot.data['location']['geopoint'];
+/*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+      position = ds.data['location']['geopoint'];
+    });*/
+    geoFirePoint =
+        geo.point(latitude: position.latitude, longitude: position.longitude);
+    _firestore
+        .document(ref.path)
+        .collection('members')
+        .document(user['id'])
+        .updateData({'position': geoFirePoint.data});
   });
   print('member doc added');
+  await _firestore
+      .document(ref.path)
+      .collection('fermeture')
+      .document('fermeture')
+      .setData({'fermer': false});
+
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
-  // adding that grp to member's invitations liste:
+// adding that grp to member's invitations liste:
   for (Map m in membres) {
     DocumentSnapshot doc =
     await Firestore.instance.collection('UserGrp').document(m['id']).get();
@@ -340,7 +389,7 @@ void createvoyage() async {
     }
   }
   print('invitations sent');
-  //adding it to admin list of grp
+//adding it to admin list of grp
   DocumentSnapshot userdoc =
   await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
@@ -389,9 +438,11 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
@@ -458,12 +509,13 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                   IconButton(
                     onPressed: () async {
                       try {
-                        final result = await InternetAddress.lookup(
-                            'google.com');
+                        final result =
+                        await InternetAddress.lookup('google.com');
                         var result2 = await Connectivity().checkConnectivity();
                         var b = (result2 != ConnectivityResult.none);
 
-                        if (b && result.isNotEmpty &&
+                        if (b &&
+                            result.isNotEmpty &&
                             result[0].rawAddress.isNotEmpty) {
                           // show input autocomplete with selected mode
                           // then get the Prediction selected
@@ -483,8 +535,8 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                             String placeIdToString = "$placeId";
                             double lat = detail.result.geometry.location.lat;
                             double lng = detail.result.geometry.location.lng;
-                            PlacesDetailsResponse place =
-                            await _places.getDetailsByPlaceId(placeIdToString);
+                            PlacesDetailsResponse place = await _places
+                                .getDetailsByPlaceId(placeIdToString);
                             final placeDetail = place.result;
                             setState(() {
                               _destinationAdr = placeDetail.formattedAddress;

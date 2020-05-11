@@ -11,8 +11,13 @@ import 'auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:provider/provider.dart';
 import 'package:battery/battery.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:math' show cos, sqrt, asin;
+import 'dataBaseSoum.dart';
 
 class UpdateMarkers extends ChangeNotifier {
+  String groupepath;
   Firestore _firestore = Firestore.instance;
   Geoflutterfire geo = Geoflutterfire();
   StreamSubscription<List<DocumentSnapshot>> stream;
@@ -25,13 +30,14 @@ class UpdateMarkers extends ChangeNotifier {
   var val;
 
   void UpdateusersLocation(String path, BuildContext context) async {
+    groupepath = path;
     await Future.delayed(Duration(seconds: 1));
     mapcontext = context;
     val = await authService.connectedID();
     var collectionReference = _firestore.document(path).collection('members');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
-        geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
+    geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
     marker_dest(path);
@@ -44,6 +50,10 @@ class UpdateMarkers extends ChangeNotifier {
   }
 
   void marker_dest(String chemin) async {
+    String destination;
+    await _firestore.document(chemin).get().then((DocumentSnapshot doc) {
+      destination = doc.data['destination']['adresse'];
+    });
     await _firestore.document(chemin).get().then((DocumentSnapshot ds) {
       dest_lat = ds.data['destination']['latitude'];
     });
@@ -55,7 +65,7 @@ class UpdateMarkers extends ChangeNotifier {
       markerId: id,
       position: LatLng(dest_lat, dest_lng),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      infoWindow: InfoWindow(title: 'destination'),
+      infoWindow: InfoWindow(snippet: '$destination'),
     );
 
     markers[id] = _marker;
@@ -63,22 +73,69 @@ class UpdateMarkers extends ChangeNotifier {
   }
 
   void _updateMarkers(List<DocumentSnapshot> documentList) async {
-    LatLng latlng;
-    CameraUpdate cameraUpdate;
-
-    documentList.forEach((DocumentSnapshot document) async {
-      String userid = document.documentID;
-      markers.remove(MarkerId(userid));
-      GeoPoint point = document.data['position']['geopoint'];
-      if (val == userid) {
-        latlng = new LatLng(point.latitude, point.longitude);
-        cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-        Provider.of<controllermap>(mapcontext, listen: false)
-            .mapController
-            .animateCamera(cameraUpdate);
-      }
-      _addMarker(point.latitude, point.longitude, userid);
+    //  LatLng latlng;
+    //  CameraUpdate cameraUpdate;
+    bool arret;
+    String id = await authService.connectedID();
+    await Firestore.instance
+        .document(groupepath)
+        .collection('fermeture')
+        .document('fermeture')
+        .get()
+        .then((DocumentSnapshot ds) {
+      arret = ds.data['fermer'];
     });
+    bool fermer = true;
+    if (arret == false) {
+      bool arrived;
+
+      for (DocumentSnapshot document in documentList) {
+        print('fermer -----------------$fermer');
+        String userid = document.documentID;
+        print('documet: $userid');
+        markers.remove(MarkerId(userid));
+        GeoPoint point = document.data['position']['geopoint'];
+        arrived = document.data['arrive'];
+        print('arrived $arrived');
+
+        if (!arrived) {
+          if (id == document.documentID) {
+            print('connecteeeeeeeeeeeeeeeeeed USERRR');
+            double distanceInMeters = await Geolocator().distanceBetween(
+                point.latitude, point.longitude, dest_lat, dest_lng);
+            if (distanceInMeters <= 50) {
+              document.reference.updateData({'arrive': true});
+            } else {
+              fermer = false;
+            }
+          } else {
+            fermer = false;
+            print('not curent useeeeeeeeeeeeeerrr $fermer');
+          }
+        }
+        /*
+        if (val == userid) {
+          latlng = new LatLng(point.latitude, point.longitude);
+          cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+          Provider.of<controllermap>(mapcontext, listen: false)
+              .mapController
+              .animateCamera(cameraUpdate);
+        }
+*/
+        _addMarker(point.latitude, point.longitude, userid);
+      }
+
+      if (fermer) {
+        print('fermeeeeeeeeeeeer $fermer');
+        await Firestore.instance
+            .document(groupepath)
+            .collection('fermeture')
+            .document('fermeture')
+            .updateData({'fermer': true});
+        print(
+            'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
+      }
+    }
   }
 
   Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size) async {
@@ -136,7 +193,7 @@ class UpdateMarkers extends ChangeNotifier {
 
     // Convert image to bytes
     final ByteData byteData =
-        await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+    await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
 
     final Uint8List uint8List = byteData.buffer.asUint8List();
 
@@ -161,6 +218,7 @@ class UpdateMarkers extends ChangeNotifier {
     MarkerId id = MarkerId(usrid);
 
     String url;
+    String pseudo;
     await _firestore
         .collection('Utilisateur')
         .document(usrid)
@@ -169,18 +227,96 @@ class UpdateMarkers extends ChangeNotifier {
       url = ds.data['photo'];
     });
 
+    await _firestore
+        .collection('Utilisateur')
+        .document(usrid)
+        .get()
+        .then((DocumentSnapshot ds) {
+      pseudo = ds.data['pseudo'];
+    });
+
     _marker = Marker(
       markerId: id,
       position: LatLng(lat, lng),
       icon: await getMarkerIcon(url, Size(200.0, 200.0)),
-      //icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      //infoWindow: InfoWindow(title: 'distance', snippet: '$distance'),
+      infoWindow: InfoWindow(snippet: '$pseudo'),
     );
-
     markers[id] = _marker;
     notifyListeners();
   }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  Future getChanges(BuildContext context, String path_groupe) async {
+    var id = await AuthService().connectedID();
+    String pseud = await Database().getPseudo(id);
+    print('path');
+    print(path_groupe);
+
+    Firestore.instance.document(path_groupe).collection('PlanifierArrets')
+        .document('Arrets')
+        .snapshots(includeMetadataChanges: true)
+        .listen((DocumentSnapshot documentSnapshot) async {
+      print("object3");
+      if (documentSnapshot.data != null) {
+        if (documentSnapshot.data.containsKey('planArrets')) {
+          List<dynamic> list = await documentSnapshot.data['planArrets'];
+          print(list);
+
+          print('markers');
+
+          for (Map map in list) {
+            print(map);
+            MarkerId markerid = MarkerId(
+                map['latitude'].toString() + map['longitude'].toString());
+            // Provider.of<UpdateMarkers>(context, listen: false).
+            markers.remove(markerid);
+            Marker _marker = Marker(
+              markerId: markerid,
+              position: LatLng(map['latitude'], map['longitude']),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueCyan),
+              infoWindow: InfoWindow(
+                  title: map['pseudo'] + " a planifié(e) un arret ici"),
+            );
+            print("object4");
+            //  Provider.of<UpdateMarkers>(context,listen:false).
+            markers[markerid] = _marker;
+            notifyListeners();
+            Provider
+                .of<controllermap>(context)
+                .mapController
+                .animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(
+                    target: LatLng(map['latitude'], map['longitude']),
+                    zoom: 14.0)));
+            // bool nouvelArret = documentSnapshot.data['planArret'];
+
+
+            if (map['pseudo'] != pseud) {
+              var vaaa = _AlertScreenState();
+              vaaa.initState();
+              await vaaa.showNotificationWithDefaultSound();
+            }
+          }
+
+          print("object5");
+        }
+      }
+    }
+
+    );
+  }
 }
+
+
 
 class DeviceInformationService extends ChangeNotifier {
   bool _broadcastBattery = false;
@@ -205,38 +341,63 @@ class DeviceInformationService extends ChangeNotifier {
   }
 }
 
-// body:Text('${Provider.of<DeviceInformationService>(context).batteryLvl}'),
-/* body:StreamBuilder(
-         stream:_firestore.collection('Utilisateur').document().snapshots(),
-         builder:(context,snapshot){
-           if(!snapshot.hasData)
-           return Text('Loading data ... please wait');
-           return Text('Le niveau de batterie est : ${snapshot.data['baterie']}');
-         } ,
-         ),*/
-/*
-Future<double> getDistance(Position position, LatLng dest)async{
-  double distanced= await Geolocator().distanceBetween(position.latitude, position.longitude,dest.latitude, dest.longitude);
-  return distanced;
+class AlertScreen extends StatefulWidget {
+  @override
+  _AlertScreenState createState() => _AlertScreenState();
 }
 
-double getSpeed(String groupeid, String id) {
-  StreamBuilder(
-    stream:
-        Firestore.instance.collection('Utilisateur').document(id).snapshots(),
-    builder: (context, snapshot) {
-      return Text(
-        '${snapshot.data['batterie']}%',
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFFFFFFFF),
-        ),
-      );
-    },
-  );
-  double speed = position.speed;
-  return speed;
+class _AlertScreenState extends State<AlertScreen> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('app_icon');
+    var ios = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: onSelectedNotification);
+  }
+
+  Future onSelectedNotification(String payload) {
+    debugPrint('payload : $payload');
+    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
+    setState(() {
+      //stackIndex = 3;
+    });
+    /*showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Color(0xFFd0d8e2),
+          title: Text('Notification'),
+          content: Text('heeeeeeeeeeey'),
+        );
+      },
+    );*/
+  }
+
+  Future showNotificationWithDefaultSound() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Un nouvel arrêt a été planifier',
+      'Clickez pour en savoir plus',
+      platformChannelSpecifics,
+      payload: 'Default_Sound',
+    );
+  }
+
+  //------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }
-*/
