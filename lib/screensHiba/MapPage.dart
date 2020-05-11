@@ -26,8 +26,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'Aide.dart';
-import'package:winek/dataBaseSoum.dart';
+import 'package:winek/dataBaseSoum.dart';
 import 'planifierArrets.dart';
+
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -780,11 +781,14 @@ class _HomeState extends State<Home> {
                         result[0].rawAddress.isNotEmpty) {
                       Position position = await Geolocator().getCurrentPosition(
                           desiredAccuracy: LocationAccuracy.high);
-                      markersAcceuil.remove(MarkerId('markerrecentrer'));
+                      setState(() {
+                        markersAcceuil.remove(MarkerId('markerrecentrer'));
+                      });
+
                       MarkerId markerid = MarkerId('markerrecentrer');
                       String url;
-                      var id=await AuthService().connectedID();
-                      String pseudo=await Database().getPseudo(id);
+                      var id = await AuthService().connectedID();
+                      String pseudo = await Database().getPseudo(id);
                       await _firestore
                           .collection('Utilisateur')
                           .document(id)
@@ -792,13 +796,18 @@ class _HomeState extends State<Home> {
                           .then((DocumentSnapshot ds) {
                         url = ds.data['photo'];
                       });
-                      _marker=  Marker(
+                      _marker = Marker(
                         markerId: markerid,
                         position: LatLng(position.latitude, position.longitude),
-                        icon: await Provider.of<UpdateMarkers>(context, listen: false).getMarkerIcon(url, Size(200.0, 200.0)),
+                        icon: await Provider.of<UpdateMarkers>(context,
+                                listen: false)
+                            .getMarkerIcon(url, Size(200.0, 200.0)),
                         infoWindow: InfoWindow(snippet: '$pseudo'),
                       );
-                      markersAcceuil[markerid]=_marker;
+                      setState(() {
+                        markersAcceuil[markerid] = _marker;
+                      });
+
                       Provider.of<controllermap>(context, listen: false)
                           .mapController
                           .animateCamera(CameraUpdate.newCameraPosition(
@@ -806,7 +815,6 @@ class _HomeState extends State<Home> {
                                   target: LatLng(
                                       position.latitude, position.longitude),
                                   zoom: 14.0)));
-
                     }
                   } on SocketException catch (_) {
                     _showSnackBar('Vérifiez votre connexion internet');
@@ -1509,40 +1517,41 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 });
                               }
 
-
-                                // show input autocomplete with selected mode
-                                // then get the Prediction selected
-                                Prediction p = await PlacesAutocomplete.show(
-                                  context: context,
-                                  apiKey: kGoogleApiKey,
-                                  onError: onError,
-                                  mode: Mode.overlay,
-                                  language: "fr",
-                                  components: [
-                                    Component(Component.country, "DZ")
-                                  ],
-                                );
-                                if (p != null) {
-                                  PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
-                                  print('heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeeee');
-                                  //var placeId = p.placeId;
-                                  double lat = detail.result.geometry.location
-                                      .lat;
-                                  double lng = detail.result.geometry.location.lng;
-                                  //PlanifierArrets().getChanges(context, path);
-                                  PlanifierArrets().addArretsToSubCol(path, lat, lng);
-                                  print("arret added");
-                                  //PlanifierArrets().getChanges(context, path);
-                                  print(lat);
-                                  print(lng);
-
-                                };
-
+                              // show input autocomplete with selected mode
+                              // then get the Prediction selected
+                              Prediction p = await PlacesAutocomplete.show(
+                                context: context,
+                                apiKey: kGoogleApiKey,
+                                onError: onError,
+                                mode: Mode.overlay,
+                                language: "fr",
+                                components: [
+                                  Component(Component.country, "DZ")
+                                ],
+                              );
+                              if (p != null) {
+                                PlacesDetailsResponse detail = await _places
+                                    .getDetailsByPlaceId(p.placeId);
+                                print(
+                                    'heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeeee');
+                                //var placeId = p.placeId;
+                                double lat =
+                                    detail.result.geometry.location.lat;
+                                double lng =
+                                    detail.result.geometry.location.lng;
+                                //PlanifierArrets().getChanges(context, path);
+                                PlanifierArrets()
+                                    .addArretsToSubCol(path, lat, lng);
+                                print("arret added");
+                                //PlanifierArrets().getChanges(context, path);
+                                print(lat);
+                                print(lng);
+                              }
+                              ;
                             } on SocketException catch (_) {
                               _showSnackBar(
                                   'Vérifiez votre connexion internet');
                             }
-
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
