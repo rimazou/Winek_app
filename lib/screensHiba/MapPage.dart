@@ -855,7 +855,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
       extendBody: true,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      key: _scaffoldKey,
+      key: _scaffoldKeyAsma,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -2571,6 +2571,27 @@ class AlertBubble extends StatelessWidget {
                 _firestore.document(groupPath).updateData({
                   'justReceivedAlert': !tr,
                 });
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Row(
+                    children: <Widget>[
+                      Text(
+                        'Alerte envoyée !',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Expanded(
+                        child: SizedBox(),
+                      ),
+                      Icon(
+                        Icons.check,
+                        color: Color(0xFF3b466b),
+                      )
+                    ],
+                  ),
+                ));
 
                 _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
                   content: Row(
