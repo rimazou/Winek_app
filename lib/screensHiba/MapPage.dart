@@ -152,7 +152,7 @@ class _HomeState extends State<Home> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    //_scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -160,7 +160,7 @@ class _HomeState extends State<Home> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       extendBody: true,
-      key: _scaffoldKey,
+      //key: _scaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: bottomNavBar,
@@ -302,8 +302,8 @@ class _HomeState extends State<Home> {
                                         }
                                       }
                                     } on SocketException catch (_) {
-                                      _showSnackBar(
-                                          'Vérifiez votre connexion internet');
+//                                      _showSnackBar(
+//                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -359,8 +359,8 @@ class _HomeState extends State<Home> {
                                                         currentUser)));
                                       }
                                     } on SocketException catch (_) {
-                                      _showSnackBar(
-                                          'Vérifiez votre connexion internet');
+//                                      _showSnackBar(
+//                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -487,8 +487,8 @@ class _HomeState extends State<Home> {
                                   Navigator.pushNamed(context, NvVoyagePage.id);
                                 }
                               } on SocketException catch (_) {
-                                _showSnackBar(
-                                    'Vérifiez votre connexion internet');
+//                                _showSnackBar(
+//                                    'Vérifiez votre connexion internet');
                               }
                             },
                             child: Bouton(
@@ -529,8 +529,8 @@ class _HomeState extends State<Home> {
                                       context, NvLongTermePage.id);
                                 }
                               } on SocketException catch (_) {
-                                _showSnackBar(
-                                    'Vérifiez votre connexion internet');
+//                                _showSnackBar(
+//                                    'Vérifiez votre connexion internet');
                               }
                             },
                             child: Bouton(
@@ -617,7 +617,7 @@ class _HomeState extends State<Home> {
                         });
                       }
                     } on SocketException catch (_) {
-                      _showSnackBar('Vérifiez votre connexion internet');
+                      //_showSnackBar('Vérifiez votre connexion internet');
                     }
                   },
                   iconSize: 30.0),
@@ -667,7 +667,7 @@ class _HomeState extends State<Home> {
                             .displayPredictionRecherche(p);
                       }
                     } on SocketException catch (_) {
-                      _showSnackBar('Vérifiez votre connexion internet');
+                      //_showSnackBar('Vérifiez votre connexion internet');
                     }
                   },
                   iconSize: 30.0),
@@ -741,7 +741,7 @@ class _HomeState extends State<Home> {
                           Navigator.pushNamed(context, ListGrpPage.id);
                         }
                       } on SocketException catch (_) {
-                        _showSnackBar('Vérifiez votre connexion internet');
+                       // _showSnackBar('Vérifiez votre connexion internet');
                       }
                     },
                   ),
@@ -889,7 +889,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    //_scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   _showSnackBar2(String value, BuildContext context) {
@@ -1023,8 +1023,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 });
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar2(
-                                  'Vérifiez votre connexion internet', context);
+//                              _showSnackBar2(
+//                                  'Vérifiez votre connexion internet', context);
                             }
                           },
                           child: Image.network(imagesUrl[i]))),
@@ -1053,7 +1053,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     }
     return Scaffold(
       extendBody: true,
-      key: _scaffoldKey,
+      key: _scaffoldKeyAsma,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
       body: Stack(
@@ -1130,8 +1130,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     });
                                   }
                                 } on SocketException catch (_) {
-                                  _showSnackBar(
-                                      'Vérifiez votre connexion internet');
+//                                  _showSnackBar(
+//                                      'Vérifiez votre connexion internet');
                                 }
                               },
                               iconSize: 30.0),
@@ -1187,8 +1187,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         .displayPredictionRecherche(p);
                                   }
                                 } on SocketException catch (_) {
-                                  _showSnackBar(
-                                      'Vérifiez votre connexion internet');
+//                                  _showSnackBar(
+//                                      'Vérifiez votre connexion internet');
                                 }
                               },
                               iconSize: 30.0),
@@ -1283,7 +1283,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   });
                             }
                           } on SocketException catch (_) {
-                            _showSnackBar('Vérifiez votre connexion internet');
+                            //_showSnackBar('Vérifiez votre connexion internet');
                           }
                         },
                       ),
@@ -1339,41 +1339,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   bottom: MediaQuery.of(context).size.height * 0.15,
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () async {
-                            try {
-                              final result =
-                                  await InternetAddress.lookup('google.com');
-                              var result2 =
-                                  await Connectivity().checkConnectivity();
-                              var b = (result2 != ConnectivityResult.none);
-
-                              if (b &&
-                                  result.isNotEmpty &&
-                                  result[0].rawAddress.isNotEmpty) {
-                                var vvv =
-                                    await _firestore.document(groupPath).get();
-                                bool tr = vvv.data['justReceivedAlert'];
-                                _firestore.document(groupPath).updateData({
-                                  'justReceivedAlert': !tr,
-                                });
-                              }
-                            } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
-                            }
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.free_breakfast,
-                            size: 20,
-                          ),
-                        ),
-                      ),
+                      //breakfast
                       Padding(
                         //asma boite reception
                         padding: EdgeInsets.all(3),
@@ -1400,8 +1366,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 });
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+//                              _showSnackBar(
+//                                  'Vérifiez votre connexion internet');
                             }
                           },
                           backgroundColor: Color(0xFF389490),
@@ -1430,8 +1396,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 Navigator.pushNamed(context, ListGrpPage.id);
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+//                              _showSnackBar(
+//                                  'Vérifiez votre connexion internet');
                             }
                           },
                           backgroundColor: Color(0xFF389490),
@@ -1497,8 +1463,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       });
                                     }
                                   } on SocketException catch (_) {
-                                    _showSnackBar(
-                                        'Vérifiez votre connexion internet');
+//                                    _showSnackBar(
+//                                        'Vérifiez votre connexion internet');
                                   }
                                 }),
                             Padding(
@@ -1629,8 +1595,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                             });
                                           }
                                         } on SocketException catch (_) {
-                                          _showSnackBar(
-                                              'Vérifiez votre connexion internet');
+//                                          _showSnackBar(
+//                                              'Vérifiez votre connexion internet');
                                         }
                                       },
                                     ),
@@ -1668,8 +1634,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   });
                                 }
                               } on SocketException catch (_) {
-                                _showSnackBar(
-                                    'Vérifiez votre connexion internet');
+//                                _showSnackBar(
+//                                    'Vérifiez votre connexion internet');
                               }
                             }),
                         Padding(
@@ -1704,7 +1670,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: ReceivedAlertStream(),
+                                    child: ReceivedAlertStream(settingindex: setStateIndex,),
                                   ),
                                 ),
                                 SizedBox(
@@ -1756,7 +1722,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               });
                             }
                           } on SocketException catch (_) {
-                            _showSnackBar('Vérifiez votre connexion internet');
+                            //_showSnackBar('Vérifiez votre connexion internet');
                           }
                         },
                         child: Icon(
@@ -1858,8 +1824,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         }
                                       }
                                     } on SocketException catch (_) {
-                                      _showSnackBar(
-                                          'Vérifiez votre connexion internet');
+//                                      _showSnackBar(
+//                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -1915,8 +1881,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                                         currentUser)));
                                       }
                                     } on SocketException catch (_) {
-                                      _showSnackBar(
-                                          'Vérifiez votre connexion internet');
+//                                      _showSnackBar(
+//                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -2130,7 +2096,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             });
                           }
                         } on SocketException catch (_) {
-                          _showSnackBar('Vérifiez votre connexion internet');
+                          //_showSnackBar('Vérifiez votre connexion internet');
                         }
                       },
                     )),
@@ -2288,7 +2254,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    //_scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -2341,10 +2307,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 
     return Scaffold(
       extendBody: true,
-      key: _scaffoldKey,
+      //key: _scaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -2418,8 +2383,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                     });
                                   }
                                 } on SocketException catch (_) {
-                                  _showSnackBar(
-                                      'Vérifiez votre connexion internet');
+//                                  _showSnackBar(
+//                                      'Vérifiez votre connexion internet');
                                 }
                               },
                               iconSize: 30.0),
@@ -2475,8 +2440,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                         .displayPredictionRecherche(p);
                                   }
                                 } on SocketException catch (_) {
-                                  _showSnackBar(
-                                      'Vérifiez votre connexion internet');
+//                                  _showSnackBar(
+//                                      'Vérifiez votre connexion internet');
                                 }
                               },
                               iconSize: 30.0),
@@ -2555,8 +2520,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 Navigator.pushNamed(context, ListGrpPage.id);
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+//                              _showSnackBar(
+//                                  'Vérifiez votre connexion internet');
                             }
                           },
                           backgroundColor: Color(0xFF389490),
@@ -2587,8 +2552,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 });
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+//                              _showSnackBar(
+//                                  'Vérifiez votre connexion internet');
                             }
                           },
                           backgroundColor: Color(0xFF389490),
@@ -2634,7 +2599,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               });
                             }
                           } on SocketException catch (_) {
-                            _showSnackBar('Vérifiez votre connexion internet');
+//                            _showSnackBar('Vérifiez votre connexion internet');
                           }
                         },
                         child: Icon(
@@ -2736,8 +2701,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                         }
                                       }
                                     } on SocketException catch (_) {
-                                      _showSnackBar(
-                                          'Vérifiez votre connexion internet');
+//                                      _showSnackBar(
+//                                          'Vérifiez votre connexion internet');
                                     }
                                   },
                                   leading: Icon(
@@ -3091,7 +3056,7 @@ class AlertBubble extends StatelessWidget {
                     desiredAccuracy: LocationAccuracy.medium);
                 Geoflutterfire geo = Geoflutterfire();
                 GeoFirePoint geoP = geo.point(
-                    latitude: position.longitude,
+                    latitude: position.latitude,
                     longitude: position.longitude);
 
                 if (text != null &&
@@ -3116,76 +3081,78 @@ class AlertBubble extends StatelessWidget {
                   'justReceivedAlert': !tr,
                 });
 
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Row(
-                    children: <Widget>[
-                      Text(
-                        'Alerte envoyée !',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.0,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      Icon(
-                        Icons.check,
-                        color: Color(0xFF3b466b),
-                      )
-                    ],
-                  ),
-                ));
                 Navigator.pop(context);
+
+
+//                _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+//                  content: Row(
+//                    children: <Widget>[
+//                      Text(
+//                        'Alerte envoyée !',
+//                        style: TextStyle(
+//                            color: Colors.white,
+//                            fontSize: 14.0,
+//                            fontFamily: 'Montserrat',
+//                            fontWeight: FontWeight.w600),
+//                      ),
+//                      Expanded(
+//                        child: SizedBox(),
+//                      ),
+//                      Icon(
+//                        Icons.check,
+//                        color: Color(0xFF3b466b),
+//                      )
+//                    ],
+//                  ),
+//                ));
               } else {
                 Navigator.pop(context);
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Row(
-                    children: <Widget>[
-                      Text(
-                        'Veuillez activer votre GPS',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.0,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      Icon(
-                        Icons.location_off,
-                        color: Colors.yellow,
-                      )
-                    ],
-                  ),
-                ));
+//                _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+//                  content: Row(
+//                    children: <Widget>[
+//                      Text(
+//                        'Veuillez activer votre GPS',
+//                        style: TextStyle(
+//                            color: Colors.white,
+//                            fontSize: 14.0,
+//                            fontFamily: 'Montserrat',
+//                            fontWeight: FontWeight.w600),
+//                      ),
+//                      Expanded(
+//                        child: SizedBox(),
+//                      ),
+//                      Icon(
+//                        Icons.location_off,
+//                        color: Colors.yellow,
+//                      )
+//                    ],
+//                  ),
+//                ));
               }
             }
           } on SocketException catch (_) {
             Navigator.pop(context);
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
-              content: Row(
-                children: <Widget>[
-                  Text(
-                    'Vérifiez votre connexion internet',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.0,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600),
-                  ),
-                  Expanded(
-                    child: SizedBox(),
-                  ),
-                  Icon(
-                    Icons.signal_wifi_off,
-                    color: Colors.yellow,
-                  )
-                ],
-              ),
-            ));
+//            _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+//              content: Row(
+//                children: <Widget>[
+//                  Text(
+//                    'Vérifiez votre connexion internet',
+//                    style: TextStyle(
+//                        color: Colors.white,
+//                        fontSize: 14.0,
+//                        fontFamily: 'Montserrat',
+//                        fontWeight: FontWeight.w600),
+//                  ),
+//                  Expanded(
+//                    child: SizedBox(),
+//                  ),
+//                  Icon(
+//                    Icons.signal_wifi_off,
+//                    color: Colors.yellow,
+//                  )
+//                ],
+//              ),
+//            ));
           }
         }
 
@@ -3341,27 +3308,27 @@ class AlertStream extends StatelessWidget {
                       });
 
                       alertList.removeAt(index); //iciiiiii
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
-                        content: Row(
-                          children: <Widget>[
-                            Text(
-                              'Alerte supprimée !',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14.0,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Expanded(
-                              child: SizedBox(),
-                            ),
-                            Icon(
-                              Icons.check,
-                              color: Color(0xFF3b466b),
-                            )
-                          ],
-                        ),
-                      ));
+//                      _scaffoldKeyAsma.currentState.showSnackBar(SnackBar(
+//                        content: Row(
+//                          children: <Widget>[
+//                            Text(
+//                              'Alerte supprimée !',
+//                              style: TextStyle(
+//                                  color: Colors.white,
+//                                  fontSize: 14.0,
+//                                  fontFamily: 'Montserrat',
+//                                  fontWeight: FontWeight.w600),
+//                            ),
+//                            Expanded(
+//                              child: SizedBox(),
+//                            ),
+//                            Icon(
+//                              Icons.check,
+//                              color: Color(0xFF3b466b),
+//                            )
+//                          ],
+//                        ),
+//                      ));
                       Navigator.pop(context);
                     },
                     background: Container(
@@ -3556,9 +3523,7 @@ class ReceivedAlertBubble extends StatelessWidget {
   AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
-  Function settingindex = () {
-    print('heeeeeeeeeeeeeeeeeeeeey');
-  };
+  Function settingindex ;
 
   ReceivedAlertBubble(
       {String sender,
@@ -3573,31 +3538,9 @@ class ReceivedAlertBubble extends StatelessWidget {
     this.settingindex = settingindex;
   }
 
-  _showSnackBar(String value, BuildContext context) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(SnackBar(
-      content: new Text(
-        value,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.0,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600),
-      ),
-      duration: new Duration(seconds: 2),
-      behavior: SnackBarBehavior.floating,
-      //backgroundColor: Colors.green,
-      action: new SnackBarAction(
-          label: 'Ok',
-          onPressed: () {
-            print('press Ok on SnackBar');
-          }),
-    ));
-  }
-
   Future<BitmapDescriptor> createMarkerIc() async {
     return await UpdateMarkers2()
-        .getMarkerIcon(alert.icon.toString(), Size(150, 150));
+        .getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150, 150));
   }
 
   @override
@@ -3605,44 +3548,35 @@ class ReceivedAlertBubble extends StatelessWidget {
     return Center(
       child: FlatButton(
         onPressed: () async {
-          try {
-            final result = await InternetAddress.lookup('google.com');
-            var result2 = await Connectivity().checkConnectivity();
-            var b = (result2 != ConnectivityResult.none);
+//
+          MarkerId markerId = MarkerId(
+              geoPoint.latitude.toString() + geoPoint.longitude.toString());
+          Provider.of<UpdateMarkers>(
+            context,
+          ).markers.remove(markerId);
 
-            if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-              MarkerId markerId = MarkerId(
-                  geoPoint.latitude.toString() + geoPoint.longitude.toString());
-              Provider.of<UpdateMarkers>(
-                context,
-              ).markers.remove(markerId);
-
-              Marker _marker = Marker(
-                markerId: markerId,
-                position: LatLng(geoPoint.latitude, geoPoint.longitude),
-                infoWindow: InfoWindow(title: sender, snippet: alert.text),
+          Marker _marker = Marker(
+            markerId: markerId,
+            position: LatLng(geoPoint.latitude, geoPoint.longitude),
+            infoWindow: InfoWindow(title: sender, snippet: alert.text),
 //           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
 //            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
-                icon: await createMarkerIc(),
-              );
-              Provider.of<UpdateMarkers>(
-                context,
-              ).markers[markerId] = _marker;
+            icon: await createMarkerIc(),
+          );
+          Provider.of<UpdateMarkers>(
+            context,
+          ).markers[markerId] = _marker;
 
-              CameraUpdate cameraUpdate;
-              cameraUpdate = CameraUpdate.newLatLngZoom(
-                  LatLng(geoPoint.latitude, geoPoint.longitude), 10);
-              Provider.of<controllermap>(context, listen: false)
-                  .mapController
-                  .animateCamera(cameraUpdate);
+          CameraUpdate cameraUpdate;
+          cameraUpdate = CameraUpdate.newLatLngZoom(
+              LatLng(geoPoint.latitude, geoPoint.longitude), 10);
+          Provider.of<controllermap>(context, listen: false)
+              .mapController
+              .animateCamera(cameraUpdate);
 
-              settingindex();
-//TODO: je positionne l'alerte sur la map
+          settingindex();
+         //TODO: je positionne l'alerte sur la map
 
-            }
-          } on SocketException catch (_) {
-            _showSnackBar('Vérifiez votre connexion internet', context);
-          }
         },
         padding: const EdgeInsets.all(0),
         child: Column(
@@ -3784,9 +3718,11 @@ void addListnerToNotifier(Function ffunction) {
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
     checkSenderUser();
-    var vaaa = _AlertScreenState(ffunction);
-    vaaa.initState();
-    await vaaa.showNotificationWithDefaultSound();
+    if (currentUser != notifSender) {
+      var vaaa = _AlertScreenState(ffunction);
+      vaaa.initState();
+      await vaaa.showNotificationWithDefaultSound();
+    }
   });
 }
 
