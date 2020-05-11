@@ -54,11 +54,30 @@ class DataBaseFavoris {
     // ajouter un amis a la liste de current
     // getConnectedId();
     setCurrentUser();
-    return await userCollection.document(currentUser).updateData({
-      "favoris": FieldValue.arrayUnion([
-        {'latitude': geop.latitude, "longitude": geop.longitude, "placeid": id}
-      ]),
-    });
+    final snap=await userCollection.document(currentUser).get();
+    if(snap.data['favoris']==null) {
+      return await userCollection.document(currentUser).updateData({
+        "favoris": [
+          {
+            'latitude': geop.latitude,
+            "longitude": geop.longitude,
+            "placeid": id
+          }
+        ]
+      });
+    }
+    else
+      {
+        return await userCollection.document(currentUser).updateData({
+          "favoris": FieldValue.arrayUnion([
+            {
+              'latitude': geop.latitude,
+              "longitude": geop.longitude,
+              "placeid": id
+            }
+          ]),
+        });
+      }
   }
 
   Future favorisDeleteData(GeoFirePoint g, String id) async {
