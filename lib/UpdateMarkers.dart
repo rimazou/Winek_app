@@ -22,6 +22,7 @@ class UpdateMarkers extends ChangeNotifier {
   Geoflutterfire geo = Geoflutterfire();
   StreamSubscription<List<DocumentSnapshot>> stream;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+
   Marker _marker;
   GoogleMapController _controller;
   double dest_lat;

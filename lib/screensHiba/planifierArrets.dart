@@ -21,10 +21,7 @@ class PlanifierArrets {
   addArretsToSubCol(String p,double l,double lo) async{
     print("yeeeeeeeeeeeeeey");
     final databaseReference = Firestore.instance;
-    final String colPath=p+'/PlanifierArrets';
-    print(colPath);
-    final String docPath=p+'/PlanifierArrets'+'/Arrets';
-    print(docPath);
+
     var id=await AuthService().connectedID();
     String pseudo=await Database().getPseudo(id);
 

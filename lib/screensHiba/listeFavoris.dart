@@ -42,13 +42,10 @@ class _FavorisListState extends State<FavorisList> {
       itemCount: count,
       itemBuilder: (context, index) {
         return FavorisTile(
-            //geopointfav: favoris[index]['geopoint'],
             favoris[index]['latitude'],
             favoris[index]['longitude'],
-            // favoris[index]['geohash'],
-
             favoris[index]['placeid']
-            //addressToPrint: FavorisTile().convertLatLong().then(String),
+
             );
       },
     );
@@ -197,8 +194,9 @@ class _FavorisTile extends State<FavorisTile> {
               var b = (result2 != ConnectivityResult.none);
 
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+
             DataBaseFavoris().favorisDeleteData(this.geoP, this.placeid);
-            //DataBaseFavoris().favorisIdDeleteData(this.placeid);
+
               }
             } on SocketException catch (_) {
               _showSnackBar('Vérifiez votre connexion internet', context);

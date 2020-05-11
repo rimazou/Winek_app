@@ -26,6 +26,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'Aide.dart';
+import'package:winek/dataBaseSoum.dart';
 import 'planifierArrets.dart';
 //asma's variables
 final _firestore = Firestore.instance;
@@ -105,7 +106,8 @@ class _HomeState extends State<Home> {
   Color c1 = const Color.fromRGBO(0, 0, 60, 0.8);
   Color c2 = const Color(0xFF3B466B);
   Color myWhite = const Color(0xFFFFFFFF);
-
+  Map<MarkerId, Marker> markersAcceuil = <MarkerId, Marker>{};
+  Marker _marker;
 //fin variables
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
@@ -172,6 +174,7 @@ class _HomeState extends State<Home> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
+
             onMapCreated: Provider.of<controllermap>(context, listen: false)
                 ._onMapCreated,
             initialCameraPosition: CameraPosition(
@@ -777,6 +780,25 @@ class _HomeState extends State<Home> {
                         result[0].rawAddress.isNotEmpty) {
                       Position position = await Geolocator().getCurrentPosition(
                           desiredAccuracy: LocationAccuracy.high);
+                      markersAcceuil.remove(MarkerId('markerrecentrer'));
+                      MarkerId markerid = MarkerId('markerrecentrer');
+                      String url;
+                      var id=await AuthService().connectedID();
+                      String pseudo=await Database().getPseudo(id);
+                      await _firestore
+                          .collection('Utilisateur')
+                          .document(id)
+                          .get()
+                          .then((DocumentSnapshot ds) {
+                        url = ds.data['photo'];
+                      });
+                      _marker=  Marker(
+                        markerId: markerid,
+                        position: LatLng(position.latitude, position.longitude),
+                        icon: await Provider.of<UpdateMarkers>(context, listen: false).getMarkerIcon(url, Size(200.0, 200.0)),
+                        infoWindow: InfoWindow(snippet: '$pseudo'),
+                      );
+                      markersAcceuil[markerid]=_marker;
                       Provider.of<controllermap>(context, listen: false)
                           .mapController
                           .animateCamera(CameraUpdate.newCameraPosition(
@@ -784,6 +806,7 @@ class _HomeState extends State<Home> {
                                   target: LatLng(
                                       position.latitude, position.longitude),
                                   zoom: 14.0)));
+
                     }
                   } on SocketException catch (_) {
                     _showSnackBar('Vérifiez votre connexion internet');
