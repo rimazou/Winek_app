@@ -11,9 +11,10 @@ import 'auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:provider/provider.dart';
 import 'package:battery/battery.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' show cos, sqrt, asin;
-
+import 'dataBaseSoum.dart';
 class UpdateMarkers extends ChangeNotifier {
   String groupepath;
   Firestore _firestore = Firestore.instance;
@@ -281,6 +282,71 @@ class UpdateMarkers extends ChangeNotifier {
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
+
+  Future getChanges(BuildContext context,String path_groupe) async {
+    var id=await AuthService().connectedID();
+    String pseud=await Database().getPseudo(id);
+    print('path');
+    print(path_groupe);
+
+    Firestore.instance.document(path_groupe).collection('PlanifierArrets').document('Arrets')
+        .snapshots(includeMetadataChanges: true)
+        .listen((DocumentSnapshot documentSnapshot) async {
+
+      print("object3");
+      if (documentSnapshot.data != null) {
+        if (documentSnapshot.data.containsKey('planArrets')) {
+          List<dynamic> list = await documentSnapshot.data['planArrets'];
+          print(list);
+
+          print('markers');
+
+          for (Map map in list) {
+
+            print(map);
+            MarkerId markerid = MarkerId(
+                map['latitude'].toString() + map['longitude'].toString());
+           // Provider.of<UpdateMarkers>(context, listen: false).
+            markers.remove(markerid);
+            Marker _marker = Marker(
+              markerId: markerid,
+              position: LatLng(map['latitude'], map['longitude']),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueCyan),
+              infoWindow: InfoWindow(
+                  title: map['pseudo'] + " a planifié(e) un arret ici"),
+            );
+            print("object4");
+          //  Provider.of<UpdateMarkers>(context,listen:false).
+            markers[markerid] = _marker;
+             notifyListeners();
+            Provider.of<controllermap>(context).mapController.animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(target: LatLng(map['latitude'], map['longitude']),
+                    zoom: 14.0)));
+            // bool nouvelArret = documentSnapshot.data['planArret'];
+
+
+            if (map['pseudo']!=pseud) {
+
+              var vaaa = _AlertScreenState();
+              vaaa.initState();
+              await vaaa.showNotificationWithDefaultSound();
+
+            }
+
+          }
+
+          print("object5");
+
+        }
+      }
+    }
+
+    );
+
+  }
+
+
 }
 
 class DeviceInformationService extends ChangeNotifier {
@@ -303,5 +369,65 @@ class DeviceInformationService extends ChangeNotifier {
 
   void stopBroadcast() {
     _broadcastBattery = false;
+  }
+}
+
+
+class AlertScreen extends StatefulWidget {
+  @override
+  _AlertScreenState createState() => _AlertScreenState();
+}
+
+class _AlertScreenState extends State<AlertScreen> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('app_icon');
+    var ios = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: onSelectedNotification);
+  }
+
+  Future onSelectedNotification(String payload) {
+    debugPrint('payload : $payload');
+    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
+    setState(() {
+      //stackIndex = 3;
+    });
+    /*showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Color(0xFFd0d8e2),
+          title: Text('Notification'),
+          content: Text('heeeeeeeeeeey'),
+        );
+      },
+    );*/
+  }
+
+  Future showNotificationWithDefaultSound() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Un nouvel arrêt a été planifier',
+      'Clickez pour en savoir plus',
+      platformChannelSpecifics,
+      payload: 'Default_Sound',
+    );
+  }
+  //------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

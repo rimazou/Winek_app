@@ -58,7 +58,9 @@ class PlanifierArrets {
       {"planArrets":[{'latitude':l,'longitude':lo,'pseudo':psd}]}
     );*/
   }
-  Future getChanges(BuildContext context,String path_groupe) async {
+
+  //cette fonction est mise dans la classe de lemis a fin d'enlever le provider lors de l'ajout des markers
+ /* Future getChanges(BuildContext context,String path_groupe) async {
     var id=await AuthService().connectedID();
     String pseud=await Database().getPseudo(id);
     print('path');
@@ -94,7 +96,8 @@ class PlanifierArrets {
                   title: map['pseudo'] + " a planifié(e) un arret ici"),
             );
             print("object4");
-            Provider.of<UpdateMarkers>(context).markers[markerid] = _marker;
+            Provider.of<UpdateMarkers>(context,listen:false).markers[markerid] = _marker;
+
             Provider.of<controllermap>(context).mapController.animateCamera(CameraUpdate.newCameraPosition(
                 CameraPosition(target: LatLng(map['latitude'], map['longitude']),
                     zoom: 14.0)));
@@ -119,67 +122,9 @@ class PlanifierArrets {
 
     );
 
-  }
+  }*/
 
 
 }
 
 
-class AlertScreen extends StatefulWidget {
-  @override
-  _AlertScreenState createState() => _AlertScreenState();
-}
-
-class _AlertScreenState extends State<AlertScreen> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  @override
-  void initState() {
-    super.initState();
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var android = AndroidInitializationSettings('app_icon');
-    var ios = IOSInitializationSettings();
-    var initSettings = InitializationSettings(android, ios);
-    flutterLocalNotificationsPlugin.initialize(initSettings,
-        onSelectNotification: onSelectedNotification);
-  }
-
-  Future onSelectedNotification(String payload) {
-    debugPrint('payload : $payload');
-    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
-    setState(() {
-      //stackIndex = 3;
-    });
-    /*showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          backgroundColor: Color(0xFFd0d8e2),
-          title: Text('Notification'),
-          content: Text('heeeeeeeeeeey'),
-        );
-      },
-    );*/
-  }
-
-  Future showNotificationWithDefaultSound() async {
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High);
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    var platformChannelSpecifics = new NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Un nouvel arrêt a été planifier',
-      'Clickez pour en savoir plus',
-      platformChannelSpecifics,
-      payload: 'Default_Sound',
-    );
-  }
-  //------------------------------------
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
