@@ -1091,26 +1091,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                   bottom: MediaQuery.of(context).size.height * 0.15,
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () async {
-                            var vvv =
-                                await _firestore.document(groupPath).get();
-                            bool tr = vvv.data['justReceivedAlert'];
-                            _firestore.document(groupPath).updateData({
-                              'justReceivedAlert': !tr,
-                            });
-                          },
-                          backgroundColor: Color(0xFF389490),
-                          foregroundColor: Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.free_breakfast,
-                            size: 20,
-                          ),
-                        ),
-                      ),
+                      //breakfast akn hna
                       Padding(
                         //asma boite reception
                         padding: EdgeInsets.all(3),
