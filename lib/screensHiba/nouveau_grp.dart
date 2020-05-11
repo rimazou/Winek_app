@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,10 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'DestinationFromFav.dart';
+import 'dart:io';
+import 'dart:ui';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 Databasegrp data = Databasegrp();
 bool _alerte_nom = false;
@@ -28,7 +33,7 @@ GoogleMapsPlaces _places =
     GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 void createlongterme() async {
-  // get the current user info
+// get the current user info
   Map<String, String> user = {'pseudo': '', 'id': ''};
   user['id'] = await authService.connectedID();
   user['pseudo'] = await Firestore.instance
@@ -39,7 +44,7 @@ void createlongterme() async {
     return Doc.data['pseudo'];
   });
   print("user:$user");
-  // creationg the doc of the grp
+// creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('LongTerme').add({
     'nom': nom_grp,
     'admin': user['pseudo'],
@@ -67,7 +72,7 @@ void createlongterme() async {
       .snapshots(includeMetadataChanges: true)
       .listen((DocumentSnapshot documentSnapshot) {
     position = documentSnapshot.data['location']['geopoint'];
-    /*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+/*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
       position = ds.data['location']['geopoint'];
     });*/
     geoFirePoint =
@@ -81,7 +86,7 @@ void createlongterme() async {
   print('member doc added');
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
   print(grp);
-  // adding that grp to member's invitations liste.
+// adding that grp to member's invitations liste.
   for (Map m in membres) {
     DocumentSnapshot doc =
         await Firestore.instance.collection('UserGrp').document(m['id']).get();
@@ -102,7 +107,7 @@ void createlongterme() async {
       });
     }
   }
-  //adding the grp into the admin list of grp
+//adding the grp into the admin list of grp
   DocumentSnapshot userdoc =
       await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
@@ -301,7 +306,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
 
 //----------------------------------------------------------------------------------//
 void createvoyage() async {
-  // creationg the doc of the grp
+// creationg the doc of the grp
   Map user = {'pseudo': '', 'id': ''};
   user['id'] = await authService.connectedID();
   user['pseudo'] = await Firestore.instance
@@ -311,17 +316,17 @@ void createvoyage() async {
       .then((Doc) {
     return Doc.data['pseudo'];
   });
-  // creationg the doc of the grp
+// creationg the doc of the grp
   DocumentReference ref = await _firestore.collection('Voyage').add({
     'nom': nom_grp,
     'admin': user['pseudo'],
     'destination': _destination,
     'membres': [user],
     'justReceivedAlert': false,
-    // since he's the admin, others have to accept the invitation first
+// since he's the admin, others have to accept the invitation first
   });
   print('voyage cree');
-  //creating the subcollection doc for location
+//creating the subcollection doc for location
   Geoflutterfire geo = Geoflutterfire();
   GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
 
@@ -343,7 +348,7 @@ void createvoyage() async {
       .snapshots(includeMetadataChanges: true)
       .listen((DocumentSnapshot documentSnapshot) {
     position = documentSnapshot.data['location']['geopoint'];
-    /*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
+/*await _firestore.collection('Utilisateur').document(userID).get().then((DocumentSnapshot ds) {
       position = ds.data['location']['geopoint'];
     });*/
     geoFirePoint =
@@ -362,7 +367,7 @@ void createvoyage() async {
       .setData({'fermer': false});
 
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
-  // adding that grp to member's invitations liste:
+// adding that grp to member's invitations liste:
   for (Map m in membres) {
     DocumentSnapshot doc =
         await Firestore.instance.collection('UserGrp').document(m['id']).get();
@@ -384,7 +389,7 @@ void createvoyage() async {
     }
   }
   print('invitations sent');
-  //adding it to admin list of grp
+//adding it to admin list of grp
   DocumentSnapshot userdoc =
       await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
@@ -421,10 +426,32 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
     _loading = false;
   }
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: _loading,
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.white,
         body: Column(
@@ -481,39 +508,52 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      // show input autocomplete with selected mode
-                      // then get the Prediction selected
-                      //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
-                      Prediction p = await PlacesAutocomplete.show(
-                        context: context,
-                        apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
-                        onError: onError,
-                        mode: Mode.overlay,
-                        language: "fr",
-                        components: [Component(Component.country, "DZ")],
-                      );
-                      if (p != null) {
-                        PlacesDetailsResponse detail =
-                            await _places.getDetailsByPlaceId(p.placeId);
-                        var placeId = p.placeId;
-                        String placeIdToString = "$placeId";
-                        double lat = detail.result.geometry.location.lat;
-                        double lng = detail.result.geometry.location.lng;
-                        PlacesDetailsResponse place =
-                            await _places.getDetailsByPlaceId(placeIdToString);
-                        final placeDetail = place.result;
-                        setState(() {
-                          _destinationAdr = placeDetail.formattedAddress;
-                          print(_destinationAdr);
-                          _destination = {
-                            'latitude': lat,
-                            'longitude': lng,
-                            'adresse': _destinationAdr
-                          };
-                        });
-                      }
+                      try {
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        var result2 = await Connectivity().checkConnectivity();
+                        var b = (result2 != ConnectivityResult.none);
 
-                      print(_destination);
+                        if (b &&
+                            result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          // show input autocomplete with selected mode
+                          // then get the Prediction selected
+                          //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
+                          Prediction p = await PlacesAutocomplete.show(
+                            context: context,
+                            apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
+                            onError: onError,
+                            mode: Mode.overlay,
+                            language: "fr",
+                            components: [Component(Component.country, "DZ")],
+                          );
+                          if (p != null) {
+                            PlacesDetailsResponse detail =
+                                await _places.getDetailsByPlaceId(p.placeId);
+                            var placeId = p.placeId;
+                            String placeIdToString = "$placeId";
+                            double lat = detail.result.geometry.location.lat;
+                            double lng = detail.result.geometry.location.lng;
+                            PlacesDetailsResponse place = await _places
+                                .getDetailsByPlaceId(placeIdToString);
+                            final placeDetail = place.result;
+                            setState(() {
+                              _destinationAdr = placeDetail.formattedAddress;
+                              print(_destinationAdr);
+                              _destination = {
+                                'latitude': lat,
+                                'longitude': lng,
+                                'adresse': _destinationAdr
+                              };
+                            });
+                          }
+
+                          print(_destination);
+                        }
+                      } on SocketException catch (_) {
+                        _showSnackBar('Vérifiez votre connexion internet');
+                      }
                     },
                     icon: Icon(Icons.mode_edit),
                     color: Color(0xff707070),

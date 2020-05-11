@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +24,8 @@ import 'package:password_strength/password_strength.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:path/path.dart' as p;
 
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'register';
   @override
@@ -40,6 +43,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   File _image;
   String _uploadedFileURL;
 
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -50,6 +74,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     } else {
       return SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           appBar: PreferredSize(
@@ -442,23 +467,52 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 70, vertical: 20),
                             child: Material(
-                              color: Color(0XFF3B466B),
+                              color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
-                                onPressed: () => _testSignInWithGoogle(),
-                                minWidth: 140.0,
+                                onPressed: () async {
+                                  try {
+                                    final result = await InternetAddress.lookup(
+                                        'google.com');
+                                    var result2 = await Connectivity()
+                                        .checkConnectivity();
+                                    var b =
+                                        (result2 != ConnectivityResult.none);
+
+                                    if (b &&
+                                        result.isNotEmpty &&
+                                        result[0].rawAddress.isNotEmpty) {
+                                      _registerWithGoogle();
+                                    }
+                                  } on SocketException catch (_) {
+                                    _showSnackBar(
+                                        'Vérifiez votre connexion internet');
+                                  }
+                                },
                                 height: 42.0,
-                                child: Text(
-                                  "Google",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Container(
+                                        height: 42,
+                                        child: Image.asset(
+                                            'images/googlelogo.png',
+                                            fit: BoxFit.fill)),
+                                    Text(
+                                      'Google',
+                                      style: TextStyle(
+                                        color: Color(0XFF707070),
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -474,7 +528,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
-                                onPressed: () => _createUser(),
+                                onPressed: () async {
+                                  try {
+                                    final result = await InternetAddress.lookup(
+                                        'google.com');
+                                    var result2 = await Connectivity()
+                                        .checkConnectivity();
+                                    var b =
+                                        (result2 != ConnectivityResult.none);
+
+                                    if (b &&
+                                        result.isNotEmpty &&
+                                        result[0].rawAddress.isNotEmpty) {
+                                      _createUser();
+                                    }
+                                  } on SocketException catch (_) {
+                                    _showSnackBar(
+                                        'Vérifiez votre connexion internet');
+                                  }
+                                },
                                 minWidth: 140.0,
                                 height: 42.0,
                                 child: Text(
@@ -509,8 +581,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               Icons.camera_alt,
                               size: 30.0,
                             ),
-                            onPressed: () => showAlertDialog(context,
-                                "choisissez la source de l'image", "Source"),
+                            onPressed: () async {
+                              try {
+                                final result =
+                                    await InternetAddress.lookup('google.com');
+                                var result2 =
+                                    await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b &&
+                                    result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  showAlertDialog(
+                                      context,
+                                      "choisissez la source de l'image",
+                                      "Source");
+                                }
+                              } on SocketException catch (_) {
+                                _showSnackBar(
+                                    'Vérifiez votre connexion internet');
+                              }
+                            },
                             // uploadFile();
                           ),
                         ),
@@ -606,7 +697,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   bool loading = false;
 
-  Future<String> _testSignInWithGoogle() async {
+  Future<String> _registerWithGoogle() async {
     try {
       final GoogleSignInAccount googleUser =
           await authService.googleSignIn.signIn();
@@ -669,6 +760,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
+  showSnackBar(String value, BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    ));
+  }
+
   Future _createUser() async {
     try {
       setState(() {
@@ -715,25 +827,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         });
       }
     } catch (signUpError) {
-      setState(() {
-        if (signUpError is PlatformException) {
-          if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-            errMl = 'Cet email est deja utilise';
-          } else {
-            errMl = null;
-          }
-          if (signUpError.code == 'ERROR_INVALID_EMAIL') {
-            errMl = "Veuillez introduire une adresse valide";
-          } else {
-            errMl = null;
-          }
-          if (signUpError.code == 'ERROR_WEAK_PASSWORD') {
-            errPwd = 'Mot de passe faible';
-          } else {
-            errPwd = null;
-          }
+      if (signUpError is PlatformException) {
+        if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+          showSnackBar('Cet email est deja utilise', context);
         }
-      });
+        if (signUpError.code == 'ERROR_INVALID_EMAIL') {
+          showSnackBar("Veuillez introduire une adresse valide", context);
+        }
+        if (signUpError.code == 'ERROR_WEAK_PASSWORD') {
+          showSnackBar('Mot de passe faible', context);
+        }
+      }
     } catch (e) {
       print(e);
     }
