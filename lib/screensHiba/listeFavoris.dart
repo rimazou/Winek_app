@@ -80,7 +80,7 @@ class _FavorisTile extends State<FavorisTile> {
   static double l2;
   double lat;
   double long;
-  String placeName = "  ";
+  String placeName = " Chargement...";
   String placeAddress = "  ";
   String placeid;
   String geohsh;

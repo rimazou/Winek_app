@@ -26,7 +26,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'Aide.dart';
-
+import 'planifierArrets.dart';
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -1485,10 +1485,41 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   'justReceivedAlert': !tr,
                                 });
                               }
+
+
+                                // show input autocomplete with selected mode
+                                // then get the Prediction selected
+                                Prediction p = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey: kGoogleApiKey,
+                                  onError: onError,
+                                  mode: Mode.overlay,
+                                  language: "fr",
+                                  components: [
+                                    Component(Component.country, "DZ")
+                                  ],
+                                );
+                                if (p != null) {
+                                  PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
+                                  print('heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeeee');
+                                  //var placeId = p.placeId;
+                                  double lat = detail.result.geometry.location
+                                      .lat;
+                                  double lng = detail.result.geometry.location.lng;
+                                  //PlanifierArrets().getChanges(context, path);
+                                  PlanifierArrets().addArretsToSubCol(path, lat, lng);
+                                  print("arret added");
+                                  //PlanifierArrets().getChanges(context, path);
+                                  print(lat);
+                                  print(lng);
+
+                                };
+
                             } on SocketException catch (_) {
                               _showSnackBar(
                                   'Vérifiez votre connexion internet');
                             }
+
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
