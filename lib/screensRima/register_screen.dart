@@ -11,8 +11,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/classes.dart';
+import 'package:winek/main.dart';
 import 'package:winek/screensHiba/MapPage.dart';
-import 'login_screen.dart';
+import 'package:winek/ui/size_config.dart';
 import 'profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,14 +43,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
   File _image;
   String _uploadedFileURL;
-
+  bool tap = false;
   _showSnackBar(String value) {
     final snackBar = new SnackBar(
       content: new Text(
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -69,7 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (loading) {
       return Center(
           child: SpinKitChasingDots(
-            color: Colors.deepPurpleAccent,
+            color: Color(0XFF389490),
           ));
     } else {
       return SafeArea(
@@ -78,7 +79,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(28.0),
+            preferredSize: Size.fromHeight(responsiveheight(28.0)),
             child: AppBar(
               backgroundColor: Colors.white30,
               elevation: 0.0,
@@ -97,11 +98,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: 140,
+                            height: responsiveheight(140),
                           ),
                           Container(
-                            height: 800.0,
-                            width: 320.0,
+                            height: responsiveheight(800.0),
+                            width: responsivewidth(320.0),
                           ),
                         ],
                       ),
@@ -110,36 +111,39 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: 190,
+                            height: responsiveheight(190),
                           ),
                           Container(
-                            height: 400.0,
-                            width: 320.0,
+                            height: responsiveheight(400.0),
+                            width: responsivewidth(320.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
                                 color: Colors.grey[300],
-                                width: 3,
+                                width: responsivewidth(3),
                               ),
                               boxShadow: [
                                 new BoxShadow(
                                   color: Colors.grey[200],
-                                  blurRadius: 20.0,
+                                  blurRadius: responsiveradius(20.0, 1),
                                 ),
                               ],
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(
+                                  responsiveradius(20, 1)),
                             ),
                             child: Column(
                               children: <Widget>[
                                 SizedBox(
-                                  height: 80.0,
+                                  height: responsiveheight(80.0),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, right: 20.0),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: responsivewidth(20)),
                                   child: Container(
-                                    height: 38,
+                                    height: responsiveheight(42),
                                     child: TextField(
+
+
                                       onChanged: (value) {
                                         pseudo = value;
                                         pseudoExist();
@@ -160,10 +164,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold),
                                         contentPadding: EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 20.0),
+                                          vertical: responsiveheight(10.0),
+                                          horizontal: responsivewidth(20.0),),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(32.0)),
+                                              Radius.circular(
+                                                  responsiveradius(32.0, 1))),
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -184,13 +190,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 8.0,
+                                  height: responsiveheight(2.0),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, right: 20.0),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: 38,
+                                    height: responsiveheight(42),
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       onChanged: (value) {
@@ -244,13 +250,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 8.0,
+                                  height: responsiveheight(2.0),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, right: 20.0),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: 38,
+                                    height: responsiveheight(42),
                                     child: TextField(
                                       onChanged: (value) {
                                         tel = value;
@@ -304,13 +310,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 8.0,
+                                  height: responsiveheight(2.0),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, right: 20.0),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: 38,
+                                    height: responsiveheight(42),
                                     child: TextField(
                                       // obscureText: true,
                                       onChanged: (value) {
@@ -369,13 +375,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 8.0,
+                                  height: responsiveheight(2.0),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, right: 20.0),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: 38,
+                                    height: responsiveheight(42),
                                     child: TextField(
                                       // obscureText: true,
                                         autocorrect: false,
@@ -434,23 +440,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                         children: <Widget>[
                           SizedBox(
-                            height: 140,
+                            height: responsiveheight(140),
                           ),
                           Center(
                             child: Container(
-                              height: 100.0,
-                              width: 100.0,
+                              height: responsivewidth(100.0),
+                              width: responsivewidth(100.0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(
                                   color: Colors.grey[300],
                                   width: 3,
                                 ),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(
+                                    responsiveradius(20, 100)),
                                 boxShadow: [
                                   new BoxShadow(
                                     color: Colors.grey[200],
-                                    blurRadius: 20.0,
+                                    blurRadius: responsiveradius(20.0, 100),
                                   ),
                                 ],
                               ),
@@ -461,20 +468,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                     Positioned(
-                      bottom: 317,
-                      left: 25,
+                      bottom: responsiveheight(310),
+                      left: responsivewidth(12),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 70, vertical: 20),
+                                horizontal: responsivewidth(20),
+                                vertical: responsiveheight(20)),
                             child: Material(
                               color: Colors.white,
                               borderRadius:
                               BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
+                                minWidth: responsivewidth(140),
                                 onPressed: () async {
                                   try {
                                     final result = await InternetAddress.lookup(
@@ -494,13 +503,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         'Vérifiez votre connexion internet');
                                   }
                                 },
-                                height: 42.0,
+                                height: responsiveheight(42),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Container(
-                                        height: 42,
+                                        height: responsiveheight(42),
                                         child: Image.asset(
                                             'images/googlelogo.png',
                                             fit: BoxFit.fill)),
@@ -517,9 +526,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 30,
-                          ),
+
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
                             child: Material(
@@ -547,8 +554,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         'Vérifiez votre connexion internet');
                                   }
                                 },
-                                minWidth: 140.0,
-                                height: 42.0,
+                                minWidth: responsivewidth(140.0),
+                                height: responsiveheight(42.0),
                                 child: Text(
                                   "S'inscrire",
                                   style: TextStyle(
@@ -564,22 +571,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                     Positioned(
-                      top: 130,
-                      right: 113,
+                      top: responsiveheight(120),
+                      left: (MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.5) -
+                          responsivewidth(47) * 0.5 +
+                          responsiveheight(100) * 0.5,
+                      // left: responsivewidth(203),
                       child: Container(
-                        height: 40,
-                        width: 40,
-                        padding: EdgeInsets.only(bottom: 0, right: 3),
+                        //padding: EdgeInsets.all(1),
+                        width: responsivewidth(47),
+                        height: responsivewidth(47),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                          color: Colors.white,
-                        ),
+                            color: Colors.white,
+                            // border: Border.all(color: secondarycolor, width: 1),
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color: secondarycolor,
+                                  //Color.fromRGBO(59, 70, 107, 0.3),
+                                  blurRadius: 3.0,
+                                  //offset: Offset(0.0, 0.75),
+                                  offset: Offset(responsivewidth(0.0),
+                                      responsiveheight(0.75))),
+                            ],
+                            borderRadius: BorderRadius.circular(
+                                responsiveradius(50, 1))),
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: 0, right: 3),
+                          padding: EdgeInsets.all(responsivewidth(0.1)),
                           child: IconButton(
                             icon: Icon(
                               Icons.camera_alt,
-                              size: 30.0,
+                              size: responsivewidth(30),
                             ),
                             onPressed: () async {
                               try {
@@ -603,56 +626,51 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               }
                             },
                             // uploadFile();
+
                           ),
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 157.5,
-                      top: 50,
-                      child: Text(
-                        'Winek',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0XFF3B466B),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 96,
-                      top: 70,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 20,
-                          bottom: 20,
-                        ),
-                        child: Text(
-                          'Inscription',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0XFF389490), //vert
-                          ),
-                        ),
-                      ),
-                    ),
+
+
                     SizedBox(
-                      height: 50,
+                      height: responsiveheight(50),
                     ),
                     Positioned(
-                      left: 149,
-                      child: Container(
-                        height: 60.0,
-                        width: 60.0,
-                        child: Image.asset(
-                          'images/logo.png',
-                          fit: BoxFit.fill,
-                          height: 120.0,
-                          width: 120.0,
-                        ),
+                      left: SizeConfig.screenWidth * 0.5 - responsivewidth(70),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        //  crossAxisAlignment:CrossAxisAlignment.center ,
+                        children: <Widget>[
+                          Container(
+                            height: responsivewidth(60.0),
+                            width: responsivewidth(60.0),
+                            child: Image.asset(
+                              'images/logo.png',
+                              fit: BoxFit.fill,
+                              height: responsivewidth(120.0),
+                              width: responsivewidth(120.0),
+                            ),
+                          ),
+                          Text(
+                            'Winek',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0XFF3B466B),
+                            ),
+                          ),
+                          Text(
+                            'Inscription',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: responsivetext(25.0),
+                              fontWeight: FontWeight.w900,
+                              color: Color(0XFF389490), //vert
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

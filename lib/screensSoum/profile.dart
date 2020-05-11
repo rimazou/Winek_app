@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:winek/main.dart';
 import '../dataBaseSoum.dart';
 import 'usersListScreen.dart';
 import 'package:winek/auth.dart';
@@ -48,7 +49,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   bool invit = false;
 
   final CollectionReference userCollection =
-      Firestore.instance.collection('Utilisateur');
+  Firestore.instance.collection('Utilisateur');
 
   _ProfileScreen2State(
       {Map friend, String pseudo, String currentUser, String name}) {
@@ -150,10 +151,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                 }
               }
               if (doc.data["invitation "].contains(currentName)) // amis*
-              {
+                  {
                 setState(() {
                   who = 'Annuler l\'invitaion';
-                  size = 102;
+                  size = 80;
                 });
               } else if (!amipseudo &&
                   !doc.data["invitation "].contains(currentName)) {
@@ -231,7 +232,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
 
                 if (change.document.data["invitation "]
                     .contains(currentName)) // amis*
-                {
+                    {
                   print('annuuule invit');
                   setState(() {
                     who = 'Annuler l\'invitaion';
@@ -260,7 +261,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -276,6 +277,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
 
 
   Widget getButton() {
+
     if (pseudo == currentName) {
       return Container();
     }
@@ -286,43 +288,45 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         left: 80,
         bottom: 50,
         child: Container(
-          height: 200.0,
-          width: 200.0,
-          child: Column(
+          height: responsiveheight(200.0),
+          width: responsivewidth(200.0),
+          child: Wrap(
             children: <Widget>[
               MaterialButton(
                 child: Center(
-                  child: Text(
-                    '$pseudo vous a envoyé une invitation',
-                    style: TextStyle(
-                      fontFamily: 'montserrat',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff707070),
+                  child: FittedBox(fit: BoxFit.fitWidth,
+                    child: Text(
+                      '$pseudo vous a envoyé une invitation',
+                      style: TextStyle(
+                        fontFamily: 'montserrat',
+                        fontSize: responsivetext(18),
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff707070),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                ),),
               Row(
                 children: <Widget>[
                   SizedBox(
                     width: 8,
                   ),
-                  Container(
-                    height: 40.0,
-                    width: 110.0,
+                  Flexible(child: Container(
+                    height: responsiveheight(40.0),
+                    width: responsivewidth(110.0),
                     child: MaterialButton(
                         child: Center(
-                          child: Text(
-                            'Accepter',
-                            style: TextStyle(
-                              fontFamily: 'montserrat',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                          child: FittedBox(fit: BoxFit.fitWidth,
+                            child: Text(
+                              'Accepter',
+                              style: TextStyle(
+                                fontFamily: 'montserrat',
+                                fontSize: responsivetext(14),
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ),
+                          ),),
                         onPressed: () async {
                           try {
                             final result = await InternetAddress.lookup(
@@ -369,27 +373,29 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                         color: Color(0xff389490),
                         width: 3,
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(
+                          responsiveradius(20, 1)),
                     ),
-                  ),
+                  ),),
                   SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    height: 40.0,
-                    width: 110.0,
+                  Flexible(child: Container(
+                    height: responsiveheight(40.0),
+                    width: responsivewidth(110.0),
                     child: MaterialButton(
                         child: Center(
-                          child: Text(
-                            'Refuser',
-                            style: TextStyle(
-                              fontFamily: 'montserrat',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                          child: FittedBox(fit: BoxFit.fitWidth,
+                            child: Text(
+                              'Refuser',
+                              style: TextStyle(
+                                fontFamily: 'montserrat',
+                                fontSize: responsivetext(14),
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ),
+                          ),),
                         onPressed: () async {
                           try {
                             final result = await InternetAddress.lookup(
@@ -406,12 +412,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                 });
                                 await Database(pseudo: pseudo).userDeleteData(
                                     currentUser);
-                          setState(() {
-                            invit = false;
-                            size = 138;
-                            who = "Ajouter";
-                            tap = true;
-                          });
+                                setState(() {
+                                  invit = false;
+                                  size = 138;
+                                  who = "Ajouter";
+                                  tap = true;
+                                });
                                 _showSnackBar('Invitation supprimée !');
                               }
                             }
@@ -425,9 +431,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                         color: Colors.red[400],
                         width: 3,
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(
+                          responsiveradius(20, 1)),
                     ),
-                  ),
+                  ),),
                 ],
               ),
             ],
@@ -438,7 +445,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               color: Colors.grey[300],
               width: 3,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(responsiveradius(20, 1)),
           ),
         ),
       );
@@ -449,21 +456,22 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         left: size,
         bottom: 76,
         child: Container(
-          height: 200.0,
-          width: 30.0,
+          height: responsiveheight(200.0),
+          width: responsivewidth(30.0),
           //Bouton ajouter
           child: MaterialButton(
             child: Center(
-              child: Text(
-                who,
-                style: TextStyle(
-                  fontFamily: 'montserrat',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
+              child: FittedBox(fit: BoxFit.fitWidth,
+                child: Text(
+                  who,
+                  style: TextStyle(
+                    fontFamily: 'montserrat',
+                    fontSize: responsivetext(17),
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ),
+              ),),
             onPressed: () async {
               try {
                 final result = await InternetAddress.lookup('google.com');
@@ -481,7 +489,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       //envoyer invit
                       setState(() {
                         who = "Annuler l\'invitaion";
-                        size = 102;
+                        size = 80;
                         tap = true;
                       });
 
@@ -522,7 +530,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               color: Colors.grey[300],
               width: 3,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(responsiveradius(20, 1)),
           ),
         ),
       );
@@ -544,7 +552,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       return Center(
         child: FittedBox(
           child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(responsiveradius(18, 1)),
               child: Image(image: NetworkImage(image))),
           fit: BoxFit.fill,
         ),
@@ -620,64 +628,68 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                             Container(
                               padding: const EdgeInsets.only(
                                   left: 40.0, right: 30.0),
-                              child: Text(
-                                online,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff707070),
+                              child: FittedBox(fit: BoxFit.fitWidth,
+                                child: Text(
+                                  online,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff707070),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              ),),
                             SizedBox(
                               height: 26,
                             ),
                             Container(
                               padding: const EdgeInsets.only(
                                   left: 40.0, right: 30.0),
-                              child: Text(
-                                pseudo,
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff000000),
+                              child: FittedBox(fit: BoxFit.fitWidth,
+                                child: Text(
+                                  pseudo,
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff000000),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              ),),
                             SizedBox(
                               height: 23,
                             ),
                             Container(
                               padding: const EdgeInsets.only(
                                   left: 40.0, right: 30.0),
-                              child: Text(
-                                phone,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
+                              child: FittedBox(fit: BoxFit.fitWidth,
+                                child: Text(
+                                  phone,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff000000),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              ),),
                             SizedBox(
                               height: 23,
                             ),
                             Container(
                               padding: const EdgeInsets.only(
                                   left: 40.0, right: 30.0),
-                              child: Text(
-                                mail,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff000000),
+                              child: FittedBox(fit: BoxFit.fitWidth,
+                                child: Text(
+                                  mail,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff000000),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              ),),
                           ],
                         ),
 
@@ -706,11 +718,11 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
 
                     children: <Widget>[
                       SizedBox(
-                        height: 60,
+                        height: responsiveheight(60),
                       ),
                       Container(
-                          height: 110.0,
-                          width: 110.0,
+                          height: responsivewidth(110.0),
+                          width: responsivewidth(110.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(

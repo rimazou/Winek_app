@@ -117,7 +117,7 @@ class _ResetMailScreenState extends State<ResetMailScreen> {
                       minWidth: 140.0,
                       height: 37.0,
                       child: Text(
-                        'Envoyer code de confirmation',
+                        'Envoyer mail de restauration',
 
                         style: TextStyle(
                           color: Colors.white,

@@ -16,6 +16,7 @@ import 'package:winek/screensRima/register_screen.dart';
 import '../UpdateMarkers.dart';
 import '../classes.dart';
 import 'package:winek/screensRima/resetmail.dart';
+import '../main.dart';
 import 'resetmail.dart';
 import '../auth.dart';
 import 'dart:async';
@@ -296,8 +297,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Vérifiez votre connexion internet');
                             }
                           }, //_signInG(),
-                          minWidth: 140.0,
-                          height: 42.0,
+                          minWidth: responsivewidth(140),
+                          height: responsiveheight(42),
                           child: Text(
                             "S'inscrire",
                             style: TextStyle(
@@ -334,8 +335,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Vérifiez votre connexion internet');
                             }
                           },
-                          minWidth: 140.0,
-                          height: 42.0,
+                          minWidth: responsivewidth(140),
+                          height: responsiveheight(42),
                           child: Text(
                             'Se connecter',
                             style: TextStyle(
@@ -350,19 +351,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 70, vertical: 20),
+                  padding: EdgeInsets.symmetric(horizontal: responsivewidth(70),
+                      vertical: responsiveheight(20)),
                   child: Material(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     elevation: 5.0,
                     child: MaterialButton(
                       onPressed: () => _signInWithGoogle(),
-                      height: 42.0,
+                      height: responsiveheight(42),
+
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Container(
-                              height: 42,
+                              height: responsiveheight(42),
                               child: Image.asset('images/googlelogo.png',
                                   fit: BoxFit.fill)),
                           Text(
