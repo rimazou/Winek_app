@@ -3595,6 +3595,11 @@ class ReceivedAlertBubble extends StatelessWidget {
     ));
   }
 
+  Future<BitmapDescriptor> createMarkerIc() async {
+    return await UpdateMarkers2()
+        .getMarkerIcon(alert.icon.toString(), Size(150, 150));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -3775,12 +3780,11 @@ class AlertBubbleBox extends StatelessWidget {
   }
 }
 
-void addListnerToNotifier() {
+void addListnerToNotifier(Function ffunction) {
   valueNotifier.addListener(() async {
     //print('ey tout le monde on a recu une alerte');
     checkSenderUser();
-
-    var vaaa = _AlertScreenState(() {});
+    var vaaa = _AlertScreenState(ffunction);
     vaaa.initState();
     await vaaa.showNotificationWithDefaultSound();
   });
