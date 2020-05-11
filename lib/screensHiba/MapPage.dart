@@ -81,7 +81,7 @@ class controllermap extends ChangeNotifier {
       //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
       //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
       mapController.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(lat, lng), zoom: 14.0)));
+          CameraPosition(target: LatLng(lat, lng), zoom: 13.0)));
       print(lat);
       print(lng);
     }
@@ -797,7 +797,7 @@ class _HomeState extends State<Home> {
                               CameraPosition(
                                   target: LatLng(
                                       position.latitude, position.longitude),
-                                  zoom: 14.0)));
+                                  zoom: 13.0)));
                     }
                   } on SocketException catch (_) {
                     _showSnackBar('Vérifiez votre connexion internet');
@@ -994,7 +994,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 LatLng latlng =
                                     new LatLng(point.latitude, point.longitude);
                                 cameraUpdate =
-                                    CameraUpdate.newLatLngZoom(latlng, 15);
+                                    CameraUpdate.newLatLngZoom(latlng, 13);
                                 Provider.of<controllermap>(context,
                                         listen: false)
                                     .mapController
@@ -2289,7 +2289,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             LatLng latlng =
                                 new LatLng(point.latitude, point.longitude);
                             cameraUpdate =
-                                CameraUpdate.newLatLngZoom(latlng, 12);
+                                CameraUpdate.newLatLngZoom(latlng, 13);
                             Provider.of<controllermap>(context, listen: false)
                                 .mapController
                                 .animateCamera(cameraUpdate);
@@ -2550,7 +2550,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               LatLng latlng =
                                   new LatLng(point.latitude, point.longitude);
                               cameraUpdate =
-                                  CameraUpdate.newLatLngZoom(latlng, 15);
+                                  CameraUpdate.newLatLngZoom(latlng, 13);
                               Provider.of<controllermap>(context, listen: false)
                                   .mapController
                                   .animateCamera(cameraUpdate);
@@ -3207,7 +3207,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                       });
                       LatLng latlng =
                           new LatLng(point.latitude, point.longitude);
-                      cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+                      cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 13);
                       Provider.of<controllermap>(context, listen: false)
                           .mapController
                           .animateCamera(cameraUpdate);

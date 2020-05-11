@@ -154,9 +154,11 @@ class _FavorisTile extends State<FavorisTile> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
 
@@ -197,8 +199,9 @@ class _FavorisTile extends State<FavorisTile> {
               var b = (result2 != ConnectivityResult.none);
 
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-            DataBaseFavoris().favorisDeleteData(this.geoP, this.placeid);
-            //DataBaseFavoris().favorisIdDeleteData(this.placeid);
+                DataBaseFavoris().favorisDeleteData(this.geoP, this.placeid);
+
+                //DataBaseFavoris().favorisIdDeleteData(this.placeid);
               }
             } on SocketException catch (_) {
               _showSnackBar('Vérifiez votre connexion internet', context);

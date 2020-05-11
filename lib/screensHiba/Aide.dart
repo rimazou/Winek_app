@@ -21,7 +21,6 @@ bool qst15;
 class AidePage extends StatefulWidget {
   @override
   static const String id = 'Aide';
-
   _AidePageState createState() => _AidePageState();
 }
 
@@ -91,7 +90,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  ' j’ai pas d’amis, comment je fais ?',
+                  ' je n’ai pas d’amis, comment je fais ?',
                   style: TextStyle(
                     color: (qst1) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -105,10 +104,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Allez vers la liste d’amis puis faites une recherche et ajouter la personne que vous voulez, et patienter jusqu’à ce qu’elle accepte l’invitation.',
+                      'Allez vers la liste d’amis, faites une recherche et ajoutez la personne que vous voulez, puis patientez jusqu’à ce qu’elle accepte l’invitation.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -141,8 +140,8 @@ class _AidePageState extends State<AidePage> {
                     child: Text(
                       'Allez vers la liste d’amis puis appuyez sur l’icône en haut à droite qui va vous renvoyer vers la liste des invitations.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -175,8 +174,8 @@ class _AidePageState extends State<AidePage> {
                     child: Text(
                       'En appuyant sur l’utilisateur soit dans la liste d’amis, d’utilisateurs ou d’invitations.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -206,7 +205,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  'C’est quoi la différence entre un Voyage et un groupe à long terme ?',
+                  'Quelle est la différence entre un Voyage et un groupe à long terme ?',
                   style: TextStyle(
                     color: (qst4) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -220,10 +219,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Un voyage est caractérisé par sa destination et permet à ses membres de se localiser mutuellement et d’échanger certaines informations comme leurs vitesses de déplacement, l’états de batterie de leurs téléphones portables et le temps restant jusqu’à leurs arrivées au point de rencontre. De plus, ils peuvent s’envoyer des alertes ou planifier des arrêts. Une fois tous les membres arrivent à destination le groupe sera fermé. En revanche un long terme offre seulement le service de localisation et se ferme que lorsque l’administrateur le décide.',
+                      'Un voyage est caractérisé par sa destination et permet à ses membres de se localiser mutuellement et d’échanger certaines informations comme leurs vitesses de déplacement, l’état de batterie de leurs appareils et le temps restant pour arriver à destination. De plus, ils peuvent s’envoyer des alertes ou planifier des arrêts. Une fois que tous les membres arrivent à destination le groupe sera fermé. En revanche un long terme offre seulement le service de localisation et sera fermé que lorsque l’administrateur le décide.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -240,7 +239,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  'Pourquoi mon nouveau groupe ne contient pas mes amis ?',
+                  'Pourquoi mon nouveau groupe ne contient pas les amis que j’ai ajoutés',
                   style: TextStyle(
                     color: (qst5) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -256,8 +255,8 @@ class _AidePageState extends State<AidePage> {
                     child: Text(
                       'Il faut attendre que les membres ajoutés acceptent l’invitation du groupe.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -288,10 +287,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Une fois votre voyage terminé, et que tous les membres sont à destination, le voyage se ferme automatiquement.',
+                      'Une fois que votre voyage soit terminé, et que tous les membres arrivent à destination, le groupe se ferme automatiquement.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -308,7 +307,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  'Où es que je trouve les informations d’un membre dans mon voyage ?',
+                  'Où est ce que je trouve les informations d’un membre dans mon groupe voyage ?',
                   style: TextStyle(
                     color: (qst7) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -322,10 +321,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'En cliquant sur sa bulle dans la liste des membres du voyage ouvert sur la carte.',
+                      'En cliquant sur sa bulle dans la liste des membres du voyage,en bas de la carte.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -369,10 +368,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Vous pouvez y accéder lors de la création de vos voyages, et ainsi vous n’aurez pas à rechercher cet endroit de nouveau.',
+                      'Vous pouvez y accéder lors de la création de vos voyages, ainsi vous n’aurez pas à rechercher cet endroit de nouveau quand vous introduirez votre destination.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -389,10 +388,10 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  'Comment ajouter un  endroits favoris ?',
+                  'Comment ajouter un  endroit favoris ?',
                   style: TextStyle(
                     color: (qst9) ? secondarycolor : Color(0xff707070),
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     fontFamily: 'Montserrat',
                     fontSize: 15,
                   ),
@@ -403,10 +402,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Pour ajouter un endroits favoris allez au “favoris”, vous y trouverez la liste de vos endroits favoris, en bas de l’écran sur cette même page, cliquez sur le bouton “+” et faites votre recherche.',
+                      'Pour ajouter un endroit favoris: allez au “favoris”, vous y trouverez la liste de vos endroits favoris, en bas de l’écran sur cette même page, cliquez sur le bouton “+” et faites votre recherche.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -452,8 +451,8 @@ class _AidePageState extends State<AidePage> {
                     child: Text(
                       'Faites apparaître votre liste d’alertes grâce au bouton gris en bas de votre écran et cliquez sur l’alerte de votre choix.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -484,10 +483,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Et bien vous n’avez qu’à la personnaliser ! Avec le bouton "personnaliser" qui se trouve en haut de la liste d’alertes ; en introduisant le contenu que vous voulez, elle sera rajoutée à votre liste et vous pouvez l’utiliser quand vous voulez. ',
+                      'Et bien vous n’avez qu’à la personnaliser ! Avec le bouton "personnaliser" qui se trouve en haut de la liste d’alertes ; en introduisant le contenu que vous voulez, elle sera rajoutée à votre liste et vous pourrez l’utiliser quand vous le voudrez. ',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -504,7 +503,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  'Maintenant je me demandez si je peux supprimer une de mes alertes personnalisées ?',
+                  'Maintenant je me demande si je peux supprimer une de mes alertes personnalisées ?',
                   style: TextStyle(
                     color: (qst12) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -518,10 +517,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'C’est possible, glissez l’alerte à gauche où à droite et vous ne la trouver plus dans la fameuse liste.',
+                      'C’est possible, glissez l’alerte à gauche où à droite et vous ne la trouverez plus dans la fameuse liste.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -538,7 +537,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  ' Dis comme ça, envoyer des alertes a l’air facile comme passer une lettre à la poste, mais comment je fais pour savoir si j’ai reçu une alerte ? ',
+                  ' Dit comme ça, envoyer des alertes a l’air facile comme passer une lettre à la poste, mais comment je fais pour savoir si j’ai reçu une alerte ? ',
                   style: TextStyle(
                     color: (qst13) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -552,10 +551,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Instinctivement vous consultez votre boite à lettre, non ? Oui on ne rigole pas, vous disposez d’une sur Winek, c’est le bouton rond avec l’icônede message à droite de votre écran.',
+                      'Instinctivement vous consultez votre boite aux lettres, non ? Oui on ne rigole pas, vous en disposez d’une sur Winek, c’est le bouton rond avec l’icône de message à droite de votre écran.',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
@@ -573,7 +572,7 @@ class _AidePageState extends State<AidePage> {
                   });
                 },
                 child: Text(
-                  'Très bien, je vois que j’ai reçu des alertes et je sais même qui et quand je les ai reçues, on a fait le tour des fonctionnalités autour des alerts, non ? ',
+                  'Très bien, je vois que j’ai reçu des alertes et je sais même qui me les a envoyés et quand je les ai reçues, on a fait le tour des fonctionnalités autour des alertes, non ? ',
                   style: TextStyle(
                     color: (qst14) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
@@ -587,10 +586,10 @@ class _AidePageState extends State<AidePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      'Et si on vous disait que, pas encore ! Il reste un dernier truc ; si vous cliquez sur une des vos alertes reçues, vous pouvez les visualiser sur la map là où elle a été envoyée, pratique vous ne pensez pas ?',
+                      'Et si on vous disait que, pas encore ! Il reste un dernier truc ; si vous cliquez sur une de vos alertes reçues, vous pourrez la visualiser sur la map là où elle a été envoyée, pratique ne pensez-vous pas ?',
                       style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xff5B5050),
+                        fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                       ),
