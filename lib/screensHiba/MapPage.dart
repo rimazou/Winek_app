@@ -27,6 +27,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'Aide.dart';
 import 'planifierArrets.dart';
+
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -39,7 +40,7 @@ bool justReceivedAlert = false;
 ValueNotifier valueNotifier = ValueNotifier(justReceivedAlert);
 
 const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+//final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
 
@@ -48,6 +49,8 @@ Databasegrp data = Databasegrp();
 String searchAddr;
 
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
+final voyageScaffoldKey = GlobalKey<ScaffoldState>();
+final longtermeScaffoldKey = GlobalKey<ScaffoldState>();
 
 class controllermap extends ChangeNotifier {
   GoogleMapController mapController;
@@ -85,8 +88,20 @@ class controllermap extends ChangeNotifier {
   }
 }
 
-void onError(PlacesAutocompleteResponse response) {
+void onErrorhome(PlacesAutocompleteResponse response) {
   homeScaffoldKey.currentState.showSnackBar(
+    SnackBar(content: Text(response.errorMessage)),
+  );
+}
+
+void onErrorvoyage(PlacesAutocompleteResponse response) {
+  voyageScaffoldKey.currentState.showSnackBar(
+    SnackBar(content: Text(response.errorMessage)),
+  );
+}
+
+void onErrorlongterme(PlacesAutocompleteResponse response) {
+  longtermeScaffoldKey.currentState.showSnackBar(
     SnackBar(content: Text(response.errorMessage)),
   );
 }
@@ -150,7 +165,7 @@ class _HomeState extends State<Home> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    homeScaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -158,10 +173,9 @@ class _HomeState extends State<Home> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       extendBody: true,
-      key: _scaffoldKey,
+      key: homeScaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
       bottomNavigationBar: bottomNavBar,
       floatingActionButton: flaotButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -221,7 +235,7 @@ class _HomeState extends State<Home> {
                       //margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         borderRadius:
-                        BorderRadius.circular(responsiveradius(20, 1)),
+                            BorderRadius.circular(responsiveradius(20, 1)),
                         color: primarycolor, //Color.fromRGBO(59, 70, 107, 1),
                       ),
                       child: Column(
@@ -268,28 +282,28 @@ class _HomeState extends State<Home> {
                                   onTap: () async {
                                     try {
                                       final result =
-                                      await InternetAddress.lookup(
-                                          'google.com');
+                                          await InternetAddress.lookup(
+                                              'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
                                       var b =
-                                      (result2 != ConnectivityResult.none);
+                                          (result2 != ConnectivityResult.none);
 
                                       if (b &&
                                           result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String id =
-                                        await authService.connectedID();
+                                            await authService.connectedID();
                                         if (id != null) {
                                           DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
+                                              await authService.userRef
+                                                  .document(id)
+                                                  .get();
 
                                           if (snapshot != null) {
                                             Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
+                                                Utilisateur.fromdocSnapshot(
+                                                    snapshot);
                                             //  Navigator.pushNamed(context, Home.id);
                                             Navigator.push(
                                                 context,
@@ -338,18 +352,18 @@ class _HomeState extends State<Home> {
                                   onTap: () async {
                                     try {
                                       final result =
-                                      await InternetAddress.lookup(
-                                          'google.com');
+                                          await InternetAddress.lookup(
+                                              'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
                                       var b =
-                                      (result2 != ConnectivityResult.none);
+                                          (result2 != ConnectivityResult.none);
 
                                       if (b &&
                                           result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String currentUser =
-                                        await AuthService().connectedID();
+                                            await AuthService().connectedID();
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -486,9 +500,9 @@ class _HomeState extends State<Home> {
                             onTap: () async {
                               try {
                                 final result =
-                                await InternetAddress.lookup('google.com');
+                                    await InternetAddress.lookup('google.com');
                                 var result2 =
-                                await Connectivity().checkConnectivity();
+                                    await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
                                 if (b &&
@@ -528,9 +542,9 @@ class _HomeState extends State<Home> {
                             onTap: () async {
                               try {
                                 final result =
-                                await InternetAddress.lookup('google.com');
+                                    await InternetAddress.lookup('google.com');
                                 var result2 =
-                                await Connectivity().checkConnectivity();
+                                    await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
                                 if (b &&
@@ -671,7 +685,7 @@ class _HomeState extends State<Home> {
                         Prediction p = await PlacesAutocomplete.show(
                           context: context,
                           apiKey: kGoogleApiKey,
-                          onError: onError,
+                          onError: onErrorhome,
                           mode: Mode.overlay,
                           language: "fr",
                           components: [Component(Component.country, "DZ")],
@@ -697,15 +711,15 @@ class _HomeState extends State<Home> {
         //duration: Duration(milliseconds: 500),
         //child:
         FloatingActionButton(
-          heroTag: null,
-          backgroundColor: Color(0xFF389490),
-          child: Icon(Icons.group_add, size: 32.0),
-          onPressed: () {
-            setState(() {
-              index = 2;
-              // _visible = !_visible;
-            });
-          },
+      heroTag: null,
+      backgroundColor: Color(0xFF389490),
+      child: Icon(Icons.group_add, size: 32.0),
+      onPressed: () {
+        setState(() {
+          index = 2;
+          // _visible = !_visible;
+        });
+      },
       // ),
     );
     //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked;
@@ -717,88 +731,84 @@ class _HomeState extends State<Home> {
       duration: Duration(milliseconds: 500),
       child: */
         ClipRRect(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(40),
-            topLeft: Radius.circular(40),
-          ),
-          child: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            color: Color(0xFF3B466B),
-            notchMargin: 10,
-            child: Container(
-              height: 70,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(40),
+        topLeft: Radius.circular(40),
+      ),
+      child: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: Color(0xFF3B466B),
+        notchMargin: 10,
+        child: Container(
+          height: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.group,
-                          size: 32.0,
-                          color: Colors.white,
-                        ),
-                        onPressed: () async {
-                          try {
-                            final result =
-                            await InternetAddress.lookup('google.com');
-                            var result2 = await Connectivity()
-                                .checkConnectivity();
-                            var b = (result2 != ConnectivityResult.none);
-
-                            if (b &&
-                                result.isNotEmpty &&
-                                result[0].rawAddress.isNotEmpty) {
-                              setState(() {
-                                index = 0;
-                              });
-                              Navigator.pushNamed(context, ListGrpPage.id);
-                            }
-                          } on SocketException catch (_) {
-                            _showSnackBar('Vérifiez votre connexion internet');
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-
-                  // Right Tab bar icons
-
-                  MaterialButton(
-                    minWidth: 40,
+                  IconButton(
+                    icon: Icon(
+                      Icons.group,
+                      size: 32.0,
+                      color: Colors.white,
+                    ),
                     onPressed: () async {
                       try {
-                        final result = await InternetAddress.lookup(
-                            'google.com');
+                        final result =
+                            await InternetAddress.lookup('google.com');
                         var result2 = await Connectivity().checkConnectivity();
                         var b = (result2 != ConnectivityResult.none);
 
                         if (b &&
                             result.isNotEmpty &&
                             result[0].rawAddress.isNotEmpty) {
-                          Position position = await Geolocator()
-                              .getCurrentPosition(
-                              desiredAccuracy: LocationAccuracy.high);
-                          Provider
-                              .of<controllermap>(context, listen: false)
-                              .mapController
-                              .animateCamera(CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                  target: LatLng(
-                                      position.latitude, position.longitude),
-                                  zoom: 14.0)));
+                          setState(() {
+                            index = 0;
+                          });
+                          Navigator.pushNamed(context, ListGrpPage.id);
                         }
                       } on SocketException catch (_) {
                         _showSnackBar('Vérifiez votre connexion internet');
                       }
                     },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.location_on,
-                          size: 32.0,
+                  ),
+                ],
+              ),
+
+              // Right Tab bar icons
+
+              MaterialButton(
+                minWidth: 40,
+                onPressed: () async {
+                  try {
+                    final result = await InternetAddress.lookup('google.com');
+                    var result2 = await Connectivity().checkConnectivity();
+                    var b = (result2 != ConnectivityResult.none);
+
+                    if (b &&
+                        result.isNotEmpty &&
+                        result[0].rawAddress.isNotEmpty) {
+                      Position position = await Geolocator().getCurrentPosition(
+                          desiredAccuracy: LocationAccuracy.high);
+                      Provider.of<controllermap>(context, listen: false)
+                          .mapController
+                          .animateCamera(CameraUpdate.newCameraPosition(
+                              CameraPosition(
+                                  target: LatLng(
+                                      position.latitude, position.longitude),
+                                  zoom: 14.0)));
+                    }
+                  } on SocketException catch (_) {
+                    _showSnackBar('Vérifiez votre connexion internet');
+                  }
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.location_on,
+                      size: 32.0,
                       color: Colors.white,
                     ),
                   ],
@@ -915,7 +925,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    voyageScaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   _showSnackBar2(String value, BuildContext context) {
@@ -963,9 +973,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           onTap: () async {
                             try {
                               final result =
-                              await InternetAddress.lookup('google.com');
+                                  await InternetAddress.lookup('google.com');
                               var result2 =
-                              await Connectivity().checkConnectivity();
+                                  await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
                               if (b &&
@@ -982,19 +992,18 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   point = ds.data['position']['geopoint'];
                                 });
                                 LatLng latlng =
-                                new LatLng(point.latitude, point.longitude);
+                                    new LatLng(point.latitude, point.longitude);
                                 cameraUpdate =
                                     CameraUpdate.newLatLngZoom(latlng, 15);
-                                Provider
-                                    .of<controllermap>(context,
-                                    listen: false)
+                                Provider.of<controllermap>(context,
+                                        listen: false)
                                     .mapController
                                     .animateCamera(cameraUpdate);
                                 setState(() {
 //zoum sur la personne, son id est dans
 // groupe.membres[i]['id']
                                   membreinfo['pseudo'] =
-                                  groupe.membres[i]['pseudo'];
+                                      groupe.membres[i]['pseudo'];
                                   membreinfo['image'] = imagesUrl[i];
 
 // membreinfo['vitesse']
@@ -1106,15 +1115,15 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         vts = snapshot.data['vitesse'];
                                         if (vts != 0) {
                                           point = snapshot.data['location']
-                                          ['geopoint'];
+                                              ['geopoint'];
                                           distance = Provider.of<UpdateMarkers>(
-                                              context,
-                                              listen: false)
+                                                  context,
+                                                  listen: false)
                                               .calculateDistance(
-                                              point.latitude,
-                                              point.longitude,
-                                              groupe.destination_latitude,
-                                              groupe.destination_longitude);
+                                                  point.latitude,
+                                                  point.longitude,
+                                                  groupe.destination_latitude,
+                                                  groupe.destination_longitude);
                                           temps = (distance * 1000) / vts;
                                           t = temps / 60;
                                           heure = (t ~/ 60).toInt();
@@ -1183,7 +1192,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     }
     return Scaffold(
       extendBody: true,
-      key: _scaffoldKey,
+      key: voyageScaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
       body: Stack(
@@ -1230,7 +1239,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
                                   var result2 =
-                                  await Connectivity().checkConnectivity();
+                                      await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
                                   if (b &&
@@ -1292,7 +1301,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
                                   var result2 =
-                                  await Connectivity().checkConnectivity();
+                                      await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
                                   if (b &&
@@ -1301,10 +1310,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     // show input autocomplete with selected mode
                                     // then get the Prediction selected
                                     Prediction p =
-                                    await PlacesAutocomplete.show(
+                                        await PlacesAutocomplete.show(
                                       context: context,
                                       apiKey: kGoogleApiKey,
-                                      onError: onError,
+                                      onError: onErrorvoyage,
                                       mode: Mode.overlay,
                                       language: "fr",
                                       components: [
@@ -1313,7 +1322,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     );
 
                                     Provider.of<controllermap>(context,
-                                        listen: false)
+                                            listen: false)
                                         .displayPredictionRecherche(p);
                                   }
                                 } on SocketException catch (_) {
@@ -1354,9 +1363,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         onPressed: () async {
                           try {
                             final result =
-                            await InternetAddress.lookup('google.com');
+                                await InternetAddress.lookup('google.com');
                             var result2 =
-                            await Connectivity().checkConnectivity();
+                                await Connectivity().checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
                             if (b &&
@@ -1364,7 +1373,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 result[0].rawAddress.isNotEmpty) {
                               utilisateurID = await AuthService().connectedID();
                               currentUser =
-                              await AuthService().getPseudo(utilisateurID);
+                                  await AuthService().getPseudo(utilisateurID);
                               groupPath = path;
                               showModalBottomSheet(
                                   backgroundColor: Colors.transparent,
@@ -1379,12 +1388,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                           )),
                                       child: Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         children: <Widget>[
                                           Container(
                                             child: Padding(
                                               padding:
-                                              const EdgeInsets.all(10.0),
+                                                  const EdgeInsets.all(10.0),
                                               child: Column(
                                                 children: <Widget>[
                                                   RoundedButton(
@@ -1476,29 +1485,28 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           onPressed: () async {
                             try {
                               final result =
-                              await InternetAddress.lookup('google.com');
+                                  await InternetAddress.lookup('google.com');
                               var result2 =
-                              await Connectivity().checkConnectivity();
+                                  await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
                               if (b &&
                                   result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
                                 var vvv =
-                                await _firestore.document(groupPath).get();
+                                    await _firestore.document(groupPath).get();
                                 bool tr = vvv.data['justReceivedAlert'];
                                 _firestore.document(groupPath).updateData({
                                   'justReceivedAlert': !tr,
                                 });
                               }
 
-
                               // show input autocomplete with selected mode
                               // then get the Prediction selected
                               Prediction p = await PlacesAutocomplete.show(
                                 context: context,
                                 apiKey: kGoogleApiKey,
-                                onError: onError,
+                                onError: onErrorvoyage,
                                 mode: Mode.overlay,
                                 language: "fr",
                                 components: [
@@ -1511,24 +1519,23 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 print(
                                     'heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeeee');
                                 //var placeId = p.placeId;
-                                double lat = detail.result.geometry.location
-                                    .lat;
-                                double lng = detail.result.geometry.location
-                                    .lng;
+                                double lat =
+                                    detail.result.geometry.location.lat;
+                                double lng =
+                                    detail.result.geometry.location.lng;
                                 //PlanifierArrets().getChanges(context, path);
-                                PlanifierArrets().addArretsToSubCol(
-                                    path, lat, lng);
+                                PlanifierArrets()
+                                    .addArretsToSubCol(path, lat, lng);
                                 print("arret added");
                                 //PlanifierArrets().getChanges(context, path);
                                 print(lat);
                                 print(lng);
-                              };
-
+                              }
+                              ;
                             } on SocketException catch (_) {
                               _showSnackBar(
                                   'Vérifiez votre connexion internet');
                             }
-
                           },
                           backgroundColor: Color(0xFF389490),
                           foregroundColor: Color(0xFFFFFFFF),
@@ -1546,16 +1553,16 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           onPressed: () async {
                             try {
                               final result =
-                              await InternetAddress.lookup('google.com');
+                                  await InternetAddress.lookup('google.com');
                               var result2 =
-                              await Connectivity().checkConnectivity();
+                                  await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
                               if (b &&
                                   result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
                                 utilisateurID =
-                                await AuthService().connectedID();
+                                    await AuthService().connectedID();
                                 currentUser = await AuthService()
                                     .getPseudo(utilisateurID);
                                 setState(() {
@@ -1583,9 +1590,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                           onPressed: () async {
                             try {
                               final result =
-                              await InternetAddress.lookup('google.com');
+                                  await InternetAddress.lookup('google.com');
                               var result2 =
-                              await Connectivity().checkConnectivity();
+                                  await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
                               if (b &&
@@ -1651,7 +1658,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
                                     var b =
-                                    (result2 != ConnectivityResult.none);
+                                        (result2 != ConnectivityResult.none);
 
                                     if (b &&
                                         result.isNotEmpty &&
@@ -1761,8 +1768,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       onPressed: () async {
                                         try {
                                           final result =
-                                          await InternetAddress.lookup(
-                                              'google.com');
+                                              await InternetAddress.lookup(
+                                                  'google.com');
                                           var result2 = await Connectivity()
                                               .checkConnectivity();
                                           var b = (result2 !=
@@ -1780,8 +1787,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                                   .document(utilisateurID)
                                                   .updateData({
                                                 'alertLIST':
-                                                FieldValue.arrayUnion(
-                                                    [alertePerso]),
+                                                    FieldValue.arrayUnion(
+                                                        [alertePerso]),
                                               });
                                               alertePerso = null;
                                             }
@@ -1819,9 +1826,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             onPressed: () async {
                               try {
                                 final result =
-                                await InternetAddress.lookup('google.com');
+                                    await InternetAddress.lookup('google.com');
                                 var result2 =
-                                await Connectivity().checkConnectivity();
+                                    await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
                                 if (b &&
@@ -1902,9 +1909,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         onPressed: () async {
                           try {
                             final result =
-                            await InternetAddress.lookup('google.com');
+                                await InternetAddress.lookup('google.com');
                             var result2 =
-                            await Connectivity().checkConnectivity();
+                                await Connectivity().checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
                             if (b &&
@@ -1985,28 +1992,28 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   onTap: () async {
                                     try {
                                       final result =
-                                      await InternetAddress.lookup(
-                                          'google.com');
+                                          await InternetAddress.lookup(
+                                              'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
                                       var b =
-                                      (result2 != ConnectivityResult.none);
+                                          (result2 != ConnectivityResult.none);
 
                                       if (b &&
                                           result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String id =
-                                        await authService.connectedID();
+                                            await authService.connectedID();
                                         if (id != null) {
                                           DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
+                                              await authService.userRef
+                                                  .document(id)
+                                                  .get();
 
                                           if (snapshot != null) {
                                             Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
+                                                Utilisateur.fromdocSnapshot(
+                                                    snapshot);
                                             //  Navigator.pushNamed(context, Home.id);
                                             Navigator.push(
                                                 context,
@@ -2055,18 +2062,18 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   onTap: () async {
                                     try {
                                       final result =
-                                      await InternetAddress.lookup(
-                                          'google.com');
+                                          await InternetAddress.lookup(
+                                              'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
                                       var b =
-                                      (result2 != ConnectivityResult.none);
+                                          (result2 != ConnectivityResult.none);
 
                                       if (b &&
                                           result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String currentUser =
-                                        await AuthService().connectedID();
+                                            await AuthService().connectedID();
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -2114,12 +2121,10 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () =>
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SignoutWait())),
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -2262,9 +2267,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       onTap: () async {
                         try {
                           final result =
-                          await InternetAddress.lookup('google.com');
+                              await InternetAddress.lookup('google.com');
                           var result2 =
-                          await Connectivity().checkConnectivity();
+                              await Connectivity().checkConnectivity();
                           var b = (result2 != ConnectivityResult.none);
 
                           if (b &&
@@ -2282,7 +2287,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               point = ds.data['position']['geopoint'];
                             });
                             LatLng latlng =
-                            new LatLng(point.latitude, point.longitude);
+                                new LatLng(point.latitude, point.longitude);
                             cameraUpdate =
                                 CameraUpdate.newLatLngZoom(latlng, 12);
                             Provider.of<controllermap>(context, listen: false)
@@ -2439,7 +2444,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 _loading = true;
                               });
                               DocumentSnapshot doc =
-                              await Firestore.instance.document(path).get();
+                                  await Firestore.instance.document(path).get();
                               if (doc.exists) {
                                 await data.fermergroupe(path, groupe.nom);
                               }
@@ -2505,7 +2510,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    longtermeScaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -2543,11 +2548,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 point = ds.data['position']['geopoint'];
                               });
                               LatLng latlng =
-                              new LatLng(point.latitude, point.longitude);
+                                  new LatLng(point.latitude, point.longitude);
                               cameraUpdate =
                                   CameraUpdate.newLatLngZoom(latlng, 15);
-                              Provider
-                                  .of<controllermap>(context, listen: false)
+                              Provider.of<controllermap>(context, listen: false)
                                   .mapController
                                   .animateCamera(cameraUpdate);
                               setState(() {
@@ -2582,10 +2586,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 
     return Scaffold(
       extendBody: true,
-      key: _scaffoldKey,
+      key: longtermeScaffoldKey,
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
-      // key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -2629,7 +2632,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
                                   var result2 =
-                                  await Connectivity().checkConnectivity();
+                                      await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
                                   if (b &&
@@ -2691,7 +2694,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   final result = await InternetAddress.lookup(
                                       'google.com');
                                   var result2 =
-                                  await Connectivity().checkConnectivity();
+                                      await Connectivity().checkConnectivity();
                                   var b = (result2 != ConnectivityResult.none);
 
                                   if (b &&
@@ -2700,10 +2703,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                     // show input autocomplete with selected mode
                                     // then get the Prediction selected
                                     Prediction p =
-                                    await PlacesAutocomplete.show(
+                                        await PlacesAutocomplete.show(
                                       context: context,
                                       apiKey: kGoogleApiKey,
-                                      onError: onError,
+                                      onError: onErrorlongterme,
                                       mode: Mode.overlay,
                                       language: "fr",
                                       components: [
@@ -2712,7 +2715,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                     );
 
                                     Provider.of<controllermap>(context,
-                                        listen: false)
+                                            listen: false)
                                         .displayPredictionRecherche(p);
                                   }
                                 } on SocketException catch (_) {
@@ -2785,9 +2788,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                           onPressed: () async {
                             try {
                               final result =
-                              await InternetAddress.lookup('google.com');
+                                  await InternetAddress.lookup('google.com');
                               var result2 =
-                              await Connectivity().checkConnectivity();
+                                  await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
                               if (b &&
@@ -2815,9 +2818,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                           onPressed: () async {
                             try {
                               final result =
-                              await InternetAddress.lookup('google.com');
+                                  await InternetAddress.lookup('google.com');
                               var result2 =
-                              await Connectivity().checkConnectivity();
+                                  await Connectivity().checkConnectivity();
                               var b = (result2 != ConnectivityResult.none);
 
                               if (b &&
@@ -2861,9 +2864,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                         onPressed: () async {
                           try {
                             final result =
-                            await InternetAddress.lookup('google.com');
+                                await InternetAddress.lookup('google.com');
                             var result2 =
-                            await Connectivity().checkConnectivity();
+                                await Connectivity().checkConnectivity();
                             var b = (result2 != ConnectivityResult.none);
 
                             if (b &&
@@ -2944,28 +2947,28 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   onTap: () async {
                                     try {
                                       final result =
-                                      await InternetAddress.lookup(
-                                          'google.com');
+                                          await InternetAddress.lookup(
+                                              'google.com');
                                       var result2 = await Connectivity()
                                           .checkConnectivity();
                                       var b =
-                                      (result2 != ConnectivityResult.none);
+                                          (result2 != ConnectivityResult.none);
 
                                       if (b &&
                                           result.isNotEmpty &&
                                           result[0].rawAddress.isNotEmpty) {
                                         String id =
-                                        await authService.connectedID();
+                                            await authService.connectedID();
                                         if (id != null) {
                                           DocumentSnapshot snapshot =
-                                          await authService.userRef
-                                              .document(id)
-                                              .get();
+                                              await authService.userRef
+                                                  .document(id)
+                                                  .get();
 
                                           if (snapshot != null) {
                                             Utilisateur utilisateur =
-                                            Utilisateur.fromdocSnapshot(
-                                                snapshot);
+                                                Utilisateur.fromdocSnapshot(
+                                                    snapshot);
                                             //  Navigator.pushNamed(context, Home.id);
                                             Navigator.push(
                                                 context,
@@ -3056,12 +3059,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () =>
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SignoutWait())),
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignoutWait())),
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -3205,10 +3206,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                         point = ds.data['position']['geopoint'];
                       });
                       LatLng latlng =
-                      new LatLng(point.latitude, point.longitude);
+                          new LatLng(point.latitude, point.longitude);
                       cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-                      Provider
-                          .of<controllermap>(context, listen: false)
+                      Provider.of<controllermap>(context, listen: false)
                           .mapController
                           .animateCamera(cameraUpdate);
                       setState(() {
@@ -3289,10 +3289,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 // show input autocomplete with selected mode
 // then get the Prediction selected
                                     Prediction p =
-                                    await PlacesAutocomplete.show(
+                                        await PlacesAutocomplete.show(
                                       context: context,
                                       apiKey: kGoogleApiKey,
-                                      onError: onError,
+                                      onError: onErrorlongterme,
                                       mode: Mode.overlay,
                                       language: "fr",
                                       components: [
@@ -3301,7 +3301,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                     );
 
                                     Provider.of<controllermap>(context,
-                                        listen: false)
+                                            listen: false)
                                         .displayPredictionRecherche(p);
                                   },
                                   iconSize: 30.0),
@@ -3311,19 +3311,10 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 //liste of members
                     Positioned(
                       bottom: 5,
-                      left: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.025,
+                      left: MediaQuery.of(context).size.width * 0.025,
                       child: Container(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.95,
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .height * 0.10,
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        height: MediaQuery.of(context).size.height * 0.10,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(33.0),
                           color: Color(0xFF3B466B),
@@ -3339,10 +3330,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 //nom groupe
                     Positioned(
                       bottom: 65,
-                      left: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.025,
+                      left: MediaQuery.of(context).size.width * 0.025,
                       child: Container(
                           padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
@@ -3371,10 +3359,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     Positioned(
                       right: 5,
 //MediaQuery.of(context).size.width*0.05,
-                      bottom: MediaQuery
-                          .of(context)
-                          .size
-                          .height * 0.15,
+                      bottom: MediaQuery.of(context).size.height * 0.15,
                       child: Column(
                         children: <Widget>[
                           Padding(
@@ -3549,7 +3534,8 @@ class AlertBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
-        if (isReceived) {} else {
+        if (isReceived) {
+        } else {
           //todo: je dis a tout le groupe qu'on vient d'envoyer une alerte ici
           try {
             final result = await InternetAddress.lookup('google.com');
@@ -3558,7 +3544,7 @@ class AlertBubble extends StatelessWidget {
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               bool isLocationEnabled =
-              await Geolocator().isLocationServiceEnabled();
+                  await Geolocator().isLocationServiceEnabled();
               if (isLocationEnabled) {
                 //TODO: je change le just received
 
@@ -3591,7 +3577,7 @@ class AlertBubble extends StatelessWidget {
                   'justReceivedAlert': !tr,
                 });
 
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                voyageScaffoldKey.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -3615,7 +3601,7 @@ class AlertBubble extends StatelessWidget {
                 Navigator.pop(context);
               } else {
                 Navigator.pop(context);
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                voyageScaffoldKey.currentState.showSnackBar(SnackBar(
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -3640,7 +3626,7 @@ class AlertBubble extends StatelessWidget {
             }
           } on SocketException catch (_) {
             Navigator.pop(context);
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
+            voyageScaffoldKey.currentState.showSnackBar(SnackBar(
               content: Row(
                 children: <Widget>[
                   Text(
@@ -3669,7 +3655,7 @@ class AlertBubble extends StatelessWidget {
       padding: const EdgeInsets.all(0),
       child: Card(
         shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
         margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
         color: Colors.white,
         elevation: 5.0,
@@ -3816,7 +3802,7 @@ class AlertStream extends StatelessWidget {
                       });
 
                       alertList.removeAt(index); //iciiiiii
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                      voyageScaffoldKey.currentState.showSnackBar(SnackBar(
                         content: Row(
                           children: <Widget>[
                             Text(
@@ -3845,7 +3831,7 @@ class AlertStream extends StatelessWidget {
                         children: <Widget>[
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 15.0),
+                                const EdgeInsets.symmetric(horizontal: 15.0),
                             child: Icon(
                               Icons.delete,
                               color: Colors.white,
@@ -3856,7 +3842,7 @@ class AlertStream extends StatelessWidget {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 15.0),
+                                const EdgeInsets.symmetric(horizontal: 15.0),
                             child: Icon(
                               Icons.delete,
                               color: Colors.white,
@@ -3987,10 +3973,11 @@ class ReceivedAlertBubble extends StatelessWidget {
   DateTime date;
   GeoPoint geoPoint;
 
-  ReceivedAlertBubble({String sender,
-    AlertBubbleBox alert,
-    Timestamp date,
-    GeoPoint geoPoint}) {
+  ReceivedAlertBubble(
+      {String sender,
+      AlertBubbleBox alert,
+      Timestamp date,
+      GeoPoint geoPoint}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
@@ -4038,11 +4025,9 @@ class ReceivedAlertBubble extends StatelessWidget {
                 icon: BitmapDescriptor.defaultMarkerWithHue(
                     BitmapDescriptor.hueViolet),
               );
-              Provider
-                  .of<UpdateMarkers>(
+              Provider.of<UpdateMarkers>(
                 context,
-              )
-                  .markers[markerId] = _marker;
+              ).markers[markerId] = _marker;
 
               //TODO: je positionne l'alerte sur la map
             }
@@ -4204,9 +4189,7 @@ class NotifStream extends StatelessWidget {
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
-          if (id == _firestore
-              .document(groupPath)
-              .documentID) {
+          if (id == _firestore.document(groupPath).documentID) {
             print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
             if (groupJRA != justReceivedAlert) {

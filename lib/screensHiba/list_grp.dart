@@ -33,7 +33,6 @@ class ListGrpPage extends StatefulWidget {
 class _ListGrpPageState extends State<ListGrpPage> {
   @override
   void initState() {
-    super.initState();
     _loading = false;
   }
 
@@ -49,9 +48,11 @@ class _ListGrpPageState extends State<ListGrpPage> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
@@ -77,12 +78,13 @@ class _ListGrpPageState extends State<ListGrpPage> {
                   IconButton(
                     onPressed: () async {
                       try {
-                        final result = await InternetAddress.lookup(
-                            'google.com');
+                        final result =
+                            await InternetAddress.lookup('google.com');
                         var result2 = await Connectivity().checkConnectivity();
                         var b = (result2 != ConnectivityResult.none);
 
-                        if (b && result.isNotEmpty &&
+                        if (b &&
+                            result.isNotEmpty &&
                             result[0].rawAddress.isNotEmpty) {
                           Navigator.pushNamed(context, InvitationGrpPage.id);
                         }
@@ -119,7 +121,12 @@ class _ListGrpPageState extends State<ListGrpPage> {
                   borderRadius: BorderRadius.circular(10),
                   color: Color.fromRGBO(59, 70, 107, 0.3),
                 ),
-                child: Groupeprovider(),
+                child: Groupeprovider(() {
+                  setState(() {
+                    _loading = !_loading;
+                    print('loading: $_loading');
+                  });
+                }),
               ),
               Spacer(
                 flex: 2,
@@ -135,8 +142,11 @@ class _ListGrpPageState extends State<ListGrpPage> {
 class grpTile extends StatelessWidget {
   final String grp_nom;
   final String grp_chemin;
-
-  grpTile({@required this.grp_nom, @required this.grp_chemin});
+  final Function function;
+  grpTile(
+      {@required this.grp_nom,
+      @required this.grp_chemin,
+      @required this.function});
 
   _showSnackBar(String value, BuildContext context) {
     final scaffold = Scaffold.of(context);
@@ -151,9 +161,11 @@ class grpTile extends StatelessWidget {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
 
@@ -168,6 +180,10 @@ class grpTile extends StatelessWidget {
             var b = (result2 != ConnectivityResult.none);
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+              () {
+                function;
+                print('da5el listtile');
+              };
               Groupe g = Voyage();
               if (grp_chemin.startsWith('Voyage')) {
                 await Firestore.instance
@@ -188,11 +204,13 @@ class grpTile extends StatelessWidget {
                   });
                   images.add(url);
                 }
-                Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .markers
+                    .clear();
                 Provider.of<UpdateMarkers>(context, listen: false)
                     .UpdateusersLocation(grp_chemin, context);
-                Provider.of<UpdateMarkers>(context, listen: false).getChanges(
-                    context, grp_chemin);
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .getChanges(context, grp_chemin);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -201,8 +219,7 @@ class grpTile extends StatelessWidget {
                 //asma initialise
                 groupPath = grp_chemin;
                 utilisateurID = await AuthService().connectedID();
-                currentUser =
-                await AuthService().getPseudo(utilisateurID);
+                currentUser = await AuthService().getPseudo(utilisateurID);
                 stackIndex = 3;
               }
               if (grp_chemin.startsWith('LongTerme')) {
@@ -223,7 +240,9 @@ class grpTile extends StatelessWidget {
                   });
                   images.add(url);
                 }
-                Provider.of<UpdateMarkers>(context, listen: false).markers.clear();
+                Provider.of<UpdateMarkers>(context, listen: false)
+                    .markers
+                    .clear();
                 Provider.of<UpdateMarkers>(context, listen: false)
                     .UpdateusersLocation(grp_chemin, context);
                 Navigator.push(
@@ -232,6 +251,10 @@ class grpTile extends StatelessWidget {
                         builder: (context) =>
                             MapLongTermePage(g, grp_chemin, images)));
               }
+
+              () {
+                function;
+              };
             }
           } on SocketException catch (_) {
             _showSnackBar('Vérifiez votre connexion internet', context);
@@ -310,21 +333,33 @@ class grpTile extends StatelessWidget {
 }
 
 class Groupeprovider extends StatelessWidget {
+  final Function _function;
+
+  Groupeprovider(this._function);
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Map<dynamic, dynamic>>>.value(
       value: getListGroupes().asStream(),
-      child: GroupesList(),
+      child: GroupesList(_function),
     );
   }
 }
 
 class GroupesList extends StatefulWidget {
+  Function fonction;
+
+  GroupesList(this.fonction);
+
   @override
-  _GroupesListState createState() => _GroupesListState();
+  _GroupesListState createState() => _GroupesListState(fonction);
 }
 
 class _GroupesListState extends State<GroupesList> {
+  Function function;
+
+  _GroupesListState(this.function);
+
   @override
   Widget build(BuildContext context) {
     final grps = Provider.of<List<Map<dynamic, dynamic>>>(context);
@@ -344,6 +379,10 @@ class _GroupesListState extends State<GroupesList> {
         return grpTile(
           grp_nom: grps[index]['nom'],
           grp_chemin: grps[index]['chemin'],
+          function: () {
+            function;
+            print('grptile');
+          },
         );
       },
     );
