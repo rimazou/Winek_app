@@ -174,7 +174,7 @@ class _HomeState extends State<Home> {
             zoomGesturesEnabled: true,
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
-
+            markers: Set<Marker>.of(markersAcceuil.values),
             onMapCreated: Provider.of<controllermap>(context, listen: false)
                 ._onMapCreated,
             initialCameraPosition: CameraPosition(
