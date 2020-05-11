@@ -27,6 +27,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'Aide.dart';
 import 'planifierArrets.dart';
+import 'package:winek/updateMarkers2.dart';
 
 //asma's variables
 final _firestore = Firestore.instance;
@@ -1875,7 +1876,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: ReceivedAlertStream(),
+                                    child:
+                                        ReceivedAlertStream(settingindex: () {
+                                      setState(() {
+                                        stackIndex = 0;
+                                      });
+                                    }),
                                   ),
                                 ),
                                 SizedBox(
@@ -1888,7 +1894,11 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       ],
                     ),
                     //indexe3
-                    NotifStream(),
+                    NotifStream(ffunction: (){
+                      setState(() {
+                        stackIndex = 2;
+                      });
+                    }),
                   ],
                 ),
               ],
@@ -3552,8 +3562,7 @@ class AlertBubble extends StatelessWidget {
                     desiredAccuracy: LocationAccuracy.medium);
                 Geoflutterfire geo = Geoflutterfire();
                 GeoFirePoint geoP = geo.point(
-                    latitude: position.longitude,
-                    longitude: position.longitude);
+                    latitude: position.latitude, longitude: position.longitude);
 
                 if (text != null &&
                     icon != null &&
@@ -3865,11 +3874,15 @@ class AlertStream extends StatelessWidget {
 
 class AlertScreen extends StatefulWidget {
   @override
-  _AlertScreenState createState() => _AlertScreenState();
+  _AlertScreenState createState() => _AlertScreenState(() {});
 }
 
 class _AlertScreenState extends State<AlertScreen> {
+  final Function onTouched;
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  _AlertScreenState(this.onTouched);
   @override
   void initState() {
     super.initState();
@@ -3884,9 +3897,8 @@ class _AlertScreenState extends State<AlertScreen> {
   Future onSelectedNotification(String payload) {
     debugPrint('payload : $payload');
     //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
-    setState(() {
-      stackIndex = 2;
-    });
+
+    onTouched();
     /*showDialog(
       context: context,
       builder: (_) {
@@ -3949,9 +3961,9 @@ IconData createIcon(String s) {
         return Icons.traffic;
       }
       break;
-    case 'IconData(U+0E8BF)':
+    case 'IconData(U+0E01B)':
       {
-        return Icons.settings_input_antenna;
+        return Icons.av_timer;
       }
       break;
     case 'IconData(U+0E56F)':
@@ -3967,21 +3979,76 @@ IconData createIcon(String s) {
   }
 }
 
+String createIconPicture(String s) {
+  switch (s) {
+    case 'IconData(U+0E531)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E531).png?alt=media&token=bdc7568f-a775-4520-b938-fab05c0e2a4c';
+      }
+      break;
+    case 'IconData(U+0E546)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E546).png?alt=media&token=1c367f23-d05e-4370-b92a-852b104e533f';
+      }
+      break;
+    case 'IconData(U+0E14B)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E14B).png?alt=media&token=6fe13f3a-19b2-4409-abe6-00c6e3acb2fc';
+      }
+      break;
+    case 'IconData(U+0E55E)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E55E).png?alt=media&token=e5e9b5e7-9953-4383-9bad-46dffaa058d5';
+      }
+      break;
+    case 'IconData(U+0E565)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E565).png?alt=media&token=8dd622f7-3a37-48d8-a1ff-8fc0dbe4e318';
+      }
+      break;
+    case 'IconData(U+0E01B)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E01B).png?alt=media&token=650c3f9c-c64c-44d6-aa88-a3e091290dd9';
+      }
+      break;
+    case 'IconData(U+0E56F)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E56F).png?alt=media&token=99f954c8-dede-4462-b7b0-d75649bb4aab';
+      }
+      break;
+    case 'IconData(U+0E626)':
+      {
+        return 'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/alertes_png%2FIconData(U%2B0E626).png?alt=media&token=1f27e891-712c-49ae-9250-0a017287559f';
+      }
+      break;
+  }
+}
+
 class ReceivedAlertBubble extends StatelessWidget {
   String sender;
   AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
+  Function settingindex = () {
+    print('heeeeeeeeeeeeeeeeeeeeey');
+  };
 
   ReceivedAlertBubble(
       {String sender,
       AlertBubbleBox alert,
       Timestamp date,
-      GeoPoint geoPoint}) {
+      GeoPoint geoPoint,
+      Function settingindex}) {
     this.sender = sender;
     this.date = date.toDate();
     this.alert = alert;
     this.geoPoint = geoPoint;
+    this.settingindex = settingindex;
+  }
+
+  Future<BitmapDescriptor> createMarkerIc() async {
+    return await UpdateMarkers2().getMarkerIcon(
+        createIconPicture(alert.icon.toString()), Size(150, 150));
   }
 
   _showSnackBar(String value, BuildContext context) {
@@ -4019,16 +4086,30 @@ class ReceivedAlertBubble extends StatelessWidget {
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               MarkerId markerId = MarkerId(
                   geoPoint.latitude.toString() + geoPoint.longitude.toString());
+              Provider.of<UpdateMarkers>(
+                context,
+              ).markers.remove(markerId);
+
               Marker _marker = Marker(
                 markerId: markerId,
-                position: LatLng(geoPoint.latitude, geoPoint.latitude),
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueViolet),
+                position: LatLng(geoPoint.latitude, geoPoint.longitude),
+                infoWindow: InfoWindow(title: sender, snippet: alert.text),
+//           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+//            icon: await UpdateMarkers2().getMarkerIcon(createIconPicture(alert.icon.toString()), Size(150,150)),
+                icon: await createMarkerIc(),
               );
               Provider.of<UpdateMarkers>(
                 context,
               ).markers[markerId] = _marker;
 
+              CameraUpdate cameraUpdate;
+              cameraUpdate = CameraUpdate.newLatLngZoom(
+                  LatLng(geoPoint.latitude, geoPoint.longitude), 10);
+              Provider.of<controllermap>(context, listen: false)
+                  .mapController
+                  .animateCamera(cameraUpdate);
+
+              settingindex();
               //TODO: je positionne l'alerte sur la map
             }
           } on SocketException catch (_) {
@@ -4059,6 +4140,10 @@ class ReceivedAlertBubble extends StatelessWidget {
 }
 
 class ReceivedAlertStream extends StatelessWidget {
+  Function settingindex;
+
+  ReceivedAlertStream({this.settingindex});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -4096,6 +4181,7 @@ class ReceivedAlertStream extends StatelessWidget {
             alert: alertBubble,
             date: alertDate,
             geoPoint: alertGeoP,
+            settingindex: settingindex,
           );
           alertList.add(receivedAlertBubble);
         }
@@ -4167,24 +4253,26 @@ class AlertBubbleBox extends StatelessWidget {
   }
 }
 
-void addListnerToNotifier() {
+void addListnerToNotifier(Function ffunction) {
   valueNotifier.addListener(() async {
-    //print('ey tout le monde on a recu une alerte');
-    checkSenderUser();
-
-    var vaaa = _AlertScreenState();
-    vaaa.initState();
-    await vaaa.showNotificationWithDefaultSound();
+    //checkSenderUser();
+    //if (currentUser != notifSender) {
+      var vaaa = _AlertScreenState(ffunction);
+      vaaa.initState();
+      await vaaa.showNotificationWithDefaultSound();
+    //}
   });
 }
 
 class NotifStream extends StatelessWidget {
+  Function ffunction;
+  NotifStream({this.ffunction});
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection("Voyage").snapshots(),
       builder: (context, snapshot) {
-        addListnerToNotifier();
+        addListnerToNotifier(ffunction);
 
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
@@ -4193,9 +4281,11 @@ class NotifStream extends StatelessWidget {
             print('FOUUUUUUUUUUUUUUUUUUUND');
             final groupJRA = alert.data['justReceivedAlert'];
             if (groupJRA != justReceivedAlert) {
+              checkSenderUser();
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');
-              if (notifSender != currentUser) {
-                valueNotifier.notifyListeners();
+              if (notifSender != currentUser){
+              valueNotifier.notifyListeners();
+
               }
               justReceivedAlert = groupJRA;
             }

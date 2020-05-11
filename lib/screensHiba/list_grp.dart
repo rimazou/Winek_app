@@ -219,8 +219,11 @@ class grpTile extends StatelessWidget {
                 //asma initialise
                 groupPath = grp_chemin;
                 utilisateurID = await AuthService().connectedID();
-                currentUser = await AuthService().getPseudo(utilisateurID);
+                currentUser =
+                await AuthService().getPseudo(utilisateurID);
                 stackIndex = 3;
+                checkSenderUser();
+                print('HEEEEEEEEEEEEEEEY$notifSender');
               }
               if (grp_chemin.startsWith('LongTerme')) {
                 await Firestore.instance
