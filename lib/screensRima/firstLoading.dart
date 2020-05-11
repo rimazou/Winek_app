@@ -26,6 +26,7 @@ class _FirstLoadingState extends State<FirstLoading> {
     await authService.isLog().then((log) async {
       if (log) {
         String id = await authService.connectedID();
+
         print('yes log');
         authService.getUserLocation();
         authService.updategroupelocation();

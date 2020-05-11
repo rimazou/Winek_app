@@ -1,8 +1,12 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -11,6 +15,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:winek/main.dart';
+import 'package:winek/screensRima/login_screen.dart';
+import 'package:winek/ui/size_config.dart';
 import '../classes.dart';
 
 var _controller;
@@ -20,6 +26,7 @@ String nv_pseudo;
 String nv_tel;
 String nv_mail;
 bool _loading;
+final GlobalKey<ScaffoldState> _profilekey = new GlobalKey<ScaffoldState>();
 
 class ProfileScreen extends StatefulWidget {
   static const String id = 'profile';
@@ -47,6 +54,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _ProfileScreenState(Utilisateur myuser);
+
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: responsivetext(14),
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
+    );
+    _profilekey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -63,286 +92,213 @@ class _ProfileScreenState extends State<ProfileScreen> {
         inAsyncCall: _loading,
         child: SafeArea(
           child: Scaffold(
+            key: _profilekey,
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
-            /*appBar: PreferredSize(
-              preferredSize: Size.fromHeight(28.0),
-              child: AppBar(
-                backgroundColor: Colors.white30,
-                elevation: 0.0,
-                iconTheme: IconThemeData(
-                  color: Colors.black54,
-                ),
-
-              ),),*/
             body: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                padding: EdgeInsets.symmetric(
+                    horizontal: responsivewidth(0.0),
+                    vertical: responsiveheight(0.0)),
                 child: Container(
                   child: SingleChildScrollView(
                     child: Stack(
                       children: <Widget>[
-                        /*  Center(
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 140,
-                              ),
-                              Container(
-                                height: 500.0,
-                                width: 320.0,
-                              ),
-                            ],
-                          ),
-                        ),*/
-                        Center(
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 180,
-                              ),
-                              Container(
+                        Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: responsiveheight(180),
+                            ),
+                            Container(
+                              // carre principal
+                              child: Container(
+                                height: 600,
                                 // carre principal
-                                height: 380.0,
-                                width: 320.0,
                                 child: Column(
                                   children: <Widget>[
-                                    SizedBox(
-                                      height: 70,
-                                    ),
-                                    SizedBox(
-                                      height: 26,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
-                                      child: Container(
-                                        height: 1.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                    ),
+                                    SizedBox(height: 140,),
+
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0, top: 15.0),
+//                                      padding: EdgeInsets.only(
+//                                        left: responsivewidth(50.0),
+//                                      ),
                                       child: FlatButton(
+                                        padding: EdgeInsets.all(0),
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) =>
-                                                  //   namedialog(groupe.nom),
-                                                  AlertDialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                    contentPadding:
-                                                        EdgeInsets.all(15),
-                                                    title: Text(
-                                                      'changer le pseudo ',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 19,
-                                                        fontWeight:
-                                                            FontWeight.w700,
+                                              //   namedialog(groupe.nom),
+                                              AlertDialog(
+                                                shape:
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        20)),
+                                                contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: responsiveheight(
+                                                        15),
+                                                    vertical: responsivewidth(
+                                                        15)),
+                                                title: Text(
+                                                  'Changer le pseudo ',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                    'Montserrat',
+                                                    fontSize: responsivetext(
+                                                        19),
+                                                    fontWeight:
+                                                    FontWeight.w700,
+                                                    color: primarycolor,
+                                                  ),
+                                                ),
+                                                content: TextField(
+                                                  controller: _controller,
+                                                  maxLines: 1,
+                                                  decoration:
+                                                  InputDecoration(
+                                                    hintText: widget
+                                                        .myuser.pseudo,
+                                                    hintStyle: TextStyle(
+                                                      fontFamily:
+                                                      'Montserrat',
+                                                      fontSize: responsivetext(
+                                                          14),
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      color:
+                                                      Color(0xff707070),
+                                                    ),
+                                                    enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
                                                         color: primarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    content: TextField(
-                                                      controller: _controller,
-                                                      maxLines: 1,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText: widget
-                                                            .myuser.pseudo,
-                                                        hintStyle: TextStyle(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Color(0xff707070),
-                                                        ),
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color: primarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color:
-                                                                secondarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
+                                                    focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color:
+                                                        secondarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        onPressed: () async {
-                                                          nv_pseudo =
-                                                              _controller.text;
-                                                          setState(() {
-                                                            _loading = true;
-                                                          });
-                                                          if (nv_pseudo != '') {
-                                                            await pseudoExist(
-                                                                nv_pseudo)
-                                                                .then((
-                                                                onValue) {
-                                                              if (onValue) {
-
-                                                              } else {}
-                                                            });
-                                                            {
-                                                              await authService
-                                                                  .changePseudo(
-                                                                  widget
-                                                                      .myuser
-                                                                      .pseudo,
-                                                                  nv_pseudo);
-                                                            }
-                                                            setState(() {
-                                                              _loading = false;
-                                                              widget.myuser
-                                                                  .pseudo =
-                                                                  nv_pseudo;
-                                                            });
-                                                            // nv_nom = _controller.text;
-                                                            // _confirmer = true;
-                                                            Navigator.pop(
-                                                                context);
-                                                          }
-                                                        },
-                                                        child: Text(
-                                                          'confirmer',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      FlatButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          'annuler',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
                                                   ),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () =>
+                                                        changepseudo(),
+                                                    child: Text(
+                                                      'Confirmer',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: responsivetext(
+                                                            12),
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context);
+                                                    },
+                                                    child: Text(
+                                                      'Annuler',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: responsivetext(
+                                                            12),
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                               barrierDismissible: true);
                                         },
-                                        child: Text(
-                                          widget.myuser.pseudo,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 15,
-                                            color: Color(0xff707070),
+                                        child: Card(
+                                          color: Colors.white,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 5.0, horizontal: 25.0),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.account_box,
+                                              color: Color(0xFF3b466b),
+                                              size: 25.0,
+                                            ),
+                                            title: Text(widget.myuser.pseudo,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: responsivetext(18),
+                                                color: Color(0xff707070),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      /* TextField(
-                                        enabled: true,
-                                        onChanged: (val) {
-                                          pseudo = val;
-                                        },
 
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontFamily: 'Montserrat',
-
-                                          // decorationColor: Color(0XFFFFCC00),//Font color change
-                                          //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: widget.myuser.pseudo,
-                                          errorText: errPs,
-                                          errorStyle: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 15,
-                                              bottom: 0,
-                                              top: 32,
-                                              right: 15),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),*/
                                     ),
-                                    SizedBox(
-                                      height: 23,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
-                                      child: Container(
-                                        height: 1.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                    ),
+                                    //le trait
+//                                        Padding(
+//                                          padding: EdgeInsets.symmetric(
+//                                              horizontal: responsivewidth(30.0)),
+//                                          child: Container(
+//                                            height: responsiveheight(1.0),
+//                                            decoration: BoxDecoration(
+//                                              color: Colors.blueGrey,
+//                                            ),
+//                                          ),
+//                                        ),
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 15, left: 20.0, right: 10.0),
+//
                                       child: FlatButton(
+                                        padding: EdgeInsets.all(0),
+
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) =>
                                                   AlertDialog(
                                                     shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            20)),
                                                     contentPadding:
-                                                        EdgeInsets.all(15),
+                                                    EdgeInsets.symmetric(
+                                                        vertical: responsiveheight(
+                                                            15),
+                                                        horizontal: responsivewidth(
+                                                            15)),
                                                     title: Text(
                                                       'changer le tel ',
                                                       style: TextStyle(
                                                         fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 19,
+                                                        'Montserrat',
+                                                        fontSize: responsivetext(
+                                                            19),
                                                         fontWeight:
-                                                            FontWeight.w700,
+                                                        FontWeight.w700,
                                                         color: primarycolor,
                                                       ),
                                                     ),
@@ -350,80 +306,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       controller: _controller1,
                                                       maxLines: 1,
                                                       decoration:
-                                                          InputDecoration(
+                                                      InputDecoration(
                                                         hintText:
-                                                            widget.myuser.tel,
+                                                        widget.myuser.tel,
                                                         hintStyle: TextStyle(
                                                           fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
+                                                          'Montserrat',
+                                                          fontSize: responsivetext(
+                                                              14),
                                                           fontWeight:
-                                                              FontWeight.w400,
+                                                          FontWeight.w400,
                                                           color:
-                                                              Color(0xff707070),
+                                                          Color(0xff707070),
                                                         ),
                                                         enabledBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                          BorderSide(
                                                             color: primarycolor,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
+                                                          BorderRadius
+                                                              .circular(50),
                                                         ),
                                                         focusedBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                          BorderSide(
                                                             color:
-                                                                secondarycolor,
+                                                            secondarycolor,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
+                                                          BorderRadius
+                                                              .circular(50),
                                                         ),
                                                       ),
                                                     ),
                                                     actions: <Widget>[
                                                       FlatButton(
-                                                        onPressed: () async {
-                                                          nv_tel =
-                                                              _controller1.text;
-                                                          setState(() {
-                                                            _loading = true;
-                                                          });
-                                                          if (nv_tel != '') {
-                                                            String id =
-                                                                await authService
-                                                                    .connectedID();
-                                                            await Firestore
-                                                                .instance
-                                                                .collection(
-                                                                    'Utilisateur')
-                                                                .document(id)
-                                                                .updateData({
-                                                              'tel': nv_tel
-                                                            });
-                                                          }
-                                                          setState(() {
-                                                            _loading = false;
-                                                            widget.myuser.tel =
-                                                                nv_tel;
-                                                          });
-                                                          // nv_nom = _controller.text;
-                                                          // _confirmer = true;
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
+                                                        onPressed: () =>
+                                                            changetel(),
                                                         child: Text(
-                                                          'confirmer',
+                                                          'Confirmer',
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
+                                                            'Montserrat',
+                                                            fontSize: responsivetext(
+                                                                12),
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                            FontWeight.w600,
                                                             color: Color(
                                                                 0xff707070),
                                                           ),
@@ -435,13 +366,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               context);
                                                         },
                                                         child: Text(
-                                                          'annuller',
+                                                          'Annuler',
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
+                                                            'Montserrat',
+                                                            fontSize: responsivetext(
+                                                                12),
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                            FontWeight.w600,
                                                             color: Color(
                                                                 0xff707070),
                                                           ),
@@ -451,294 +383,216 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   ),
                                               barrierDismissible: true);
                                         },
-                                        child: Text(
-                                          widget.myuser.tel,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 15,
-                                            color: Color(0xff707070),
+                                        child: Card(
+                                          color: Colors.white,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 5.0, horizontal: 25.0),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.phone,
+                                              color: Color(0xFF3b466b),
+                                              size: 25.0,
+                                            ),
+                                            title: Text(
+                                              widget.myuser.tel == null
+                                                  ? 'aucun numero'
+                                                  : widget.myuser.tel,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: responsivetext(18),
+                                                color: Color(0xff707070),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      /* TextField(
-                                        enabled: true,
-                                        onChanged: (val) {
-                                          tel = val;
-                                        },
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontFamily: 'Montserrat',
 
-                                          // decorationColor: Color(0XFFFFCC00),//Font color change
-                                          //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: widget.myuser.tel == null
-                                              ? 'aucun numero'
-                                              : widget.myuser.tel,
-                                          errorText: errTel,
-                                          errorStyle: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 15,
-                                              bottom: 0,
-                                              top: 32,
-                                              right: 15),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),*/
-                                    ),
-                                    SizedBox(
-                                      height: 23,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
-                                      child: Container(
-                                        height: 1.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 15, left: 40.0, right: 30.0),
+
                                       child: FlatButton(
+                                        padding: EdgeInsets.all(0),
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) =>
-                                                  //   namedialog(groupe.nom),
-                                                  AlertDialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                    contentPadding:
-                                                        EdgeInsets.all(15),
-                                                    title: Text(
-                                                      'changer l' 'email ',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 19,
-                                                        fontWeight:
-                                                            FontWeight.w700,
+                                              //   namedialog(groupe.nom),
+                                              AlertDialog(
+                                                shape:
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        20)),
+                                                contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: responsivewidth(
+                                                        15),
+                                                    vertical: responsiveheight(
+                                                        15)),
+                                                title: Text(
+                                                  "changer l'email",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                    'Montserrat',
+                                                    fontSize: responsivetext(
+                                                        19),
+                                                    fontWeight:
+                                                    FontWeight.w700,
+                                                    color: primarycolor,
+                                                  ),
+                                                ),
+                                                content: TextField(
+                                                  controller: _controller2,
+                                                  maxLines: 1,
+                                                  decoration:
+                                                  InputDecoration(
+                                                    hintText:
+                                                    widget.myuser.mail,
+                                                    hintStyle: TextStyle(
+                                                      fontFamily:
+                                                      'Montserrat',
+                                                      fontSize: responsivetext(
+                                                          14),
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      color:
+                                                      Color(0xff707070),
+                                                    ),
+                                                    enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
                                                         color: primarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    content: TextField(
-                                                      controller: _controller2,
-                                                      maxLines: 1,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            widget.myuser.mail,
-                                                        hintStyle: TextStyle(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Color(0xff707070),
-                                                        ),
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color: primarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color:
-                                                                secondarycolor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
+                                                    focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderSide:
+                                                      BorderSide(
+                                                        color:
+                                                        secondarycolor,
                                                       ),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(50),
                                                     ),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        onPressed: () async {
-                                                          nv_mail =
-                                                              _controller2.text;
-                                                          setState(() {
-                                                            _loading = true;
-                                                          });
-                                                          if (nv_mail != '') {
-                                                            String id =
-                                                                await authService
-                                                                    .connectedID();
-                                                            await Firestore
-                                                                .instance
-                                                                .collection(
-                                                                    'Utilisateur')
-                                                                .document(id)
-                                                                .updateData({
-                                                              'mail': nv_mail
-                                                            });
-                                                          }
-                                                          setState(() {
-                                                            _loading = false;
-                                                            widget.myuser.mail =
-                                                                nv_mail;
-                                                          });
-                                                          // nv_nom = _controller.text;
-                                                          // _confirmer = true;
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          'confirmer',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      FlatButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          'annuler',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xff707070),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
                                                   ),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () =>
+                                                        changemail(),
+                                                    child: Text(
+                                                      'confirmer',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: responsivetext(
+                                                            12),
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context);
+                                                    },
+                                                    child: Text(
+                                                      'annuller',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        fontSize: responsivetext(
+                                                            12),
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                        color: Color(
+                                                            0xff707070),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                               barrierDismissible: true);
                                         },
-                                        child: Text(
-                                          widget.myuser.mail,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 15,
-                                            color: Color(0xff707070),
+                                        child: Card(
+                                          color: Colors.white,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 5.0, horizontal: 25.0),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.mail,
+                                              color: Color(0xFF3b466b),
+                                              size: 25.0,
+                                            ),
+                                            title: Text(
+                                              widget.myuser.mail,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: responsivetext(18),
+                                                color: Color(0xff707070),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      /* TextField(
-                                        enabled: true,
-                                        onChanged: (val) {
-                                          mail = val;
-                                        },
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontFamily: 'Montserrat',
-
-                                          // decorationColor: Color(0XFFFFCC00),//Font color change
-                                          //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: widget.myuser.mail,
-                                          errorText: errMl,
-                                          errorStyle: TextStyle(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 15,
-                                              bottom: 0,
-                                              top: 32,
-                                              right: 15),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                        ),
-                                      ),*/
-                                    ),
-                                    /* Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(Icons.edit),
-                                          onPressed: _edit(),
-                                        ),
-                                      ],
-                                    ),*/
-                                  ],
-                                ),
-
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey[300],
-                                    width: 3,
-                                  ),
-                                  boxShadow: [
-                                    new BoxShadow(
-                                      color: Colors.grey[200],
-                                      blurRadius: 20.0,
                                     ),
                                   ],
-                                  borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                            ],
-                          ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFd0d8e2),
+                                borderRadius: BorderRadius.only(
+                                  topRight: const Radius.circular(20),
+                                  topLeft: const Radius.circular(20),
+                                ),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.blueGrey,
+                                      blurRadius: 3.0,
+                                      offset: Offset(responsivewidth(0.0),
+                                          responsiveheight(0.75))
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                        //la photo
                         Center(
                           child: Column(
                             //photos
 
                             children: <Widget>[
                               SizedBox(
-                                height: 130,
+                                height: responsiveheight(130),
                               ),
                               Center(
                                 child: Container(
-                                  height: 100.0,
-                                  width: 100.0,
+                                  height: responsiveheight(130),
+                                  width: responsiveheight(130),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
                                       color: Colors.grey[300],
-                                      width: 3,
+                                      width: responsivewidth(3),
                                     ),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(
+                                        responsiveradius(20, 100)),
                                     boxShadow: [
                                       new BoxShadow(
                                         color: Colors.grey[200],
-                                        blurRadius: 20.0,
+                                        blurRadius: responsiveradius(20.0, 1),
                                       ),
                                     ],
                                   ),
@@ -748,28 +602,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
+                        //changer la photo
                         Positioned(
-                          top: 110,
-                          left: 200,
+                          top: responsiveheight(110),
+                          left: (MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.5) -
+                              responsivewidth(47) * 0.5 +
+                              responsiveheight(120) * 0.5,
+                          // left: responsivewidth(203),
                           child: Container(
+                            //padding: EdgeInsets.all(1),
+                            width: responsivewidth(47),
+                            height: responsivewidth(47),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 // border: Border.all(color: secondarycolor, width: 1),
                                 boxShadow: <BoxShadow>[
                                   BoxShadow(
-                                    color:
-                                        secondarycolor, //Color.fromRGBO(59, 70, 107, 0.3),
-                                    blurRadius: 3.0,
-                                    offset: Offset(0.0, 0.75),
-                                  ),
+                                      color: secondarycolor,
+                                      //Color.fromRGBO(59, 70, 107, 0.3),
+                                      blurRadius: 3.0,
+                                      //offset: Offset(0.0, 0.75),
+                                      offset: Offset(responsivewidth(0.0),
+                                          responsiveheight(0.75))),
                                 ],
-                                borderRadius: BorderRadius.circular(50)),
+                                borderRadius: BorderRadius.circular(
+                                    responsiveradius(50, 1))),
                             child: Padding(
-                              padding: EdgeInsets.all(0),
+                              padding: EdgeInsets.all(responsivewidth(0.1)),
                               child: IconButton(
                                 icon: Icon(
                                   Icons.camera_alt,
-                                  size: 30.0,
+                                  size: responsivewidth(30),
                                 ),
                                 onPressed: () => showAlertDialog(
                                     context,
@@ -781,24 +647,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Column(
                           children: <Widget>[
+                            SizedBox(height: 20,),
                             Center(
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    height: 60.0,
-                                    width: 60.0,
+                                    height: responsivewidth(30.0),
+                                    width: responsivewidth(30.0),
                                     child: Image.asset(
                                       'images/logo.png',
                                       fit: BoxFit.fill,
-                                      height: 120.0,
-                                      width: 120.0,
+                                      height: responsivewidth(120.0),
+                                      width: responsivewidth(120.0),
                                     ),
                                   ),
+                                  SizedBox(width: 2,),
                                   Text(
                                     'inek',
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
-                                      fontSize: 25.0,
+                                      fontSize: responsivetext(20.0),
                                       fontWeight: FontWeight.w900,
                                       color: Color(0XFF3B466B),
                                     ),
@@ -813,17 +681,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'Compte',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.w900,
+                                  fontSize: responsivetext(30.0),
+                                  fontWeight: FontWeight.w600,
                                   color: Color(0XFF389490), //vert
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
-                        SizedBox(
-                          height: 50,
-                        ),
+
                       ],
                     ),
                   ),
@@ -839,50 +705,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (widget.myuser.photo != null) {
       return Center(
           child: ClipRRect(
-        borderRadius: BorderRadius.circular(17.0),
-        child: Image.network(
-          widget.myuser.photo,
-          height: 110.0,
-          gaplessPlayback: true,
-          fit: BoxFit.fill,
-        ),
-      ));
+            borderRadius: BorderRadius.circular(responsiveradius(17.0, 110)),
+            child: Image.network(
+              widget.myuser.photo,
+              height: responsiveheight(140),
+              gaplessPlayback: true,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Center(
         child: ListView(
           //photos
           children: <Widget>[
             SizedBox(
-              height: 16,
+              height: responsiveheight(16),
             ),
             Icon(
               Icons.person,
               color: Color(0xFF5B5050),
-              size: 105.0,
+              size: responsivewidth(105),
             ),
           ],
         ),
       );
     }
   }
+// tester si les chaines de caratceres ne sont pas vides
 
   bool isEditable = false;
-
-  _edit() {
-    modifier();
-  }
-
-  modifmail() {
-    if (mail != null) {
-      widget.myuser.mail = mail;
-    }
-  }
-
-  modiftel() {
-    if (tel != null) {
-      widget.myuser.tel = tel;
-    }
-  }
 
   File _image;
   String _uploadedFileURL;
@@ -898,8 +749,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         sourcePath: _image.path,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 100,
-        maxHeight: 110,
-        maxWidth: 110,
+        maxHeight: responsiveheight(110).toInt(),
+        maxWidth: responsiveheight(110).toInt(),
         compressFormat: ImageCompressFormat.jpg,
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Rogner',
@@ -946,28 +797,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   bool loading = false;
-  modifier() {
-    modifmail();
-    modiftel();
-    setState(() {
-      loading = true;
-    });
-    print(' debutsignout');
-    authService.auth.currentUser().then((onValue) {
-      authService.userRef.document(onValue.uid).updateData({
-        'mail': widget.myuser.mail,
-        'tel': widget.myuser.tel,
-        'photo': widget.myuser.photo
-      });
-      onValue.updateEmail(widget.myuser.mail).then((onVal) {
-        print('changed mail succeedeed');
-      });
-    });
-    setState(() {
-      loading = false;
-    });
-    print('succeddeed ?');
-  }
 
   showAlertDialog(BuildContext context, String message, String heading) {
     // set up the buttons
@@ -1020,7 +849,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       content: Text(message),
       backgroundColor: Colors.white,
       shape:
-          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
+      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
       actions: [
         GalleryButton,
         CameraButton,
@@ -1046,14 +875,195 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (documents.length == 1) {
       print("UserName Already Exits");
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
+  Future<bool> mailExist(String nom) async {
+    final QuerySnapshot result = await Future.value(authService.db
+        .collection('Utilisateur')
+        .where('mail', isEqualTo: nom)
+        .limit(1)
+        .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length == 1) {
+      print("email Already Exits");
+      return true;
+    } else {
+      print("email is Available");
+      return false;
+    }
+  }
+
+  changepseudo() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      var result2 = await Connectivity().checkConnectivity();
+      var b = (result2 != ConnectivityResult.none);
+
+      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        nv_pseudo = _controller.text;
+        setState(() {
+          _loading = true;
+        });
+        if (nv_pseudo != '') {
+          await pseudoExist(nv_pseudo).then((value) async {
+            if (!value) {
+              await authService.changePseudo(widget.myuser.pseudo, nv_pseudo);
+              Navigator.pop(context);
+              setState(() {
+                _loading = false;
+                widget.myuser.pseudo = nv_pseudo;
+              });
+            } else {
+              Navigator.pop(context);
+              setState(() {
+                _loading = false;
+              });
+              _showSnackBar('Ce pseudo existe deja, reessayez');
+            }
+          });
+        }
+        setState(() {
+          _loading = false;
+        });
+        // nv_nom = _controller.text;
+        // _confirmer = true;
+
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        _loading = false;
+      });
+      _showSnackBar('Vérifiez votre connexion internet');
+    }
+  }
+
+  changetel() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      var result2 = await Connectivity().checkConnectivity();
+      var b = (result2 != ConnectivityResult.none);
+
+      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        nv_tel = _controller1.text;
+        setState(() {
+          _loading = true;
+        });
+        if (nv_tel != '') {
+          if (!Validator.number(nv_tel)) {
+            String id = await authService.connectedID();
+
+            if (id != null) {
+              await Firestore.instance
+                  .collection('Utilisateur')
+                  .document(id)
+                  .updateData({'tel': nv_tel});
+              setState(() {
+                _loading = false;
+                widget.myuser.tel = nv_tel;
+              });
+              Navigator.pop(context);
+            }
+          } else {
+            Navigator.pop(context);
+            _showSnackBar('Veuillez introduire un nombre');
+          }
+        }
+        setState(() {
+          _loading = false;
+        });
+        // nv_nom = _controller.text;
+        // _confirmer = true;
+
+      }
+    } on SocketException catch (_) {
+      _showSnackBar('Vérifiez votre connexion internet');
+    }
+  }
+
+  changemail() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      var result2 = await Connectivity().checkConnectivity();
+      var b = (result2 != ConnectivityResult.none);
+
+      if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        nv_mail = _controller2.text;
+        setState(() {
+          _loading = true;
+        });
+        if (nv_mail != '') {
+          if (!Validator.email(nv_mail)) {
+            await mailExist(nv_mail).then((value) async {
+              if (!value) {
+                FirebaseUser id = await authService.auth.currentUser();
+                if (id != null) {
+                  await id.updateEmail(nv_mail).then((value) async {
+                    await Firestore.instance
+                        .collection('Utilisateur')
+                        .document(id.uid)
+                        .updateData({'mail': nv_mail});
+                  });
+                  setState(() {
+                    _loading = false;
+                    widget.myuser.mail = nv_mail;
+                  });
+                  Navigator.pop(context);
+                }
+              } else {
+                Navigator.pop(context);
+                setState(() {
+                  _loading = false;
+                });
+                _showSnackBar('Cette adresse mail est deja prise');
+              }
+            });
+          } else {
+            Navigator.pop(context);
+            setState(() {
+              _loading = false;
+            });
+            _showSnackBar('Veuillez introduire une adresse mail valide');
+          }
+        }
+
+        // nv_nom = _controller.text;
+        // _confirmer = true;
+      }
+    } on SocketException catch (_) {
+      Navigator.pop(context);
+      _showSnackBar('Vérifiez votre connexion internet');
+    } catch (e) {
+      print(e);
+      if (e is PlatformException) {
+        if (e.code == 'ERROR_REQUIRES_RECENT_LOGIN') {
+          _showSnackBar(
+              'Cette operation requiert une authentification recente , reconnectez-vous puis reessayez');
+          Navigator.pushNamed(context, LoginScreen.id);
+        }
+      }
+    }
+  }
 
   String mail, pseudo, tel, photo;
+
+  double responsivetext(double siz) {
+    return (siz / 6.92) * SizeConfig.textMultiplier;
+  }
+
+  double responsiveheight(double height) {
+    return (height / 6.92) * SizeConfig.heightMultiplier;
+  }
+
+  double responsivewidth(double width) {
+    return (width / 3.6) * SizeConfig.imageSizeMultiplier;
+  }
+
+  double responsiveradius(double rad, double height) {
+    return (rad / height) * responsiveheight(height);
+  }
 
   Future userID;
 }

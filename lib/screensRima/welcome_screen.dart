@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/waitingSignout.dart';
@@ -12,6 +15,8 @@ import 'login_screen.dart';
 import 'register_screen.dart';
 import '../UpdateMarkers.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome';
 
@@ -20,10 +25,30 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  _showSnackBar(String value) {
+    final snackBar = new SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+      action: new SnackBarAction(label: 'Ok', onPressed: () {
+        print('press Ok on SnackBar');
+      }),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -57,7 +82,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: <Widget>[
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         elevation: 5.0,
                         color: Color(0XFF389490),
@@ -82,7 +107,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
@@ -107,30 +132,44 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () async {
-                            String id = await authService.connectedID();
-                            if (id != null) {
-                              DocumentSnapshot snapshot =
+                            try {
+                              final result = await InternetAddress.lookup(
+                                  'google.com');
+                              var result2 = await Connectivity()
+                                  .checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b && result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                String id = await authService.connectedID();
+                                if (id != null) {
+                                  DocumentSnapshot snapshot =
                                   await authService.userRef.document(id).get();
-                              while (snapshot == null) {
-                                showSpinner();
-                              }
-                              if (snapshot != null) {
-                                Utilisateur utilisateur =
+                                  while (snapshot == null) {
+                                    showSpinner();
+                                  }
+                                  if (snapshot != null) {
+                                    Utilisateur utilisateur =
                                     Utilisateur.fromdocSnapshot(snapshot);
-                                //  Navigator.pushNamed(context, Home.id);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ProfileScreen(utilisateur)));
+                                    //  Navigator.pushNamed(context, Home.id);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProfileScreen(utilisateur)));
+                                  }
+                                }
                               }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
                             }
                           },
                           minWidth: 140.0,
@@ -148,7 +187,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
@@ -175,25 +214,42 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF3B466B),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () async {
-                            await authService.connectedID().then((onVal) {
-                              if (onVal != null) {
-                                authService.getPseudo(onVal).then((val) {
-                                  print(val);
-                                });
-                              }
-                            });
-                            await authService.isLog().then((log) {
-                              if (log) {
-                                print('yes log');
-                              } else {
-                                print('no log');
+                            await authService.connectedID().then((onVal) async {
+                              try {
+                                final result = await InternetAddress.lookup(
+                                    'google.com');
+                                var result2 = await Connectivity()
+                                    .checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b && result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  await authService.connectedID().then((
+                                      onVal) async {
+                                    if (onVal != null) {
+                                      await authService.getPseudo(onVal).then((val) {
+                                        print(val);
+                                      });
+                                    }
+                                  });
+                                  await authService.isLog().then((log) {
+                                    if (log) {
+                                      print('yes log');
+                                    } else {
+                                      print('no log');
+                                    }
+                                  });
+                                }
+                              } on SocketException catch (_) {
+                                _showSnackBar(
+                                    'Vérifiez votre connexion internet');
                               }
                             });
                           },
@@ -212,20 +268,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () async {
-                            String id = await authService.connectedID();
-                            // getUserLocation();
-                            Provider.of<DeviceInformationService>(context,
+                            try {
+                              final result = await InternetAddress.lookup(
+                                  'google.com');
+                              var result2 = await Connectivity()
+                                  .checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
+
+                              if (b && result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                String id = await authService.connectedID();
+                                // getUserLocation();
+                                Provider.of<DeviceInformationService>(context,
                                     listen: false)
-                                .broadcastBatteryLevel(id);
-                            Navigator.pushNamed(context, Home.id);
-                            /* print('gonna return the stream builder');
+                                    .broadcastBatteryLevel(id);
+                                Navigator.pushNamed(context, Home.id);
+                                /* print('gonna return the stream builder');
                             return Container(
                               child: StreamBuilder(
                                   stream: authService.userRef.document(
@@ -247,6 +312,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                     }
                                   }),
                             );*/
+                              }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet');
+                            }
                           },
                           minWidth: 140.0,
                           height: 42.0,
@@ -263,7 +333,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
                       child: Material(
                         color: Color(0XFF389490),
                         borderRadius: BorderRadius.circular(30.0),
