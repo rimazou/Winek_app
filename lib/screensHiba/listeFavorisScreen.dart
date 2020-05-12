@@ -17,7 +17,7 @@ import 'dart:io';
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 GoogleMapsPlaces _places =
-    GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
+GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 class FavoritePlacesScreen extends StatefulWidget {
   static const String id = 'FavoritePlacesScreen';
@@ -88,7 +88,7 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
                     child: Text(
                       'Endroits favoris',
                       style: TextStyle(
-                        fontSize: 30.0,
+                        fontSize: responsivetext(20),
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF389490),
                         fontFamily: 'Montserrat-Bold',
