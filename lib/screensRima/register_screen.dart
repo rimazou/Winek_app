@@ -140,7 +140,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: responsivewidth(20)),
                                   child: Container(
-                                    height: responsiveheight(42),
+                                    height: responsiveheight(50),
                                     child: TextField(
 
 
@@ -196,7 +196,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   padding: EdgeInsets.symmetric(
                                     horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: responsiveheight(42),
+                                    height: responsiveheight(50),
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       onChanged: (value) {
@@ -256,7 +256,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   padding: EdgeInsets.symmetric(
                                     horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: responsiveheight(42),
+                                    height: responsiveheight(50),
                                     child: TextField(
                                       onChanged: (value) {
                                         tel = value;
@@ -316,7 +316,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   padding: EdgeInsets.symmetric(
                                     horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: responsiveheight(42),
+                                    height: responsiveheight(50),
                                     child: TextField(
                                       // obscureText: true,
                                       onChanged: (value) {
@@ -381,7 +381,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   padding: EdgeInsets.symmetric(
                                     horizontal: responsivewidth(20),),
                                   child: Container(
-                                    height: responsiveheight(42),
+                                    height: responsiveheight(50),
                                     child: TextField(
                                       // obscureText: true,
                                         autocorrect: false,
@@ -503,13 +503,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         'Vérifiez votre connexion internet');
                                   }
                                 },
-                                height: responsiveheight(42),
+                                height: responsiveheight(50),
                                 child: Row(
                                   mainAxisAlignment:
                                   MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Container(
-                                        height: responsiveheight(42),
+                                        height: responsiveheight(50),
                                         child: Image.asset(
                                             'images/googlelogo.png',
                                             fit: BoxFit.fill)),
@@ -698,7 +698,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     } else {
       return Center(
           child: SpinKitChasingDots(
-            color: Colors.deepPurpleAccent,
+            color: Color(0XFF3B466B),
           ));
       /*ListView( //photos
             children: <Widget>[
@@ -904,16 +904,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .ref()
         .child('photos/${p.basename(_image.path)}}');
     _uploadedFileURL =
-    "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
 
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
-    await uploadTask.onComplete;
-    print('File Uploaded');
-    storageReference.getDownloadURL().then((fileURL) {
-      setState(() {
-        _uploadedFileURL = fileURL;
+    if (_image != null) {
+      StorageUploadTask uploadTask = storageReference.putFile(_image);
+      await uploadTask.onComplete;
+      print('File Uploaded');
+      storageReference.getDownloadURL().then((fileURL) {
+        setState(() {
+          _uploadedFileURL = fileURL;
+        });
       });
-    });
+    }
+    else {
+      setState(() {
+        _uploadedFileURL =
+        'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+      });
+    }
   }
 
   pseudoExist() async {
