@@ -75,7 +75,7 @@ class Winek extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             //  initialRoute: OnboardingScreen.id, //IntroPage.id,
             initialRoute: initScreen == 0 || initScreen == null
-                ? OnboardingScreen.id // IntroPage.id
+                ? IntroPage.id
                 : FirstLoading.id,
 
             routes: {

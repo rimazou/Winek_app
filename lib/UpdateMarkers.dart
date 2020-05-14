@@ -34,10 +34,24 @@ class UpdateMarkers extends ChangeNotifier {
     await Future.delayed(Duration(seconds: 1));
     mapcontext = context;
     val = await authService.connectedID();
+    LatLng latlng;
+    CameraUpdate cameraUpdate;
+    GeoPoint point = await Firestore.instance
+        .collection("Utilisateur")
+        .document(val)
+        .get()
+        .then((DocumentSnapshot doc) {
+      return doc.data['location']['geopoint'];
+    });
+    latlng = new LatLng(point.latitude, point.longitude);
+    cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+    Provider.of<controllermap>(mapcontext, listen: false)
+        .mapController
+        .animateCamera(cameraUpdate);
     var collectionReference = _firestore.document(path).collection('members');
     LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
-    geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
+        geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
     marker_dest(path);
@@ -65,7 +79,7 @@ class UpdateMarkers extends ChangeNotifier {
       markerId: id,
       position: LatLng(dest_lat, dest_lng),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      infoWindow: InfoWindow(snippet: '$destination'),
+      infoWindow: InfoWindow(title: destination),
     );
 
     markers[id] = _marker;
@@ -113,15 +127,7 @@ class UpdateMarkers extends ChangeNotifier {
             print('not curent useeeeeeeeeeeeeerrr $fermer');
           }
         }
-        /*
-        if (val == userid) {
-          latlng = new LatLng(point.latitude, point.longitude);
-          cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-          Provider.of<controllermap>(mapcontext, listen: false)
-              .mapController
-              .animateCamera(cameraUpdate);
-        }
-*/
+
         _addMarker(point.latitude, point.longitude, userid);
       }
 
@@ -193,7 +199,7 @@ class UpdateMarkers extends ChangeNotifier {
 
     // Convert image to bytes
     final ByteData byteData =
-    await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+        await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
 
     final Uint8List uint8List = byteData.buffer.asUint8List();
 
@@ -239,7 +245,7 @@ class UpdateMarkers extends ChangeNotifier {
       markerId: id,
       position: LatLng(lat, lng),
       icon: await getMarkerIcon(url, Size(200.0, 200.0)),
-      infoWindow: InfoWindow(snippet: '$pseudo'),
+      infoWindow: InfoWindow(title: pseudo),
     );
     markers[id] = _marker;
     notifyListeners();
@@ -260,7 +266,9 @@ class UpdateMarkers extends ChangeNotifier {
     print('path');
     print(path_groupe);
 
-    Firestore.instance.document(path_groupe).collection('PlanifierArrets')
+    Firestore.instance
+        .document(path_groupe)
+        .collection('PlanifierArrets')
         .document('Arrets')
         .snapshots(includeMetadataChanges: true)
         .listen((DocumentSnapshot documentSnapshot) async {
@@ -290,15 +298,11 @@ class UpdateMarkers extends ChangeNotifier {
             //  Provider.of<UpdateMarkers>(context,listen:false).
             markers[markerid] = _marker;
             notifyListeners();
-            Provider
-                .of<controllermap>(context)
-                .mapController
-                .animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(
+            Provider.of<controllermap>(context).mapController.animateCamera(
+                CameraUpdate.newCameraPosition(CameraPosition(
                     target: LatLng(map['latitude'], map['longitude']),
                     zoom: 14.0)));
             // bool nouvelArret = documentSnapshot.data['planArret'];
-
 
             if (map['pseudo'] != pseud) {
               var vaaa = _AlertScreenState();
@@ -310,13 +314,9 @@ class UpdateMarkers extends ChangeNotifier {
           print("object5");
         }
       }
-    }
-
-    );
+    });
   }
 }
-
-
 
 class DeviceInformationService extends ChangeNotifier {
   bool _broadcastBattery = false;

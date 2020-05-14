@@ -23,6 +23,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:path/path.dart' as p;
+import 'package:geolocator/geolocator.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -69,8 +70,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (loading) {
       return Center(
           child: SpinKitChasingDots(
-            color: Colors.deepPurpleAccent,
-          ));
+        color: Colors.deepPurpleAccent,
+      ));
     } else {
       return SafeArea(
         child: Scaffold(
@@ -199,7 +200,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           !Validator.email(email)
                                               ? errMl = null
                                               : errMl =
-                                          "Veuillez introduire une adresse valide";
+                                                  "Veuillez introduire une adresse valide";
                                           mailExist();
                                         });
                                       },
@@ -258,12 +259,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           !Validator.number(tel)
                                               ? errTel = null
                                               : errTel =
-                                          'Veuillez entrer un numero';
+                                                  'Veuillez entrer un numero';
                                         });
                                       },
                                       textAlign: TextAlign.center,
                                       keyboardType:
-                                      TextInputType.numberWithOptions(),
+                                          TextInputType.numberWithOptions(),
                                       style: TextStyle(
                                         color: Colors.black87,
                                         fontFamily: 'Montserrat',
@@ -317,7 +318,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         setState(() {
                                           pwd = value;
                                           double strength =
-                                          estimatePasswordStrength(pwd);
+                                              estimatePasswordStrength(pwd);
 
                                           if (strength < 0.3) {
                                             errPwd = 'Mot de passe faible';
@@ -377,7 +378,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   child: Container(
                                     height: 38,
                                     child: TextField(
-                                      // obscureText: true,
+                                        // obscureText: true,
                                         autocorrect: false,
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
@@ -393,7 +394,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ),
                                         decoration: InputDecoration(
                                           labelText:
-                                          'Confirmer le mot de passe',
+                                              'Confirmer le mot de passe',
                                           errorText: errPw,
                                           errorStyle: TextStyle(
                                               fontFamily: 'Montserrat',
@@ -472,7 +473,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: Material(
                               color: Colors.white,
                               borderRadius:
-                              BorderRadius.all(Radius.circular(30.0)),
+                                  BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
                                 onPressed: () async {
@@ -482,7 +483,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
                                     var b =
-                                    (result2 != ConnectivityResult.none);
+                                        (result2 != ConnectivityResult.none);
 
                                     if (b &&
                                         result.isNotEmpty &&
@@ -497,7 +498,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 height: 42.0,
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
+                                      MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     Container(
                                         height: 42,
@@ -525,7 +526,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: Material(
                               color: Color(0XFF389490), //vert
                               borderRadius:
-                              BorderRadius.all(Radius.circular(30.0)),
+                                  BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
                                 onPressed: () async {
@@ -535,7 +536,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
                                     var b =
-                                    (result2 != ConnectivityResult.none);
+                                        (result2 != ConnectivityResult.none);
 
                                     if (b &&
                                         result.isNotEmpty &&
@@ -584,9 +585,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             onPressed: () async {
                               try {
                                 final result =
-                                await InternetAddress.lookup('google.com');
+                                    await InternetAddress.lookup('google.com');
                                 var result2 =
-                                await Connectivity().checkConnectivity();
+                                    await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
                                 if (b &&
@@ -669,19 +670,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_uploadedFileURL != null) {
       return Center(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(17.0),
-            child: Image.network(
-              _uploadedFileURL,
-              height: 100.0,
-              gaplessPlayback: true,
-              fit: BoxFit.fill,
-            ),
-          ));
+        borderRadius: BorderRadius.circular(17.0),
+        child: Image.network(
+          _uploadedFileURL,
+          height: 100.0,
+          gaplessPlayback: true,
+          fit: BoxFit.fill,
+        ),
+      ));
     } else {
       return Center(
           child: SpinKitChasingDots(
-            color: Colors.deepPurpleAccent,
-          ));
+        color: Colors.deepPurpleAccent,
+      ));
       /*ListView( //photos
             children: <Widget>[
               SizedBox(
@@ -700,9 +701,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Future<String> _registerWithGoogle() async {
     try {
       final GoogleSignInAccount googleUser =
-      await authService.googleSignIn.signIn();
+          await authService.googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -718,9 +719,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       final FirebaseUser currentUser = await authService.auth.currentUser();
       assert(user.uid == currentUser.uid);
       Geoflutterfire geo = Geoflutterfire();
-      LatLng lt = new LatLng(36.7525000, 3.0419700);
+      Position position = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng lt = new LatLng(position.latitude, position.longitude);
       GeoFirePoint pt =
-      geo.point(latitude: lt.latitude, longitude: lt.longitude);
+          geo.point(latitude: lt.latitude, longitude: lt.longitude);
       print(currentUser.email);
       if (user != null) {
         var pic =
@@ -790,7 +793,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
       GeoFirePoint pt =
-      geo.point(latitude: lt.latitude, longitude: lt.longitude);
+          geo.point(latitude: lt.latitude, longitude: lt.longitude);
       final newUser = await authService.auth
           .createUserWithEmailAndPassword(email: email, password: pwd);
       if (newUser != null) {
@@ -886,7 +889,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .ref()
         .child('photos/${p.basename(_image.path)}}');
     _uploadedFileURL =
-    "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+        "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
 
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
@@ -989,7 +992,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       content: Text(message),
       backgroundColor: Colors.white,
       shape:
-      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
       actions: [
         GalleryButton,
         CameraButton,
