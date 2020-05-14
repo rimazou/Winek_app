@@ -30,7 +30,7 @@ class _SignoutWaitState extends State<SignoutWait> {
         print('an error occured ');
       });
       print(' fin signout');
-      Navigator.pushNamed(context, LoginScreen.id);
+      Navigator.pushReplacementNamed(context, LoginScreen.id);
     } catch (e) {
       print(e);
     }
