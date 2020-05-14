@@ -414,6 +414,12 @@ class _LoginScreenState extends State<LoginScreen> {
             .document(user.uid)
             .updateData({'connecte': true});
         print('user logged in');
+        authService.getUserLocation();
+        authService.updategroupelocation();
+        Provider.of<DeviceInformationService>(context, listen: false)
+            .broadcastBatteryLevel(user.uid);
+        Navigator.pushReplacementNamed(context, Home.id);
+
         // getUserLocation();
         // Provider.of<DeviceInformationService>(context, listen: false)
         //   .broadcastBatteryLevel(user.uid);
@@ -459,30 +465,17 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await authService.auth
           .signInWithEmailAndPassword(email: mail, password: pwd);
       if (user != null) {
-        //getUserLocation();
-        //Provider.of<DeviceInformationService>(context,listen:false).broadcastBatteryLevel(user.user.uid);
+
 
         authService.getUserLocation();
         authService.updategroupelocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.user.uid);
-        Provider.of<DeviceInformationService>(context, listen: false)
-            .broadcastBatteryLevel(user.user.uid);
         authService.userRef
             .document(user.user.uid)
             .updateData({'connecte': true});
-        DocumentSnapshot snapshot =
-        await authService.userRef.document(user.user.uid).get();
+        Navigator.pushReplacementNamed(context, Home.id);
 
-        if (snapshot != null) {
-          Utilisateur utilisateur = Utilisateur.fromdocSnapshot(snapshot);
-          Navigator.pushNamed(context, Home.id);
-          /* Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ProfileScreen(utilisateur)
-          ));*/
-          print(utilisateur.pseudo);
-          print(utilisateur.tel);
-        }
       }
     } catch (logIn) {
       if (logIn is PlatformException) {

@@ -507,7 +507,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           context);
                                                     },
                                                     child: Text(
-                                                      'annuller',
+                                                      'Annuler',
                                                       style: TextStyle(
                                                         fontFamily:
                                                         'Montserrat',
@@ -733,7 +733,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 // tester si les chaines de caratceres ne sont pas vides
 
-  bool isEditable = false;
 
   File _image;
   String _uploadedFileURL;
