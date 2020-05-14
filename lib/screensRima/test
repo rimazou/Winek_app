@@ -1108,3 +1108,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future userID;
 }
+Provider.of<AuthService>(context,
+                                            listen: false)
+                                        .positionStream
+                                        .cancel();
+                                    Provider.of<UpdateMarkers>(
+                                            context,
+                                            listen: false).stream.cancel() ;

@@ -415,15 +415,16 @@ class _HomeState extends State<Home> {
                                 ),
                                 ListTile(
                                   onTap: () {
-/*    Provider.of<AuthService>(context,
-                                            listen: false)
+                                    Provider
+                                        .of<AuthService>(context, listen: false)
                                         .positionStream
-                                        .cancel();
-                                    Provider.of<DeviceInformationService>(
-                                            context,
-                                            listen: false)
-                                        .stopBroadcast();
-*/
+                                        ?.cancel();
+                                    Provider
+                                        .of<UpdateMarkers>(
+                                        context, listen: false)
+                                        .stream
+                                        ?.cancel();
+
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -2160,10 +2161,21 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () => Navigator.push(
+                                  onTap: () {
+                                    Provider
+                                        .of<AuthService>(context, listen: false)
+                                        .positionStream
+                                        ?.cancel();
+                                    Provider
+                                        .of<UpdateMarkers>(
+                                        context, listen: false)
+                                        .stream
+                                        ?.cancel();
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SignoutWait())),
+                                          builder: (context) => SignoutWait()));
+                                  },
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
@@ -3098,10 +3110,21 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   ),
                                 ),
                                 ListTile(
-                                  onTap: () => Navigator.push(
+                                  onTap: () {
+                                    Provider
+                                        .of<AuthService>(context, listen: false)
+                                        .positionStream
+                                        ?.cancel();
+                                    Provider
+                                        .of<UpdateMarkers>(
+                                        context, listen: false)
+                                        .stream
+                                        ?.cancel();
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SignoutWait())),
+                                          builder: (context) => SignoutWait()));
+                                  },
                                   leading: Icon(
                                     Icons.directions_run,
                                     color: Colors.white,
