@@ -29,6 +29,7 @@ import 'Aide.dart';
 import 'planifierArrets.dart';
 import 'package:winek/updateMarkers2.dart';
 import 'package:winek/dataBaseSoum.dart';
+
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -40,7 +41,7 @@ String Userimage;
 bool justReceivedAlert = false;
 ValueNotifier valueNotifier = ValueNotifier(justReceivedAlert);
 
-const kGoogleApiKey = "AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc";
+const kGoogleApiKey = "AIzaSyAnvTAPHqVvPr21Oeq8of-PANR_tEPLLO8";
 //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 Databasegrp data = Databasegrp();
@@ -814,7 +815,7 @@ class _HomeState extends State<Home> {
                         markerId: markerid,
                         position: LatLng(position.latitude, position.longitude),
                         icon: await Provider.of<UpdateMarkers>(context,
-                            listen: false)
+                                listen: false)
                             .getMarkerIcon(url, Size(200.0, 200.0)),
                         infoWindow: InfoWindow(snippet: '$pseudo'),
                       );
@@ -1923,7 +1924,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       ],
                     ),
                     //indexe3
-                    NotifStream(ffunction: (){
+                    NotifStream(ffunction: () {
                       setState(() {
                         stackIndex = 2;
                       });
@@ -4286,9 +4287,9 @@ void addListnerToNotifier(Function ffunction) {
   valueNotifier.addListener(() async {
 //    checkSenderUser();
 //    if (currentUser != notifSender) {
-      var vaaa = _AlertScreenState(ffunction);
-      vaaa.initState();
-      await vaaa.showNotificationWithDefaultSound();
+    var vaaa = _AlertScreenState(ffunction);
+    vaaa.initState();
+    await vaaa.showNotificationWithDefaultSound();
 //    }
   });
 }
@@ -4309,13 +4310,13 @@ class NotifStream extends StatelessWidget {
           if (id == _firestore.document(groupPath).documentID) {
             print('je recupere le just received alerte');
             final groupJRA = alert.data['justReceivedAlert'];
-            print('justReceived BDD = $groupJRA et le local = $justReceivedAlert');
+            print(
+                'justReceived BDD = $groupJRA et le local = $justReceivedAlert');
             if (groupJRA != justReceivedAlert) {
               checkSenderUser();
               print('SENDEEEEEER $notifSender USEEEEER $currentUser');
-              if (notifSender != currentUser){
-              valueNotifier.notifyListeners();
-
+              if (notifSender != currentUser) {
+                valueNotifier.notifyListeners();
               }
               justReceivedAlert = groupJRA;
             }
