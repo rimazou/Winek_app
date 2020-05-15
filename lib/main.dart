@@ -71,10 +71,10 @@ class Winek extends StatelessWidget {
           return MaterialApp(
             builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
-            initialRoute: OnboardingScreen.id,
-            //initialRoute: initScreen == 0 || initScreen == null
-            //   ? OnboardingScreen.id
-            //   : FirstLoading.id,
+           // initialRoute: OnboardingScreen.id,
+            initialRoute: initScreen == 0 || initScreen == null
+               ? OnboardingScreen.id
+               : FirstLoading.id,
 
             routes: {
               Home.id: (BuildContext context) => Home(),
