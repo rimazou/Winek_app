@@ -30,7 +30,7 @@ List<Map<dynamic, dynamic>> membres;
 bool _loading;
 final _firestore = Firestore.instance;
 GoogleMapsPlaces _places =
-GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
+    GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 void createlongterme() async {
 // get the current user info
@@ -54,7 +54,7 @@ void createlongterme() async {
   });
   Geoflutterfire geo = Geoflutterfire();
   GeoFirePoint point =
-  geo.point(latitude: 36.7525, longitude: 3.041969999999992);
+      geo.point(latitude: 36.7525, longitude: 3.041969999999992);
 
   await _firestore
       .document(ref.path)
@@ -89,7 +89,7 @@ void createlongterme() async {
 // adding that grp to member's invitations liste.
   for (Map m in membres) {
     DocumentSnapshot doc =
-    await Firestore.instance.collection('UserGrp').document(m['id']).get();
+        await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -109,7 +109,7 @@ void createlongterme() async {
   }
 //adding the grp into the admin list of grp
   DocumentSnapshot userdoc =
-  await Firestore.instance.collection('UserGrp').document(user['id']).get();
+      await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
     if (userdoc.data.containsKey('groupes')) {
       userdoc.reference.updateData({
@@ -277,7 +277,7 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
                       setState(() {
                         _loading = false;
                       });
-                      Navigator.pushNamed(context, Home.id);
+                      Navigator.pop(context);
                     }
                   });
                 },
@@ -370,7 +370,7 @@ void createvoyage() async {
 // adding that grp to member's invitations liste:
   for (Map m in membres) {
     DocumentSnapshot doc =
-    await Firestore.instance.collection('UserGrp').document(m['id']).get();
+        await Firestore.instance.collection('UserGrp').document(m['id']).get();
     if (doc.exists) {
       if (doc.data.containsKey('invitations')) {
         doc.reference.updateData({
@@ -391,7 +391,7 @@ void createvoyage() async {
   print('invitations sent');
 //adding it to admin list of grp
   DocumentSnapshot userdoc =
-  await Firestore.instance.collection('UserGrp').document(user['id']).get();
+      await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
     if (userdoc.data.containsKey('groupes')) {
       userdoc.reference.updateData({
@@ -510,7 +510,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                     onPressed: () async {
                       try {
                         final result =
-                        await InternetAddress.lookup('google.com');
+                            await InternetAddress.lookup('google.com');
                         var result2 = await Connectivity().checkConnectivity();
                         var b = (result2 != ConnectivityResult.none);
 
@@ -530,7 +530,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                           );
                           if (p != null) {
                             PlacesDetailsResponse detail =
-                            await _places.getDetailsByPlaceId(p.placeId);
+                                await _places.getDetailsByPlaceId(p.placeId);
                             var placeId = p.placeId;
                             String placeIdToString = "$placeId";
                             double lat = detail.result.geometry.location.lat;
@@ -686,7 +686,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                       setState(() {
                         _loading = false;
                       });
-                      Navigator.pushNamed(context, Home.id);
+                      Navigator.pop(context);
                     }
                   });
                 },
@@ -787,15 +787,15 @@ class _FriendsListState extends State<FriendsList> {
             ),
             trailing: membres.contains(friends[index])
                 ? Icon(
-              Icons.done,
-              color: secondarycolor,
-              size: 30,
-            )
+                    Icons.done,
+                    color: secondarycolor,
+                    size: 30,
+                  )
                 : Icon(
-              Icons.add_circle_outline,
-              color: secondarycolor,
-              size: 30,
-            ),
+                    Icons.add_circle_outline,
+                    color: secondarycolor,
+                    size: 30,
+                  ),
           ),
         );
       },

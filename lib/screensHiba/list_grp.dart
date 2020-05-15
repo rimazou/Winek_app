@@ -181,7 +181,7 @@ class grpTile extends StatelessWidget {
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               () {
-                function;
+                function();
                 print('da5el listtile');
               };
               Groupe g = Voyage();
@@ -255,7 +255,8 @@ class grpTile extends StatelessWidget {
               }
 
               () {
-                function;
+                // ignore: unnecessary_statements
+                function();
               };
             }
           } on SocketException catch (_) {
@@ -382,7 +383,7 @@ class _GroupesListState extends State<GroupesList> {
           grp_nom: grps[index]['nom'],
           grp_chemin: grps[index]['chemin'],
           function: () {
-            function;
+            function();
             print('grptile');
           },
         );

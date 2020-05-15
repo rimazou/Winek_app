@@ -9,6 +9,7 @@ import '../main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:winek/screensSoum/profile.dart';
 
 String nv_nom;
 bool _confirmer;
@@ -605,8 +606,26 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                             itemBuilder: (context, index) {
                               return Card(
                                 child: ListTile(
-                                  onTap: () {
-                                    //goto profile
+                                  onTap: () async {
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    String name = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(currentUser)
+                                        .get()
+                                        .then((Doc) {
+                                      return Doc.data['pseudo'];
+                                    });
+                                    //go to the profile screen
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ProfileScreen2(
+                                                friend: groupe.membres[index],
+                                                currentUser: currentUser,
+                                                name: name,
+                                              )),
+                                    );
                                   },
                                   title: Text(
                                     groupe.membres[index]['pseudo'],
@@ -1309,8 +1328,26 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                             itemBuilder: (context, index) {
                               return Card(
                                 child: ListTile(
-                                  onTap: () {
-                                    //goto profile
+                                  onTap: () async {
+                                    String currentUser =
+                                        await AuthService().connectedID();
+                                    String name = await Firestore.instance
+                                        .collection('Utilisateur')
+                                        .document(currentUser)
+                                        .get()
+                                        .then((Doc) {
+                                      return Doc.data['pseudo'];
+                                    });
+                                    //go to the profile screen
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ProfileScreen2(
+                                                friend: groupe.membres[index],
+                                                currentUser: currentUser,
+                                                name: name,
+                                              )),
+                                    );
                                   },
                                   title: Text(
                                     groupe.membres[index]['pseudo'],
