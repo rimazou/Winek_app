@@ -219,8 +219,7 @@ class grpTile extends StatelessWidget {
                 //asma initialise
                 groupPath = grp_chemin;
                 utilisateurID = await AuthService().connectedID();
-                currentUser =
-                await AuthService().getPseudo(utilisateurID);
+                currentUser = await AuthService().getPseudo(utilisateurID);
                 stackIndex = 3;
                 //checkSenderUser();
                 //print('HEEEEEEEEEEEEEEEY$notifSender');
@@ -247,7 +246,7 @@ class grpTile extends StatelessWidget {
                     .markers
                     .clear();
                 Provider.of<UpdateMarkers>(context, listen: false)
-                    .UpdateusersLocation(grp_chemin, context);
+                    .UpdateusersLocationlt(grp_chemin, context);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

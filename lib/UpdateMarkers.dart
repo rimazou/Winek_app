@@ -44,7 +44,7 @@ class UpdateMarkers extends ChangeNotifier {
       return doc.data['location']['geopoint'];
     });
     latlng = new LatLng(point.latitude, point.longitude);
-    cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
+    cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 13);
     Provider.of<controllermap>(mapcontext, listen: false)
         .mapController
         .animateCamera(cameraUpdate);
@@ -61,6 +61,38 @@ class UpdateMarkers extends ChangeNotifier {
         .collection(collectionRef: collectionReference)
         .within(center: geoFPointl, radius: radius, field: field)
         .listen(_updateMarkers);
+  }
+
+  void UpdateusersLocationlt(String path, BuildContext context) async {
+    groupepath = path;
+    await Future.delayed(Duration(seconds: 1));
+    mapcontext = context;
+    val = await authService.connectedID();
+    LatLng latlng;
+    CameraUpdate cameraUpdate;
+    GeoPoint point = await Firestore.instance
+        .collection("Utilisateur")
+        .document(val)
+        .get()
+        .then((DocumentSnapshot doc) {
+      return doc.data['location']['geopoint'];
+    });
+    latlng = new LatLng(point.latitude, point.longitude);
+    cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 13);
+    Provider.of<controllermap>(mapcontext, listen: false)
+        .mapController
+        .animateCamera(cameraUpdate);
+    var collectionReference = _firestore.document(path).collection('members');
+    // LatLng lemis = new LatLng(36.6178786, 2.3912362);
+    GeoFirePoint geoFPointl =
+        geo.point(latitude: point.latitude, longitude: point.longitude);
+    LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
+    double radius = 2000;
+    String field = 'position';
+    stream = geo
+        .collection(collectionRef: collectionReference)
+        .within(center: geoFPointl, radius: radius, field: field)
+        .listen(_updateMarkerslongterme);
   }
 
   void marker_dest(String chemin) async {
@@ -139,6 +171,15 @@ class UpdateMarkers extends ChangeNotifier {
             .updateData({'fermer': true});
       }
     }
+  }
+
+  void _updateMarkerslongterme(List<DocumentSnapshot> documentList) async {
+    documentList.forEach((DocumentSnapshot document) async {
+      String userid = document.documentID;
+      markers.remove(MarkerId(userid));
+      GeoPoint point = document.data['position']['geopoint'];
+      _addMarker(point.latitude, point.longitude, userid);
+    });
   }
 
   Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size) async {
