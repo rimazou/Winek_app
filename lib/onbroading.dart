@@ -87,7 +87,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          //  crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Center(
                               child: Image(
@@ -99,9 +99,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
                             SizedBox(height: responsiveheight(30)),
-                            Text(
-                              'Repérez-vous où que vous soyez !',
-                              style: kTitleStyle,
+                            Center(
+                              child: Text(
+                                'Repérez-vous où que vous soyez !',
+                                style: kTitleStyle,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ],
                         ),
@@ -109,7 +112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          //  crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Center(
                               child: Image(
@@ -121,9 +124,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
                             SizedBox(height: responsiveheight(30)),
-                            Text(
-                              'Retrouvez vos amis et voyagez ensemble!',
-                              style: kTitleStyle,
+                            Center(
+                              child: Text(
+                                'Retrouvez vos amis et voyagez ensemble!',
+                                style: kTitleStyle,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ],
                         ),
@@ -131,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          //crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Center(
                               child: Image(
@@ -143,9 +149,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
                             SizedBox(height: responsiveheight(30)),
-                            Text(
-                              'Échangez des mots et programmez des arrêts !',
-                              style: kTitleStyle,
+                            Center(
+                              child: Text(
+                                'Échangez des mots et programmez des arrêts !',
+                                style: kTitleStyle,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ],
                         ),
