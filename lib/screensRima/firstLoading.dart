@@ -6,7 +6,6 @@ import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/welcome_screen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
-import 'package:winek/intro_page.dart';
 import '../auth.dart';
 
 class FirstLoading extends StatefulWidget {

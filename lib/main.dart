@@ -1,5 +1,4 @@
 import 'package:winek/auth.dart';
-import 'package:winek/intro_page.dart';
 import 'package:winek/screensHiba/Aide.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:winek/screensHiba/listeFavorisScreen.dart';
@@ -18,7 +17,6 @@ import 'screensHiba/list_grp.dart';
 import 'screensHiba/list_inv_grp.dart';
 import 'screensHiba/nouveau_grp.dart';
 import 'screensRima/welcome_screen.dart';
-import 'intro_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'onbroading.dart';
 
@@ -73,10 +71,10 @@ class Winek extends StatelessWidget {
           return MaterialApp(
             builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
-            //  initialRoute: OnboardingScreen.id, //IntroPage.id,
-            initialRoute: initScreen == 0 || initScreen == null
-                ? OnboardingScreen.id // IntroPage.id
-                : FirstLoading.id,
+            initialRoute: OnboardingScreen.id,
+            //initialRoute: initScreen == 0 || initScreen == null
+            //   ? OnboardingScreen.id
+            //   : FirstLoading.id,
 
             routes: {
               Home.id: (BuildContext context) => Home(),
@@ -97,7 +95,6 @@ class Winek extends StatelessWidget {
               // ProfileScreen.id: (context) => ProfileScreen(user),
               FirstLoading.id: (context) => FirstLoading(),
               AidePage.id: (context) => AidePage(),
-              IntroPage.id: (context) => IntroPage(),
               OnboardingScreen.id: (context) => OnboardingScreen(),
             },
           );

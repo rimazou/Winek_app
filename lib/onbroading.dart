@@ -4,19 +4,11 @@ import 'package:winek/main.dart';
 import 'screensRima/login_screen.dart';
 
 final kTitleStyle = TextStyle(
-  color: Colors.white,
+  color: primarycolor,
   fontFamily: 'Montserrat',
   fontSize: 22,
   fontWeight: FontWeight.w600,
   //height: 1.5,
-);
-
-final kSubtitleStyle = TextStyle(
-  fontFamily: 'Montserrat',
-  color: Colors.white,
-  fontSize: 16,
-  fontWeight: FontWeight.w500,
-  // height: 1.2,
 );
 
 class OnboardingScreen extends StatefulWidget {
@@ -26,7 +18,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final int _numPages = 4;
+  final int _numPages = 3;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
@@ -45,7 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: responsiveheight(8),
       width: isActive ? responsivewidth(24) : responsivewidth(16),
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : secondarycolor,
+        color: isActive ? primarycolor : secondarycolor,
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -57,19 +49,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.1, 0.4, 0.7, 0.9],
-              colors: [
-                Color(0xff389090), //secondarycolor,
-                Color(0xff387888),
-                Color(0xff385870),
-                primarycolor,
-              ],
-            ),
-          ),
+          color: Colors.white,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 10.0),
             child: Column(
@@ -86,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       'Passer',
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        color: Colors.white,
+                        color: primarycolor,
                         fontSize: 20.0,
                         fontWeight: FontWeight.w700,
                       ),
@@ -112,102 +92,60 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Center(
                               child: Image(
                                 image: AssetImage(
-                                  'images/logo.png',
+                                  'images/screen1.jpg',
                                 ),
-                                height: responsiveheight(300),
-                                width: responsivewidth(300),
+                                height: responsiveheight(350),
+                                width: responsivewidth(350),
                               ),
                             ),
                             SizedBox(height: responsiveheight(30)),
                             Text(
-                              'Connect people\naround the world',
+                              'Repérez-vous où que vous soyez !',
                               style: kTitleStyle,
-                            ),
-                            SizedBox(height: responsiveheight(15)),
-                            Text(
-                              'Lorem ipsum dolor sit amet, consect adipiscing elit, sed do eiusmod tempor incididunt ut labore et.',
-                              style: kSubtitleStyle,
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(40.0),
+                        padding: EdgeInsets.all(20.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Center(
                               child: Image(
                                 image: AssetImage(
-                                  'images/logo.png',
+                                  'images/screen2.jpg',
                                 ),
-                                height: responsiveheight(300.0),
-                                width: responsivewidth(300),
+                                height: responsiveheight(350.0),
+                                width: responsivewidth(350),
                               ),
                             ),
                             SizedBox(height: responsiveheight(30)),
                             Text(
-                              'Live your life smarter\nwith us!',
+                              'Retrouvez vos amis et voyagez ensemble!',
                               style: kTitleStyle,
-                            ),
-                            SizedBox(height: responsiveheight(15)),
-                            Text(
-                              'Lorem ipsum dolor sit amet, consect adipiscing elit, sed do eiusmod tempor incididunt ut labore et.',
-                              style: kSubtitleStyle,
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(40.0),
+                        padding: EdgeInsets.all(20.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Center(
                               child: Image(
                                 image: AssetImage(
-                                  'images/logo.png',
+                                  'images/screen3.jpg',
                                 ),
-                                height: responsiveheight(300),
-                                width: responsivewidth(300),
+                                height: responsiveheight(350),
+                                width: responsivewidth(350),
                               ),
                             ),
                             SizedBox(height: responsiveheight(30)),
                             Text(
-                              'Get a new experience\nof imagination',
+                              'Échangez des mots et programmez des arrêts !',
                               style: kTitleStyle,
-                            ),
-                            SizedBox(height: responsiveheight(15)),
-                            Text(
-                              'Lorem ipsum dolor sit amet, consect adipiscing elit, sed do eiusmod tempor incididunt ut labore et.',
-                              style: kSubtitleStyle,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(40.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Center(
-                              child: Image(
-                                image: AssetImage(
-                                  'images/logo.png',
-                                ),
-                                height: responsiveheight(300),
-                                width: responsivewidth(300),
-                              ),
-                            ),
-                            SizedBox(height: responsiveheight(30)),
-                            Text(
-                              'Get a new experience\nof imagination',
-                              style: kTitleStyle,
-                            ),
-                            SizedBox(height: responsiveheight(15)),
-                            Text(
-                              'Lorem ipsum dolor sit amet, consect adipiscing elit, sed do eiusmod tempor incididunt ut labore et.',
-                              style: kSubtitleStyle,
                             ),
                           ],
                         ),
@@ -237,14 +175,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 Text(
                                   'Suivant',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: secondarycolor,
                                     fontSize: 22.0,
                                   ),
                                 ),
                                 SizedBox(width: responsivewidth(10)),
                                 Icon(
                                   Icons.arrow_forward,
-                                  color: Colors.white,
+                                  color: secondarycolor,
                                   size: 30.0,
                                 ),
                               ],
@@ -262,7 +200,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ? Container(
               height: responsiveheight(100),
               width: double.infinity,
-              color: Colors.white,
+              color: primarycolor,
               child: GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, LoginScreen.id);
@@ -271,7 +209,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Text(
                     'Commencer',
                     style: TextStyle(
-                      color: primarycolor,
+                      color: Colors.white,
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
                     ),
