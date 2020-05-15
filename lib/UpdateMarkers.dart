@@ -49,13 +49,13 @@ class UpdateMarkers extends ChangeNotifier {
         .mapController
         .animateCamera(cameraUpdate);
     var collectionReference = _firestore.document(path).collection('members');
-    LatLng lemis = new LatLng(36.6178786, 2.3912362);
+    // LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
-        geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
+        geo.point(latitude: point.latitude, longitude: point.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
     marker_dest(path);
-    double radius = 50;
+    double radius = 2000;
     String field = 'position';
     stream = geo
         .collection(collectionRef: collectionReference)
@@ -101,9 +101,8 @@ class UpdateMarkers extends ChangeNotifier {
     });
     bool fermer = true;
     if (arret == false) {
-      bool arrived;
-
       for (DocumentSnapshot document in documentList) {
+        bool arrived = false;
         print('fermer -----------------$fermer');
         String userid = document.documentID;
         print('documet: $userid');
@@ -138,8 +137,6 @@ class UpdateMarkers extends ChangeNotifier {
             .collection('fermeture')
             .document('fermeture')
             .updateData({'fermer': true});
-        print(
-            'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
       }
     }
   }
@@ -149,7 +146,7 @@ class UpdateMarkers extends ChangeNotifier {
     final Canvas canvas = Canvas(pictureRecorder);
 
     final Radius radius = Radius.circular(size.width / 2);
-    final Paint shadowPaint = Paint()..color = Color(0x96389490);
+    final Paint shadowPaint = Paint()..color = Color(0x94389490);
     final double shadowWidth = 25.0;
 
     final Paint borderPaint = Paint()..color = Colors.white;
