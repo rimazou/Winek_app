@@ -17,8 +17,22 @@ import 'screensHiba/list_grp.dart';
 import 'screensHiba/list_inv_grp.dart';
 import 'screensHiba/nouveau_grp.dart';
 import 'screensRima/welcome_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'onbroading.dart';
+
 //void main() => runApp(DevicePreview(builder: (context) => Winek()));
-void main() => runApp(Winek());
+int initScreen;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  initScreen = await prefs.getInt("initScreen");
+  await prefs.setInt("initScreen", 1);
+  print('initScreen ${initScreen}');
+  runApp(Winek());
+}
+
+//void main() => runApp(Winek());
 Color primarycolor = Color(0xff3B466B);
 Color secondarycolor = Color(0xff389490);
 
@@ -57,9 +71,10 @@ class Winek extends StatelessWidget {
           return MaterialApp(
             builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
-            //initialRoute:  authService.connectedID()==null ? WelcomeScreen.id : Home.id,
-            initialRoute: WelcomeScreen.id,
-            //FirstLoading.id,
+            //initialRoute: OnboardingScreen.id,
+            initialRoute: initScreen == 0 || initScreen == null
+                ? OnboardingScreen.id
+                : FirstLoading.id,
             routes: {
               Home.id: (BuildContext context) => Home(),
               // la map
@@ -79,6 +94,7 @@ class Winek extends StatelessWidget {
               // ProfileScreen.id: (context) => ProfileScreen(user),
               FirstLoading.id: (context) => FirstLoading(),
               AidePage.id: (context) => AidePage(),
+              OnboardingScreen.id: (context) => OnboardingScreen(),
             },
           );
         });

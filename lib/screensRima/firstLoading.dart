@@ -37,6 +37,7 @@ class _FirstLoadingState extends State<FirstLoading> {
         print('no log');
         Navigator.pushNamed(
             context, WelcomeScreen.id); // va devenir apres loginscreen
+
       }
     });
   }

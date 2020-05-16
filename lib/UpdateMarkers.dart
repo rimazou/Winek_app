@@ -34,19 +34,65 @@ class UpdateMarkers extends ChangeNotifier {
     await Future.delayed(Duration(seconds: 1));
     mapcontext = context;
     val = await authService.connectedID();
+    LatLng latlng;
+    CameraUpdate cameraUpdate;
+    GeoPoint point = await Firestore.instance
+        .collection("Utilisateur")
+        .document(val)
+        .get()
+        .then((DocumentSnapshot doc) {
+      return doc.data['location']['geopoint'];
+    });
+    latlng = new LatLng(point.latitude, point.longitude);
+    cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 13);
+    Provider.of<controllermap>(mapcontext, listen: false)
+        .mapController
+        .animateCamera(cameraUpdate);
     var collectionReference = _firestore.document(path).collection('members');
-    LatLng lemis = new LatLng(36.6178786, 2.3912362);
+    // LatLng lemis = new LatLng(36.6178786, 2.3912362);
     GeoFirePoint geoFPointl =
-    geo.point(latitude: lemis.latitude, longitude: lemis.longitude);
+        geo.point(latitude: point.latitude, longitude: point.longitude);
     LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
 
     marker_dest(path);
-    double radius = 50;
+    double radius = 2000;
     String field = 'position';
     stream = geo
         .collection(collectionRef: collectionReference)
         .within(center: geoFPointl, radius: radius, field: field)
         .listen(_updateMarkers);
+  }
+
+  void UpdateusersLocationlt(String path, BuildContext context) async {
+    groupepath = path;
+    await Future.delayed(Duration(seconds: 1));
+    mapcontext = context;
+    val = await authService.connectedID();
+    LatLng latlng;
+    CameraUpdate cameraUpdate;
+    GeoPoint point = await Firestore.instance
+        .collection("Utilisateur")
+        .document(val)
+        .get()
+        .then((DocumentSnapshot doc) {
+      return doc.data['location']['geopoint'];
+    });
+    latlng = new LatLng(point.latitude, point.longitude);
+    cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 13);
+    Provider.of<controllermap>(mapcontext, listen: false)
+        .mapController
+        .animateCamera(cameraUpdate);
+    var collectionReference = _firestore.document(path).collection('members');
+    // LatLng lemis = new LatLng(36.6178786, 2.3912362);
+    GeoFirePoint geoFPointl =
+        geo.point(latitude: point.latitude, longitude: point.longitude);
+    LatLng latLng = new LatLng(geoFPointl.latitude, geoFPointl.longitude);
+    double radius = 2000;
+    String field = 'position';
+    stream = geo
+        .collection(collectionRef: collectionReference)
+        .within(center: geoFPointl, radius: radius, field: field)
+        .listen(_updateMarkerslongterme);
   }
 
   void marker_dest(String chemin) async {
@@ -65,7 +111,7 @@ class UpdateMarkers extends ChangeNotifier {
       markerId: id,
       position: LatLng(dest_lat, dest_lng),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      infoWindow: InfoWindow(snippet: '$destination'),
+      infoWindow: InfoWindow(title: destination),
     );
 
     markers[id] = _marker;
@@ -87,9 +133,8 @@ class UpdateMarkers extends ChangeNotifier {
     });
     bool fermer = true;
     if (arret == false) {
-      bool arrived;
-
       for (DocumentSnapshot document in documentList) {
+        bool arrived = false;
         print('fermer -----------------$fermer');
         String userid = document.documentID;
         print('documet: $userid');
@@ -113,15 +158,7 @@ class UpdateMarkers extends ChangeNotifier {
             print('not curent useeeeeeeeeeeeeerrr $fermer');
           }
         }
-        /*
-        if (val == userid) {
-          latlng = new LatLng(point.latitude, point.longitude);
-          cameraUpdate = CameraUpdate.newLatLngZoom(latlng, 12);
-          Provider.of<controllermap>(mapcontext, listen: false)
-              .mapController
-              .animateCamera(cameraUpdate);
-        }
-*/
+
         _addMarker(point.latitude, point.longitude, userid);
       }
 
@@ -132,10 +169,17 @@ class UpdateMarkers extends ChangeNotifier {
             .collection('fermeture')
             .document('fermeture')
             .updateData({'fermer': true});
-        print(
-            'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
       }
     }
+  }
+
+  void _updateMarkerslongterme(List<DocumentSnapshot> documentList) async {
+    documentList.forEach((DocumentSnapshot document) async {
+      String userid = document.documentID;
+      markers.remove(MarkerId(userid));
+      GeoPoint point = document.data['position']['geopoint'];
+      _addMarker(point.latitude, point.longitude, userid);
+    });
   }
 
   Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size) async {
@@ -143,7 +187,7 @@ class UpdateMarkers extends ChangeNotifier {
     final Canvas canvas = Canvas(pictureRecorder);
 
     final Radius radius = Radius.circular(size.width / 2);
-    final Paint shadowPaint = Paint()..color = Color(0x96389490);
+    final Paint shadowPaint = Paint()..color = Color(0x94389490);
     final double shadowWidth = 25.0;
 
     final Paint borderPaint = Paint()..color = Colors.white;
@@ -193,7 +237,7 @@ class UpdateMarkers extends ChangeNotifier {
 
     // Convert image to bytes
     final ByteData byteData =
-    await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+        await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
 
     final Uint8List uint8List = byteData.buffer.asUint8List();
 
@@ -239,7 +283,7 @@ class UpdateMarkers extends ChangeNotifier {
       markerId: id,
       position: LatLng(lat, lng),
       icon: await getMarkerIcon(url, Size(200.0, 200.0)),
-      infoWindow: InfoWindow(snippet: '$pseudo'),
+      infoWindow: InfoWindow(title: pseudo),
     );
     markers[id] = _marker;
     notifyListeners();
@@ -260,7 +304,9 @@ class UpdateMarkers extends ChangeNotifier {
     print('path');
     print(path_groupe);
 
-    Firestore.instance.document(path_groupe).collection('PlanifierArrets')
+    Firestore.instance
+        .document(path_groupe)
+        .collection('PlanifierArrets')
         .document('Arrets')
         .snapshots(includeMetadataChanges: true)
         .listen((DocumentSnapshot documentSnapshot) async {
@@ -290,15 +336,11 @@ class UpdateMarkers extends ChangeNotifier {
             //  Provider.of<UpdateMarkers>(context,listen:false).
             markers[markerid] = _marker;
             notifyListeners();
-            Provider
-                .of<controllermap>(context)
-                .mapController
-                .animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(
+            Provider.of<controllermap>(context).mapController.animateCamera(
+                CameraUpdate.newCameraPosition(CameraPosition(
                     target: LatLng(map['latitude'], map['longitude']),
                     zoom: 14.0)));
             // bool nouvelArret = documentSnapshot.data['planArret'];
-
 
             if (map['pseudo'] != pseud) {
               var vaaa = _AlertScreenState();
@@ -310,13 +352,9 @@ class UpdateMarkers extends ChangeNotifier {
           print("object5");
         }
       }
-    }
-
-    );
+    });
   }
 }
-
-
 
 class DeviceInformationService extends ChangeNotifier {
   bool _broadcastBattery = false;
