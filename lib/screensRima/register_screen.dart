@@ -864,6 +864,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           });
           showSnackBar('Mot de passe faible', context);
         }
+        else {
+          setState(() {
+            loading = false;
+          });
+          showSnackBar(
+              "Une erreur s'est produite, veuillez reessayer", context);
+        }
       }
     } catch (e) {
       print(e);

@@ -33,289 +33,299 @@ class _LoginScreenState extends State<LoginScreen> {
       mail = '',
       errMl,
       errPwd;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  final GlobalKey<ScaffoldState> _scaffoldlogKey = new GlobalKey<
+      ScaffoldState>();
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        key: _scaffoldKey,
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: SingleChildScrollView(
-            //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 30.0,
-                ),
-                Container(
-                  height: 120.0,
-                  child: Image.asset(
-                    'images/logo.png',
-                    fit: BoxFit.fill,
+    if (loading) {
+      return Center(
+          child: SpinKitChasingDots(
+            color: Color(0XFF389490),
+          ));
+    } else {
+      return SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          key: _scaffoldlogKey,
+          body: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            child: SingleChildScrollView(
+              //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                  Container(
                     height: 120.0,
-                    width: 120.0,
-                  ),
-                ),
-                Text(
-                  'Winek',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF3B466B),
-                  ),
-                ),
-                SizedBox(
-                  height: 50.0,
-                ),
-                Text(
-                  'Connexion',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF389490), //vert
-                  ),
-                ),
-                SizedBox(
-                  height: 40.0,
-                ),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) {
-                    mail = value;
-                    setState(() {
-                      !Validator.email(mail)
-                          ? errMl = null
-                          : errMl = "Veuillez introduire une adresse valide";
-                    });
-                  },
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontFamily: 'Montserrat',
-
-                    // decorationColor: Color(0XFFFFCC00),//Font color change
-                    //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Adresse mail',
-                    hoverColor: Colors.black87,
-                    errorText: errMl,
-                    errorStyle: TextStyle(
-                        color: Colors.red,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.bold),
-                    contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                    child: Image.asset(
+                      'images/logo.png',
+                      fit: BoxFit.fill,
+                      height: 120.0,
+                      width: 120.0,
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                TextField(
-                  onChanged: (value) {
-                    pwd = value;
-                    if (pwd.isEmpty) {
-                      setState(() {
-                        errPwd = 'Veuillez introduire un mot de passe';
-                      });
-                    }
-                  },
-                  obscureText: true,
-                  autocorrect: false,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-
-                    color: Colors.black87,
-                    // decorationColor: Color(0XFFFFCC00),//Font color change
-                    //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Mot de passe',
-                    contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 1.0),
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                      BorderSide(color: Colors.blueGrey, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                    ),
-                  ),
-                ),
-                FlatButton(
-                  child: Text(
-                    'mot de passe oublie ?',
+                  Text(
+                    'Winek',
                     style: TextStyle(
-                      color: Color(0XFF389490),
+                      fontFamily: 'Montserrat',
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0XFF3B466B),
                     ),
                   ),
-                  onPressed: () async {
-                    try {
-                      final result = await InternetAddress.lookup('google.com');
-                      var result2 = await Connectivity().checkConnectivity();
-                      var b = (result2 != ConnectivityResult.none);
+                  SizedBox(
+                    height: 50.0,
+                  ),
+                  Text(
+                    'Connexion',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0XFF389490), //vert
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (value) {
+                      mail = value;
+                      setState(() {
+                        !Validator.email(mail)
+                            ? errMl = null
+                            : errMl = "Veuillez introduire une adresse valide";
+                      });
+                    },
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontFamily: 'Montserrat',
 
-                      if (b &&
-                          result.isNotEmpty &&
-                          result[0].rawAddress.isNotEmpty) {
-                        Navigator.pushNamed(context, ResetMailScreen.id);
+                      // decorationColor: Color(0XFFFFCC00),//Font color change
+                      //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Adresse mail',
+                      hoverColor: Colors.black87,
+                      errorText: errMl,
+                      errorStyle: TextStyle(
+                          color: Colors.red,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold),
+                      contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      pwd = value;
+                      if (pwd.isEmpty) {
+                        setState(() {
+                          errPwd = 'Veuillez introduire un mot de passe';
+                        });
                       }
-                    } on SocketException catch (_) {
-                      showSnackBar(
-                          'Vérifiez votre connexion internet', context);
-                    }
-                  },
-                ),
-                SizedBox(
-                  height: 24.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: Material(
-                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                        elevation: 5.0,
-                        color: Color(0XFF3B466B),
-                        child: MaterialButton(
-                          onPressed: () async {
-                            try {
-                              final result =
-                              await InternetAddress.lookup('google.com');
-                              var result2 =
-                              await Connectivity().checkConnectivity();
-                              var b = (result2 != ConnectivityResult.none);
+                    },
+                    obscureText: true,
+                    autocorrect: false,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
 
-                              if (b &&
-                                  result.isNotEmpty &&
-                                  result[0].rawAddress.isNotEmpty) {
-                                Navigator.pushNamed(
-                                    context, RegistrationScreen.id);
-                              }
-                            } on SocketException catch (_) {
-                              showSnackBar(
-                                  'Vérifiez votre connexion internet', context);
-                            }
-                          }, //_signInG(),
-                          minWidth: responsivewidth(140),
-                          height: responsiveheight(42),
-                          child: Text(
-                            "S'inscrire",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
+                      color: Colors.black87,
+                      // decorationColor: Color(0XFFFFCC00),//Font color change
+                      //  backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: Material(
-                        color: Color(0XFF389490),
-                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                        elevation: 5.0,
-                        child: MaterialButton(
-                          onPressed: () async {
-                            try {
-                              final result =
-                              await InternetAddress.lookup('google.com');
-                              var result2 =
-                              await Connectivity().checkConnectivity();
-                              var b = (result2 != ConnectivityResult.none);
-
-                              if (b &&
-                                  result.isNotEmpty &&
-                                  result[0].rawAddress.isNotEmpty) {
-                                connect();
-                              }
-                            } on SocketException catch (_) {
-                              showSnackBar(
-                                  'Vérifiez votre connexion internet', context);
-                            }
-                          },
-                          minWidth: responsivewidth(140),
-                          height: responsiveheight(42),
-                          child: Text(
-                            'Se connecter',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                    decoration: InputDecoration(
+                      labelText: 'Mot de passe',
+                      contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsivewidth(70),
-                      vertical: responsiveheight(20)),
-                  child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                    elevation: 5.0,
-                    child: MaterialButton(
-                      onPressed: () => _signInWithGoogle(),
-                      height: responsiveheight(42),
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Container(
-                              height: responsiveheight(42),
-                              child: Image.asset('images/googlelogo.png',
-                                  fit: BoxFit.fill)),
-                          Text(
-                            'Google',
-                            style: TextStyle(
-                              color: Color(0XFF707070),
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                        BorderSide(color: Colors.blueGrey, width: 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                        BorderSide(color: Colors.blueGrey, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  FlatButton(
+                    child: Text(
+                      'mot de passe oublie ?',
+                      style: TextStyle(
+                        color: Color(0XFF389490),
+                      ),
+                    ),
+                    onPressed: () async {
+                      try {
+                        final result = await InternetAddress.lookup('google.com');
+                        var result2 = await Connectivity().checkConnectivity();
+                        var b = (result2 != ConnectivityResult.none);
+
+                        if (b &&
+                            result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          Navigator.pushNamed(context, ResetMailScreen.id);
+                        }
+                      } on SocketException catch (_) {
+                        showSnackBar(
+                            'Vérifiez votre connexion internet', context);
+                      }
+                    },
+                  ),
+                  SizedBox(
+                    height: 24.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Material(
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                          elevation: 5.0,
+                          color: Color(0XFF3B466B),
+                          child: MaterialButton(
+                            onPressed: () async {
+                              try {
+                                final result =
+                                await InternetAddress.lookup('google.com');
+                                var result2 =
+                                await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b &&
+                                    result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  Navigator.pushNamed(
+                                      context, RegistrationScreen.id);
+                                }
+                              } on SocketException catch (_) {
+                                showSnackBar(
+                                    'Vérifiez votre connexion internet', context);
+                              }
+                            }, //_signInG(),
+                            minWidth: responsivewidth(140),
+                            height: responsiveheight(42),
+                            child: Text(
+                              "S'inscrire",
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Material(
+                          color: Color(0XFF389490),
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                          elevation: 5.0,
+                          child: MaterialButton(
+                            onPressed: () async {
+                              try {
+                                final result =
+                                await InternetAddress.lookup('google.com');
+                                var result2 =
+                                await Connectivity().checkConnectivity();
+                                var b = (result2 != ConnectivityResult.none);
+
+                                if (b &&
+                                    result.isNotEmpty &&
+                                    result[0].rawAddress.isNotEmpty) {
+                                  connect();
+                                }
+                              } on SocketException catch (_) {
+                                showSnackBar(
+                                    'Vérifiez votre connexion internet', context);
+                              }
+                            },
+                            minWidth: responsivewidth(140),
+                            height: responsiveheight(42),
+                            child: Text(
+                              'Se connecter',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: responsivewidth(70),
+                        vertical: responsiveheight(20)),
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                      elevation: 5.0,
+                      child: MaterialButton(
+                        onPressed: () => _signInWithGoogle(),
+                        height: responsiveheight(42),
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(
+                                height: responsiveheight(42),
+                                child: Image.asset('images/googlelogo.png',
+                                    fit: BoxFit.fill)),
+                            Text(
+                              'Google',
+                              style: TextStyle(
+                                color: Color(0XFF707070),
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
-
   Future<String> _signInWithGoogle() async {
     try {
+      setState(() {
+        loading = true;
+      });
       final GoogleSignInAccount googleUser =
       await authService.googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
@@ -352,23 +362,33 @@ class _LoginScreenState extends State<LoginScreen> {
         // Provider.of<DeviceInformationService>(context, listen: false)
         //   .broadcastBatteryLevel(user.uid);
       } else {
+        setState(() {
+          loading = false;
+        });
         print('failed google authetication');
       }
     } catch (logIn) {
       if (logIn is PlatformException) {
         if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar(
               'Veuillez verifiez votre connexion internet et reessayez',
               context);
         } else {
-          print(logIn);
+          setState(() {
+            loading = false;
+          });
+          showSnackBar(
+              "Une erreur s'est produite, veuillez reessayer", context);
         }
       }
     }
   }
 
   showSnackBar(String value, BuildContext context) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    _scaffoldlogKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -391,6 +411,9 @@ class _LoginScreenState extends State<LoginScreen> {
         showSnackBar('Veuillez remplir tous le champs', context);
       }
       else {
+        setState(() {
+          loading = true;
+        });
         final user = await authService.auth
             .signInWithEmailAndPassword(email: mail, password: pwd);
         if (user != null) {
@@ -401,24 +424,41 @@ class _LoginScreenState extends State<LoginScreen> {
           authService.userRef
               .document(user.user.uid)
               .updateData({'connecte': true});
-          // Navigator.pushReplacementNamed(context, Home.id);
-          Navigator.pushNamed(context, WelcomeScreen.id);
+          Navigator.pushReplacementNamed(context, Home.id);
         }
       }
     } catch (logIn) {
       if (logIn is PlatformException) {
         if (logIn.code == 'ERROR_USER_NOT_FOUND') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar('Utilisateur inexistant', context);
         }
         if (logIn.code == 'ERROR_INVALID_EMAIL') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar("Veuillez introduire une adresse valide", context);
         }
         if (logIn.code == 'ERROR_WRONG_PASSWORD') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar('Mot de passe errone', context);
         }
 
         if (logIn.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar('Vérifiez votre connexion internet', context);
+        } else {
+          setState(() {
+            loading = false;
+          });
+          showSnackBar(
+              "Une erreur s'est produite, veuillez reessayer", context);
         }
       }
     }

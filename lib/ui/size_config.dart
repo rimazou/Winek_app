@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:winek/enums/device_screen_type.dart';
 
 class SizeConfig {
   static double screenWidth;

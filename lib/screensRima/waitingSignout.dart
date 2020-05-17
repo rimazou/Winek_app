@@ -40,6 +40,7 @@ class _SignoutWaitState extends State<SignoutWait> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: Container(
           child: Center(
             child: SpinKitChasingDots(
