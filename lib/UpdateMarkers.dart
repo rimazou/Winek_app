@@ -145,13 +145,19 @@ class UpdateMarkers extends ChangeNotifier {
         GeoPoint point = document.data['position']['geopoint'];
         arrived = document.data['arrive'];
         print('arrived $arrived');
-
+        if (point == null) {
+          print('de la merde le point est null');
+        }
         if (!arrived) {
           if (id == document.documentID) {
             print('connecteeeeeeeeeeeeeeeeeed USERRR');
-            double distanceInMeters = await Geolocator().distanceBetween(
+            double distanceInMeters = calculateDistance(
                 point.latitude, point.longitude, dest_lat, dest_lng);
-            if (distanceInMeters <= 50) {
+            double dist;
+            if (distanceInMeters != 0) {
+              dist = distanceInMeters * 1000;
+            }
+            if (dist <= 50) {
               document.reference.updateData({'arrive': true});
             } else {
               fermer = false;

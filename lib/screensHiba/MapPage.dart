@@ -122,7 +122,13 @@ class _HomeState extends State<Home> {
   Color myWhite = const Color(0xFFFFFFFF);
   Map<MarkerId, Marker> markersAcceuil = <MarkerId, Marker>{};
   Marker _marker;
+  GoogleMapController mapAccController;
 //fin variables
+
+
+  void _onMapCreatedAcc(GoogleMapController controller) {
+    mapAccController = controller;
+  }
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
@@ -188,8 +194,7 @@ class _HomeState extends State<Home> {
             scrollGesturesEnabled: true,
             mapToolbarEnabled: true,
             markers: Set<Marker>.of(markersAcceuil.values),
-            onMapCreated: Provider.of<controllermap>(context, listen: false)
-                ._onMapCreated,
+            onMapCreated: _onMapCreatedAcc,
             initialCameraPosition: CameraPosition(
               target: LatLng(36.7525000, 3.0419700),
               zoom: 11.0,
@@ -834,9 +839,7 @@ class _HomeState extends State<Home> {
                         setState(() {
                           markersAcceuil[markerid] = _marker;
                         });
-                        Provider
-                            .of<controllermap>(context, listen: false)
-                            .mapController
+                        mapAccController
                             .animateCamera(CameraUpdate.newCameraPosition(
                             CameraPosition(
                                 target: LatLng(
