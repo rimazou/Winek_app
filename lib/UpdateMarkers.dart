@@ -101,9 +101,12 @@ class UpdateMarkers extends ChangeNotifier {
         if (!arrived) {
           if (id == document.documentID) {
             print('connecteeeeeeeeeeeeeeeeeed USERRR');
-            double distanceInMeters = (calculateDistance(
-                point.latitude, point.longitude, dest_lat, dest_lng))*1000;
-            if (distanceInMeters <= 50) {
+            double distanceInMeters = calculateDistance(
+                point.latitude, point.longitude, dest_lat, dest_lng);
+              double dist;
+              if(distanceInMeters!=0)
+              {dist=distanceInMeters*1000;}
+            if (dist <= 50) {
               document.reference.updateData({'arrive': true});
             } else {
               fermer = false;
