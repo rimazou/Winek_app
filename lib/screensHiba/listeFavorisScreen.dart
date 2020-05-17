@@ -14,7 +14,7 @@ import 'package:winek/auth.dart';
 import 'dart:ui';
 import 'dart:io';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldfavKey = new GlobalKey<ScaffoldState>();
 
 GoogleMapsPlaces _places =
 GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
@@ -29,8 +29,8 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
 //static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
 
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  _showSnackBar(String value, BuildContext) {
+    _scaffoldfavKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -44,8 +44,8 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
       action: new SnackBarAction(label: 'Ok', onPressed: () {
         print('press Ok on SnackBar');
       }),
+    )
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -63,7 +63,8 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
         },
         child: SafeArea(
           child: Scaffold(
-            key: _scaffoldKey,
+            backgroundColor: Colors.white,
+            key: _scaffoldfavKey,
             resizeToAvoidBottomInset: false,
             /* appBar: AppBar(
             backgroundColor: Colors.white30,
@@ -137,7 +138,8 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
                           displayPrediction(p);
                         }
                       } on SocketException catch (_) {
-                        _showSnackBar('Vérifiez votre connexion internet');
+                        _showSnackBar(
+                            'Vérifiez votre connexion internet', context);
                       }
                     },
                   ),

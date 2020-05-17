@@ -29,7 +29,6 @@ import 'Aide.dart';
 import 'planifierArrets.dart';
 import 'package:winek/updateMarkers2.dart';
 import 'package:winek/dataBaseSoum.dart';
-
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -809,33 +808,42 @@ class _HomeState extends State<Home> {
 
                       MarkerId markerid = MarkerId('markerrecentrer');
                       String url;
-                      var id = await AuthService().connectedID();
-                      String pseudo = await Database().getPseudo(id);
-                      await _firestore
-                          .collection('Utilisateur')
-                          .document(id)
-                          .get()
-                          .then((DocumentSnapshot ds) {
-                        url = ds.data['photo'];
-                      });
-                      _marker = Marker(
-                        markerId: markerid,
-                        position: LatLng(position.latitude, position.longitude),
-                        icon: await Provider.of<UpdateMarkers>(context,
-                                listen: false)
-                            .getMarkerIcon(url, Size(200.0, 200.0)),
-                        infoWindow: InfoWindow(snippet: '$pseudo'),
-                      );
-                      setState(() {
-                        markersAcceuil[markerid] = _marker;
-                      });
-                      Provider.of<controllermap>(context, listen: false)
-                          .mapController
-                          .animateCamera(CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                  target: LatLng(
-                                      position.latitude, position.longitude),
-                                  zoom: 13.0)));
+                      var id = await authService.connectedID();
+                      if (id != null) {
+                        print('iiiiid');
+                        print(id);
+
+                        String pseudo = await Database().getPseudo(id);
+                        await _firestore
+                            .collection('Utilisateur')
+                            .document(id)
+                            .get()
+                            .then((DocumentSnapshot ds) {
+                          url = ds.data['photo'];
+                        });
+                        _marker = Marker(
+                          markerId: markerid,
+                          position: LatLng(position.latitude,
+                              position.longitude),
+                          icon: await Provider.of<UpdateMarkers>(context,
+                              listen: false)
+                              .getMarkerIcon(url, Size(200.0, 200.0)),
+                          infoWindow: InfoWindow(snippet: '$pseudo'),
+                        );
+
+                        setState(() {
+                          markersAcceuil[markerid] = _marker;
+                        });
+                        Provider
+                            .of<controllermap>(context, listen: false)
+                            .mapController
+                            .animateCamera(CameraUpdate.newCameraPosition(
+                            CameraPosition(
+                                target: LatLng(
+                                    position.latitude, position.longitude),
+                                zoom: 13.0)));
+                      }
+
                     }
                   } on SocketException catch (_) {
                     _showSnackBarhome(
@@ -2543,6 +2551,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
             fontWeight: FontWeight.w600),
       ),
       duration: new Duration(seconds: 2),
+
       behavior: SnackBarBehavior.floating,
       //backgroundColor: Colors.green,
       action: new SnackBarAction(
@@ -3633,6 +3642,7 @@ class AlertBubble extends StatelessWidget {
                 });
 
                 voyageScaffoldKey.currentState.showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -3657,6 +3667,7 @@ class AlertBubble extends StatelessWidget {
               } else {
                 Navigator.pop(context);
                 voyageScaffoldKey.currentState.showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
                   content: Row(
                     children: <Widget>[
                       Text(
@@ -3682,6 +3693,7 @@ class AlertBubble extends StatelessWidget {
           } on SocketException catch (_) {
             Navigator.pop(context);
             voyageScaffoldKey.currentState.showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
               content: Row(
                 children: <Widget>[
                   Text(
@@ -3858,6 +3870,7 @@ class AlertStream extends StatelessWidget {
 
                       alertList.removeAt(index); //iciiiiii
                       voyageScaffoldKey.currentState.showSnackBar(SnackBar(
+                        behavior: SnackBarBehavior.floating,
                         content: Row(
                           children: <Widget>[
                             Text(
@@ -4159,6 +4172,7 @@ class ReceivedAlertBubble extends StatelessWidget {
               //TODO: je positionne l'alerte sur la map
             }
           } on SocketException catch (_) {
+            // Get.snackbar();
             _showSnackBar('Vérifiez votre connexion internet', context);
           }
         },

@@ -129,7 +129,10 @@ class UpdateMarkers extends ChangeNotifier {
         .document('fermeture')
         .get()
         .then((DocumentSnapshot ds) {
-      arret = ds.data['fermer'];
+      if (ds.data != null) {
+        arret = ds.data['fermer'];
+      }
+
     });
     bool fermer = true;
     if (arret == false) {

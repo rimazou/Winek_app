@@ -10,7 +10,7 @@ import 'package:winek/dataBasehiba.dart';
 import 'dart:ui';
 import 'dart:io';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _listinvKey = new GlobalKey<ScaffoldState>();
 Databasegrp data = Databasegrp();
 
 Stream invitation;
@@ -52,8 +52,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
     });
   }
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  _showSnackBar(String value, BuildContext context) {
+    _listinvKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -69,8 +69,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
+    )
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -80,7 +80,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
       child: ModalProgressHUD(
         inAsyncCall: _loading,
         child: Scaffold(
-          key: _scaffoldKey,
+          key: _listinvKey,
           backgroundColor: Colors.white,
           body: Center(
             child: Column(children: <Widget>[
@@ -281,7 +281,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                     }
                                   } on SocketException catch (_) {
                                     _showSnackBar(
-                                        'Vérifiez votre connexion internet');
+                                        'Vérifiez votre connexion internet',
+                                        context);
                                   }
                                 },
                                 icon: Icon(Icons.done),
@@ -319,7 +320,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                     }
                                   } on SocketException catch (_) {
                                     _showSnackBar(
-                                        'Vérifiez votre connexion internet');
+                                        'Vérifiez votre connexion internet',
+                                        context);
                                   }
                                 },
                                 icon: Icon(Icons.delete),
@@ -479,7 +481,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                     }
                                   } on SocketException catch (_) {
                                     _showSnackBar(
-                                        'Vérifiez votre connexion internet');
+                                        'Vérifiez votre connexion internet',
+                                        context);
                                   }
                                 },
                                 icon: Icon(Icons.done),

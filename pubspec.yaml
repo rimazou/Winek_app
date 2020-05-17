@@ -57,6 +57,7 @@ dependencies:
   battery: ^0.3.1+9
   device_preview:
   shared_preferences: ^0.5.7+2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

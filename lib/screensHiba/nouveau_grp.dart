@@ -16,7 +16,7 @@ import 'DestinationFromFav.dart';
 import 'dart:io';
 import 'dart:ui';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _caffoldKey = new GlobalKey<ScaffoldState>();
 
 Databasegrp data = Databasegrp();
 bool _alerte_nom = false;
@@ -426,8 +426,8 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
     _loading = false;
   }
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  _showSnackBar(String value, BuildContext context) {
+    _caffoldKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -443,15 +443,15 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
+    )
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: _loading,
       child: Scaffold(
-        key: _scaffoldKey,
+        key: _caffoldKey,
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.white,
         body: Column(
@@ -552,7 +552,8 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                           print(_destination);
                         }
                       } on SocketException catch (_) {
-                        _showSnackBar('Vérifiez votre connexion internet');
+                        _showSnackBar(
+                            'Vérifiez votre connexion internet', context);
                       }
                     },
                     icon: Icon(Icons.mode_edit),
@@ -833,10 +834,10 @@ Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
   return friendsid;
 }
 
-final homeScaffoldKey = GlobalKey<ScaffoldState>();
+final homecaffoldKey = GlobalKey<ScaffoldState>();
 
 void onError(PlacesAutocompleteResponse response) {
-  homeScaffoldKey.currentState.showSnackBar(
+  homecaffoldKey.currentState.showSnackBar(
     SnackBar(content: Text(response.errorMessage)),
   );
 }

@@ -26,6 +26,7 @@ class _FriendRequestListScreenState extends State<FriendRequestListScreen> {
     return StreamProvider<List<String>>.value(
       value: Database(current: this.current).friendRequest,
       child: Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white30,

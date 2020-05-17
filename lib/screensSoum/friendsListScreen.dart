@@ -76,6 +76,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
           }
         },
         child: Scaffold(
+          backgroundColor: Colors.white,
           key: _scaffoldKey,
           resizeToAvoidBottomInset: false,
           appBar: AppBar(

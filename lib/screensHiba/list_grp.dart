@@ -22,7 +22,7 @@ import '../UpdateMarkers.dart';
 import 'MapPage.dart';
 
 bool _loading;
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldgrpKey = new GlobalKey<ScaffoldState>();
 
 class ListGrpPage extends StatefulWidget {
   @override
@@ -36,8 +36,8 @@ class _ListGrpPageState extends State<ListGrpPage> {
     _loading = false;
   }
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  _showSnkBar(String value, BuildContext context) {
+    _scaffoldgrpKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -53,8 +53,8 @@ class _ListGrpPageState extends State<ListGrpPage> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
+    )
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -62,7 +62,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
     return ModalProgressHUD(
       inAsyncCall: _loading,
       child: Scaffold(
-        key: _scaffoldKey,
+        key: _scaffoldgrpKey,
         backgroundColor: Colors.white,
         body: Center(
           child: Column(
@@ -89,7 +89,8 @@ class _ListGrpPageState extends State<ListGrpPage> {
                           Navigator.pushNamed(context, InvitationGrpPage.id);
                         }
                       } on SocketException catch (_) {
-                        _showSnackBar('Vérifiez votre connexion internet');
+                        _showSnkBar(
+                            'Vérifiez votre connexion internet', context);
                       }
                     },
                     icon: Icon(Icons.supervised_user_circle),
