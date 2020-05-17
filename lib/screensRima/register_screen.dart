@@ -835,7 +835,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(newUser.user.uid);
-        Navigator.pushNamed(context, Home.id);
+        Navigator.pushReplacementNamed(context, Home.id);
 
         //  authService.db.collection(pseudo).add(myUser.map);
       } else {
@@ -847,12 +847,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     } catch (signUpError) {
       if (signUpError is PlatformException) {
         if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar('Cet email est deja utilise', context);
         }
         if (signUpError.code == 'ERROR_INVALID_EMAIL') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar("Veuillez introduire une adresse valide", context);
         }
         if (signUpError.code == 'ERROR_WEAK_PASSWORD') {
+          setState(() {
+            loading = false;
+          });
           showSnackBar('Mot de passe faible', context);
         }
       }
@@ -877,8 +886,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Future chooseFile(ImageSource source) async {
     File cropped;
     print('choooose file');
-    _image = await ImagePicker.pickImage(source: source);
-
+    try {
+      _image = await ImagePicker.pickImage(source: source);
     if (_image != null) {
       cropped = await ImageCropper.cropImage(
         sourcePath: _image.path,
@@ -894,6 +903,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             backgroundColor: Colors.white),
       );
     }
+    else {
+      print('didnt pick any');
+    }
+    }
+    catch (e) {
+      print('prob in cropp');
+      print(e);
+    }
     if (cropped != null) {
       setState(() {
         _image = cropped;
@@ -902,7 +919,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     print('uploaaaaaaaaaadfile');
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
-        .child('photos/${p.basename(_image.path)}}');
+        .child('photos/${p.basename(cropped.path)}}');
     _uploadedFileURL =
     'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
 

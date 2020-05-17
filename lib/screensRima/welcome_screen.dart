@@ -25,8 +25,8 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  _showSnackBar(String value, BuildContext context) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -37,11 +37,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+
+    )
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -169,7 +167,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+                                  'Vérifiez votre connexion internet', context);
                             }
                           },
                           minWidth: 140.0,
@@ -249,7 +247,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 }
                               } on SocketException catch (_) {
                                 _showSnackBar(
-                                    'Vérifiez votre connexion internet');
+                                    'Vérifiez votre connexion internet',
+                                    context);
                               }
                             });
                           },
@@ -315,7 +314,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+                                  'Vérifiez votre connexion internet', context);
                             }
                           },
                           minWidth: 140.0,

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,76 +7,19 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flux_validator_dart/flux_validator_dart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/register_screen.dart';
+import 'package:winek/screensRima/welcome_screen.dart';
 import '../UpdateMarkers.dart';
-import '../classes.dart';
 import 'package:winek/screensRima/resetmail.dart';
 import '../main.dart';
 import 'resetmail.dart';
 import '../auth.dart';
 import 'dart:async';
-import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:winek/UpdateMarkers.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-/*
-StreamSubscription<Position> positionStream;
-void getUserLocation() async {
-  var val = await authService.connectedID();
-  if (val != null) // ca permetra de faire lappel seulement quand le user est co
-  {
-    try {
-      var geolocator = Geolocator();
-      Position position;
-      var locationOptions =
-          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-      positionStream =
-          geolocator.getPositionStream(locationOptions).listen((position) {
-        double vitesse = position.speed;
-        GeoFirePoint geoFirePoint = authService.geo
-            .point(latitude: position.latitude, longitude: position.longitude);
-        authService.userRef
-            .document(val)
-            .updateData({'location': geoFirePoint.data, 'vitesse': vitesse});
-        print(geoFirePoint.data.toString());
-      });
-    } catch (e) {
-      print('ya eu une erreur pour la localisation');
-    }
-  }
-}
-
- */
-/*
-void getUserLocation() async {
-  var val = await authService.connectedID();
-  if (val != null) // ca permetra de faire lappel seulement quand le user est co
-  {
-    try {
-      var geolocator = Geolocator();
-      var locationOptions =
-          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-      StreamSubscription<Position> positionStream = geolocator
-          .getPositionStream(locationOptions)
-          .listen((Position position) {
-        GeoFirePoint geoFirePoint = authService.geo
-            .point(latitude: position.latitude, longitude: position.longitude);
-        authService.userRef
-            .document(val)
-            .updateData({'location': geoFirePoint.data});
-        print(geoFirePoint.data.toString());
-      });
-    } catch (e) {
-      print('ya eu une erreur pour la localisation');
-    }
-  }
-}
-*/
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login';
@@ -88,29 +29,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String pwd, mail, errMl, errPwd;
+  String pwd = '',
+      mail = '',
+      errMl,
+      errPwd;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
-      content: new Text(
-        value,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.0,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600),
-      ),
-      duration: new Duration(seconds: 2),
-      //backgroundColor: Colors.green,
-      action: new SnackBarAction(
-          label: 'Ok',
-          onPressed: () {
-            print('press Ok on SnackBar');
-          }),
-    );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushNamed(context, ResetMailScreen.id);
                       }
                     } on SocketException catch (_) {
-                      _showSnackBar('Vérifiez votre connexion internet');
+                      showSnackBar(
+                          'Vérifiez votre connexion internet', context);
                     }
                   },
                 ),
@@ -293,8 +218,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     context, RegistrationScreen.id);
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+                              showSnackBar(
+                                  'Vérifiez votre connexion internet', context);
                             }
                           }, //_signInG(),
                           minWidth: responsivewidth(140),
@@ -331,8 +256,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 connect();
                               }
                             } on SocketException catch (_) {
-                              _showSnackBar(
-                                  'Vérifiez votre connexion internet');
+                              showSnackBar(
+                                  'Vérifiez votre connexion internet', context);
                             }
                           },
                           minWidth: responsivewidth(140),
@@ -443,8 +368,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   showSnackBar(String value, BuildContext context) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(SnackBar(
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
@@ -455,30 +379,31 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(
-          label: 'Ok',
-          onPressed: () {
-            print('press Ok on SnackBar');
-          }),
+
     ));
   }
 
   connect() async {
     try {
-      final user = await authService.auth
-          .signInWithEmailAndPassword(email: mail, password: pwd);
-      if (user != null) {
-
-
-        authService.getUserLocation();
-        authService.updategroupelocation();
-        Provider.of<DeviceInformationService>(context, listen: false)
-            .broadcastBatteryLevel(user.user.uid);
-        authService.userRef
-            .document(user.user.uid)
-            .updateData({'connecte': true});
-        Navigator.pushReplacementNamed(context, Home.id);
-
+      if (pwd.isEmpty) {
+        showSnackBar('Veuillez remplir tous le champs', context);
+      } else if (mail.isEmpty) {
+        showSnackBar('Veuillez remplir tous le champs', context);
+      }
+      else {
+        final user = await authService.auth
+            .signInWithEmailAndPassword(email: mail, password: pwd);
+        if (user != null) {
+          authService.getUserLocation();
+          authService.updategroupelocation();
+          Provider.of<DeviceInformationService>(context, listen: false)
+              .broadcastBatteryLevel(user.user.uid);
+          authService.userRef
+              .document(user.user.uid)
+              .updateData({'connecte': true});
+          // Navigator.pushReplacementNamed(context, Home.id);
+          Navigator.pushNamed(context, WelcomeScreen.id);
+        }
       }
     } catch (logIn) {
       if (logIn is PlatformException) {
@@ -503,6 +428,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
         body: Container(
+          color: Colors.white,
           child: Center(
             child: SpinKitChasingDots(
               color: Color(0XFF389490),

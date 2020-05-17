@@ -62,7 +62,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .snapshots()
         .listen((data) {
       data.documents.forEach((doc) {
-        setState(() {
+        if (mounted) {
+          setState(() {
           this.id = doc.documentID;
           if (doc.data['connecte'] == true) {
             online = 'En ligne';
@@ -70,7 +71,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
             online = 'Hors ligne';
           }
           print(id);
-        });
+          });
+        }
       });
     });
 
@@ -87,10 +89,15 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       data.documents.forEach((doc) {
         print('heeeeere');
         print(this.pseudo);
-        setState(() {
+        if (mounted) {
+          setState(() {
           mail = doc.data['mail'];
           phone = doc.data['tel'];
+          if (phone == null) {
+            phone = 'aucun numero';
+          }
         });
+        }
       });
     });
   }
@@ -123,7 +130,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
             if (map["id"] == this.id) {
               setState(() {
                 who = 'Supprimer';
-                size = 138;
+                size = responsivewidth(100);
                 ami = true;
               });
             }
@@ -144,7 +151,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   if (map["id"] == currentUser) {
                     setState(() {
                       who = 'Supprimer';
-                      size = 138;
+                      size = responsivewidth(100);
                       amipseudo = true;
                     });
                   }
@@ -154,13 +161,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   {
                 setState(() {
                   who = 'Annuler l\'invitaion';
-                  size = 80;
+                  size = responsivewidth(80);
                 });
               } else if (!amipseudo &&
                   !doc.data["invitation "].contains(currentName)) {
                 setState(() {
                   who = 'Ajouter';
-                  size = 138;
+                  size = responsivewidth(100);
                 });
               }
             });
@@ -175,18 +182,24 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .snapshots()
         .listen((data) {
       data.documentChanges.forEach((change) {
-        if (!change.document.data["invitation "].contains(pseudo)) {
-          setState(() {
-            invit = false;
-          });
-        } else {
-          setState(() {
-            invit = true;
-          });
+        if (change != null) {
+          if (!change.document.data["invitation "].contains(pseudo)) {
+            if (mounted) {
+              setState(() {
+                invit = false;
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                invit = true;
+              });
+            }
+          }
         }
       });
     });
-    if (!invit) {
+    if (!invit) { //todo
       Firestore.instance
           .collection('Utilisateur')
           .where("pseudo", isEqualTo: currentName)
@@ -195,84 +208,97 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           .listen((data) {
         data.documentChanges.forEach((change) {
           ami = false;
-          List<dynamic> friendcurrent = change.document.data["amis"];
-          if (friendcurrent != null) {
-            for (var map in friendcurrent) {
-              if (map["id"] == this.id) {
-                setState(() {
-                  who = 'Supprimer';
-                  size = 138;
-                  ami = true;
-                });
-              }
-            }
-          }
-
-          if (!ami) {
-            Firestore.instance
-                .collection('Utilisateur')
-                .where("pseudo", isEqualTo: pseudo)
-                .limit(1)
-                .snapshots()
-                .listen((data) {
-              data.documentChanges.forEach((change) {
-                amipseudo = false;
-                List<dynamic> friendpseudo = change.document.data["amis"];
-                if (friendpseudo != null) {
-                  for (var map in friendpseudo) {
-                    if (map["id"] == currentUser) {
-                      setState(() {
-                        who = 'Supprimer';
-                        size = 138;
-                        amipseudo = true;
-                      });
-                    }
+          if (change != null) {
+            List<dynamic> friendcurrent = change.document.data["amis"];
+            if (friendcurrent != null) {
+              for (var map in friendcurrent) {
+                if (map["id"] == this.id) {
+                  if (mounted) {
+                    setState(() {
+                      who = 'Supprimer';
+                      size = responsivewidth(100);
+                      ami = true;
+                    });
                   }
                 }
+              }
+            }
 
-                if (change.document.data["invitation "]
-                    .contains(currentName)) // amis*
-                    {
-                  print('annuuule invit');
-                  setState(() {
-                    who = 'Annuler l\'invitaion';
-                    size = 102;
-                  });
-                } else if (!amipseudo &&
-                    !change.document.data["invitation "]
-                        .contains(currentName)) {
-                  print('ajouuuut');
-                  setState(() {
-                    who = 'Ajouter';
-                    size = 138;
-                  });
-                }
+            if (!ami) {
+              Firestore.instance
+                  .collection('Utilisateur')
+                  .where("pseudo", isEqualTo: pseudo)
+              //  .limit(1)
+                  .snapshots()
+                  .listen((data) {
+                data.documentChanges.forEach((changes) {
+                  if (changes != null) {
+                    amipseudo = false;
+                    List<dynamic> friendpseudo = changes.document.data["amis"];
+                    if (friendpseudo != null) {
+                      for (var map in friendpseudo) {
+                        if (map["id"] == currentUser) {
+                          if (mounted) {
+                            setState(() {
+                              who = 'Supprimer';
+                              size = responsivewidth(100);
+                              amipseudo = true;
+                            });
+                          }
+                        }
+                      }
+                    }
+
+                    if (changes.document.data["invitation "]
+                        .contains(currentName)) // amis*
+                        {
+                      print('annuuule invit');
+                      if (mounted) {
+                        setState(() {
+                          who = 'Annuler l\'invitaion';
+                          size = responsivewidth(100);
+                        });
+                      }
+                    } else if (!amipseudo &&
+                        !changes.document.data["invitation "]
+                            .contains(currentName)) {
+                      print('ajouuuut');
+                      if (mounted) {
+                        setState(() {
+                          who = 'Ajouter';
+                          size = responsivewidth(100);
+                        });
+                      }
+                    }
+                  }
+                });
               });
-            });
-          } //fin else
+            } //fin else
+          }
         });
       });
     }
   }
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  _showSnackBar(String value, BuildContext context) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: responsivetext(14.0),
+            fontSize: 14.0,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
-    );
-    //How to display Snackbar ?
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+
+    ));
   }
 
 
@@ -283,10 +309,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
     }
     if (invit) {
       return Positioned(
-        top: 470,
-        right: 80,
-        left: 80,
-        bottom: 50,
+        top: responsiveheight(470),
+        right: responsivewidth(80),
+        left: responsivewidth(80),
+        bottom: responsiveheight(50),
         child: Container(
           height: responsiveheight(200.0),
           width: responsivewidth(200.0),
@@ -308,9 +334,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                 ),),
               Row(
                 children: <Widget>[
-                  SizedBox(
-                    width: 8,
-                  ),
+
                   Flexible(child: Container(
                     height: responsiveheight(40.0),
                     width: responsivewidth(110.0),
@@ -355,16 +379,18 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                     .userDeleteData(currentUser);
                                 setState(() {
                                   invit = false;
-                                  size = 138;
+                                  size = responsivewidth(100);
                                   who = "Supprimer";
                                   tap = true;
                                 });
                                 _showSnackBar(
-                                    'vous et $pseudo êtes désormais amis!');
+                                    'vous et $pseudo êtes désormais amis!',
+                                    context);
                               }
                             }
                           } on SocketException catch (_) {
-                            _showSnackBar('Vérifiez votre connexion internet');
+                            _showSnackBar(
+                                'Vérifiez votre connexion internet', context);
                           }
                         }),
                     decoration: BoxDecoration(
@@ -378,7 +404,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                     ),
                   ),),
                   SizedBox(
-                    width: 10,
+                    width: responsivewidth(10),
                   ),
                   Flexible(child: Container(
                     height: responsiveheight(40.0),
@@ -414,15 +440,17 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                     currentUser);
                                 setState(() {
                                   invit = false;
-                                  size = 138;
+                                  size = responsivewidth(100);
                                   who = "Ajouter";
                                   tap = true;
                                 });
-                                _showSnackBar('Invitation supprimée !');
+                                _showSnackBar(
+                                    'Invitation supprimée !', context);
                               }
                             }
                           } on SocketException catch (_) {
-                            _showSnackBar('Vérifiez votre connexion internet');
+                            _showSnackBar(
+                                'Vérifiez votre connexion internet', context);
                           }
                         }),
                     decoration: BoxDecoration(
@@ -451,10 +479,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       );
     } else {
       return Positioned(
-        top: 495,
-        right: size,
-        left: size,
-        bottom: 76,
+        top: responsiveheight(495),
+        right: responsivewidth(size),
+        left: responsivewidth(size),
+        bottom: responsiveheight(76),
         child: Container(
           height: responsiveheight(200.0),
           width: responsivewidth(30.0),
@@ -489,20 +517,20 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       //envoyer invit
                       setState(() {
                         who = "Annuler l\'invitaion";
-                        size = 80;
+                        size = responsivewidth(80);
                         tap = true;
                       });
 
-                      _showSnackBar('Invitation envoyée !');
+                      _showSnackBar('Invitation envoyée !', context);
                     } else {
                       if (who == 'Annuler l\'invitaion') {
                         await Database(pseudo: currentName).userDeleteData(id);
                         setState(() {
                           who = "Ajouter";
-                          size = 138;
+                          size = responsivewidth(100);
                           tap = true;
                         });
-                        _showSnackBar('Invitation annulée!');
+                        _showSnackBar('Invitation annulée!', context);
                       } else {
                         // if who=supprimer
 
@@ -510,16 +538,16 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                         await Database(pseudo: currentName).friendDeleteData(id);
                         setState(() {
                           who = "Ajouter";
-                          size = 138;
+                          size = responsivewidth(100);
                           tap = true;
                         });
                       }
-                      _showSnackBar('Ami supprimé !');
+                      _showSnackBar('Ami supprimé !', context);
                     }
                   }
                 }
               } on SocketException catch (_) {
-                _showSnackBar('Vérifiez votre connexion internet');
+                _showSnackBar('Vérifiez votre connexion internet', context);
               }
             },
           ),
@@ -563,12 +591,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           //photos
           children: <Widget>[
             SizedBox(
-              height: 16,
+              height: responsiveheight(16),
             ),
             Icon(
               Icons.person,
               color: Color(0xFF5B5050),
-              size: 105.0,
+              size: responsivewidth(105.0),
             ),
           ],
         ),
@@ -601,11 +629,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: 140,
+
+                        height: responsiveheight(140),
                       ),
                       Container(
-                        height: 480.0,
-                        width: 320.0,
+                        height: responsiveheight(480.0),
+                        width: responsivewidth(320.0),
                       ),
                     ],
                   ),
@@ -614,25 +643,27 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: 120,
+                        height: responsiveheight(120),
                       ),
                       Container(
                         // carre principal
-                        height: 400.0,
-                        width: 320.0,
+
+                        height: responsiveheight(400.0),
+                        width: responsivewidth(320.0),
                         child: Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 70,
+                              height: responsiveheight(70),
                             ),
                             Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
+                              padding: EdgeInsets.only(
+                                  left: responsivewidth(40.0),
+                                  right: responsivewidth(30.0)),
                               child: FittedBox(fit: BoxFit.fitWidth,
                                 child: Text(
                                   online,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: responsivetext(16),
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xff707070),
@@ -640,16 +671,17 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                 ),
                               ),),
                             SizedBox(
-                              height: 26,
+                              height: responsiveheight(26),
                             ),
                             Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
+                              padding: EdgeInsets.only(
+                                  left: responsivewidth(40.0),
+                                  right: responsivewidth(30.0)),
                               child: FittedBox(fit: BoxFit.fitWidth,
                                 child: Text(
                                   pseudo,
                                   style: TextStyle(
-                                    fontSize: 28,
+                                    fontSize: responsivetext(28),
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xff000000),
@@ -657,16 +689,17 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                 ),
                               ),),
                             SizedBox(
-                              height: 23,
+                              height: responsiveheight(23),
                             ),
                             Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
+                              padding: EdgeInsets.only(
+                                  left: responsivewidth(40.0),
+                                  right: responsivewidth(30.0)),
                               child: FittedBox(fit: BoxFit.fitWidth,
                                 child: Text(
                                   phone,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: responsivetext(16),
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xff000000),
@@ -674,16 +707,17 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                 ),
                               ),),
                             SizedBox(
-                              height: 23,
+                              height: responsiveheight(23),
                             ),
                             Container(
-                              padding: const EdgeInsets.only(
-                                  left: 40.0, right: 30.0),
+                              padding: EdgeInsets.only(
+                                  left: responsivewidth(40.0),
+                                  right: responsivewidth(30.0)),
                               child: FittedBox(fit: BoxFit.fitWidth,
                                 child: Text(
                                   mail,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: responsivetext(16),
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xff000000),
@@ -702,10 +736,11 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                           boxShadow: [
                             new BoxShadow(
                               color: Colors.grey[200],
-                              blurRadius: 20.0,
+                              blurRadius: responsiveradius(20.0, 1),
                             ),
                           ],
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(responsiveradius(
+                              20, 1)),
                         ),
                       ),
                     ],
@@ -718,7 +753,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
 
                     children: <Widget>[
                       SizedBox(
-                        height: responsiveheight(60),
+                        height: responsiveheight(65),
                       ),
                       Container(
                           height: responsivewidth(110.0),
@@ -729,11 +764,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               color: Colors.grey[300],
                               width: 3,
                             ),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(
+                                responsiveradius(20, 1)),
                             boxShadow: [
                               new BoxShadow(
                                 color: Colors.grey[200],
-                                blurRadius: 20.0,
+                                blurRadius: responsiveradius(20.0, 1),
                               ),
                             ],
                           ),

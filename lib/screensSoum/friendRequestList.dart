@@ -1,6 +1,7 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winek/auth.dart';
@@ -127,7 +128,8 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
             var b = (result2 != ConnectivityResult.none);
 
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-              String currentUser = await AuthService().connectedID();
+              String currentUser = await authService.connectedID();
+              if (currentUser != null) {
               String name = await Database().getPseudo(currentUser);
               Navigator.push(
                 context,
@@ -136,6 +138,7 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                         ProfileScreen2(pseudo: widget.invit,
                           currentUser: currentUser,
                           name: name,)),);
+              }
             }
           } on SocketException catch (_) {
             _showSnackBar('Vérifiez votre connexion internet', context);
@@ -168,7 +171,8 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                       setState(() {
                         tap = false;
                       });
-                      String currentUser = await AuthService().connectedID();
+                      String currentUser = await authService.connectedID();
+                      if (currentUser != null) {
                       await Database().getPseudo(currentUser).then((docSnap) {
                         name = docSnap;
                       });
@@ -187,6 +191,7 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                       _showSnackBar(
                           'vous et $invit êtes désormais amis!', context);
                       print('HELLOOOOOOOOOOOOOOOOOOOOOOOOO');
+                      }
                     }
                   }
                 } on SocketException catch (_) {
@@ -210,10 +215,12 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                       setState(() {
                         tap = false;
                       });
-                      String currentUser = await AuthService().connectedID();
+                      String currentUser = await authService.connectedID();
+                      if (currentUser != null) {
                       await Database(pseudo: widget.invit).userDeleteData(
                           currentUser);
                       _showSnackBar('Invitation supprimée !', context);
+                      }
                     }
                   }
                 } on SocketException catch (_) {

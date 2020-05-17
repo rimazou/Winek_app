@@ -32,10 +32,10 @@ class _FirstLoadingState extends State<FirstLoading> {
         authService.updategroupelocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(id);
-        Navigator.pushNamed(context, Home.id);
+        Navigator.pushReplacementNamed(context, Home.id);
       } else {
         print('no log');
-        Navigator.pushNamed(
+        Navigator.pushReplacementNamed(
             context, WelcomeScreen.id); // va devenir apres loginscreen
 
       }

@@ -608,7 +608,8 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                 child: ListTile(
                                   onTap: () async {
                                     String currentUser =
-                                        await AuthService().connectedID();
+                                    await authService.connectedID();
+                                    if (currentUser != null) {
                                     String name = await Firestore.instance
                                         .collection('Utilisateur')
                                         .document(currentUser)
@@ -626,6 +627,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                                 name: name,
                                               )),
                                     );
+                                    }
                                   },
                                   title: Text(
                                     groupe.membres[index]['pseudo'],
@@ -1330,7 +1332,8 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                 child: ListTile(
                                   onTap: () async {
                                     String currentUser =
-                                        await AuthService().connectedID();
+                                    await authService.connectedID();
+                                    if (currentUser != null) {
                                     String name = await Firestore.instance
                                         .collection('Utilisateur')
                                         .document(currentUser)
@@ -1348,6 +1351,7 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                                 name: name,
                                               )),
                                     );
+                                    }
                                   },
                                   title: Text(
                                     groupe.membres[index]['pseudo'],

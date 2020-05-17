@@ -61,14 +61,18 @@ class _FriendTileState extends State<FriendTile> {
         .limit(1)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
-        setState(() {
-          print('entreeeeeee');
-          image = doc.data['photo'];
-          print(image);
-        });
+      if (data != null) {
+        data.documents.forEach((doc) {
+          if (mounted) {
+            setState(() {
+              print('entreeeeeee');
+              image = doc.data['photo'];
+              print(image);
+            });
+          }
+        }
+        );
       }
-      );
     });
   }
 
@@ -141,7 +145,8 @@ class _FriendTileState extends State<FriendTile> {
               var b = (result2 != ConnectivityResult.none);
 
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-                String currentUser = await AuthService().connectedID();
+                String currentUser = await authService.connectedID();
+                if (currentUser != null) {
             String name = await Database().getPseudo(currentUser);
             //go to the profile screen
             Navigator.push(
@@ -151,6 +156,7 @@ class _FriendTileState extends State<FriendTile> {
                       ProfileScreen2(
                         friend: id, currentUser: currentUser, name: name,)),
             );
+                }
               }
             } on SocketException catch (_) {
               _showSnackBar('Vérifiez votre connexion internet', context);
@@ -228,11 +234,13 @@ class _UserTileState extends State<UserTile> {
         .snapshots()
         .listen((data) {
       data.documents.forEach((doc) {
-        setState(() {
+        if (mounted) {
+          setState(() {
           print('entreeeeeee');
           image = doc.data['photo'];
           print(image);
-        });
+          });
+        }
       }
       );
 
@@ -307,7 +315,8 @@ class _UserTileState extends State<UserTile> {
               var b = (result2 != ConnectivityResult.none);
 
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-            String currentUser = await AuthService().connectedID();
+                String currentUser = await authService.connectedID();
+                if (currentUser != null) {
             String name = await Database().getPseudo(currentUser);
             Navigator.push(
               context,
@@ -317,6 +326,7 @@ class _UserTileState extends State<UserTile> {
                         currentUser: currentUser,
                         name: name,)),
             ); // call the class and passing arguments
+                }
               }
             } on SocketException catch (_) {
               _showSnackBar('Vérifiez votre connexion internet', context);

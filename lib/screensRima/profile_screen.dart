@@ -26,7 +26,6 @@ String nv_pseudo;
 String nv_tel;
 String nv_mail;
 bool _loading;
-final GlobalKey<ScaffoldState> _profilekey = new GlobalKey<ScaffoldState>();
 
 class ProfileScreen extends StatefulWidget {
   static const String id = 'profile';
@@ -40,6 +39,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser loggedInUser;
+  final GlobalKey<ScaffoldState> _profilekey = new GlobalKey<ScaffoldState>();
 
   String errMl, errPs, errTel;
   @override
@@ -55,25 +55,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   _ProfileScreenState(Utilisateur myuser);
 
-  _showSnackBar(String value) {
-    final snackBar = new SnackBar(
+  showSBar(String value, BuildContext context) {
+    _profilekey.currentState.showSnackBar(SnackBar(
       content: new Text(
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: responsivetext(14),
+            fontSize: 14.0,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(
-          label: 'Ok',
-          onPressed: () {
-            print('press Ok on SnackBar');
-          }),
+
+    )
     );
-    _profilekey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -106,35 +102,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: responsiveheight(180),
+                              height: responsiveheight(230),
                             ),
                             Container(
                               // carre principal
                               child: Container(
-                                height: 600,
+                                height: responsiveheight(450),
                                 // carre principal
                                 child: Column(
                                   children: <Widget>[
-                                    SizedBox(height: 140,),
+                                    SizedBox(height: responsiveheight(140),),
 
                                     Container(
-//                                      padding: EdgeInsets.only(
-//                                        left: responsivewidth(50.0),
-//                                      ),
                                       child: FlatButton(
                                         padding: EdgeInsets.all(0),
                                         onPressed: () async {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) =>
-                                              //   namedialog(groupe.nom),
+
                                               AlertDialog(
                                                 shape:
                                                 RoundedRectangleBorder(
                                                     borderRadius:
                                                     BorderRadius
                                                         .circular(
-                                                        20)),
+                                                        responsiveradius(
+                                                            20, 1))),
                                                 contentPadding:
                                                 EdgeInsets.symmetric(
                                                     horizontal: responsiveheight(
@@ -257,17 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
 
                                     ),
-                                    //le trait
-//                                        Padding(
-//                                          padding: EdgeInsets.symmetric(
-//                                              horizontal: responsivewidth(30.0)),
-//                                          child: Container(
-//                                            height: responsiveheight(1.0),
-//                                            decoration: BoxDecoration(
-//                                              color: Colors.blueGrey,
-//                                            ),
-//                                          ),
-//                                        ),
+
                                     Container(
 //
                                       child: FlatButton(
@@ -575,7 +559,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             children: <Widget>[
                               SizedBox(
-                                height: responsiveheight(130),
+                                height: responsiveheight(170),
                               ),
                               Center(
                                 child: Container(
@@ -604,7 +588,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         //changer la photo
                         Positioned(
-                          top: responsiveheight(110),
+                          top: responsiveheight(150),
                           left: (MediaQuery
                               .of(context)
                               .size
@@ -623,7 +607,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   BoxShadow(
                                       color: secondarycolor,
                                       //Color.fromRGBO(59, 70, 107, 0.3),
-                                      blurRadius: 3.0,
+                                      blurRadius: responsiveradius(3.0, 1),
                                       //offset: Offset(0.0, 0.75),
                                       offset: Offset(responsivewidth(0.0),
                                           responsiveheight(0.75))),
@@ -647,7 +631,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Column(
                           children: <Widget>[
-                            SizedBox(height: 20,),
+                            SizedBox(height: responsiveheight(20),),
                             Center(
                               child: Row(
                                 children: <Widget>[
@@ -920,7 +904,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               setState(() {
                 _loading = false;
               });
-              _showSnackBar('Ce pseudo existe deja, reessayez');
+              showSBar('Ce pseudo existe deja, reessayez', context);
+              print('psueod exist deja');
             }
           });
         }
@@ -935,7 +920,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _loading = false;
       });
-      _showSnackBar('Vérifiez votre connexion internet');
+      showSBar('Vérifiez votre connexion internet', context);
+      print('verifiez internet');
     }
   }
 
@@ -967,7 +953,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           } else {
             Navigator.pop(context);
-            _showSnackBar('Veuillez introduire un nombre');
+            showSBar('Veuillez introduire un nombre', context);
           }
         }
         setState(() {
@@ -978,7 +964,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       }
     } on SocketException catch (_) {
-      _showSnackBar('Vérifiez votre connexion internet');
+      showSBar('Vérifiez votre connexion internet', context);
     }
   }
 
@@ -1016,7 +1002,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 setState(() {
                   _loading = false;
                 });
-                _showSnackBar('Cette adresse mail est deja prise');
+                showSBar('Cette adresse mail est deja prise', context);
               }
             });
           } else {
@@ -1024,7 +1010,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             setState(() {
               _loading = false;
             });
-            _showSnackBar('Veuillez introduire une adresse mail valide');
+            showSBar('Veuillez introduire une adresse mail valide', context);
           }
         }
 
@@ -1033,13 +1019,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } on SocketException catch (_) {
       Navigator.pop(context);
-      _showSnackBar('Vérifiez votre connexion internet');
+      showSBar('Vérifiez votre connexion internet', context);
     } catch (e) {
       print(e);
       if (e is PlatformException) {
         if (e.code == 'ERROR_REQUIRES_RECENT_LOGIN') {
-          _showSnackBar(
-              'Cette operation requiert une authentification recente , reconnectez-vous puis reessayez');
+          showSBar(
+              'Cette operation requiert une authentification recente , reconnectez-vous puis reessayez',
+              context);
           Navigator.pushNamed(context, LoginScreen.id);
         }
       }

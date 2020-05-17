@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.winek">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -9,6 +10,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="winek"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/winek">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAqKjL3o1J_Hn45ieKwEo9g8XLmj9CqhSc"/>
@@ -24,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

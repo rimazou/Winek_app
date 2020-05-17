@@ -38,7 +38,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       width: isActive ? responsivewidth(24) : responsivewidth(16),
       decoration: BoxDecoration(
         color: isActive ? primarycolor : secondarycolor,
-        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderRadius: BorderRadius.all(
+            Radius.circular(responsiveradius(12, 1))),
       ),
     );
   }
@@ -51,7 +52,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
+            padding: EdgeInsets.symmetric(vertical: responsiveheight(10.0)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -67,7 +68,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         color: primarycolor,
-                        fontSize: 20.0,
+                        fontSize: responsivetext(20.0),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -94,7 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 image: AssetImage(
                                   'images/screen1.jpg',
                                 ),
-                                height: responsiveheight(350),
+                                height: responsivewidth(350),
                                 width: responsivewidth(350),
                               ),
                             ),
@@ -119,7 +120,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 image: AssetImage(
                                   'images/screen2.jpg',
                                 ),
-                                height: responsiveheight(350.0),
+                                height: responsivewidth(350.0),
                                 width: responsivewidth(350),
                               ),
                             ),
@@ -144,7 +145,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 image: AssetImage(
                                   'images/screen3.jpg',
                                 ),
-                                height: responsiveheight(350),
+                                height: responsivewidth(350),
                                 width: responsivewidth(350),
                               ),
                             ),
