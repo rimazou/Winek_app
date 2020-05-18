@@ -1,16 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import '../dataBaseDounia.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'listeFavoris.dart';
 import '../main.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:winek/auth.dart';
 import 'dart:ui';
 import 'dart:io';
 
@@ -26,7 +22,6 @@ class FavoritePlacesScreen extends StatefulWidget {
 }
 
 class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
-//static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
 
 
   _showSnackBar(String value, BuildContext) {
@@ -35,12 +30,11 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
       duration: new Duration(seconds: 2),
-      //backgroundColor: Colors.green,
       action: new SnackBarAction(label: 'Ok', onPressed: () {
         print('press Ok on SnackBar');
       }),
@@ -86,11 +80,14 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
                   ),
                   Spacer(flex: 1),
                   Container(
-                    height: 450.0,
-                    width: 350.0,
-                    padding: EdgeInsets.all(10.0),
+                    height: responsiveheight(450.0),
+                    width: responsivewidth(350.0),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: responsivewidth(10),
+                        vertical: responsiveheight(10)),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                          responsiveradius(10, 1)),
                       color: Color(0xFFD0D8E2),
                     ),
                     child: FavorisList(),
@@ -101,7 +98,7 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
                       Icons.add_circle_outline,
                       color: Color(0xFF389490),
                     ),
-                    iconSize: 35,
+                    iconSize: responsivewidth(35),
                     onPressed: () async {
                       try {
                         final result = await InternetAddress.lookup(
@@ -111,9 +108,6 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
 
                         if (b && result.isNotEmpty &&
                             result[0].rawAddress.isNotEmpty) {
-                          // show input autocomplete with selected mode
-                          // then get the Prediction selected
-                          //Prediction c= await PlacesDetailsResponse(status, errorMessage, r, htmlAttributions)
                           Prediction p = await PlacesAutocomplete.show(
                             context: context,
                             apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
@@ -166,10 +160,3 @@ void onError(PlacesAutocompleteResponse response) {
     SnackBar(content: Text(response.errorMessage)),
   );
 }
-/*Future<Null> showDetailPlace(String placeId,BuildContext context) async {
-if (placeId != null) {
-Navigator.push(
-context,
-MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
-);
-}*/

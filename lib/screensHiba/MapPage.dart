@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -246,15 +246,17 @@ class _HomeState extends State<Home> {
                             flex: 1,
                           ),
                           Container(
-                            height: 80,
+                            height: responsiveheight(80),
                             // MediaQuery.of(context).size.height * 0.1 * 0.65,
-                            width: 80,
+                            width: responsivewidth(80),
                             // MediaQuery.of(context).size.height * 0.1 * 0.65,
-                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: responsivewidth(4)),
                             child: CircleAvatar(
                               backgroundColor: Color(0xFFFFFFFF),
                               child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(
+                                      responsiveradius(50, 1)),
                                   child: Image.network(Userimage)),
                             ),
                           ),
@@ -266,7 +268,8 @@ class _HomeState extends State<Home> {
                               style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
+
                                   color: Colors.white),
                             ),
                           ),
@@ -409,7 +412,8 @@ class _HomeState extends State<Home> {
                                       fontFamily: 'Montserrat',
                                       fontWeight: FontWeight.w600,
                                       color: myWhite,
-                                      fontSize: 15,
+                                      fontSize: responsivetext(15),
+
                                     ),
                                   ),
                                 ),
@@ -479,10 +483,12 @@ class _HomeState extends State<Home> {
                 ),
                 Center(
                   child: Container(
-                    height: 370,
-                    width: 266,
+                    height: responsiveheight(370),
+                    width: responsivewidth(266),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                            responsiveradius(10, 1)),
+
                         color: Color.fromRGBO(59, 70, 107, 0.5)),
                     child: Center(
                       child: Column(
@@ -492,7 +498,7 @@ class _HomeState extends State<Home> {
                           ),
                           Text("Créer un groupe ",
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: responsivetext(17),
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w600,
                                 color: Color.fromRGBO(255, 255, 255, 1),
@@ -528,12 +534,13 @@ class _HomeState extends State<Home> {
                               icon: Icon(
                                 Icons.directions_bus,
                                 color: Color(0xff707070),
-                                size: 75,
+                                size: responsivewidth(75),
+
                               ),
                               contenu: Text(
                                 "de voyage",
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: responsivetext(14.0),
                                     fontWeight: FontWeight.w700,
                                     fontFamily: 'Montserrat',
                                     color: Color(0xff707070)),
@@ -571,12 +578,13 @@ class _HomeState extends State<Home> {
                               icon: Icon(
                                 Icons.people,
                                 color: Color(0xff707070),
-                                size: 75,
+                                size: responsivewidth(75),
+
                               ),
                               contenu: Text(
                                 "a long terme",
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: responsivetext(14.0),
                                     fontWeight: FontWeight.w700,
                                     fontFamily: 'Montserrat',
                                     color: Color(0xff707070)),
@@ -665,7 +673,8 @@ class _HomeState extends State<Home> {
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
+
                     color: Color(0xff707070),
                   ),
                 ),
@@ -748,7 +757,7 @@ class _HomeState extends State<Home> {
         color: Color(0xFF3B466B),
         notchMargin: 10,
         child: Container(
-          height: 70,
+          height: responsiveheight(70),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
@@ -758,7 +767,7 @@ class _HomeState extends State<Home> {
                   IconButton(
                     icon: Icon(
                       Icons.group,
-                      size: 32.0,
+                      size: responsivewidth(32.0),
                       color: Colors.white,
                     ),
                     onPressed: () async {
@@ -788,7 +797,7 @@ class _HomeState extends State<Home> {
               // Right Tab bar icons
 
               MaterialButton(
-                minWidth: 40,
+                minWidth: responsivewidth(40),
                 onPressed: () async {
                   try {
                     final result = await InternetAddress.lookup('google.com');
@@ -850,7 +859,8 @@ class _HomeState extends State<Home> {
                   children: <Widget>[
                     Icon(
                       Icons.location_on,
-                      size: 32.0,
+                      size: responsivewidth(32.0),
+
                       color: Colors.white,
                     ),
                   ],
@@ -909,7 +919,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         overflow: TextOverflow.clip,
         style: TextStyle(
           fontFamily: 'Montserrat',
-          fontSize: 14,
+          fontSize: responsivetext(14.0),
           fontWeight: FontWeight.w600,
           color: Color(0xFFFFFFFF),
         ),
@@ -919,7 +929,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         overflow: TextOverflow.clip,
         style: TextStyle(
           fontFamily: 'Montserrat',
-          fontSize: 14,
+          fontSize: responsivetext(14.0),
           fontWeight: FontWeight.w600,
           color: Color(0xFFFFFFFF),
         ),
@@ -928,7 +938,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         '100%',
         style: TextStyle(
           fontFamily: 'Montserrat',
-          fontSize: 10,
+          fontSize: responsivetext(10),
           fontWeight: FontWeight.w600,
           color: Color(0xFFFFFFFF),
         ),
@@ -955,7 +965,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -1049,7 +1059,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                           '$vite Km/h',
                                           style: TextStyle(
                                             fontFamily: 'Montserrat',
-                                            fontSize: 14,
+                                            fontSize: responsivetext(14.0),
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFFFFFFFF),
                                           ),
@@ -1112,7 +1122,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         '${snapshot.data['batterie']}',
                                         style: TextStyle(
                                           fontFamily: 'Montserrat',
-                                          fontSize: 10,
+                                          fontSize: responsivetext(10),
                                           fontWeight: FontWeight.w600,
                                           color: Color(0xFFFFFFFF),
                                         ),
@@ -1140,7 +1150,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     //textScaleFactor: 0.4,
                     style: TextStyle(
                       fontFamily: 'MontSerrat',
-                      fontSize: 10,
+                      fontSize: responsivetext(10),
                       color: Color(0xFFFFFFFF),
                     ),
                   ),
@@ -1245,7 +1255,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'Montserrat',
-                                fontSize: 15,
+                                fontSize: responsivetext(15),
+
                                 color: Color(0xff707070),
                               ),
                             ),
@@ -1307,7 +1318,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         //HEEEEre grey container
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(
+                                responsiveradius(10, 1)),
+
                             color: Color(0xFF7888a0),
                             boxShadow: [
                               BoxShadow(
@@ -1481,7 +1494,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 PlanifierArrets()
                                     .addArretsToSubCol(path, lat, lng);
                               }
-                              ;
+
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
@@ -1630,7 +1643,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 width: 380,
                                 height: 280,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(
+                                      responsiveradius(10, 1)),
+
                                   color: Color(0xFFd0d8e8),
                                   boxShadow: [
                                     BoxShadow(
@@ -1658,7 +1673,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       child: Card(
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(32.0)),
+                                            BorderRadius.circular(
+                                                responsiveradius(32.0, 1))),
                                         color: Colors.white,
                                         elevation: 5.0,
                                         child: Padding(
@@ -1688,21 +1704,27 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                                       horizontal: 20.0),
                                               border: OutlineInputBorder(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(32.0)),
+                                                    Radius.circular(
+                                                        responsiveradius(
+                                                            32.0, 1))),
                                               ),
                                               enabledBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Color(0xd03b466b),
                                                     width: 1.0),
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(32.0)),
+                                                    Radius.circular(
+                                                        responsiveradius(
+                                                            32.0, 1))),
                                               ),
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Color(0xd03b466b),
                                                     width: 2.0),
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(32.0)),
+                                                    Radius.circular(
+                                                        responsiveradius(
+                                                            32.0, 1))),
                                               ),
                                               labelStyle: TextStyle(
                                                 color: Color(0xd03b466b),
@@ -1802,7 +1824,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               vertical: 150.0, horizontal: 8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                  responsiveradius(10, 1)),
+
                               color: Color(0xFFd0d8e8),
                               boxShadow: [
                                 BoxShadow(
@@ -1939,7 +1963,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
+
                                   color: Colors.white),
                             ),
                           ),
@@ -2082,7 +2107,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       fontFamily: 'Montserrat',
                                       fontWeight: FontWeight.w600,
                                       color: myWhite,
-                                      fontSize: 15,
+                                      fontSize: responsivetext(15),
+
                                     ),
                                   ),
                                 ),
@@ -2156,7 +2182,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         height: 370,
                         width: 266,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(
+                                responsiveradius(10, 1)),
+
                             color: Color.fromRGBO(59, 70, 107, 0.5)),
                         child: Center(
                           child: Column(
@@ -2166,7 +2194,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               ),
                               Text("Créer un groupe ",
                                   style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: responsivetext(17),
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.w600,
                                     color: Color.fromRGBO(255, 255, 255, 1),
@@ -2185,12 +2213,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   icon: Icon(
                                     Icons.directions_bus,
                                     color: Color(0xff707070),
-                                    size: 75,
+                                    size: responsivewidth(75),
+
                                   ),
                                   contenu: Text(
                                     "de voyage",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: responsivetext(14.0),
                                         fontWeight: FontWeight.w700,
                                         fontFamily: 'Montserrat',
                                         color: Color(0xff707070)),
@@ -2212,12 +2241,13 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   icon: Icon(
                                     Icons.people,
                                     color: Color(0xff707070),
-                                    size: 75,
+                                    size: responsivewidth(75),
+
                                   ),
                                   contenu: Text(
                                     "a long terme",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: responsivetext(14.0),
                                         fontWeight: FontWeight.w700,
                                         fontFamily: 'Montserrat',
                                         color: Color(0xff707070)),
@@ -2325,7 +2355,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     membreinfo['pseudo'],
                                     style: TextStyle(
                                       fontFamily: 'MontSerrat',
-                                      fontSize: 10,
+                                      fontSize: responsivetext(10),
                                       color: Color(0xFFFFFFFF),
                                     ),
                                   ),
@@ -2386,10 +2416,12 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
 //index= 4 msg fermeture:
             Center(
                 child: Container(
-                    width: 300,
-                    height: 150,
+                    width: responsivewidth(300),
+                    height: responsiveheight(150),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                          responsiveradius(10, 1)),
+
                       color: Colors.white,
                     ),
                     child: Column(
@@ -2397,12 +2429,15 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: responsivewidth(20),
+                              vertical: responsivewidth(20)),
                           child: Text(
                               'Tous les membres sont arrivés à destination. Ce voyage est terminé.',
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontSize: 16,
+                                fontSize: responsivetext(16),
+
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff707070),
                               )),
@@ -2413,7 +2448,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             child: Text('OK',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 16,
+                                  fontSize: responsivetext(16),
+
                                   fontWeight: FontWeight.w700,
                                   color: secondarycolor,
                                 )),
@@ -2475,7 +2511,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -2545,12 +2581,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                     padding: EdgeInsets.symmetric(horizontal: 6),
                     child: Text(
                       groupe.membres[i]['pseudo'],
-//overflow:TextOverflow.fade,
-
-//textScaleFactor: 0.4,
                       style: TextStyle(
                         fontFamily: 'MontSerrat',
-                        fontSize: 10,
+                        fontSize: responsivetext(10),
                         color: Color(0xFFFFFFFF),
                       ),
                     ),
@@ -2597,7 +2630,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                       height: size.height * 0.07,
                       width: size.width * 0.85,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40.0),
+                          borderRadius: BorderRadius.circular(
+                              responsiveradius(40.0, 1)),
                           color: Colors.white),
                       child: Row(
                         children: <Widget>[
@@ -2656,7 +2690,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'Montserrat',
-                                fontSize: 15,
+                                fontSize: responsivetext(15),
+
                                 color: Color(0xff707070),
                               ),
                             ),
@@ -2680,8 +2715,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   if (b &&
                                       result.isNotEmpty &&
                                       result[0].rawAddress.isNotEmpty) {
-                                    // show input autocomplete with selected mode
-                                    // then get the Prediction selected
                                     Prediction p =
                                         await PlacesAutocomplete.show(
                                       context: context,
@@ -2704,13 +2737,12 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                       context);
                                 }
                               },
-                              iconSize: 30.0),
+                              iconSize: responsivewidth(30.0)),
                         ],
                       )),
                 ),
-                //liste of members
                 Positioned(
-                  bottom: 5,
+                  bottom: responsiveheight(5),
                   left: MediaQuery.of(context).size.width * 0.025,
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.95,
@@ -2729,7 +2761,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                 ),
                 //nom groupe
                 Positioned(
-                  bottom: 65,
+                  bottom: responsiveheight(65),
                   left: MediaQuery.of(context).size.width * 0.025,
                   child: Container(
                       padding: EdgeInsets.all(5),
@@ -2749,7 +2781,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                         groupe.nom,
                         style: TextStyle(
                           color: myWhite,
-                          fontSize: 12,
+                          fontSize: responsivetext(12),
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w600,
                         ),
@@ -2757,13 +2789,15 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                 ),
                 //floationg butons
                 Positioned(
-                  right: 5,
+                  right: responsivewidth(5),
                   //MediaQuery.of(context).size.width*0.05,
                   bottom: MediaQuery.of(context).size.height * 0.15,
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(3),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: responsivewidth(3),
+                            vertical: responsiveheight(3)),
                         child: FloatingActionButton(
                           heroTag: null,
                           onPressed: () async {
@@ -2912,7 +2946,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
+
                                   color: Colors.white),
                             ),
                           ),
@@ -3037,7 +3072,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                       fontFamily: 'Montserrat',
                                       fontWeight: FontWeight.w600,
                                       color: myWhite,
-                                      fontSize: 15,
+                                      fontSize: responsivetext(15),
+
                                     ),
                                   ),
                                 ),
@@ -3103,7 +3139,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                       height: 370,
                       width: 266,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                              responsiveradius(10, 1)),
+
                           color: Color.fromRGBO(59, 70, 107, 0.5)),
                       child: Center(
                         child: Column(
@@ -3113,7 +3151,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                             ),
                             Text("Créer un groupe ",
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: responsivetext(17),
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
                                   color: Color.fromRGBO(255, 255, 255, 1),
@@ -3133,12 +3171,13 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 icon: Icon(
                                   Icons.directions_bus,
                                   color: Color(0xff707070),
-                                  size: 75,
+                                  size: responsivewidth(75),
+
                                 ),
                                 contenu: Text(
                                   "de voyage",
                                   style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: responsivetext(14.0),
                                       fontWeight: FontWeight.w700,
                                       fontFamily: 'Montserrat',
                                       color: Color(0xff707070)),
@@ -3160,12 +3199,13 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 icon: Icon(
                                   Icons.people,
                                   color: Color(0xff707070),
-                                  size: 75,
+                                  size: responsivewidth(75),
+
                                 ),
                                 contenu: Text(
                                   "a long terme",
                                   style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: responsivetext(14.0),
                                       fontWeight: FontWeight.w700,
                                       fontFamily: 'Montserrat',
                                       color: Color(0xff707070)),
@@ -3266,7 +3306,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Montserrat',
-                                    fontSize: 15,
+                                    fontSize: responsivetext(15),
+
                                     color: Color(0xff707070),
                                   ),
                                 ),
@@ -3410,7 +3451,8 @@ class ChoixGrp extends StatelessWidget {
         height: 370,
         width: 266,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
+
             color: Color.fromRGBO(59, 70, 107, 0.5)),
         child: Center(
           child: Column(
@@ -3420,7 +3462,7 @@ class ChoixGrp extends StatelessWidget {
               ),
               Text("Créer un groupe ",
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: responsivetext(17),
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600,
                     color: Color.fromRGBO(255, 255, 255, 1),
@@ -3436,12 +3478,13 @@ class ChoixGrp extends StatelessWidget {
                   icon: Icon(
                     Icons.directions_bus,
                     color: Color(0xff707070),
-                    size: 75,
+                    size: responsivewidth(75),
+
                   ),
                   contenu: Text(
                     "de voyage",
                     style: TextStyle(
-                        fontSize: 14,
+                        fontSize: responsivetext(14.0),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         color: Color(0xff707070)),
@@ -3459,12 +3502,13 @@ class ChoixGrp extends StatelessWidget {
                   icon: Icon(
                     Icons.people,
                     color: Color(0xff707070),
-                    size: 75,
+                    size: responsivewidth(75),
+
                   ),
                   contenu: Text(
                     "a long terme",
                     style: TextStyle(
-                        fontSize: 14,
+                        fontSize: responsivetext(14.0),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
                         color: Color(0xff707070)),
@@ -3491,11 +3535,12 @@ class Bouton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 106,
-        width: 113,
+        height: responsiveheight(106),
+        width: responsivewidth(113),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
+
         ),
         child: Column(
           children: <Widget>[
@@ -3578,7 +3623,7 @@ class AlertBubble extends StatelessWidget {
                         'Alerte envoyée !',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14.0,
+                            fontSize: responsivetext(14.0),
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w600),
                       ),
@@ -3603,7 +3648,7 @@ class AlertBubble extends StatelessWidget {
                         'Veuillez activer votre GPS',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14.0,
+                            fontSize: responsivetext(14.0),
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w600),
                       ),
@@ -3629,7 +3674,7 @@ class AlertBubble extends StatelessWidget {
                     'Vérifiez votre connexion internet',
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14.0,
+                        fontSize: responsivetext(14.0),
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600),
                   ),
@@ -3645,21 +3690,22 @@ class AlertBubble extends StatelessWidget {
             ));
           }
         }
-
-        //TODO : SHOW NOTIF FOR A GROUP MEMBRER
       },
       padding: const EdgeInsets.all(0),
       child: Card(
         shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
-        margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+        RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(responsiveradius(32.0, 1))),
+        margin: EdgeInsets.symmetric(
+            vertical: responsiveheight(5.0), horizontal: responsivewidth(20.0)),
         color: Colors.white,
         elevation: 5.0,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(11.0),
+              padding: EdgeInsets.symmetric(horizontal: responsivewidth(11.0),
+                  vertical: responsiveheight(11)),
               child: Stack(
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
@@ -3667,7 +3713,7 @@ class AlertBubble extends StatelessWidget {
                     image: AssetImage(
                       'images/circle.png',
                     ),
-                    width: 52.0,
+                    width: responsivewidth(52.0),
                   ),
                   Icon(
                     icon,
@@ -3677,15 +3723,15 @@ class AlertBubble extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                bottom: 25,
-                top: 25,
-                left: 8,
+              padding: EdgeInsets.only(
+                bottom: responsiveheight(25),
+                top: responsiveheight(25),
+                left: responsivewidth(8),
               ),
               child: Text(
                 text,
                 style: TextStyle(
-                    fontSize: 16.0,
+                    fontSize: responsivetext(16),
                     color: Color(0xFF707070),
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600),
@@ -3776,7 +3822,7 @@ class AlertStream extends StatelessWidget {
                   'Vos alertes',
                   style: TextStyle(
                       color: Color(0xFFFFFFFF),
-                      fontSize: 15.0,
+                      fontSize: responsivetext(15.0),
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w600),
                 ),
@@ -3806,7 +3852,7 @@ class AlertStream extends StatelessWidget {
                               'Alerte supprimée !',
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14.0,
+                                  fontSize: responsivetext(14.0),
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600),
                             ),
@@ -3828,7 +3874,8 @@ class AlertStream extends StatelessWidget {
                         children: <Widget>[
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            EdgeInsets.symmetric(
+                                horizontal: responsivewidth(15.0)),
                             child: Icon(
                               Icons.delete,
                               color: Colors.white,
@@ -3839,7 +3886,9 @@ class AlertStream extends StatelessWidget {
                           ),
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            EdgeInsets.symmetric(
+                                horizontal: responsivewidth(15.0)),
+
                             child: Icon(
                               Icons.delete,
                               color: Colors.white,
@@ -3884,19 +3933,9 @@ class _AlertScreenState extends State<AlertScreen> {
 
   Future onSelectedNotification(String payload) {
     debugPrint('payload : $payload');
-    //TODO: je montre la liste des alerte recus (set state index = 3) ou j'epingle lalerte
 
     onTouched();
-    /*showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          backgroundColor: Color(0xFFd0d8e2),
-          title: Text('Notification'),
-          content: Text('heeeeeeeeeeey'),
-        );
-      },
-    );*/
+
   }
 
   Future showNotificationWithDefaultSound() async {
@@ -4046,7 +4085,7 @@ class ReceivedAlertBubble extends StatelessWidget {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -4098,10 +4137,8 @@ class ReceivedAlertBubble extends StatelessWidget {
                   .animateCamera(cameraUpdate);
 
               settingindex();
-              //TODO: je positionne l'alerte sur la map
             }
           } on SocketException catch (_) {
-            // Get.snackbar();
             _showSnackBar('Vérifiez votre connexion internet', context);
           }
         },
@@ -4111,11 +4148,11 @@ class ReceivedAlertBubble extends StatelessWidget {
           children: <Widget>[
             alert,
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: EdgeInsets.only(bottom: responsiveheight(4)),
               child: Text(
                 'Envoyée par: $sender le $date',
                 style: TextStyle(
-                    fontSize: 10.0,
+                    fontSize: responsivetext(10.0),
                     color: Color(0xFF707070),
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600),
@@ -4196,15 +4233,18 @@ class AlertBubbleBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
-      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(responsiveradius(32.0, 1))),
+      margin: EdgeInsets.symmetric(
+          vertical: responsivewidth(5.0), horizontal: responsiveheight(20.0)),
       color: Colors.white,
       elevation: 5.0,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(11.0),
+            padding: EdgeInsets.symmetric(horizontal: responsivewidth(11.0),
+                vertical: responsiveheight(11)),
             child: Stack(
               alignment: AlignmentDirectional.center,
               children: <Widget>[
@@ -4222,15 +4262,16 @@ class AlertBubbleBox extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              bottom: 25,
-              top: 25,
-              left: 8,
+            padding: EdgeInsets.only(
+              bottom: responsiveheight(25),
+              top: responsiveheight(25),
+              left: responsivewidth(8),
             ),
             child: Text(
               text,
               style: TextStyle(
-                  fontSize: 16.0,
+                  fontSize: responsivetext(16),
+
                   color: Color(0xFF707070),
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600),

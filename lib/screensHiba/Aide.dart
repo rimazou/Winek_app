@@ -55,7 +55,7 @@ class _AidePageState extends State<AidePage> {
           'Aide',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: responsivetext(20),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w800,
           ),
@@ -70,19 +70,21 @@ class _AidePageState extends State<AidePage> {
           children: <Widget>[
             // amis
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
               child: Text(
                 'Amis',
                 style: TextStyle(
                   color: primarycolor,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Montserrat',
-                  fontSize: 15,
+                  fontSize: responsivetext(15),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -95,28 +97,30 @@ class _AidePageState extends State<AidePage> {
                     color: (qst1) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst1)
                 ? Padding(
-                    padding: const EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
                     child: Text(
                       'Allez vers la liste d’amis, faites une recherche et ajoutez la personne que vous voulez, puis patientez jusqu’à ce qu’elle accepte l’invitation.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst2:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -129,28 +133,30 @@ class _AidePageState extends State<AidePage> {
                     color: (qst2) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst2)
                 ? Padding(
-                    padding: const EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
                     child: Text(
                       'Allez vers la liste d’amis puis appuyez sur l’icône en haut à droite qui va vous renvoyer vers la liste des invitations.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst3:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -163,41 +169,47 @@ class _AidePageState extends State<AidePage> {
                     color: (qst3) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst3)
                 ? Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
+              child: Text(
                       'En appuyant sur l’utilisateur soit dans la liste d’amis, d’utilisateurs ou d’invitations.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             //groupe
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: Text(
                 'Groupes',
                 style: TextStyle(
                   color: primarycolor,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Montserrat',
-                  fontSize: 15,
+                  fontSize: responsivetext(15),
                 ),
               ),
             ),
             // qst4:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -210,28 +222,31 @@ class _AidePageState extends State<AidePage> {
                     color: (qst4) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst4)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Un voyage est caractérisé par sa destination et permet à ses membres de se localiser mutuellement et d’échanger certaines informations comme leurs vitesses de déplacement, l’état de batterie de leurs appareils et le temps restant pour arriver à destination. De plus, ils peuvent s’envoyer des alertes ou planifier des arrêts. Une fois que tous les membres arrivent à destination le groupe sera fermé. En revanche un long terme offre seulement le service de localisation et sera fermé que lorsque l’administrateur le décide.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst5:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -244,28 +259,32 @@ class _AidePageState extends State<AidePage> {
                     color: (qst5) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst5)
                 ? Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
+              child: Text(
                       'Il faut attendre que les membres ajoutés acceptent l’invitation du groupe.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst6:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -278,28 +297,31 @@ class _AidePageState extends State<AidePage> {
                     color: (qst6) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst6)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Une fois que votre voyage soit terminé, et que tous les membres arrivent à destination, le groupe se ferme automatiquement.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst7:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -312,41 +334,46 @@ class _AidePageState extends State<AidePage> {
                     color: (qst7) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst7)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'En cliquant sur sa bulle dans la liste des membres du voyage,en bas de la carte.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             //favoris
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: Text(
                 'Favoris',
                 style: TextStyle(
                   color: primarycolor,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Montserrat',
-                  fontSize: 15,
+                  fontSize: responsivetext(15),
                 ),
               ),
             ),
             // qst8:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -359,28 +386,31 @@ class _AidePageState extends State<AidePage> {
                     color: (qst8) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst8)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Vous pouvez y accéder lors de la création de vos voyages, ainsi vous n’aurez pas à rechercher cet endroit de nouveau quand vous introduirez votre destination.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst9:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -393,41 +423,46 @@ class _AidePageState extends State<AidePage> {
                     color: (qst9) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w700,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst9)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Pour ajouter un endroit favoris: allez au “favoris”, vous y trouverez la liste de vos endroits favoris, en bas de l’écran sur cette même page, cliquez sur le bouton “+” et faites votre recherche.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             //aletes
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: Text(
                 'Alertes',
                 style: TextStyle(
                   color: primarycolor,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Montserrat',
-                  fontSize: 15,
+                  fontSize: responsivetext(15),
                 ),
               ),
             ),
             // qst10:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -440,28 +475,31 @@ class _AidePageState extends State<AidePage> {
                     color: (qst10) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst10)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Faites apparaître votre liste d’alertes grâce au bouton gris en bas de votre écran et cliquez sur l’alerte de votre choix.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst11:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -474,28 +512,31 @@ class _AidePageState extends State<AidePage> {
                     color: (qst11) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst11)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Et bien vous n’avez qu’à la personnaliser ! Avec le bouton "personnaliser" qui se trouve en haut de la liste d’alertes ; en introduisant le contenu que vous voulez, elle sera rajoutée à votre liste et vous pourrez l’utiliser quand vous le voudrez. ',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst12:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -508,28 +549,31 @@ class _AidePageState extends State<AidePage> {
                     color: (qst12) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst12)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'C’est possible, glissez l’alerte à gauche où à droite et vous ne la trouverez plus dans la fameuse liste.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
                 : Container(),
             // qst13:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -542,21 +586,22 @@ class _AidePageState extends State<AidePage> {
                     color: (qst13) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst13)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Instinctivement vous consultez votre boite aux lettres, non ? Oui on ne rigole pas, vous en disposez d’une sur Winek, c’est le bouton rond avec l’icône de message à droite de votre écran.',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )
@@ -564,7 +609,9 @@ class _AidePageState extends State<AidePage> {
 
             // qst14:
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.symmetric(horizontal: responsiveheight(5),
+                  vertical: responsivewidth(5)),
+
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -577,21 +624,22 @@ class _AidePageState extends State<AidePage> {
                     color: (qst14) ? secondarycolor : Color(0xff707070),
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Montserrat',
-                    fontSize: 15,
+                    fontSize: responsivetext(15),
                   ),
                 ),
               ),
             ),
             (qst14)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
+                ? Padding(padding: EdgeInsets.symmetric(
+                horizontal: responsiveheight(5), vertical: responsivewidth(5)),
+
                     child: Text(
                       'Et si on vous disait que, pas encore ! Il reste un dernier truc ; si vous cliquez sur une de vos alertes reçues, vous pourrez la visualiser sur la map là où elle a été envoyée, pratique ne pensez-vous pas ?',
                       style: TextStyle(
                         color: Color(0xff5B5050),
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Montserrat',
-                        fontSize: 15,
+                        fontSize: responsivetext(15),
                       ),
                     ),
                   )

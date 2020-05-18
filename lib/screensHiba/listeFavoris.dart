@@ -1,22 +1,13 @@
-import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/geocoding.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:geocoder/geocoder.dart' as coord;
 import 'package:winek/main.dart';
-//import 'package:winek/dataBaseDounia.dart';
-
 import 'package:provider/provider.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'dart:ui';
 import 'dart:io';
-import 'package:winek/auth.dart';
 import 'package:winek/dataBaseDounia.dart';
 
 GoogleMapsPlaces _places =
@@ -133,7 +124,6 @@ class _FavorisTileState extends State<FavorisTile> {
 
   Future<String> convertLatLong() async {
     final coordinates = new coord.Coordinates(this.lat, this.long);
-    //final addresses = await coord.Geocoder.local.findAddressesFromCoordinates(coordinates);
     final addresses = await coord.Geocoder.google(
         "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
         language: "fr")
@@ -154,7 +144,7 @@ class _FavorisTileState extends State<FavorisTile> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -197,7 +187,7 @@ class _FavorisTileState extends State<FavorisTile> {
         leading:  Icon(
           Icons.place,
           color: Color(0xff3B466B),
-          size: 30,
+          size: responsivewidth(30),
         ),
         trailing: IconButton(
           onPressed: () async {
@@ -209,7 +199,6 @@ class _FavorisTileState extends State<FavorisTile> {
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
                 await DataBaseFavoris().favorisDeleteData(this.geoP, this.placeId);
-                //DataBaseFavoris().favorisIdDeleteData(this.placeid);
               }
             } on SocketException catch (_) {
               _showSnackBar('Vérifiez votre connexion internet', context);
@@ -217,7 +206,7 @@ class _FavorisTileState extends State<FavorisTile> {
           },
           icon: Icon(Icons.remove_circle_outline),
           color: Color(0xff389490),
-          iconSize: 30,
+          iconSize: responsivewidth(30),
         ),
       ),
     );

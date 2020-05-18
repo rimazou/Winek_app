@@ -58,7 +58,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -91,7 +91,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                 'Invitations Groupes',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: 25,
+                  fontSize: responsivetext(25),
                   fontWeight: FontWeight.w900,
                   color: secondarycolor,
                 ),
@@ -100,11 +100,12 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                 flex: 2,
               ),
               Container(
-                width: 350,
-                height: 390,
-                padding: EdgeInsets.all(10),
+                width: responsivewidth(350),
+                height: responsiveheight(390),
+                padding: EdgeInsets.symmetric(horizontal: responsivewidth(10),
+                    vertical: responsiveheight(10)),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
                   color: Color.fromRGBO(59, 70, 107, 0.3),
                 ),
                 child: IndexedStack(
@@ -115,7 +116,9 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                     //Voyage card
                     GestureDetector(
                         child: Container(
-                      padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: responsivewidth(10),
+                              vertical: responsiveheight(10)),
                       color: Colors.white,
                       child: Column(
                         children: <Widget>[
@@ -127,7 +130,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 },
                                 icon: Icon(Icons.arrow_back_ios),
                                 color: Color(0xff707070),
-                                iconSize: 20,
+                                iconSize: responsivewidth(20),
                               ),
                               Spacer(
                                 flex: 1,
@@ -138,7 +141,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             'Un Voyage',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 20,
+                              fontSize: responsivetext(20),
                               fontWeight: FontWeight.w500,
                               color: secondarycolor,
                             ),
@@ -150,7 +153,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             _voyage.nom,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 30,
+                              fontSize: responsivetext(30),
                               fontWeight: FontWeight.w700,
                               color: primarycolor,
                             ),
@@ -162,14 +165,17 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             child: Container(
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.all(0.1),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: responsivewidth(0.1),
+                                    vertical: responsiveheight(0.1)),
+
                                 child: RichText(
                                   text: TextSpan(children: <TextSpan>[
                                     TextSpan(
                                       text: 'vers ',
                                       style: TextStyle(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 15,
+                                        fontSize: responsivetext(15),
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xff707070),
                                       ),
@@ -178,7 +184,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                       text: _voyage.destination,
                                       style: TextStyle(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 15,
+                                        fontSize: responsivetext(15),
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff707070),
                                       ),
@@ -200,7 +206,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 'créé par  ',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff707070),
                                 ),
@@ -209,7 +215,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 _voyage.admin,
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff707070),
                                 ),
@@ -223,9 +229,10 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             flex: 1,
                           ),
                           Container(
-                            height: 50,
+                            height: responsiveheight(50),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                  responsiveradius(10, 1)),
                               color: Color.fromRGBO(59, 70, 107, 0.3),
                             ),
                             child: ListView.builder(
@@ -234,8 +241,8 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 itemBuilder: (context, index) {
                                   return Card(
                                     child: Container(
-                                      width: 70,
-                                      height: 49,
+                                      width: responsivewidth(70),
+                                      height: responsiveheight(49),
                                       child: Center(
                                         child: Text(
                                           _voyage.membres[index]['pseudo'],
@@ -287,7 +294,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 },
                                 icon: Icon(Icons.done),
                                 color: secondarycolor,
-                                iconSize: 30,
+                                iconSize: responsivewidth(30),
                               ),
                               Spacer(
                                 flex: 1,
@@ -326,7 +333,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 },
                                 icon: Icon(Icons.delete),
                                 color: Colors.red,
-                                iconSize: 30,
+                                iconSize: responsivewidth(30),
                               ),
                               Spacer(
                                 flex: 1,
@@ -339,7 +346,9 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                     //long terme card
                     GestureDetector(
                         child: Container(
-                      padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: responsivewidth(10),
+                              vertical: responsiveheight(10)),
                       color: Colors.white,
                       child: Column(
                         children: <Widget>[
@@ -353,7 +362,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 },
                                 icon: Icon(Icons.arrow_back_ios),
                                 color: Color(0xff707070),
-                                iconSize: 20,
+                                iconSize: responsivewidth(20),
                               ),
                               Spacer(
                                 flex: 1,
@@ -364,7 +373,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             'Un Groupe a Long Terme',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 20,
+                              fontSize: responsivetext(20),
                               fontWeight: FontWeight.w500,
                               color: secondarycolor,
                             ),
@@ -376,7 +385,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             _longTerme.nom,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 30,
+                              fontSize: responsivetext(30),
                               fontWeight: FontWeight.w700,
                               color: primarycolor,
                             ),
@@ -393,7 +402,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 'créé par  ',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff707070),
                                 ),
@@ -402,7 +411,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 _longTerme.admin,
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 15,
+                                  fontSize: responsivetext(15),
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff707070),
                                 ),
@@ -416,9 +425,10 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                             flex: 1,
                           ),
                           Container(
-                            height: 50,
+                            height: responsiveheight(50),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                  responsiveradius(10, 1)),
                               color: Color.fromRGBO(59, 70, 107, 0.3),
                             ),
                             child: ListView.builder(
@@ -427,15 +437,15 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 itemBuilder: (context, index) {
                                   return Card(
                                     child: Container(
-                                      width: 70,
-                                      height: 49,
+                                      width: responsivewidth(70),
+                                      height: responsiveheight(49),
                                       color: Colors.white,
                                       child: Center(
                                         child: Text(
                                           _longTerme.membres[index]['pseudo'],
                                           style: TextStyle(
                                             fontFamily: 'Montserrat',
-                                            fontSize: 15,
+                                            fontSize: responsivetext(15),
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xff707070),
                                           ),
@@ -487,7 +497,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 },
                                 icon: Icon(Icons.done),
                                 color: secondarycolor,
-                                iconSize: 30,
+                                iconSize: responsivewidth(30),
                               ),
                               Spacer(
                                 flex: 1,
@@ -508,7 +518,7 @@ class _InvitationGrpPageState extends State<InvitationGrpPage> {
                                 },
                                 icon: Icon(Icons.delete),
                                 color: Colors.red,
-                                iconSize: 30,
+                                iconSize: responsivewidth(30),
                               ),
                               Spacer(
                                 flex: 1,
@@ -580,20 +590,21 @@ class _InvitationsListState extends State<InvitationsList> {
           },
           child: Card(
             child: Container(
-              height: 60,
-              padding: EdgeInsets.all(10),
+              height: responsiveheight(60),
+              padding: EdgeInsets.symmetric(horizontal: responsivewidth(10),
+                  vertical: responsiveheight(10)),
               child: Row(
                 children: <Widget>[
                   Icon(
                     Icons.people,
                     color: primarycolor,
-                    size: 30,
+                    size: responsivewidth(30),
                   ),
                   Text('   '),
                   Text(
                     grps[index]['nom'],
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: responsivetext(14),
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w600,
                       color: Color(0xff707070),

@@ -200,7 +200,7 @@ class _FavorisTile extends State<FavorisTile> {
         title: Text(
           placeAddress,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: responsivetext(12),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             //color: Color(0xff707070),
@@ -210,7 +210,7 @@ class _FavorisTile extends State<FavorisTile> {
         leading: Icon(
           Icons.place,
           color: Color(0xff3B466B),
-          size: 30,
+          size: responsivewidth(30),
         ),
       ),
     );

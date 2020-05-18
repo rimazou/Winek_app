@@ -7,19 +7,13 @@ import 'package:flutter/rendering.dart';
 import 'package:winek/auth.dart';
 import 'MapPage.dart';
 import '../classes.dart';
-import '../dataBasehiba.dart';
 import '../main.dart';
 import 'list_inv_grp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'parametre_grp.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
 import '../UpdateMarkers.dart';
-import 'MapPage.dart';
 
 bool _loading;
 final GlobalKey<ScaffoldState> _scaffoldgrpKey = new GlobalKey<ScaffoldState>();
@@ -42,7 +36,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -91,7 +85,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
                     },
                     icon: Icon(Icons.supervised_user_circle),
                     color: primarycolor,
-                    iconSize: 40,
+                    iconSize: responsivewidth(40),
                   ),
                 ],
               ),
@@ -102,7 +96,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
                 'Vos Groupes',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: 25,
+                  fontSize: responsivetext(25),
                   fontWeight: FontWeight.w900,
                   color: secondarycolor,
                 ),
@@ -111,11 +105,12 @@ class _ListGrpPageState extends State<ListGrpPage> {
                 flex: 2,
               ),
               Container(
-                width: 350,
-                height: 390,
-                padding: EdgeInsets.all(10),
+                width: responsivewidth(350),
+                height: responsiveheight(390),
+                padding: EdgeInsets.symmetric(horizontal: responsivewidth(10),
+                    vertical: responsiveheight(10)),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
                   color: Color.fromRGBO(59, 70, 107, 0.3),
                 ),
                 child: Groupeprovider(() {
@@ -151,7 +146,7 @@ class grpTile extends StatelessWidget {
         value,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14.0,
+            fontSize: responsivetext(14.0),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600),
       ),
@@ -258,7 +253,7 @@ class grpTile extends StatelessWidget {
         title: Text(
           grp_nom,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: responsivetext(14),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             color: Color(0xff707070),
@@ -267,7 +262,7 @@ class grpTile extends StatelessWidget {
         leading: Icon(
           Icons.people,
           color: primarycolor,
-          size: 30,
+          size: responsivewidth(30),
         ),
         trailing: IconButton(
           onPressed: () async {
@@ -320,7 +315,7 @@ class grpTile extends StatelessWidget {
           },
           icon: Icon(Icons.info_outline),
           color: secondarycolor,
-          iconSize: 30,
+          iconSize: responsivewidth(30),
         ),
       ),
     );
