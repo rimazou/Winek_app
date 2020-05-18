@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:winek/auth.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/register_screen.dart';
-import 'package:winek/screensRima/welcome_screen.dart';
 import '../UpdateMarkers.dart';
 import 'package:winek/screensRima/resetmail.dart';
 import '../main.dart';
@@ -344,14 +343,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final FirebaseUser currentUser = await authService.auth.currentUser();
       assert(user.uid == currentUser.uid);
 
-      print('loggein is cette personnnee');
-      print(currentUser.email);
       if (user != null) {
         authService.db
             .collection('Utilisateur')
             .document(user.uid)
             .updateData({'connecte': true});
-        print('user logged in');
+
         authService.getUserLocation();
         authService.updategroupelocation();
         Provider.of<DeviceInformationService>(context, listen: false)
@@ -365,7 +362,6 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           loading = false;
         });
-        print('failed google authetication');
       }
     } catch (logIn) {
       if (logIn is PlatformException) {

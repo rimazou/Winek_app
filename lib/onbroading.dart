@@ -60,7 +60,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   alignment: Alignment.centerRight,
                   child: FlatButton(
                     onPressed: () {
-                      print('Skip');
                       Navigator.pushNamed(context, LoginScreen.id);
                     },
                     child: Text(

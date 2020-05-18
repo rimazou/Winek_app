@@ -43,8 +43,7 @@ void createlongterme() async {
       .then((Doc) {
     return Doc.data['pseudo'];
   });
-  print("user:$user");
-// creationg the doc of the grp
+
   DocumentReference ref = await _firestore.collection('LongTerme').add({
     'nom': nom_grp,
     'admin': user['pseudo'],
@@ -83,10 +82,8 @@ void createlongterme() async {
         .document(user['id'])
         .updateData({'position': geoFirePoint.data});
   });
-  print('member doc added');
+
   Map grp = {'chemin': ref.path, 'nom': nom_grp};
-  print(grp);
-// adding that grp to member's invitations liste.
   for (Map m in membres) {
     DocumentSnapshot doc =
         await Firestore.instance.collection('UserGrp').document(m['id']).get();
@@ -255,8 +252,6 @@ class _NvLongTermePageState extends State<NvLongTermePage> {
               ),
               child: FlatButton(
                 onPressed: () async {
-                  print(_controller.text);
-                  print(membres.length);
                   setState(() {
                     if (_controller.text.isEmpty) {
                       _alerte_nom = true;
@@ -323,10 +318,7 @@ void createvoyage() async {
     'destination': _destination,
     'membres': [user],
     'justReceivedAlert': false,
-// since he's the admin, others have to accept the invitation first
   });
-  print('voyage cree');
-//creating the subcollection doc for location
   Geoflutterfire geo = Geoflutterfire();
   GeoFirePoint point = geo.point(latitude: 0.0, longitude: 0.0);
 
@@ -359,7 +351,6 @@ void createvoyage() async {
         .document(user['id'])
         .updateData({'position': geoFirePoint.data});
   });
-  print('member doc added');
   await _firestore
       .document(ref.path)
       .collection('fermeture')
@@ -388,8 +379,6 @@ void createvoyage() async {
       });
     }
   }
-  print('invitations sent');
-//adding it to admin list of grp
   DocumentSnapshot userdoc =
       await Firestore.instance.collection('UserGrp').document(user['id']).get();
   if (userdoc.exists) {
@@ -408,7 +397,6 @@ void createvoyage() async {
       'groupes': [grp]
     });
   }
-  print('groupe added');
 }
 
 class NvVoyagePage extends StatefulWidget {
@@ -540,7 +528,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                             final placeDetail = place.result;
                             setState(() {
                               _destinationAdr = placeDetail.formattedAddress;
-                              print(_destinationAdr);
+
                               _destination = {
                                 'latitude': lat,
                                 'longitude': lng,
@@ -548,8 +536,6 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                               };
                             });
                           }
-
-                          print(_destination);
                         }
                       } on SocketException catch (_) {
                         _showSnackBar(
@@ -650,7 +636,6 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                 membres.contains(member)
                     ? membres.remove(member)
                     : membres.add(member);
-                print(membres.toString());
               }),
             ),
             Spacer(
@@ -665,8 +650,6 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
               ),
               child: FlatButton(
                 onPressed: () {
-                  print(_controller.text);
-                  print(membres.length);
                   setState(() {
                     if (_controller.text.isEmpty) {
                       _alerte_nom = true;
@@ -806,7 +789,7 @@ class _FriendsListState extends State<FriendsList> {
 
 Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
   String id = await authService.connectedID();
-  print(id);
+
   List<Map<dynamic, dynamic>> friendsid = List<Map>();
   await Firestore.instance
       .collection('Utilisateur')
@@ -815,22 +798,8 @@ Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
       .then((DocumentSnapshot doc) {
     friendsid = List<Map>.from(doc.data['amis']);
   });
-  print(friendsid);
-  /* List<dynamic> pseudos = List();
-  for (String id in friendsid) {
-    await Firestore.instance
-        .collection('Utilisateur')
-        .document(id)
-        .get()
-        .then((DocumentSnapshot doc) {
-      pseudos.add(doc.data['pseudo']);
-    });
-  }
-  print(pseudos);
-  List<Map<dynamic, dynamic>> friendlist = List();
-  for (int index = 0; index < friendsid.length; index++) {
-    friendlist.add({'pseudo': pseudos[index], 'id': friendsid[index]});
-  } */
+
+
   return friendsid;
 }
 

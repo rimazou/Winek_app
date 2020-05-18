@@ -138,19 +138,14 @@ class UpdateMarkers extends ChangeNotifier {
     if (arret == false) {
       for (DocumentSnapshot document in documentList) {
         bool arrived = false;
-        print('fermer -----------------$fermer');
         String userid = document.documentID;
-        print('documet: $userid');
+
         markers.remove(MarkerId(userid));
         GeoPoint point = document.data['position']['geopoint'];
         arrived = document.data['arrive'];
-        print('arrived $arrived');
-        if (point == null) {
-          print('de la merde le point est null');
-        }
+
         if (!arrived) {
           if (id == document.documentID) {
-            print('connecteeeeeeeeeeeeeeeeeed USERRR');
             double distanceInMeters = calculateDistance(
                 point.latitude, point.longitude, dest_lat, dest_lng);
             double dist;
@@ -164,7 +159,6 @@ class UpdateMarkers extends ChangeNotifier {
             }
           } else {
             fermer = false;
-            print('not curent useeeeeeeeeeeeeerrr $fermer');
           }
         }
 
@@ -172,7 +166,6 @@ class UpdateMarkers extends ChangeNotifier {
       }
 
       if (fermer) {
-        print('fermeeeeeeeeeeeer $fermer');
         await Firestore.instance
             .document(groupepath)
             .collection('fermeture')
@@ -310,8 +303,7 @@ class UpdateMarkers extends ChangeNotifier {
   Future getChanges(BuildContext context, String path_groupe) async {
     var id = await AuthService().connectedID();
     String pseud = await Database().getPseudo(id);
-    print('path');
-    print(path_groupe);
+
 
     Firestore.instance
         .document(path_groupe)
@@ -319,16 +311,11 @@ class UpdateMarkers extends ChangeNotifier {
         .document('Arrets')
         .snapshots(includeMetadataChanges: true)
         .listen((DocumentSnapshot documentSnapshot) async {
-      print("object3");
       if (documentSnapshot.data != null) {
         if (documentSnapshot.data.containsKey('planArrets')) {
           List<dynamic> list = await documentSnapshot.data['planArrets'];
-          print(list);
-
-          print('markers');
 
           for (Map map in list) {
-            print(map);
             MarkerId markerid = MarkerId(
                 map['latitude'].toString() + map['longitude'].toString());
             // Provider.of<UpdateMarkers>(context, listen: false).
@@ -341,15 +328,13 @@ class UpdateMarkers extends ChangeNotifier {
               infoWindow: InfoWindow(
                   title: map['pseudo'] + " a planifié(e) un arret ici"),
             );
-            print("object4");
-            //  Provider.of<UpdateMarkers>(context,listen:false).
             markers[markerid] = _marker;
             notifyListeners();
             Provider.of<controllermap>(context).mapController.animateCamera(
                 CameraUpdate.newCameraPosition(CameraPosition(
                     target: LatLng(map['latitude'], map['longitude']),
                     zoom: 14.0)));
-            // bool nouvelArret = documentSnapshot.data['planArret'];
+
 
             if (map['pseudo'] != pseud) {
               var vaaa = _AlertScreenState();
@@ -358,7 +343,6 @@ class UpdateMarkers extends ChangeNotifier {
             }
           }
 
-          print("object5");
         }
       }
     });

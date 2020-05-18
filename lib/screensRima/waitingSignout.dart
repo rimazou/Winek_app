@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/auth.dart';
+import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/screensRima/login_screen.dart';
-import 'package:winek/screensRima/welcome_screen.dart';
 
 class SignoutWait extends StatefulWidget {
   @override
@@ -18,21 +18,15 @@ class _SignoutWaitState extends State<SignoutWait> {
   }
 
   _signOut() async {
-    print(' debutsignout');
 
     try {
       await authService.connectedID().then((val) {
-        print(val);
         authService.auth.signOut();
         authService.userRef.document(val).updateData({'connecte': false});
-        print('plus d user');
-      }).catchError((onError) {
-        print('an error occured ');
       });
-      print(' fin signout');
       Navigator.pushReplacementNamed(context, LoginScreen.id);
     } catch (e) {
-      print(e);
+      Navigator.pushReplacementNamed(context, Home.id);
     }
   }
 

@@ -553,7 +553,6 @@ class _InvitationsListState extends State<InvitationsList> {
     setState(() {
       if (grps != null) {
         count = grps.length;
-        print('count: $count');
       } else {
         count = 0;
       }
@@ -571,11 +570,9 @@ class _InvitationsListState extends State<InvitationsList> {
                 .then((DocumentSnapshot doc) {
               if (grps[index]['chemin'].toString().startsWith('Voyage')) {
                 _voyage = Voyage.fromMap(doc.data);
-                print(_voyage.nom);
                 return 1;
               } else {
                 _longTerme = LongTerme.fromMap(doc.data);
-                print(_longTerme.nom);
                 return 2;
               }
             });

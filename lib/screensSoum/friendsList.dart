@@ -40,7 +40,6 @@ class FriendTile extends StatefulWidget {
 
   FriendTile({Map id}) {
     this.id = id;
-    print('constructooooooooooor');
   }
 
   @override
@@ -54,7 +53,6 @@ class _FriendTileState extends State<FriendTile> {
 
   _FriendTileState({Map id}) {
     this.id = id;
-    print('constructooooooooooor');
     Firestore.instance
         .collection('Utilisateur')
         .where("pseudo", isEqualTo: id['pseudo'])
@@ -65,9 +63,7 @@ class _FriendTileState extends State<FriendTile> {
         data.documents.forEach((doc) {
           if (mounted) {
             setState(() {
-              print('entreeeeeee');
               image = doc.data['photo'];
-              print(image);
             });
           }
         }
@@ -85,7 +81,6 @@ class _FriendTileState extends State<FriendTile> {
   Widget photo() {
 
     if (image != null) {
-      print('photoooos');
       return CircleAvatar(
         radius: 23.0,
         backgroundImage: NetworkImage(image),
@@ -94,7 +89,6 @@ class _FriendTileState extends State<FriendTile> {
 
     }
     else {
-      print('noooo photoooos');
       return Icon(
         Icons.people,
         color: Color(0xff3B466B),
@@ -236,9 +230,7 @@ class _UserTileState extends State<UserTile> {
       data.documents.forEach((doc) {
         if (mounted) {
           setState(() {
-          print('entreeeeeee');
           image = doc.data['photo'];
-          print(image);
           });
         }
       }
@@ -256,7 +248,6 @@ class _UserTileState extends State<UserTile> {
   Widget photo() {
 
     if (image != null) {
-      print('photoooos');
       return CircleAvatar(
         radius: 23.0,
         backgroundImage: NetworkImage(image),
@@ -265,7 +256,6 @@ class _UserTileState extends State<UserTile> {
 
     }
     else {
-      print('noooo photoooos');
       return Icon(
         Icons.people,
         color: Color(0xff3B466B),

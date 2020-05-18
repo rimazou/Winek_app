@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:winek/screensHiba/MapPage.dart';
-import 'package:winek/screensRima/welcome_screen.dart';
+import 'package:winek/screensRima/login_screen.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:provider/provider.dart';
 import '../auth.dart';
@@ -27,16 +27,15 @@ class _FirstLoadingState extends State<FirstLoading> {
       if (log) {
         String id = await authService.connectedID();
 
-        print('yes log');
         authService.getUserLocation();
         authService.updategroupelocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(id);
         Navigator.pushReplacementNamed(context, Home.id);
       } else {
-        print('no log');
+
         Navigator.pushReplacementNamed(
-            context, WelcomeScreen.id); // va devenir apres loginscreen
+            context, LoginScreen.id);
 
       }
     });

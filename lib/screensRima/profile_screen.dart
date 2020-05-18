@@ -722,9 +722,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _uploadedFileURL;
 
   Future updatePic(source) async {
-    print('choooose file');
+
     File cropped;
-    print('choooose file');
     _image = await ImagePicker.pickImage(source: source);
 
     if (_image != null) {
@@ -748,7 +747,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
 
-    print('uploaaaaaaaaaadfile');
     setState(() {
       loading = true;
     });
@@ -758,7 +756,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _uploadedFileURL = widget.myuser.photo;
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
-    print('File Uploaded');
+
     storageReference.getDownloadURL().then((fileURL) {
       setState(() {
         _uploadedFileURL = fileURL;
@@ -768,9 +766,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .document(onValue.uid)
             .updateData({'photo': _uploadedFileURL});
         setState(() {
-          print(widget.myuser.photo);
           widget.myuser.photo = _uploadedFileURL;
-          print(widget.myuser.photo);
         });
       });
     });
@@ -856,7 +852,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .getDocuments());
     final List<DocumentSnapshot> documents = result.documents;
     if (documents.length == 1) {
-      print("UserName Already Exits");
       return true;
     } else {
       return false;
@@ -871,10 +866,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .getDocuments());
     final List<DocumentSnapshot> documents = result.documents;
     if (documents.length == 1) {
-      print("email Already Exits");
       return true;
     } else {
-      print("email is Available");
       return false;
     }
   }
@@ -905,15 +898,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _loading = false;
               });
               showSBar('Ce pseudo existe deja, reessayez', context);
-              print('psueod exist deja');
             }
           });
         }
         setState(() {
           _loading = false;
         });
-        // nv_nom = _controller.text;
-        // _confirmer = true;
 
       }
     } on SocketException catch (_) {
@@ -921,7 +911,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _loading = false;
       });
       showSBar('Vérifiez votre connexion internet', context);
-      print('verifiez internet');
     }
   }
 
@@ -1021,7 +1010,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.pop(context);
       showSBar('Vérifiez votre connexion internet', context);
     } catch (e) {
-      print(e);
       if (e is PlatformException) {
         if (e.code == 'ERROR_REQUIRES_RECENT_LOGIN') {
           showSBar(
@@ -1029,27 +1017,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context);
           Navigator.pushNamed(context, LoginScreen.id);
         }
+        else {
+          showSBar(e.code,
+              context);
+        }
       }
     }
   }
 
   String mail, pseudo, tel, photo;
 
-  double responsivetext(double siz) {
-    return (siz / 6.92) * SizeConfig.textMultiplier;
-  }
 
-  double responsiveheight(double height) {
-    return (height / 6.92) * SizeConfig.heightMultiplier;
-  }
 
-  double responsivewidth(double width) {
-    return (width / 3.6) * SizeConfig.imageSizeMultiplier;
-  }
-
-  double responsiveradius(double rad, double height) {
-    return (rad / height) * responsiveheight(height);
-  }
-
-  Future userID;
 }

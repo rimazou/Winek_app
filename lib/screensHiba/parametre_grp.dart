@@ -720,7 +720,6 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                 _loading = true;
                               });
                               for (var m in membres) {
-                                // print(m['id']);
                                 await data.invitemember(
                                     path, groupe.nom, m['id']);
                               }
@@ -800,7 +799,6 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                               return Card(
                                 child: ListTile(
                                   onTap: () async {
-                                    print('membre: ${groupe.membres[index]}');
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) =>
@@ -861,7 +859,7 @@ class _ParamVoyagePageState extends State<ParamVoyagePage> {
                                               setState(() {
                                                 _loading = false;
                                               });
-                                              print('bien supprimer');
+
                                               Navigator.pop(context);
                                             },
                                             child: Text(
@@ -1444,7 +1442,6 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                 _loading = true;
                               });
                               for (var m in membres) {
-                                // print(m['id']);
                                 await data.invitemember(
                                     path, groupe.nom, m['id']);
                               }
@@ -1524,7 +1521,6 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                               return Card(
                                 child: ListTile(
                                   onTap: () async {
-                                    print('membre: ${groupe.membres[index]}');
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) =>
@@ -1585,7 +1581,7 @@ class _ParamLongTermePageState extends State<ParamLongTermePage> {
                                               setState(() {
                                                 _loading = false;
                                               });
-                                              print('bien supprimer');
+
                                               Navigator.pop(context);
                                             },
                                             child: Text(
@@ -1746,7 +1742,7 @@ class _FriendsListState extends State<FriendsList> {
 
 Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
   String id = await authService.connectedID();
-  print(id);
+
   List<Map<dynamic, dynamic>> friendsid = List<Map>();
   await Firestore.instance
       .collection('Utilisateur')
@@ -1755,21 +1751,6 @@ Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
       .then((DocumentSnapshot doc) {
     friendsid = List<Map>.from(doc.data['amis']);
   });
-  print(friendsid);
-  /* List<dynamic> pseudos = List();
-  for (String id in friendsid) {
-    await Firestore.instance
-        .collection('Utilisateur')
-        .document(id)
-        .get()
-        .then((DocumentSnapshot doc) {
-      pseudos.add(doc.data['pseudo']);
-    });
-  }
-  print(pseudos);
-  List<Map<dynamic, dynamic>> friendlist = List();
-  for (int index = 0; index < friendsid.length; index++) {
-    friendlist.add({'pseudo': pseudos[index], 'id': friendsid[index]});
-  } */
+
   return friendsid;
 }

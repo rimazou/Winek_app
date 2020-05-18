@@ -18,41 +18,29 @@ class DataBaseFavoris {
   String psd;
   String currentUser;
 
-  // static final currentUser = 'oHFzqoSaM4RUDpqL9UF396aTCf72';
-  // static final currentUser = 'J2XLzfTvGSaauvH38q4Z6OexQRr1';
   Future<void> getConnectedId() async {
     var connectedUser = await authService.connectedID();
-    // final FirebaseUser user1 = await auth.currentUser();
     user = "$connectedUser";
-    //  pseud=user1.uid;
-    print("currentUser : ");
-    print(user);
   }
 
   setCurrentUser() {
     getConnectedId();
     this.currentUser = user;
-    print('done');
   }
 
   setPseudo() {
     getConnectedId();
     this.psd = pseud;
-    print('done');
   }
 
-  // GeoFirePoint geoPoint ;
   double lat;
   double long;
   DataBaseFavoris({this.lat, this.long});
-  //GeoFirePoint geoPoint=geo.Point(latitude:lati,longitude:longi);
-  // final String pseudo ;
+
   final CollectionReference userCollection =
       Firestore.instance.collection('Utilisateur');
 
   Future favorisUpdateData(GeoFirePoint geop, String id) async {
-    // ajouter un amis a la liste de current
-    // getConnectedId();
     setCurrentUser();
     final snap = await userCollection.document(currentUser).get();
     if (snap.data['favoris'] == null) {
@@ -91,13 +79,8 @@ class DataBaseFavoris {
   }
 
   Future arretUpdateData(double lat, double long) async {
-    // ajouter un amis a la liste de current
-    // getConnectedId();
-    // setPseudo();
     setCurrentUser();
-    print("object");
     var pseudoo = await AuthService().connectedID();
-    print("object2");
     return await userCollection.document(currentUser).updateData({
       "arrets": FieldValue.arrayUnion([
         {"latitude": lat, "longitude": long, "pseudo": "hiba1"}
@@ -106,32 +89,16 @@ class DataBaseFavoris {
   }
 
   Stream<List<dynamic>> get getlistfavoris {
-    // String id = await authService.connectedID();
-    // getConnectedId();
-    //print(this.currentUser);
     setCurrentUser();
     return userCollection.document(currentUser).snapshots().map((snap) {
-      print('gonna copy dataaaaaaaaaaaaaaaa');
 
       List<dynamic> listfavoris = snap.data["favoris"];
-      print(listfavoris);
-      print('liiiiiiiiiist');
       if (listfavoris != null) {
         return listfavoris;
       }
 
       return [];
     });
-    //return[];
   }
-/*
-  Future<List<dynamic>> listfavoris()async{
-     String id = await authService.connectedID() ;
-      return  userCollection.document(id).get().then((snap){
-      if (snap.data['favoris'] =! null){
-        return List<dynamic>.from(snap.data['favoris']);
-      }
-      return[];
-    });
-  } */
+
 }

@@ -48,11 +48,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(
-          label: 'Ok',
-          onPressed: () {
-            print('press Ok on SnackBar');
-          }),
+
     )
     );
   }
@@ -125,7 +121,6 @@ class _ListGrpPageState extends State<ListGrpPage> {
                 child: Groupeprovider(() {
                   setState(() {
                     _loading = !_loading;
-                    print('loading: $_loading');
                   });
                 }),
               ),
@@ -183,7 +178,6 @@ class grpTile extends StatelessWidget {
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               () {
                 function();
-                print('da5el listtile');
               };
               Groupe g = Voyage();
               if (grp_chemin.startsWith('Voyage')) {
@@ -192,7 +186,6 @@ class grpTile extends StatelessWidget {
                     .get()
                     .then((DocumentSnapshot doc) {
                   g = Voyage.fromMap(doc.data);
-                  //print(g.membres);
                 });
                 List<String> images = List();
                 for (Map member in g.membres) {
@@ -217,13 +210,11 @@ class grpTile extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) =>
                             MapVoyagePage(g, grp_chemin, images)));
-                //asma initialise
+
                 groupPath = grp_chemin;
                 utilisateurID = await AuthService().connectedID();
                 currentUser = await AuthService().getPseudo(utilisateurID);
                 stackIndex = 3;
-                //checkSenderUser();
-                //print('HEEEEEEEEEEEEEEEY$notifSender');
               }
               if (grp_chemin.startsWith('LongTerme')) {
                 await Firestore.instance
@@ -295,7 +286,7 @@ class grpTile extends StatelessWidget {
                   return doc.data['pseudo'];
                 });
 
-                print("current user :$pseudo");
+
                 Groupe g = Voyage();
                 if (grp_chemin.startsWith('Voyage')) {
                   await Firestore.instance
@@ -371,7 +362,6 @@ class _GroupesListState extends State<GroupesList> {
     setState(() {
       if (grps != null) {
         count = grps.length;
-        print('count: $count');
       } else {
         count = 0;
       }
@@ -385,7 +375,6 @@ class _GroupesListState extends State<GroupesList> {
           grp_chemin: grps[index]['chemin'],
           function: () {
             function();
-            print('grptile');
           },
         );
       },
@@ -403,13 +392,11 @@ Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
       .then((Doc) {
     return Doc.data['pseudo'];
   });
-  // await Databasegrp.getcurret(user['id'], user['pseudo']);
-  print("user : $user");
+
   DocumentSnapshot querySnapshot =
       await Firestore.instance.collection('UserGrp').document(user['id']).get();
-  print(querySnapshot.data.toString());
+
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
-    // Create a new List<String> from List<dynamic>
 
     return List<Map<dynamic, dynamic>>.from(querySnapshot.data['groupes']);
   }

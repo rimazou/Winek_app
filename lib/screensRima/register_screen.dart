@@ -739,10 +739,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       LatLng lt = new LatLng(36.7525000, 3.0419700);
       GeoFirePoint pt =
       geo.point(latitude: lt.latitude, longitude: lt.longitude);
-      print(currentUser.email);
       if (user != null) {
         var pic =
-            "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
+            'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
         if (googleUser.photoUrl.isNotEmpty) {
           pic = googleUser.photoUrl;
         }
@@ -758,13 +757,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           connecte: true,
           location: pt.data,
         );
-        // authService.db.collection('Utilisateur').add(myUser.map);
-        //authService..add(myUser.map);
         authService.db
             .collection('Utilisateur')
             .document(user.uid)
             .setData(myUser.map);
-        print('user CREAAAATEEEEED');
         authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.uid);
@@ -774,7 +770,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         print('failed google authetication');
       }
     } catch (e) {
-      print(e);
+      showSnackBar(
+          "Une erreur s'est produite, veuillez reessayer", context);
     }
   }
 
@@ -804,7 +801,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       setState(() {
         loading = true;
       });
-      print('creaaation bdaaat ');
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
       GeoFirePoint pt =
@@ -824,22 +820,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           connecte: true,
           location: pt.data,
         );
-        // authService.db.collection('Utilisateur').add(myUser.map);
-        //authService..add(myUser.map);
         authService.db
             .collection('Utilisateur')
             .document(newUser.user.uid)
             .setData(myUser.map);
-        print('user CREAAAATEEEEED');
-        print(newUser.user.uid);
         authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(newUser.user.uid);
         Navigator.pushReplacementNamed(context, Home.id);
 
-        //  authService.db.collection(pseudo).add(myUser.map);
       } else {
-        print('pas de creaaaation');
         setState(() {
           loading = false;
         });
@@ -872,8 +862,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               "Une erreur s'est produite, veuillez reessayer", context);
         }
       }
-    } catch (e) {
-      print(e);
     }
   }
 
@@ -892,7 +880,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future chooseFile(ImageSource source) async {
     File cropped;
-    print('choooose file');
     try {
       _image = await ImagePicker.pickImage(source: source);
     if (_image != null) {
@@ -910,20 +897,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             backgroundColor: Colors.white),
       );
     }
-    else {
-      print('didnt pick any');
-    }
+
     }
     catch (e) {
-      print('prob in cropp');
-      print(e);
+      showSnackBar(
+          "Une erreur s'est produite, veuillez reessayer", context);
     }
     if (cropped != null) {
       setState(() {
         _image = cropped;
       });
     }
-    print('uploaaaaaaaaaadfile');
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('photos/${p.basename(cropped.path)}}');
@@ -931,14 +915,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
 
     if (_image != null) {
-      StorageUploadTask uploadTask = storageReference.putFile(_image);
+      try {
+        StorageUploadTask uploadTask = storageReference.putFile(_image);
       await uploadTask.onComplete;
-      print('File Uploaded');
       storageReference.getDownloadURL().then((fileURL) {
         setState(() {
           _uploadedFileURL = fileURL;
         });
       });
+      } catch (e) {
+        showSnackBar(
+            "Une erreur s'est produite, veuillez reessayer", context);
+      }
     }
     else {
       setState(() {
@@ -956,12 +944,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .getDocuments());
     final List<DocumentSnapshot> documents = result.documents;
     if (documents.length == 1) {
-      print("UserName Already Exits");
       setState(() {
         errPs = 'Ce pseudo est deja pris';
       });
+      showSnackBar(
+          errPs, context);
     } else {
-      print("UserName is Available");
       setState(() {
         errPs = null;
       });
@@ -976,12 +964,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .getDocuments());
     final List<DocumentSnapshot> documents = result.documents;
     if (documents.length == 1) {
-      print("UserName Already Exits");
       setState(() {
-        errMl = 'Ce pseudo est deja pris';
+        errMl = 'Cet email est deja pris';
       });
+      showSnackBar(
+          errMl, context);
     } else {
-      print("UserName is Available");
       setState(() {
         errMl = null;
       });

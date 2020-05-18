@@ -53,7 +53,6 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
 
   _FriendRequestTileState({String invit}) {
     this.invit = invit;
-    print('constructooooooooooor');
     Firestore.instance
         .collection('Utilisateur')
         .where("pseudo", isEqualTo: invit)
@@ -62,9 +61,7 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
         .listen((data) {
       data.documents.forEach((doc) {
         setState(() {
-          print('inviiiiiiiiiit tof');
           image = doc.data['photo'];
-          print(image);
         });
       }
       );
@@ -79,7 +76,6 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
 
   Widget photo() {
     if (image != null) {
-      print('photoooos');
       return CircleAvatar(
         radius: 23.0,
         backgroundImage: NetworkImage(image),
@@ -87,7 +83,6 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
       );
     }
     else {
-      print('noooo photoooos');
       return Icon(
         Icons.people,
         color: Color(0xff3B466B),
@@ -190,7 +185,6 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
 
                       _showSnackBar(
                           'vous et $invit êtes désormais amis!', context);
-                      print('HELLOOOOOOOOOOOOOOOOOOOOOOOOO');
                       }
                     }
                   }

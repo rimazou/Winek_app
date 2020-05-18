@@ -43,7 +43,6 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
     init().then((Database result) {
       this.d = result;
 
-      print(d);
     });
 
     _showSnackBar(String value) {

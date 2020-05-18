@@ -110,30 +110,6 @@ class _FavorisTileState extends State<FavorisTile> {
   double longitude;
   String placeId ;
   @override
-  /*void initState() {
-    placeAddress = '';
-  }*/
-/*Future init (double latd, double lng, String p)async {
-  this.placeId = p;
-  this.lat = latd;
-  this.long = lng;
-  //this.geohsh=str;
-  l1 = this.lat;
-  l2 = this.long;
-  geoP = geo.point(latitude: l1, longitude: l2);
-  convertPlaceId().then((String result) {
-    setState(() {
-      this.addressToPrint = result;
-      print("address to print : ");
-      print(this.addressToPrint);
-    });
-    print("Place's name : ");
-    print(this.placeName);
-    print("addresse : ");
-    print(this.placeAddress);
-  });
-
-}*/
 
   _FavorisTileState(String name , String adr,double lt, double lg, String placeid) {
     this.placeName = name;
@@ -142,7 +118,6 @@ class _FavorisTileState extends State<FavorisTile> {
     this.longitude = lg;
     this.placeId = placeid;
     geoP = geo.point(latitude: lt, longitude: lg);
-    print('HELLOOOOOOOOOOOOOOO $placeAddress, $latitude , $longitude , $placeId');
   }
 
   Future<String> convertPlaceId() async {
@@ -152,8 +127,7 @@ class _FavorisTileState extends State<FavorisTile> {
     this.placeName = "${placeDetail.name}";
     this.placeAddress = "${placeDetail.formattedAddress}";
     String adr = "${placeDetail.name} : ${placeDetail.formattedAddress}";
-    print(
-        "is it what i want ? : ${placeDetail.name}”, “${placeDetail.formattedAddress}");
+
     return adr;
   }
 
@@ -169,9 +143,6 @@ class _FavorisTileState extends State<FavorisTile> {
     "${first.locality} : ${first.subLocality} : ${first.thoroughfare} : ${first.featureName} : ${first.addressLine}";
 
     String adr = "${first.featureName} : ${first.addressLine}";
-    print(addressToPrint);
-    print(
-        "let's see more details: ${first.locality} : ${first.subLocality} : ${first.thoroughfare} ");
 
     return adr;
   }

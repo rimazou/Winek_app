@@ -78,12 +78,8 @@ class controllermap extends ChangeNotifier {
       double lng = detail.result.geometry.location.lng;
 
       var address = await Geocoder.local.findAddressesFromQuery(p.description);
-      //mapController.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-      //mapController.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target: LatLng(lat, lng), zoom: 13.0)));
-      print(lat);
-      print(lng);
     }
   }
 }
@@ -140,8 +136,6 @@ class _HomeState extends State<Home> {
 
       var address = await Geocoder.local.findAddressesFromQuery(p.description);
 
-      print(lat);
-      print(lng);
     }
   }
 
@@ -815,8 +809,6 @@ class _HomeState extends State<Home> {
                       String url;
                       var id = await authService.connectedID();
                       if (id != null) {
-                        print('iiiiid');
-                        print(id);
 
                         String pseudo = await Database().getPseudo(id);
                         await _firestore
@@ -1046,7 +1038,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         vitesse = snapshot.data['vitesse'];
-                                        print('Vitesseeee:$vitesse');
+
 
                                         if (vitesse != 0) {
                                           vite = (vitesse * 3.6).toInt();
@@ -1067,66 +1059,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     },
                                   );
 
-/* membreinfo['vitesse'] = StreamBuilder(
-                                stream: _firestore
-                                    .collection('Utilisateur')
-                                    .document(groupe.membres[i]['id'])
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    print('hasdataa');
-                                    GeoPoint point =
-                                        snapshot.data['location']['geopoint'];
-                                    Position pos = Position(
-                                        latitude: point.latitude,
-                                        longitude: point.longitude);
-                                    print(pos.speedAccuracy);
-                                    print(pos.speed);
-                                    double vitesse = pos.speed;
-                                    return Text(
-                                      '$vitesse m/s',
-                                      style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFFFFFFFF),
-                                      ),
-                                    );
-                                  }
-                                  return Text('');
-                                },
-                              );*/
-/*   membreinfo['vitesse'] = StreamBuilder(
-                                stream: Firestore.instance
-                                    .collection('Utilisateur')
-                                    .document(groupe.membres[i]['id'])
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  GeoPoint point =
-                                      snapshot.data['location']['geopoint'];
-                                  Position pos = new Position(
-                                    latitude: point.latitude,
-                                    longitude: point.longitude,
-                                    speed: 0,
-                                  );
-                                  double vitesse = 30;
-                                  vitesse = (pos.speed);
-                                  print(vitesse);
-                                  return Text(
-                                    '$vitesse km/h',
-                                    overflow: TextOverflow.clip,
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFFFFFFF),
-                                    ),
-                                  );
-                                },
-                              );
-
-                            */
-//membreinfo['temps']
                                   double temps = 0;
                                   dynamic vts = 0;
                                   GeoPoint point;
@@ -1540,20 +1472,14 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               if (p != null) {
                                 PlacesDetailsResponse detail = await _places
                                     .getDetailsByPlaceId(p.placeId);
-                                print(
-                                    'heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeeee');
-                                //var placeId = p.placeId;
+
                                 double lat =
                                     detail.result.geometry.location.lat;
                                 double lng =
                                     detail.result.geometry.location.lng;
-                                //PlanifierArrets().getChanges(context, path);
+
                                 PlanifierArrets()
                                     .addArretsToSubCol(path, lat, lng);
-                                print("arret added");
-                                //PlanifierArrets().getChanges(context, path);
-                                print(lat);
-                                print(lng);
                               }
                               ;
                               }
@@ -4092,7 +4018,7 @@ class ReceivedAlertBubble extends StatelessWidget {
   DateTime date;
   GeoPoint geoPoint;
   Function settingindex = () {
-    print('heeeeeeeeeeeeeeeeeeeeey');
+
   };
 
   ReceivedAlertBubble(
@@ -4341,13 +4267,11 @@ class NotifStream extends StatelessWidget {
         for (var alert in alerts) {
           var id = alert.documentID;
           if (id == _firestore.document(groupPath).documentID) {
-            print('je recupere le just received alerte');
             final groupJRA = alert.data['justReceivedAlert'];
-            print(
-                'justReceived BDD = $groupJRA et le local = $justReceivedAlert');
+
             if (groupJRA != justReceivedAlert) {
               checkSenderUser();
-              print('SENDEEEEEER $notifSender USEEEEER $currentUser');
+
               if (notifSender != currentUser) {
                 valueNotifier.notifyListeners();
               }
@@ -4372,6 +4296,4 @@ Future<void> checkSenderUser() async {
       .getDocuments();
   List<DocumentSnapshot> ggglist = ggg.documents;
   notifSender = ggglist[0].data['sender'];
-  //var cont = ggglist[0].data['']
-  print('le dernier sender de la notif est $notifSender');
 }

@@ -70,7 +70,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           } else {
             online = 'Hors ligne';
           }
-          print(id);
           });
         }
       });
@@ -78,8 +77,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
 
     this.currentName = name;
 
-    print('currentuuuuuuuuuuuuuserrr $currentUser');
-    print('currrrrentnnnnaaaameeeeeeeee  $currentName');
 
     Firestore.instance
         .collection('Utilisateur')
@@ -87,8 +84,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .snapshots()
         .listen((data) {
       data.documents.forEach((doc) {
-        print('heeeeere');
-        print(this.pseudo);
         if (mounted) {
           setState(() {
           mail = doc.data['mail'];
@@ -105,8 +100,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   @override
   void initState() {
     super.initState();
-
-    print('Initstateeeeeee');
 
     userCollection
         .document(currentUser) // id du doc
@@ -252,7 +245,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                     if (changes.document.data["invitation "]
                         .contains(currentName)) // amis*
                         {
-                      print('annuuule invit');
                       if (mounted) {
                         setState(() {
                           who = 'Annuler l\'invitaion';
@@ -262,7 +254,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                     } else if (!amipseudo &&
                         !changes.document.data["invitation "]
                             .contains(currentName)) {
-                      print('ajouuuut');
                       if (mounted) {
                         setState(() {
                           who = 'Ajouter';

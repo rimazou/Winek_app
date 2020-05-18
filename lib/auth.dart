@@ -20,33 +20,6 @@ class AuthService extends ChangeNotifier {
 
   FirebaseUser get loggedIn => _loggedIn;
 
-  /* _signInG() async {
-    try{
-      await _googleSignIn.signIn();
-      GoogleSignInAccount googleUser = await _googleSignIn.signIn() ;
-      GoogleSignInAuthentication googleAuth = await googleUser.authentication ;
-      FirebaseUser user = await _auth.signInWithGoogle(
-        accessToken
-      )
-      setState(() {
-        _isLoggedin=true ;
-        print('vous etes connecte');
-      })
-    }
-    catch(err){
-      print(err);
-    };*/ //on doit avoir stateful widget
-
-  /* _signOutG() async {
-      try{
-        await _googleSignIn.signOut();
-
-      }
-      catch(err){
-        print(err);
-      }
-  }
-*/
   GoogleSignIn get googleSignIn => _googleSignIn;
 
   Firestore get db => _db;
@@ -73,20 +46,6 @@ class AuthService extends ChangeNotifier {
         .snapshots();
   }
 
-  /*Future <String> connectedID() async {
-    // returns null when no user is logged in
-    // print('stratConnectedid');
-    auth.currentUser().then((onValue) {
-      //  print(onValue.email);
-      print(onValue.uid);
-      // print('endConnectedid');
-      return onValue.uid;
-    }).catchError((onError) {
-      //   print('caught error connectedID') ;
-      //   print(onError);
-      print('means none connected');
-    });
-  }*/
   Future<String> connectedID() async {
     final FirebaseUser user = await auth.currentUser();
     if (user == null) {
@@ -121,7 +80,6 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<bool> isLog() async {
-    // returns false when no user is logged in
     var ui = await connectedID();
     if (ui == null) {
       return false;
@@ -156,7 +114,6 @@ class AuthService extends ChangeNotifier {
           if (connected) {
             authService.userRef.document(val).updateData(
                 {'location': geoFirePoint.data, 'vitesse': vitesse});
-            print(geoFirePoint.data.toString());
           }
         });
       } catch (e) {
@@ -170,7 +127,6 @@ class AuthService extends ChangeNotifier {
     DocumentSnapshot querySnapshot =
         await Firestore.instance.collection('UserGrp').document(id).get();
     List<Map<dynamic, dynamic>> groupes = List();
-    print(querySnapshot.data.toString());
     if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
       groupes = List<Map<dynamic, dynamic>>.from(querySnapshot.data['groupes']);
     }
@@ -228,7 +184,6 @@ class AuthService extends ChangeNotifier {
     }).then((result) {
       return true;
     }).catchError((error) {
-      print('Error: $error');
       return false;
     });
   }
@@ -243,7 +198,6 @@ class AuthService extends ChangeNotifier {
         if (doc.data['pseudo'] == pseudo) id = doc.documentID;
       });
     });
-    print(id);
     return id.toString();
   }
 
@@ -337,10 +291,9 @@ class AuthService extends ChangeNotifier {
                 });
             });
           } catch (e) {
-            print(e.toString());
           }
         });
-      } // Fin foooooooooooooooooor
+      }
     });
   }
 }

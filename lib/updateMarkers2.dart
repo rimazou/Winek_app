@@ -7,7 +7,6 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
-import 'auth.dart';
 
 class UpdateMarkers2 extends ChangeNotifier {
   Firestore _firestore = Firestore.instance;

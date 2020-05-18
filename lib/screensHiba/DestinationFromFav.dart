@@ -148,13 +148,7 @@ class _FavorisTile extends State<FavorisTile> {
     convertPlaceId().then((String result) {
       setState(() {
         this.addressToPrint = result;
-        print("address to print : ");
-        print(this.addressToPrint);
       });
-      print("Place's name : ");
-      print(this.placeName);
-      print("addresse : ");
-      print(this.placeAddress);
     });
   }
 
@@ -165,8 +159,7 @@ class _FavorisTile extends State<FavorisTile> {
     this.placeName = "${placeDetail.name}";
     this.placeAddress = "${placeDetail.formattedAddress}";
     String adr = "${placeDetail.name} : ${placeDetail.formattedAddress}";
-    print(
-        "is it what i want ? : ${placeDetail.name}”, “${placeDetail.formattedAddress}");
+
     return adr;
   }
 
@@ -182,9 +175,7 @@ class _FavorisTile extends State<FavorisTile> {
         "${first.locality} : ${first.subLocality} : ${first.thoroughfare} : ${first.featureName} : ${first.addressLine}";
 
     String adr = "${first.featureName} : ${first.addressLine}";
-    print(addressToPrint);
-    print(
-        "let's see more details: ${first.locality} : ${first.subLocality} : ${first.thoroughfare} ");
+
 
     return adr;
   }

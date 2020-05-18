@@ -66,19 +66,7 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
             backgroundColor: Colors.white,
             key: _scaffoldfavKey,
             resizeToAvoidBottomInset: false,
-            /* appBar: AppBar(
-            backgroundColor: Colors.white30,
-            elevation: 0.0,
-            iconTheme: IconThemeData(
-              color: Colors.black54,),
-            actions: <Widget>[ IconButton(
-              onPressed: () {
-               // Navigator.pushNamed(context, FriendRequestListScreen.id);
-              },
-              icon: Icon(Icons.arrow_back),
-              color: Color(0xFF707070),
-              iconSize: 35.0,),],
-          ),*/
+
             body: Center(
               child: Column(
                 children: <Widget>[
@@ -159,24 +147,15 @@ class _FavoritePlacesScreenState extends State<FavoritePlacesScreen> {
 Future<Null> displayPrediction(Prediction p) async {
   if (p != null) {
     PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
-    //final placeDetail=p.result;
     var placeId = p.placeId;
     String placeIdToString = "$placeId";
-    //DataBaseFavoris().favorisIdUpdateData(placeIdToString);
-    print('Place id : $placeId');
+
 
     double lat = detail.result.geometry.location.lat;
     double lng = detail.result.geometry.location.lng;
-    //stockage du geopoint dans la bdd champs "favoris"
     Geoflutterfire g = Geoflutterfire();
     GeoFirePoint gp = g.point(latitude: lat, longitude: lng);
     DataBaseFavoris().favorisUpdateData(gp, placeIdToString);
-    /* mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target:
-          LatLng(lat,lng),
-          zoom: 14.0)));*/
-    print(lat);
-    print(lng);
   }
 }
 
