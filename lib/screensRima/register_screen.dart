@@ -760,8 +760,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         authService.getUserLocation();
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.uid);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ProfileScreen(myUser)));
+        Navigator.pushReplacementNamed(context, Home.id);
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(myUser)));
       } else {
         print('failed google authetication');
       }

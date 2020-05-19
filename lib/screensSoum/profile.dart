@@ -10,7 +10,6 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 
-
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class ProfileScreen2 extends StatefulWidget {
@@ -49,7 +48,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
   bool invit = false;
 
   final CollectionReference userCollection =
-  Firestore.instance.collection('Utilisateur');
+      Firestore.instance.collection('Utilisateur');
 
   _ProfileScreen2State(
       {Map friend, String pseudo, String currentUser, String name}) {
@@ -65,19 +64,18 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       for (var doc in data.documents) {
         if (mounted) {
           setState(() {
-          this.id = doc.documentID;
-          if (doc.data['connecte'] == true) {
-            online = 'En ligne';
-          } else {
-            online = 'Hors ligne';
-          }
+            this.id = doc.documentID;
+            if (doc.data['connecte'] == true) {
+              online = 'En ligne';
+            } else {
+              online = 'Hors ligne';
+            }
           });
         }
       } //);
     });
 
     this.currentName = name;
-
 
     Firestore.instance
         .collection('Utilisateur')
@@ -88,12 +86,12 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       for (var doc in data.documents) {
         if (mounted) {
           setState(() {
-          mail = doc.data['mail'];
-          phone = doc.data['tel'];
-          if (phone == null) {
-            phone = 'aucun numero';
-          }
-        });
+            mail = doc.data['mail'];
+            phone = doc.data['tel'];
+            if (phone == null) {
+              phone = 'aucun numero';
+            }
+          });
         }
       } //);
     });
@@ -146,28 +144,30 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               if (friendpseudo != null) {
                 for (var map in friendpseudo) {
                   if (map["id"] == currentUser) {
-                    setState(() {
-                      who = 'Supprimer';
-                      size = responsivewidth(100);
-                      amipseudo = true;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        who = 'Supprimer';
+                        size = responsivewidth(100);
+                        amipseudo = true;
+                      });
+                    }
                   }
                 }
               }
               if (doc.data["invitation "].contains(currentName)) // amis*
-                  {
+              {
                 if (mounted) {
                   setState(() {
-                  who = 'Annuler l\'invitaion';
-                  size = responsivewidth(80);
+                    who = 'Annuler l\'invitaion';
+                    size = responsivewidth(80);
                   });
                 }
               } else if (!amipseudo &&
                   !doc.data["invitation "].contains(currentName)) {
                 if (mounted) {
                   setState(() {
-                  who = 'Ajouter';
-                  size = responsivewidth(100);
+                    who = 'Ajouter';
+                    size = responsivewidth(100);
                   });
                 }
               }
@@ -201,7 +201,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         }
       } //);
     });
-    if (!invit) { //todo
+    if (!invit) {
+      //todo
       Firestore.instance
           .collection('Utilisateur')
           .where("pseudo", isEqualTo: currentName)
@@ -231,7 +232,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               Firestore.instance
                   .collection('Utilisateur')
                   .where("pseudo", isEqualTo: pseudo)
-              //  .limit(1)
+                  //  .limit(1)
                   .snapshots()
                   .listen((data) {
                 //   data.documentChanges.forEach((changes) {
@@ -255,7 +256,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
 
                     if (changes.document.data["invitation "]
                         .contains(currentName)) // amis*
-                        {
+                    {
                       if (mounted) {
                         setState(() {
                           who = 'Annuler l\'invitaion';
@@ -299,13 +300,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-
     ));
   }
 
-
   Widget getButton() {
-
     if (pseudo == currentName) {
       return Container();
     }
@@ -331,134 +329,142 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       color: Color(0xff707070),
                     ),
                   ),
-                ),),
+                ),
+              ),
               Row(
                 children: <Widget>[
-
-                  Flexible(child: Container(
-                    height: responsiveheight(40.0),
-                    width: responsivewidth(110.0),
-                    child: MaterialButton(
-                        child: Center(
-                          child: Text(
-                            'Accepter',
-                            style: TextStyle(
-                              fontFamily: 'montserrat',
-                              fontSize: responsivetext(14),
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                  Flexible(
+                    child: Container(
+                      height: responsiveheight(40.0),
+                      width: responsivewidth(110.0),
+                      child: MaterialButton(
+                          child: Center(
+                            child: Text(
+                              'Accepter',
+                              style: TextStyle(
+                                fontFamily: 'montserrat',
+                                fontSize: responsivetext(14),
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),),
-                        onPressed: () async {
-                          try {
-                            final result = await InternetAddress.lookup(
-                                'google.com');
-                            var result2 = await Connectivity()
-                                .checkConnectivity();
-                            var b = (result2 != ConnectivityResult.none);
+                          ),
+                          onPressed: () async {
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
 
-                            if (b && result.isNotEmpty &&
-                                result[0].rawAddress.isNotEmpty) {
-                              if (tap) {
-                                setState(() {
-                                  tap = false;
-                                });
-                                Database d = await Database().init(
-                                    pseudo: pseudo,
-                                    subipseudo: currentName,
-                                    currentid: currentUser);
-                                await d.userUpdateData();
-                                Database c = await Database().init(
-                                    id: currentUser,
-                                    subipseudo: pseudo,
-                                    currentid: currentUser);
-                                await c.userUpdateData();
-                                await Database(pseudo: pseudo)
-                                    .userDeleteData(currentUser);
-                                setState(() {
-                                  invit = false;
-                                  size = responsivewidth(100);
-                                  who = "Supprimer";
-                                  tap = true;
-                                });
-                                _showSnackBar(
-                                    'vous et $pseudo êtes désormais amis!',
-                                    context);
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                if (tap) {
+                                  setState(() {
+                                    tap = false;
+                                  });
+                                  Database d = await Database().init(
+                                      pseudo: pseudo,
+                                      subipseudo: currentName,
+                                      currentid: currentUser);
+                                  await d.userUpdateData();
+                                  Database c = await Database().init(
+                                      id: currentUser,
+                                      subipseudo: pseudo,
+                                      currentid: currentUser);
+                                  await c.userUpdateData();
+                                  await Database(pseudo: pseudo)
+                                      .userDeleteData(currentUser);
+                                  setState(() {
+                                    invit = false;
+                                    size = responsivewidth(100);
+                                    who = "Supprimer";
+                                    tap = true;
+                                  });
+                                  _showSnackBar(
+                                      'vous et $pseudo êtes désormais amis!',
+                                      context);
+                                }
                               }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet', context);
                             }
-                          } on SocketException catch (_) {
-                            _showSnackBar(
-                                'Vérifiez votre connexion internet', context);
-                          }
-                        }),
-                    decoration: BoxDecoration(
-                      color: Color(0xff389490),
-                      border: Border.all(
+                          }),
+                      decoration: BoxDecoration(
                         color: Color(0xff389490),
-                        width: 3,
+                        border: Border.all(
+                          color: Color(0xff389490),
+                          width: 3,
+                        ),
+                        borderRadius:
+                            BorderRadius.circular(responsiveradius(20, 1)),
                       ),
-                      borderRadius: BorderRadius.circular(
-                          responsiveradius(20, 1)),
                     ),
-                  ),),
+                  ),
                   SizedBox(
                     width: responsivewidth(10),
                   ),
-                  Flexible(child: Container(
-                    height: responsiveheight(40.0),
-                    width: responsivewidth(110.0),
-                    child: MaterialButton(
-                        child: Center(
-                          child: Text(
-                            'Refuser',
-                            style: TextStyle(
-                              fontFamily: 'montserrat',
-                              fontSize: responsivetext(14),
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                  Flexible(
+                    child: Container(
+                      height: responsiveheight(40.0),
+                      width: responsivewidth(110.0),
+                      child: MaterialButton(
+                          child: Center(
+                            child: Text(
+                              'Refuser',
+                              style: TextStyle(
+                                fontFamily: 'montserrat',
+                                fontSize: responsivetext(14),
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),),
-                        onPressed: () async {
-                          try {
-                            final result = await InternetAddress.lookup(
-                                'google.com');
-                            var result2 = await Connectivity()
-                                .checkConnectivity();
-                            var b = (result2 != ConnectivityResult.none);
+                          ),
+                          onPressed: () async {
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              var result2 =
+                                  await Connectivity().checkConnectivity();
+                              var b = (result2 != ConnectivityResult.none);
 
-                            if (b && result.isNotEmpty &&
-                                result[0].rawAddress.isNotEmpty) {
-                              if (tap) {
-                                setState(() {
-                                  tap = false;
-                                });
-                                await Database(pseudo: pseudo).userDeleteData(
-                                    currentUser);
-                                setState(() {
-                                  invit = false;
-                                  size = responsivewidth(100);
-                                  who = "Ajouter";
-                                  tap = true;
-                                });
-                                _showSnackBar(
-                                    'Invitation supprimée !', context);
+                              if (b &&
+                                  result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                if (tap) {
+                                  setState(() {
+                                    tap = false;
+                                  });
+                                  await Database(pseudo: pseudo)
+                                      .userDeleteData(currentUser);
+                                  setState(() {
+                                    invit = false;
+                                    size = responsivewidth(100);
+                                    who = "Ajouter";
+                                    tap = true;
+                                  });
+                                  _showSnackBar(
+                                      'Invitation supprimée !', context);
+                                }
                               }
+                            } on SocketException catch (_) {
+                              _showSnackBar(
+                                  'Vérifiez votre connexion internet', context);
                             }
-                          } on SocketException catch (_) {
-                            _showSnackBar(
-                                'Vérifiez votre connexion internet', context);
-                          }
-                        }),
-                    decoration: BoxDecoration(
-                      color: Colors.red[400],
-                      border: Border.all(
+                          }),
+                      decoration: BoxDecoration(
                         color: Colors.red[400],
-                        width: 3,
+                        border: Border.all(
+                          color: Colors.red[400],
+                          width: 3,
+                        ),
+                        borderRadius:
+                            BorderRadius.circular(responsiveradius(20, 1)),
                       ),
-                      borderRadius: BorderRadius.circular(
-                          responsiveradius(20, 1)),
                     ),
-                  ),),
+                  ),
                 ],
               ),
             ],
@@ -493,7 +499,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),
-              ),),
+              ),
+            ),
             onPressed: () async {
               try {
                 final result = await InternetAddress.lookup('google.com');
@@ -528,8 +535,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       } else {
                         // if who=supprimer
 
-                        await Database(pseudo: pseudo).friendDeleteData(currentUser);
-                        await Database(pseudo: currentName).friendDeleteData(id);
+                        await Database(pseudo: pseudo)
+                            .friendDeleteData(currentUser);
+                        await Database(pseudo: currentName)
+                            .friendDeleteData(id);
                         setState(() {
                           who = "Ajouter";
                           size = responsivewidth(100);
@@ -537,7 +546,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                         });
                         _showSnackBar('Ami supprimé !', context);
                       }
-
                     }
                   }
                 }
@@ -599,6 +607,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -625,7 +634,6 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-
                         height: responsiveheight(140),
                       ),
                       Container(
@@ -663,7 +671,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff707070),
                                 ),
-                              ),),
+                              ),
+                            ),
                             SizedBox(
                               height: responsiveheight(26),
                             ),
@@ -679,7 +688,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xff000000),
                                 ),
-                              ),),
+                              ),
+                            ),
                             SizedBox(
                               height: responsiveheight(23),
                             ),
@@ -695,7 +705,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),
                                 ),
-                              ),),
+                              ),
+                            ),
                             SizedBox(
                               height: responsiveheight(23),
                             ),
@@ -711,7 +722,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),
                                 ),
-                              ),),
+                              ),
+                            ),
                           ],
                         ),
 
@@ -727,8 +739,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               blurRadius: responsiveradius(20.0, 1),
                             ),
                           ],
-                          borderRadius: BorderRadius.circular(responsiveradius(
-                              20, 1)),
+                          borderRadius:
+                              BorderRadius.circular(responsiveradius(20, 1)),
                         ),
                       ),
                     ],
@@ -752,8 +764,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               color: Colors.grey[300],
                               width: 3,
                             ),
-                            borderRadius: BorderRadius.circular(
-                                responsiveradius(20, 1)),
+                            borderRadius:
+                                BorderRadius.circular(responsiveradius(20, 1)),
                             boxShadow: [
                               new BoxShadow(
                                 color: Colors.grey[200],
