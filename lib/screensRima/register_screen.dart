@@ -25,7 +25,7 @@ import 'package:password_strength/password_strength.dart';
 import 'package:winek/UpdateMarkers.dart';
 import 'package:path/path.dart' as p;
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldregKey = new GlobalKey<ScaffoldState>();
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'register';
@@ -62,7 +62,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             print('press Ok on SnackBar');
           }),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    _scaffoldregKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -70,12 +70,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (loading) {
       return Center(
           child: SpinKitChasingDots(
-            color: Color(0XFF389490),
-          ));
+        color: Color(0XFF389490),
+      ));
     } else {
       return SafeArea(
         child: Scaffold(
-          key: _scaffoldKey,
+          key: _scaffoldregKey,
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           appBar: PreferredSize(
@@ -142,8 +142,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   child: Container(
                                     height: responsiveheight(50),
                                     child: TextField(
-
-
                                       onChanged: (value) {
                                         pseudo = value;
                                         pseudoExist();
@@ -165,7 +163,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             fontWeight: FontWeight.bold),
                                         contentPadding: EdgeInsets.symmetric(
                                           vertical: responsiveheight(10.0),
-                                          horizontal: responsivewidth(20.0),),
+                                          horizontal: responsivewidth(20.0),
+                                        ),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
@@ -194,7 +193,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: responsivewidth(20),),
+                                    horizontal: responsivewidth(20),
+                                  ),
                                   child: Container(
                                     height: responsiveheight(50),
                                     child: TextField(
@@ -205,7 +205,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           !Validator.email(email)
                                               ? errMl = null
                                               : errMl =
-                                          "Veuillez introduire une adresse valide";
+                                                  "Veuillez introduire une adresse valide";
                                           mailExist();
                                         });
                                       },
@@ -254,7 +254,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: responsivewidth(20),),
+                                    horizontal: responsivewidth(20),
+                                  ),
                                   child: Container(
                                     height: responsiveheight(50),
                                     child: TextField(
@@ -264,12 +265,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           !Validator.number(tel)
                                               ? errTel = null
                                               : errTel =
-                                          'Veuillez entrer un numero';
+                                                  'Veuillez entrer un numero';
                                         });
                                       },
                                       textAlign: TextAlign.center,
                                       keyboardType:
-                                      TextInputType.numberWithOptions(),
+                                          TextInputType.numberWithOptions(),
                                       style: TextStyle(
                                         color: Colors.black87,
                                         fontFamily: 'Montserrat',
@@ -314,7 +315,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: responsivewidth(20),),
+                                    horizontal: responsivewidth(20),
+                                  ),
                                   child: Container(
                                     height: responsiveheight(50),
                                     child: TextField(
@@ -323,7 +325,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         setState(() {
                                           pwd = value;
                                           double strength =
-                                          estimatePasswordStrength(pwd);
+                                              estimatePasswordStrength(pwd);
 
                                           if (strength < 0.3) {
                                             errPwd = 'Mot de passe faible';
@@ -379,11 +381,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: responsivewidth(20),),
+                                    horizontal: responsivewidth(20),
+                                  ),
                                   child: Container(
                                     height: responsiveheight(50),
                                     child: TextField(
-                                      // obscureText: true,
+                                        // obscureText: true,
                                         autocorrect: false,
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
@@ -399,7 +402,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         ),
                                         decoration: InputDecoration(
                                           labelText:
-                                          'Confirmer le mot de passe',
+                                              'Confirmer le mot de passe',
                                           errorText: errPw,
                                           errorStyle: TextStyle(
                                               fontFamily: 'Montserrat',
@@ -480,7 +483,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: Material(
                               color: Colors.white,
                               borderRadius:
-                              BorderRadius.all(Radius.circular(30.0)),
+                                  BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
                                 minWidth: responsivewidth(140),
@@ -491,7 +494,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
                                     var b =
-                                    (result2 != ConnectivityResult.none);
+                                        (result2 != ConnectivityResult.none);
 
                                     if (b &&
                                         result.isNotEmpty &&
@@ -506,7 +509,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 height: responsiveheight(50),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Container(
                                         height: responsiveheight(50),
@@ -526,13 +529,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
                             child: Material(
                               color: Color(0XFF389490), //vert
                               borderRadius:
-                              BorderRadius.all(Radius.circular(30.0)),
+                                  BorderRadius.all(Radius.circular(30.0)),
                               elevation: 5.0,
                               child: MaterialButton(
                                 onPressed: () async {
@@ -542,7 +544,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     var result2 = await Connectivity()
                                         .checkConnectivity();
                                     var b =
-                                    (result2 != ConnectivityResult.none);
+                                        (result2 != ConnectivityResult.none);
 
                                     if (b &&
                                         result.isNotEmpty &&
@@ -572,10 +574,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     Positioned(
                       top: responsiveheight(120),
-                      left: (MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.5) -
+                      left: (MediaQuery.of(context).size.width * 0.5) -
                           responsivewidth(47) * 0.5 +
                           responsiveheight(100) * 0.5,
                       // left: responsivewidth(203),
@@ -595,8 +594,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   offset: Offset(responsivewidth(0.0),
                                       responsiveheight(0.75))),
                             ],
-                            borderRadius: BorderRadius.circular(
-                                responsiveradius(50, 1))),
+                            borderRadius:
+                                BorderRadius.circular(responsiveradius(50, 1))),
                         child: Padding(
                           padding: EdgeInsets.all(responsivewidth(0.1)),
                           child: IconButton(
@@ -607,9 +606,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             onPressed: () async {
                               try {
                                 final result =
-                                await InternetAddress.lookup('google.com');
+                                    await InternetAddress.lookup('google.com');
                                 var result2 =
-                                await Connectivity().checkConnectivity();
+                                    await Connectivity().checkConnectivity();
                                 var b = (result2 != ConnectivityResult.none);
 
                                 if (b &&
@@ -626,13 +625,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               }
                             },
                             // uploadFile();
-
                           ),
                         ),
                       ),
                     ),
-
-
                     SizedBox(
                       height: responsiveheight(50),
                     ),
@@ -687,19 +683,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_uploadedFileURL != null) {
       return Center(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(17.0),
-            child: Image.network(
-              _uploadedFileURL,
-              height: 100.0,
-              gaplessPlayback: true,
-              fit: BoxFit.fill,
-            ),
-          ));
+        borderRadius: BorderRadius.circular(17.0),
+        child: Image.network(
+          _uploadedFileURL,
+          height: 100.0,
+          gaplessPlayback: true,
+          fit: BoxFit.fill,
+        ),
+      ));
     } else {
       return Center(
           child: SpinKitChasingDots(
-            color: Color(0XFF3B466B),
-          ));
+        color: Color(0XFF3B466B),
+      ));
       /*ListView( //photos
             children: <Widget>[
               SizedBox(
@@ -718,9 +714,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Future<String> _registerWithGoogle() async {
     try {
       final GoogleSignInAccount googleUser =
-      await authService.googleSignIn.signIn();
+          await authService.googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -738,7 +734,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
       GeoFirePoint pt =
-      geo.point(latitude: lt.latitude, longitude: lt.longitude);
+          geo.point(latitude: lt.latitude, longitude: lt.longitude);
       if (user != null) {
         var pic =
             'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
@@ -770,11 +766,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         print('failed google authetication');
       }
     } catch (e) {
-      showSnackBar(
-          "Une erreur s'est produite, veuillez reessayer", context);
+      print(e.toString());
+      showSnackBar("Une erreur s'est produite, veuillez reessayer", context);
     }
   }
 
+  showSnackBar(String value, BuildContext context) {
+    _scaffoldregKey.currentState.showSnackBar(SnackBar(
+      content: new Text(
+        value,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600),
+      ),
+      duration: new Duration(seconds: 2),
+      //backgroundColor: Colors.green,
+    ));
+  }
+
+/*
   showSnackBar(String value, BuildContext context) {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(SnackBar(
@@ -795,7 +807,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           }),
     ));
   }
-
+*/
   Future _createUser() async {
     try {
       setState(() {
@@ -804,7 +816,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       Geoflutterfire geo = Geoflutterfire();
       LatLng lt = new LatLng(36.7525000, 3.0419700);
       GeoFirePoint pt =
-      geo.point(latitude: lt.latitude, longitude: lt.longitude);
+          geo.point(latitude: lt.latitude, longitude: lt.longitude);
       final newUser = await authService.auth
           .createUserWithEmailAndPassword(email: email, password: pwd);
       if (newUser != null) {
@@ -828,7 +840,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(newUser.user.uid);
         Navigator.pushReplacementNamed(context, Home.id);
-
       } else {
         setState(() {
           loading = false;
@@ -853,8 +864,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             loading = false;
           });
           showSnackBar('Mot de passe faible', context);
-        }
-        else {
+        } else {
           setState(() {
             loading = false;
           });
@@ -882,26 +892,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     File cropped;
     try {
       _image = await ImagePicker.pickImage(source: source);
-    if (_image != null) {
-      cropped = await ImageCropper.cropImage(
-        sourcePath: _image.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-        compressQuality: 100,
-        maxHeight: 110,
-        maxWidth: 110,
-        compressFormat: ImageCompressFormat.jpg,
-        androidUiSettings: AndroidUiSettings(
-            toolbarTitle: 'Rogner',
-            toolbarColor: Color(0XFF389490), //vert
-            statusBarColor: Colors.white,
-            backgroundColor: Colors.white),
-      );
-    }
-
-    }
-    catch (e) {
-      showSnackBar(
-          "Une erreur s'est produite, veuillez reessayer", context);
+      if (_image != null) {
+        cropped = await ImageCropper.cropImage(
+          sourcePath: _image.path,
+          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+          compressQuality: 100,
+          maxHeight: 110,
+          maxWidth: 110,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+              toolbarTitle: 'Rogner',
+              toolbarColor: Color(0XFF389490), //vert
+              statusBarColor: Colors.white,
+              backgroundColor: Colors.white),
+        );
+      }
+    } catch (e) {
+      showSnackBar("Une erreur s'est produite, veuillez reessayer", context);
     }
     if (cropped != null) {
       setState(() {
@@ -912,26 +919,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .ref()
         .child('photos/${p.basename(cropped.path)}}');
     _uploadedFileURL =
-    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+        'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
 
     if (_image != null) {
       try {
         StorageUploadTask uploadTask = storageReference.putFile(_image);
-      await uploadTask.onComplete;
-      storageReference.getDownloadURL().then((fileURL) {
-        setState(() {
-          _uploadedFileURL = fileURL;
+        await uploadTask.onComplete;
+        storageReference.getDownloadURL().then((fileURL) {
+          setState(() {
+            _uploadedFileURL = fileURL;
+          });
         });
-      });
       } catch (e) {
-        showSnackBar(
-            "Une erreur s'est produite, veuillez reessayer", context);
+        showSnackBar("Une erreur s'est produite, veuillez reessayer", context);
       }
-    }
-    else {
+    } else {
       setState(() {
         _uploadedFileURL =
-        'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+            'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
       });
     }
   }
@@ -947,8 +952,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       setState(() {
         errPs = 'Ce pseudo est deja pris';
       });
-      showSnackBar(
-          errPs, context);
+      showSnackBar(errPs, context);
     } else {
       setState(() {
         errPs = null;
@@ -967,8 +971,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       setState(() {
         errMl = 'Cet email est deja pris';
       });
-      showSnackBar(
-          errMl, context);
+      showSnackBar(errMl, context);
     } else {
       setState(() {
         errMl = null;
@@ -1027,7 +1030,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       content: Text(message),
       backgroundColor: Colors.white,
       shape:
-      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
       actions: [
         GalleryButton,
         CameraButton,

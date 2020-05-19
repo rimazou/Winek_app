@@ -24,6 +24,10 @@ class ListGrpPage extends StatefulWidget {
   static String id = 'list_grp';
 }
 
+void spinner() {
+  _loading = !_loading;
+}
+
 class _ListGrpPageState extends State<ListGrpPage> {
   @override
   void initState() {
@@ -42,9 +46,7 @@ class _ListGrpPageState extends State<ListGrpPage> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-
-    )
-    );
+    ));
   }
 
   @override
@@ -107,16 +109,15 @@ class _ListGrpPageState extends State<ListGrpPage> {
               Container(
                 width: responsivewidth(350),
                 height: responsiveheight(390),
-                padding: EdgeInsets.symmetric(horizontal: responsivewidth(10),
+                padding: EdgeInsets.symmetric(
+                    horizontal: responsivewidth(10),
                     vertical: responsiveheight(10)),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
                   color: Color.fromRGBO(59, 70, 107, 0.3),
                 ),
                 child: Groupeprovider(() {
-                  setState(() {
-                    _loading = !_loading;
-                  });
+                  spinner();
                 }),
               ),
               Spacer(
@@ -281,7 +282,6 @@ class grpTile extends StatelessWidget {
                   return doc.data['pseudo'];
                 });
 
-
                 Groupe g = Voyage();
                 if (grp_chemin.startsWith('Voyage')) {
                   await Firestore.instance
@@ -392,7 +392,6 @@ Future<List<Map<dynamic, dynamic>>> getListGroupes() async {
       await Firestore.instance.collection('UserGrp').document(user['id']).get();
 
   if (querySnapshot.exists && querySnapshot.data.containsKey('groupes')) {
-
     return List<Map<dynamic, dynamic>>.from(querySnapshot.data['groupes']);
   }
   return [];
