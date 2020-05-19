@@ -8,7 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:257066921106:android:aff438ddcfa9e01fc28a4b",
+        "mobilesdk_app_id": "1:257066921106:android:f50c7c64fc5b5410c28a4b",
         "android_client_info": {
           "package_name": "com.equipe7.winek"
         }
@@ -110,6 +110,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "257066921106-d6pa98n1mgi0h90fs6ou2r2abroepli2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.winek",
+            "certificate_hash": "a6ca84b86f169c9d0a40501761b8d337f274090f"
+          }
+        },
+        {
           "client_id": "257066921106-1s9qk5ussb3f5moceu45s2so3904leaa.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -172,35 +180,6 @@
         "mobilesdk_app_id": "1:257066921106:android:ba7954f5883b5a1cc28a4b",
         "android_client_info": {
           "package_name": "com.example.winekapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "257066921106-kjsjlefeoe4krafkdq0u9e7fjci9amto.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAiQH89tYyL7OIeip-9GoymqBNqWy-DJW8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "257066921106-kjsjlefeoe4krafkdq0u9e7fjci9amto.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:257066921106:android:b0934d9f0f4bd6c6c28a4b",
-        "android_client_info": {
-          "package_name": "com.retroportalstudio.www.flutter_maps"
         }
       },
       "oauth_client": [

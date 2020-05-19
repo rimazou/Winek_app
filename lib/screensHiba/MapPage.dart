@@ -4284,9 +4284,12 @@ class NotifStream extends StatelessWidget {
             final groupJRA = alert.data['justReceivedAlert'];
 
             if (groupJRA != justReceivedAlert) {
+              notifSender = 'vide';
+
               checkSenderUser();
 
               if ((notifSender != currentUser) || (notifSender != 'vide')) {
+
                 valueNotifier.notifyListeners();
               }
               justReceivedAlert = groupJRA;
@@ -4303,7 +4306,6 @@ class NotifStream extends StatelessWidget {
 String notifSender;
 
 Future<void> checkSenderUser() async {
-  notifSender = 'vide';
   await _firestore
       .document(groupPath)
       .collection("receivedAlerts")
