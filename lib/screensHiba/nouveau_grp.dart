@@ -431,8 +431,7 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
-    )
-    );
+    ));
   }
 
   Widget build(BuildContext context) {
@@ -547,12 +546,12 @@ class _NvVoyagePageState extends State<NvVoyagePage> {
                     iconSize: 20,
                   ),
                   IconButton(
-                    onPressed: () {
-                      setState(() async {
-                        _destination = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GetDestination()));
+                    onPressed: () async {
+                      _destination = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GetDestination()));
+                      setState(() {
                         _destinationAdr = _destination['adresse'];
                       });
                     },
@@ -798,7 +797,6 @@ Future<List<Map<dynamic, dynamic>>> getlistfreind() async {
       .then((DocumentSnapshot doc) {
     friendsid = List<Map>.from(doc.data['amis']);
   });
-
 
   return friendsid;
 }

@@ -1,4 +1,3 @@
-
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart' as coord;
@@ -11,7 +10,7 @@ import 'dart:io';
 import 'package:winek/dataBaseDounia.dart';
 
 GoogleMapsPlaces _places =
-GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
+    GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
 
 class FavorisList extends StatefulWidget {
   @override
@@ -23,18 +22,15 @@ class _FavorisListState extends State<FavorisList> {
   String placeName = "  ";
   String placeAddress = "  ";
 
-  Future<Map<dynamic,dynamic>> getplace (String placeid) async {
-    PlacesDetailsResponse place =
-    await _places.getDetailsByPlaceId(placeid);
+  Future<Map<dynamic, dynamic>> getplace(String placeid) async {
+    PlacesDetailsResponse place = await _places.getDetailsByPlaceId(placeid);
     final placeDetail = place.result;
     this.placeName = "${placeDetail.name}";
     this.placeAddress = "${placeDetail.formattedAddress}";
-    Map map ={'name': placeName , 'adr': placeAddress};
+    Map map = {'name': placeName, 'adr': placeAddress};
 
     return map;
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,39 +47,47 @@ class _FavorisListState extends State<FavorisList> {
       itemCount: count,
       itemBuilder: (context, index) {
         return FutureBuilder(
-          future: getplace(favoris[index]['placeid']) ,
-          builder: (BuildContext context,AsyncSnapshot snapshot) {
+          future: getplace(favoris[index]['placeid']),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
-              case ConnectionState.waiting: return new Text('Loading....');
+              case ConnectionState.waiting:
+                return new Text('Loading....');
               default:
                 if (snapshot.hasError)
                   return new Text('Error: ${snapshot.error}');
                 else {
-                  var map = snapshot.data ?? {'name': 'hello' , 'adr': 'hiii'};
-                  return FavorisTile(map['name'],map['adr'],favoris[index]['latitude'], favoris[index]['longitude'], favoris[index]['placeid']
-                  );}}},);
+                  var map = snapshot.data ?? {'name': ' ', 'adr': ' '};
+                  return FavorisTile(
+                      map['name'],
+                      map['adr'],
+                      favoris[index]['latitude'],
+                      favoris[index]['longitude'],
+                      favoris[index]['placeid']);
+                }
+            }
+          },
+        );
       },
-    );}
-
+    );
+  }
 }
 
-
 class FavorisTile extends StatefulWidget {
-  String name ;
-  String adr ;
+  String name;
+  String adr;
   double latitude;
   double longitude;
-  String placeId ;
-  FavorisTile(String name , String adr ,double lt, double lg, String placeid) {
-    this.name = name ;
-    this.adr =adr ;
+  String placeId;
+  FavorisTile(String name, String adr, double lt, double lg, String placeid) {
+    this.name = name;
+    this.adr = adr;
     this.latitude = lt;
     this.longitude = lg;
     this.placeId = placeid;
-
   }
   @override
-  _FavorisTileState createState() => _FavorisTileState(name , adr,latitude, longitude,placeId);
+  _FavorisTileState createState() =>
+      _FavorisTileState(name, adr, latitude, longitude, placeId);
 }
 
 class _FavorisTileState extends State<FavorisTile> {
@@ -99,10 +103,10 @@ class _FavorisTileState extends State<FavorisTile> {
   String geohsh;
   double latitude;
   double longitude;
-  String placeId ;
+  String placeId;
   @override
-
-  _FavorisTileState(String name , String adr,double lt, double lg, String placeid) {
+  _FavorisTileState(
+      String name, String adr, double lt, double lg, String placeid) {
     this.placeName = name;
     this.placeAddress = adr;
     this.latitude = lt;
@@ -113,7 +117,7 @@ class _FavorisTileState extends State<FavorisTile> {
 
   Future<String> convertPlaceId() async {
     PlacesDetailsResponse place =
-    await _places.getDetailsByPlaceId(this.placeId);
+        await _places.getDetailsByPlaceId(this.placeId);
     final placeDetail = place.result;
     this.placeName = "${placeDetail.name}";
     this.placeAddress = "${placeDetail.formattedAddress}";
@@ -125,12 +129,12 @@ class _FavorisTileState extends State<FavorisTile> {
   Future<String> convertLatLong() async {
     final coordinates = new coord.Coordinates(this.lat, this.long);
     final addresses = await coord.Geocoder.google(
-        "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
-        language: "fr")
+            "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg",
+            language: "fr")
         .findAddressesFromCoordinates(coordinates);
     final first = addresses.first;
     this.addressToPrint =
-    "${first.locality} : ${first.subLocality} : ${first.thoroughfare} : ${first.featureName} : ${first.addressLine}";
+        "${first.locality} : ${first.subLocality} : ${first.thoroughfare} : ${first.featureName} : ${first.addressLine}";
 
     String adr = "${first.featureName} : ${first.addressLine}";
 
@@ -150,9 +154,11 @@ class _FavorisTileState extends State<FavorisTile> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
 
@@ -160,31 +166,29 @@ class _FavorisTileState extends State<FavorisTile> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title:   Text(
+        title: Text(
           placeName,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize:responsivetext(12) ,
+            fontSize: responsivetext(12),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             //color: Color(0xff707070),
             color: Color(0xff5B5050),
           ),
         ),
-
         subtitle: Text(
           placeAddress,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize:responsivetext(10) ,
+            fontSize: responsivetext(10),
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             //color: Color(0xff707070),
             color: Color(0xff5B5050),
           ),
         ),
-
-        leading:  Icon(
+        leading: Icon(
           Icons.place,
           color: Color(0xff3B466B),
           size: responsivewidth(30),
@@ -197,8 +201,8 @@ class _FavorisTileState extends State<FavorisTile> {
               var b = (result2 != ConnectivityResult.none);
 
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
-                await DataBaseFavoris().favorisDeleteData(this.geoP, this.placeId);
+                await DataBaseFavoris()
+                    .favorisDeleteData(this.geoP, this.placeId);
               }
             } on SocketException catch (_) {
               _showSnackBar('Vérifiez votre connexion internet', context);
@@ -210,6 +214,5 @@ class _FavorisTileState extends State<FavorisTile> {
         ),
       ),
     );
-
   }
 }

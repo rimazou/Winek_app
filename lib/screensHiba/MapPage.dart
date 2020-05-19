@@ -1038,7 +1038,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         vitesse = snapshot.data['vitesse'];
-
                                         if (vitesse != 0) {
                                           vite = (vitesse * 3.6).toInt();
                                         } else {
@@ -1054,7 +1053,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                           ),
                                         );
                                       }
-                                      return Text('');
+                                      return Container();
                                     },
                                   );
 
@@ -1072,32 +1071,36 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                           .document(groupe.membres[i]['id'])
                                           .snapshots(),
                                       builder: (context, snapshot) {
-                                        vts = snapshot.data['vitesse'];
-                                        if (vts != 0) {
-                                          point = snapshot.data['location']
-                                              ['geopoint'];
-                                          distance = Provider.of<UpdateMarkers>(
-                                                  context,
-                                                  listen: false)
-                                              .calculateDistance(
-                                                  point.latitude,
-                                                  point.longitude,
-                                                  groupe.destination_latitude,
-                                                  groupe.destination_longitude);
-                                          temps = (distance * 1000) / vts;
-                                          t = temps / 60;
-                                          heure = (t ~/ 60).toInt();
-                                          min = (t % 60).toInt();
+                                        if (snapshot.hasData) {
+                                          vts = snapshot.data['vitesse'];
+                                          if (vts != 0) {
+                                            point = snapshot.data['location']
+                                                ['geopoint'];
+                                            distance = Provider.of<
+                                                        UpdateMarkers>(context,
+                                                    listen: false)
+                                                .calculateDistance(
+                                                    point.latitude,
+                                                    point.longitude,
+                                                    groupe.destination_latitude,
+                                                    groupe
+                                                        .destination_longitude);
+                                            temps = (distance * 1000) / vts;
+                                            t = temps / 60;
+                                            heure = (t ~/ 60).toInt();
+                                            min = (t % 60).toInt();
+                                          }
+                                          return Text(
+                                            '$heure h $min min',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                          );
                                         }
-                                        return Text(
-                                          '$heure h $min min',
-                                          style: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xFFFFFFFF),
-                                          ),
-                                        );
+                                        return Container();
                                       });
 
 //membreinfo['batterie']
@@ -1107,15 +1110,18 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                         .document(groupe.membres[i]['id'])
                                         .snapshots(),
                                     builder: (context, snapshot) {
-                                      return Text(
-                                        '${snapshot.data['batterie']}',
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: responsivetext(10),
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFFFFFFFF),
-                                        ),
-                                      );
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                          '${snapshot.data['batterie']}',
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: responsivetext(10),
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFFFFFFFF),
+                                          ),
+                                        );
+                                      }
+                                      return Container();
                                     },
                                   );
                                   index = 3;
@@ -4280,7 +4286,7 @@ class NotifStream extends StatelessWidget {
             if (groupJRA != justReceivedAlert) {
               checkSenderUser();
 
-              if ((notifSender != currentUser) && (notifSender != 'vide')) {
+              if ((notifSender != currentUser) || (notifSender != 'vide')) {
                 valueNotifier.notifyListeners();
               }
               justReceivedAlert = groupJRA;
@@ -4294,9 +4300,10 @@ class NotifStream extends StatelessWidget {
   }
 }
 
-String notifSender = 'vide';
+String notifSender;
 
 Future<void> checkSenderUser() async {
+  notifSender = 'vide';
   await _firestore
       .document(groupPath)
       .collection("receivedAlerts")
