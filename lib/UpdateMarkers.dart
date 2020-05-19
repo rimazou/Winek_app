@@ -326,12 +326,12 @@ class UpdateMarkers extends ChangeNotifier {
             );
             markers[markerid] = _marker;
             notifyListeners();
-            Provider.of<controllermap>(context).mapController.animateCamera(
+            /* Provider.of<controllermap>(context).mapController.animateCamera(
                 CameraUpdate.newCameraPosition(CameraPosition(
                     target: LatLng(map['latitude'], map['longitude']),
                     zoom: 14.0)));
 
-
+*/
             if (map['pseudo'] != pseud) {
               var vaaa = _AlertScreenState();
               vaaa.initState();

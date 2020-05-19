@@ -13,8 +13,8 @@ import 'package:winek/screensRima/waitingSignout.dart';
 import 'package:winek/screensSoum/friendsListScreen.dart';
 import '../classes.dart';
 import '../dataBasehiba.dart';
-import 'nouveau_grp.dart';
 import 'list_grp.dart';
+import 'nouveau_grp.dart';
 import 'package:winek/auth.dart';
 import 'listeFavorisScreen.dart';
 import 'package:winek/UpdateMarkers.dart';
@@ -308,7 +308,6 @@ class _HomeState extends State<Home> {
                                             Utilisateur utilisateur =
                                                 Utilisateur.fromdocSnapshot(
                                                     snapshot);
-                                            //  Navigator.pushNamed(context, Home.id);
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -1562,7 +1561,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               if (b &&
                                   result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                                Navigator.pushNamed(context, ListGrpPage.id);
+                                // Navigator.pushNamed(context, ListGrpPage.id);
+                                Navigator.pop(context);
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
@@ -2811,7 +2811,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                               if (b &&
                                   result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                                Navigator.pushNamed(context, ListGrpPage.id);
+                                Navigator.pop(context);
+                                //  Navigator.pushNamed(context, ListGrpPage.id);
                               }
                             } on SocketException catch (_) {
                               _showSnackBarlongterm(
@@ -3402,7 +3403,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                             child: FloatingActionButton(
                               heroTag: null,
                               onPressed: () {
-                                Navigator.pushNamed(context, ListGrpPage.id);
+                                Navigator.pop(context);
+                                //   Navigator.pushNamed(context, ListGrpPage.id);
                               },
                               backgroundColor: Color(0xFF389490),
                               foregroundColor: Color(0xFFFFFFFF),
@@ -4302,12 +4304,22 @@ class NotifStream extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection("Voyage").snapshots(),
       builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Color(0xFF707070),
+            ),
+          );
+        }
         addListnerToNotifier(ffunction);
 
         final alerts = snapshot.data.documents;
         for (var alert in alerts) {
           var id = alert.documentID;
-          if (id == _firestore.document(groupPath).documentID) {
+
+          if (id == _firestore
+              .document(groupPath)
+              .documentID) {
             final groupJRA = alert.data['justReceivedAlert'];
 
             if (groupJRA != justReceivedAlert) {

@@ -32,6 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
       mail = '',
       errMl,
       errPwd;
+
+  //final longtermeScaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> _scaffoldlogKey = new GlobalKey<
       ScaffoldState>();
   bool loading = false;
