@@ -41,10 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return Center(
-          child: SpinKitChasingDots(
-            color: Color(0XFF389490),
-          ));
+      return Container(
+        color: Colors.white,
+        child: Center(
+            child: SpinKitChasingDots(
+              color: Color(0XFF389490),
+            )),
+      );
     } else {
       return SafeArea(
         child: Scaffold(
@@ -53,7 +56,6 @@ class _LoginScreenState extends State<LoginScreen> {
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.0),
             child: SingleChildScrollView(
-              //tce widget permet de faire en sorte de scroller la page et pas la cacher avec le clavier
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

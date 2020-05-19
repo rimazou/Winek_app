@@ -142,7 +142,9 @@ class _HomeState extends State<Home> {
   Size size;
   @override
   void initState() {
-    Userimage = '';
+    Userimage =
+    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+
     Username = '';
     index = 0;
   }
@@ -909,7 +911,9 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
   void initState() {
     index = 0;
     Username = '';
-    Userimage = '';
+    Userimage =
+    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+
     membreinfo = {
       'pseudo': '',
       'image': '',
@@ -2502,6 +2506,9 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
 
   @override
   void initState() {
+    Userimage =
+    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+    Username = '';
     index = 0;
   }
 

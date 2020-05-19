@@ -535,8 +535,9 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                           size = responsivewidth(100);
                           tap = true;
                         });
+                        _showSnackBar('Ami supprimé !', context);
                       }
-                      _showSnackBar('Ami supprimé !', context);
+
                     }
                   }
                 }
@@ -654,15 +655,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               padding: EdgeInsets.only(
                                   left: responsivewidth(40.0),
                                   right: responsivewidth(30.0)),
-                              child: FittedBox(fit: BoxFit.fitWidth,
-                                child: Text(
-                                  online,
-                                  style: TextStyle(
-                                    fontSize: responsivetext(16),
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff707070),
-                                  ),
+                              child: Text(
+                                online,
+                                style: TextStyle(
+                                  fontSize: responsivetext(16),
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff707070),
                                 ),
                               ),),
                             SizedBox(
@@ -672,15 +671,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               padding: EdgeInsets.only(
                                   left: responsivewidth(40.0),
                                   right: responsivewidth(30.0)),
-                              child: FittedBox(fit: BoxFit.fitWidth,
-                                child: Text(
-                                  pseudo,
-                                  style: TextStyle(
-                                    fontSize: responsivetext(28),
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xff000000),
-                                  ),
+                              child: Text(
+                                pseudo,
+                                style: TextStyle(
+                                  fontSize: responsivetext(28),
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff000000),
                                 ),
                               ),),
                             SizedBox(
@@ -690,15 +687,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               padding: EdgeInsets.only(
                                   left: responsivewidth(40.0),
                                   right: responsivewidth(30.0)),
-                              child: FittedBox(fit: BoxFit.fitWidth,
-                                child: Text(
-                                  phone,
-                                  style: TextStyle(
-                                    fontSize: responsivetext(16),
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff000000),
-                                  ),
+                              child: Text(
+                                phone,
+                                style: TextStyle(
+                                  fontSize: responsivetext(16),
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
                                 ),
                               ),),
                             SizedBox(
@@ -708,15 +703,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                               padding: EdgeInsets.only(
                                   left: responsivewidth(40.0),
                                   right: responsivewidth(30.0)),
-                              child: FittedBox(fit: BoxFit.fitWidth,
-                                child: Text(
-                                  mail,
-                                  style: TextStyle(
-                                    fontSize: responsivetext(16),
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff000000),
-                                  ),
+                              child: Text(
+                                mail,
+                                style: TextStyle(
+                                  fontSize: responsivetext(16),
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
                                 ),
                               ),),
                           ],
