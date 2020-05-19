@@ -24,8 +24,7 @@ class UpdateMarkers extends ChangeNotifier {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Marker _marker;
   GoogleMapController _controller;
-  double dest_lat;
-  double dest_lng;
+
   BuildContext mapcontext;
   var val;
 
@@ -97,6 +96,8 @@ class UpdateMarkers extends ChangeNotifier {
 
   void marker_dest(String chemin) async {
     String destination;
+    double dest_lat;
+    double dest_lng;
     await _firestore.document(chemin).get().then((DocumentSnapshot doc) {
       destination = doc.data['destination']['adresse'];
     });
@@ -122,7 +123,15 @@ class UpdateMarkers extends ChangeNotifier {
     //  LatLng latlng;
     //  CameraUpdate cameraUpdate;
     bool arret;
+    double dest_lat;
+    double dest_lng;
     String id = await authService.connectedID();
+    await _firestore.document(groupepath).get().then((DocumentSnapshot ds) {
+      dest_lat = ds.data['destination']['latitude'];
+    });
+    await _firestore.document(groupepath).get().then((DocumentSnapshot ds) {
+      dest_lng = ds.data['destination']['longitude'];
+    });
     await Firestore.instance
         .document(groupepath)
         .collection('fermeture')
