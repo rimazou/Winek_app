@@ -4305,11 +4305,7 @@ class NotifStream extends StatelessWidget {
       stream: _firestore.collection("Voyage").snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Color(0xFF707070),
-            ),
-          );
+          return Container();
         }
         addListnerToNotifier(ffunction);
 
