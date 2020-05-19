@@ -29,6 +29,7 @@ import 'Aide.dart';
 import 'planifierArrets.dart';
 import 'package:winek/updateMarkers2.dart';
 import 'package:winek/dataBaseSoum.dart';
+
 //asma's variables
 final _firestore = Firestore.instance;
 String currentUser = 'ireumimweo';
@@ -121,10 +122,10 @@ class _HomeState extends State<Home> {
   GoogleMapController mapAccController;
 //fin variables
 
-
   void _onMapCreatedAcc(GoogleMapController controller) {
     mapAccController = controller;
   }
+
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
@@ -135,7 +136,6 @@ class _HomeState extends State<Home> {
       double lng = detail.result.geometry.location.lng;
 
       var address = await Geocoder.local.findAddressesFromQuery(p.description);
-
     }
   }
 
@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     Userimage =
-    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+        'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
 
     Username = '';
     index = 0;
@@ -167,8 +167,7 @@ class _HomeState extends State<Home> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
-    )
-    );
+    ));
   }
 
   @override
@@ -271,7 +270,6 @@ class _HomeState extends State<Home> {
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
                                   fontSize: responsivetext(15),
-
                                   color: Colors.white),
                             ),
                           ),
@@ -414,19 +412,17 @@ class _HomeState extends State<Home> {
                                       fontWeight: FontWeight.w600,
                                       color: myWhite,
                                       fontSize: responsivetext(15),
-
                                     ),
                                   ),
                                 ),
                                 ListTile(
                                   onTap: () {
-                                    Provider
-                                        .of<AuthService>(context, listen: false)
+                                    Provider.of<AuthService>(context,
+                                            listen: false)
                                         .positionStream
                                         ?.cancel();
-                                    Provider
-                                        .of<UpdateMarkers>(
-                                        context, listen: false)
+                                    Provider.of<UpdateMarkers>(context,
+                                            listen: false)
                                         .stream
                                         ?.cancel();
 
@@ -487,9 +483,8 @@ class _HomeState extends State<Home> {
                     height: responsiveheight(370),
                     width: responsivewidth(266),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                            responsiveradius(10, 1)),
-
+                        borderRadius:
+                            BorderRadius.circular(responsiveradius(10, 1)),
                         color: Color.fromRGBO(59, 70, 107, 0.5)),
                     child: Center(
                       child: Column(
@@ -536,7 +531,6 @@ class _HomeState extends State<Home> {
                                 Icons.directions_bus,
                                 color: Color(0xff707070),
                                 size: responsivewidth(75),
-
                               ),
                               contenu: Text(
                                 "de voyage",
@@ -580,7 +574,6 @@ class _HomeState extends State<Home> {
                                 Icons.people,
                                 color: Color(0xff707070),
                                 size: responsivewidth(75),
-
                               ),
                               contenu: Text(
                                 "a long terme",
@@ -675,7 +668,6 @@ class _HomeState extends State<Home> {
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Montserrat',
                     fontSize: responsivetext(15),
-
                     color: Color(0xff707070),
                   ),
                 ),
@@ -819,7 +811,6 @@ class _HomeState extends State<Home> {
                       String url;
                       var id = await authService.connectedID();
                       if (id != null) {
-
                         String pseudo = await Database().getPseudo(id);
                         await _firestore
                             .collection('Utilisateur')
@@ -830,10 +821,10 @@ class _HomeState extends State<Home> {
                         });
                         _marker = Marker(
                           markerId: markerid,
-                          position: LatLng(position.latitude,
-                              position.longitude),
+                          position:
+                              LatLng(position.latitude, position.longitude),
                           icon: await Provider.of<UpdateMarkers>(context,
-                              listen: false)
+                                  listen: false)
                               .getMarkerIcon(url, Size(200.0, 200.0)),
                           infoWindow: InfoWindow(snippet: '$pseudo'),
                         );
@@ -841,14 +832,12 @@ class _HomeState extends State<Home> {
                         setState(() {
                           markersAcceuil[markerid] = _marker;
                         });
-                        mapAccController
-                            .animateCamera(CameraUpdate.newCameraPosition(
-                            CameraPosition(
+                        mapAccController.animateCamera(
+                            CameraUpdate.newCameraPosition(CameraPosition(
                                 target: LatLng(
                                     position.latitude, position.longitude),
                                 zoom: 13.0)));
                       }
-
                     }
                   } on SocketException catch (_) {
                     _showSnackBarhome(
@@ -861,7 +850,6 @@ class _HomeState extends State<Home> {
                     Icon(
                       Icons.location_on,
                       size: responsivewidth(32.0),
-
                       color: Colors.white,
                     ),
                   ],
@@ -912,7 +900,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
     index = 0;
     Username = '';
     Userimage =
-    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+        'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
 
     membreinfo = {
       'pseudo': '',
@@ -922,7 +910,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
         overflow: TextOverflow.clip,
         style: TextStyle(
           fontFamily: 'Montserrat',
-          fontSize: responsivetext(14.0),
+          fontSize: responsivetext(13.0),
           fontWeight: FontWeight.w600,
           color: Color(0xFFFFFFFF),
         ),
@@ -980,8 +968,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
-    )
-    );
+    ));
   }
 
   @override
@@ -1052,7 +1039,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       if (snapshot.hasData) {
                                         vitesse = snapshot.data['vitesse'];
 
-
                                         if (vitesse != 0) {
                                           vite = (vitesse * 3.6).toInt();
                                         } else {
@@ -1062,7 +1048,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                           '$vite Km/h',
                                           style: TextStyle(
                                             fontFamily: 'Montserrat',
-                                            fontSize: responsivetext(14.0),
+                                            fontSize: responsivetext(13.0),
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFFFFFFFF),
                                           ),
@@ -1259,7 +1245,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'Montserrat',
                                 fontSize: responsivetext(15),
-
                                 color: Color(0xff707070),
                               ),
                             ),
@@ -1321,9 +1306,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         //HEEEEre grey container
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                responsiveradius(10, 1)),
-
+                            borderRadius:
+                                BorderRadius.circular(responsiveradius(10, 1)),
                             color: Color(0xFF7888a0),
                             boxShadow: [
                               BoxShadow(
@@ -1474,30 +1458,29 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
                                 // show input autocomplete with selected mode
-                              // then get the Prediction selected
-                              Prediction p = await PlacesAutocomplete.show(
-                                context: context,
-                                apiKey: kGoogleApiKey,
-                                onError: onErrorvoyage,
-                                mode: Mode.overlay,
-                                language: "fr",
-                                components: [
-                                  Component(Component.country, "DZ")
-                                ],
-                              );
-                              if (p != null) {
-                                PlacesDetailsResponse detail = await _places
-                                    .getDetailsByPlaceId(p.placeId);
+                                // then get the Prediction selected
+                                Prediction p = await PlacesAutocomplete.show(
+                                  context: context,
+                                  apiKey: kGoogleApiKey,
+                                  onError: onErrorvoyage,
+                                  mode: Mode.overlay,
+                                  language: "fr",
+                                  components: [
+                                    Component(Component.country, "DZ")
+                                  ],
+                                );
+                                if (p != null) {
+                                  PlacesDetailsResponse detail = await _places
+                                      .getDetailsByPlaceId(p.placeId);
 
-                                double lat =
-                                    detail.result.geometry.location.lat;
-                                double lng =
-                                    detail.result.geometry.location.lng;
+                                  double lat =
+                                      detail.result.geometry.location.lat;
+                                  double lng =
+                                      detail.result.geometry.location.lng;
 
-                                PlanifierArrets()
-                                    .addArretsToSubCol(path, lat, lng);
-                              }
-
+                                  PlanifierArrets()
+                                      .addArretsToSubCol(path, lat, lng);
+                                }
                               }
                             } on SocketException catch (_) {
                               _showSnackBar(
@@ -1649,7 +1632,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
                                       responsiveradius(10, 1)),
-
                                   color: Color(0xFFd0d8e8),
                                   boxShadow: [
                                     BoxShadow(
@@ -1676,8 +1658,7 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Card(
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(
+                                            borderRadius: BorderRadius.circular(
                                                 responsiveradius(32.0, 1))),
                                         color: Colors.white,
                                         elevation: 5.0,
@@ -1830,7 +1811,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   responsiveradius(10, 1)),
-
                               color: Color(0xFFd0d8e8),
                               boxShadow: [
                                 BoxShadow(
@@ -1968,7 +1948,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
                                   fontSize: responsivetext(15),
-
                                   color: Colors.white),
                             ),
                           ),
@@ -2112,25 +2091,24 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                       fontWeight: FontWeight.w600,
                                       color: myWhite,
                                       fontSize: responsivetext(15),
-
                                     ),
                                   ),
                                 ),
                                 ListTile(
                                   onTap: () {
-                                    Provider
-                                        .of<AuthService>(context, listen: false)
+                                    Provider.of<AuthService>(context,
+                                            listen: false)
                                         .positionStream
                                         ?.cancel();
-                                    Provider
-                                        .of<UpdateMarkers>(
-                                        context, listen: false)
+                                    Provider.of<UpdateMarkers>(context,
+                                            listen: false)
                                         .stream
                                         ?.cancel();
                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SignoutWait()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignoutWait()));
                                   },
                                   leading: Icon(
                                     Icons.directions_run,
@@ -2186,9 +2164,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                         height: 370,
                         width: 266,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                responsiveradius(10, 1)),
-
+                            borderRadius:
+                                BorderRadius.circular(responsiveradius(10, 1)),
                             color: Color.fromRGBO(59, 70, 107, 0.5)),
                         child: Center(
                           child: Column(
@@ -2218,7 +2195,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     Icons.directions_bus,
                                     color: Color(0xff707070),
                                     size: responsivewidth(75),
-
                                   ),
                                   contenu: Text(
                                     "de voyage",
@@ -2246,7 +2222,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                     Icons.people,
                                     color: Color(0xff707070),
                                     size: responsivewidth(75),
-
                                   ),
                                   contenu: Text(
                                     "a long terme",
@@ -2423,9 +2398,8 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                     width: responsivewidth(300),
                     height: responsiveheight(150),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                          responsiveradius(10, 1)),
-
+                      borderRadius:
+                          BorderRadius.circular(responsiveradius(10, 1)),
                       color: Colors.white,
                     ),
                     child: Column(
@@ -2441,7 +2415,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: responsivetext(16),
-
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff707070),
                               )),
@@ -2453,7 +2426,6 @@ class _MapVoyagePageState extends State<MapVoyagePage> {
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: responsivetext(16),
-
                                   fontWeight: FontWeight.w700,
                                   color: secondarycolor,
                                 )),
@@ -2507,7 +2479,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
   @override
   void initState() {
     Userimage =
-    'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
+        'https://firebasestorage.googleapis.com/v0/b/winek-70176.appspot.com/o/photos%2Flogo.png?alt=media&token=3103246d-243e-42ec-9368-cab992206d49';
     Username = '';
     index = 0;
   }
@@ -2531,8 +2503,7 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
           onPressed: () {
             print('press Ok on SnackBar');
           }),
-    )
-    );
+    ));
   }
 
   @override
@@ -2637,8 +2608,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                       height: size.height * 0.07,
                       width: size.width * 0.85,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              responsiveradius(40.0, 1)),
+                          borderRadius:
+                              BorderRadius.circular(responsiveradius(40.0, 1)),
                           color: Colors.white),
                       child: Row(
                         children: <Widget>[
@@ -2698,7 +2669,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'Montserrat',
                                 fontSize: responsivetext(15),
-
                                 color: Color(0xff707070),
                               ),
                             ),
@@ -2955,7 +2925,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.w600,
                                   fontSize: responsivetext(15),
-
                                   color: Colors.white),
                             ),
                           ),
@@ -3081,25 +3050,24 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                       fontWeight: FontWeight.w600,
                                       color: myWhite,
                                       fontSize: responsivetext(15),
-
                                     ),
                                   ),
                                 ),
                                 ListTile(
                                   onTap: () {
-                                    Provider
-                                        .of<AuthService>(context, listen: false)
+                                    Provider.of<AuthService>(context,
+                                            listen: false)
                                         .positionStream
                                         ?.cancel();
-                                    Provider
-                                        .of<UpdateMarkers>(
-                                        context, listen: false)
+                                    Provider.of<UpdateMarkers>(context,
+                                            listen: false)
                                         .stream
                                         ?.cancel();
                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SignoutWait()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SignoutWait()));
                                   },
                                   leading: Icon(
                                     Icons.directions_run,
@@ -3147,9 +3115,8 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                       height: 370,
                       width: 266,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              responsiveradius(10, 1)),
-
+                          borderRadius:
+                              BorderRadius.circular(responsiveradius(10, 1)),
                           color: Color.fromRGBO(59, 70, 107, 0.5)),
                       child: Center(
                         child: Column(
@@ -3180,7 +3147,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   Icons.directions_bus,
                                   color: Color(0xff707070),
                                   size: responsivewidth(75),
-
                                 ),
                                 contenu: Text(
                                   "de voyage",
@@ -3208,7 +3174,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                   Icons.people,
                                   color: Color(0xff707070),
                                   size: responsivewidth(75),
-
                                 ),
                                 contenu: Text(
                                   "a long terme",
@@ -3315,7 +3280,6 @@ class _MapLongTermePageState extends State<MapLongTermePage> {
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Montserrat',
                                     fontSize: responsivetext(15),
-
                                     color: Color(0xff707070),
                                   ),
                                 ),
@@ -3461,7 +3425,6 @@ class ChoixGrp extends StatelessWidget {
         width: 266,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
-
             color: Color.fromRGBO(59, 70, 107, 0.5)),
         child: Center(
           child: Column(
@@ -3488,7 +3451,6 @@ class ChoixGrp extends StatelessWidget {
                     Icons.directions_bus,
                     color: Color(0xff707070),
                     size: responsivewidth(75),
-
                   ),
                   contenu: Text(
                     "de voyage",
@@ -3512,7 +3474,6 @@ class ChoixGrp extends StatelessWidget {
                     Icons.people,
                     color: Color(0xff707070),
                     size: responsivewidth(75),
-
                   ),
                   contenu: Text(
                     "a long terme",
@@ -3549,7 +3510,6 @@ class Bouton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(responsiveradius(10, 1)),
-
         ),
         child: Column(
           children: <Widget>[
@@ -3702,8 +3662,7 @@ class AlertBubble extends StatelessWidget {
       },
       padding: const EdgeInsets.all(0),
       child: Card(
-        shape:
-        RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(responsiveradius(32.0, 1))),
         margin: EdgeInsets.symmetric(
             vertical: responsiveheight(5.0), horizontal: responsivewidth(20.0)),
@@ -3713,7 +3672,8 @@ class AlertBubble extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: responsivewidth(11.0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: responsivewidth(11.0),
                   vertical: responsiveheight(11)),
               child: Stack(
                 alignment: AlignmentDirectional.center,
@@ -3882,8 +3842,7 @@ class AlertStream extends StatelessWidget {
                       child: Row(
                         children: <Widget>[
                           Padding(
-                            padding:
-                            EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: responsivewidth(15.0)),
                             child: Icon(
                               Icons.delete,
@@ -3894,10 +3853,8 @@ class AlertStream extends StatelessWidget {
                             child: SizedBox(),
                           ),
                           Padding(
-                            padding:
-                            EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: responsivewidth(15.0)),
-
                             child: Icon(
                               Icons.delete,
                               color: Colors.white,
@@ -3944,7 +3901,6 @@ class _AlertScreenState extends State<AlertScreen> {
     debugPrint('payload : $payload');
 
     onTouched();
-
   }
 
   Future showNotificationWithDefaultSound() async {
@@ -4065,9 +4021,7 @@ class ReceivedAlertBubble extends StatelessWidget {
   AlertBubbleBox alert;
   DateTime date;
   GeoPoint geoPoint;
-  Function settingindex = () {
-
-  };
+  Function settingindex = () {};
 
   ReceivedAlertBubble(
       {String sender,
@@ -4252,7 +4206,8 @@ class AlertBubbleBox extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: responsivewidth(11.0),
+            padding: EdgeInsets.symmetric(
+                horizontal: responsivewidth(11.0),
                 vertical: responsiveheight(11)),
             child: Stack(
               alignment: AlignmentDirectional.center,
@@ -4280,7 +4235,6 @@ class AlertBubbleBox extends StatelessWidget {
               text,
               style: TextStyle(
                   fontSize: responsivetext(16),
-
                   color: Color(0xFF707070),
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600),
@@ -4320,15 +4274,13 @@ class NotifStream extends StatelessWidget {
         for (var alert in alerts) {
           var id = alert.documentID;
 
-          if (id == _firestore
-              .document(groupPath)
-              .documentID) {
+          if (id == _firestore.document(groupPath).documentID) {
             final groupJRA = alert.data['justReceivedAlert'];
 
             if (groupJRA != justReceivedAlert) {
               checkSenderUser();
 
-              if (notifSender != currentUser) {
+              if ((notifSender != currentUser) && (notifSender != 'vide')) {
                 valueNotifier.notifyListeners();
               }
               justReceivedAlert = groupJRA;
@@ -4342,14 +4294,29 @@ class NotifStream extends StatelessWidget {
   }
 }
 
-String notifSender;
+String notifSender = 'vide';
 
 Future<void> checkSenderUser() async {
-  var ggg = await _firestore
+  await _firestore
       .document(groupPath)
       .collection("receivedAlerts")
       .orderBy("envoyeLe", descending: true)
-      .getDocuments();
+      .getDocuments()
+      .then((QuerySnapshot doc) {
+    if (doc.documents.isNotEmpty) {
+      // List<DocumentSnapshot> ggglist = ggg.documents;
+      if (doc.documents.first.data['sender'] != null) {
+        var ggg = doc.documents.first;
+        notifSender = ggg.data['sender'];
+      }
+    }
+  });
+  /*
+  if(ggg!= null){
   List<DocumentSnapshot> ggglist = ggg.documents;
-  notifSender = ggglist[0].data['sender'];
+  if (ggglist[0].data['sender'] != null) {
+    print('merdeeeeeeee :${ggglist[0].data['sender']}');
+    notifSender = ggglist[0].data['sender'];
+
+  }*/
 }
