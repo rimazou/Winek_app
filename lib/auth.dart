@@ -49,10 +49,8 @@ class AuthService extends ChangeNotifier {
   Future<String> connectedID() async {
     final FirebaseUser user = await auth.currentUser();
     if (user == null) {
-      print('no user connected'); // dans ce cas connectedID retourne null
+      print(''); // dans ce cas connectedID retourne null
     } else {
-      print(user.uid);
-      print(user.email);
       return user.uid;
     }
   }

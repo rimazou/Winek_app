@@ -155,8 +155,6 @@ class UpdateMarkers extends ChangeNotifier {
 
         if (!arrived) {
           if (id == document.documentID) {
-            print('latitude ${point.latitude},longitude ${point
-                .longitude},destlatitude ${dest_lat}, dest longi${dest_lng}');
             double distanceInMeters = await Geolocator().distanceBetween(
                 point.latitude, point.longitude, dest_lat, dest_lng);
             if (distanceInMeters <= 50) {

@@ -378,10 +378,6 @@ class _LoginScreenState extends State<LoginScreen> {
         Provider.of<DeviceInformationService>(context, listen: false)
             .broadcastBatteryLevel(user.uid);
         Navigator.pushReplacementNamed(context, Home.id);
-
-        // getUserLocation();
-        // Provider.of<DeviceInformationService>(context, listen: false)
-        //   .broadcastBatteryLevel(user.uid);
       } else {
         setState(() {
           loading = false;

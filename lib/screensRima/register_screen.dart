@@ -14,7 +14,6 @@ import 'package:winek/classes.dart';
 import 'package:winek/main.dart';
 import 'package:winek/screensHiba/MapPage.dart';
 import 'package:winek/ui/size_config.dart';
-import 'profile_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +33,11 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String email,
-      pw,
-      pwd,
-      pseudo,
-      tel,
+  String email = '',
+      pw = '',
+      pwd = '',
+      pseudo = '',
+      tel = '',
       pic =
           "https://images.unsplash.com/photo-1485873295351-019c5bf8bd2e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80";
   File _image;
@@ -782,69 +781,53 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             fontWeight: FontWeight.w600),
       ),
       duration: new Duration(seconds: 2),
-      //backgroundColor: Colors.green,
     ));
   }
 
-/*
-  showSnackBar(String value, BuildContext context) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(SnackBar(
-      content: new Text(
-        value,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.0,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600),
-      ),
-      duration: new Duration(seconds: 2),
-      //backgroundColor: Colors.green,
-      action: new SnackBarAction(
-          label: 'Ok',
-          onPressed: () {
-            print('press Ok on SnackBar');
-          }),
-    ));
-  }
-*/
+
   Future _createUser() async {
     try {
-      setState(() {
-        loading = true;
-      });
-      Geoflutterfire geo = Geoflutterfire();
-      LatLng lt = new LatLng(36.7525000, 3.0419700);
-      GeoFirePoint pt =
-          geo.point(latitude: lt.latitude, longitude: lt.longitude);
-      final newUser = await authService.auth
-          .createUserWithEmailAndPassword(email: email, password: pwd);
-      if (newUser != null) {
-        Utilisateur myUser = Utilisateur(
-          pseudo: pseudo,
-          mail: email,
-          tel: tel,
-          favoris: [],
-          photo: _uploadedFileURL,
-          amis: [],
-          invitation: [],
-          alertLIST: [],
-          connecte: true,
-          location: pt.data,
-        );
-        authService.db
-            .collection('Utilisateur')
-            .document(newUser.user.uid)
-            .setData(myUser.map);
-        authService.getUserLocation();
-        Provider.of<DeviceInformationService>(context, listen: false)
-            .broadcastBatteryLevel(newUser.user.uid);
-        Navigator.pushReplacementNamed(context, Home.id);
-      } else {
+      if (email.isNotEmpty && pwd.isNotEmpty && tel.isNotEmpty &&
+          pseudo.isNotEmpty && pw.isNotEmpty) {
         setState(() {
-          loading = false;
+          loading = true;
         });
+        Geoflutterfire geo = Geoflutterfire();
+        LatLng lt = new LatLng(36.7525000, 3.0419700);
+        GeoFirePoint pt =
+        geo.point(latitude: lt.latitude, longitude: lt.longitude);
+        final newUser = await authService.auth
+            .createUserWithEmailAndPassword(email: email, password: pwd);
+        if (newUser != null) {
+          Utilisateur myUser = Utilisateur(
+            pseudo: pseudo,
+            mail: email,
+            tel: tel,
+            favoris: [],
+            photo: _uploadedFileURL,
+            amis: [],
+            invitation: [],
+            alertLIST: [],
+            connecte: true,
+            location: pt.data,
+          );
+          authService.db
+              .collection('Utilisateur')
+              .document(newUser.user.uid)
+              .setData(myUser.map);
+          authService.getUserLocation();
+          Provider.of<DeviceInformationService>(context, listen: false)
+              .broadcastBatteryLevel(newUser.user.uid);
+          Navigator.pushReplacementNamed(context, Home.id);
+        } else {
+          setState(() {
+            loading = false;
+          });
+        }
+      } else {
+        showSnackBar('Veuillez remplir tous les champs', context);
       }
+
     } catch (signUpError) {
       if (signUpError is PlatformException) {
         if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
