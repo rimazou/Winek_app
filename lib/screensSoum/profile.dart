@@ -61,7 +61,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .where("pseudo", isEqualTo: this.pseudo)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
+      //    data.documents.forEach((doc) {
+      for (var doc in data.documents) {
         if (mounted) {
           setState(() {
           this.id = doc.documentID;
@@ -72,7 +73,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           }
           });
         }
-      });
+      } //);
     });
 
     this.currentName = name;
@@ -83,7 +84,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .where("pseudo", isEqualTo: this.pseudo)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
+      // data.documents.forEach((doc) {
+      for (var doc in data.documents) {
         if (mounted) {
           setState(() {
           mail = doc.data['mail'];
@@ -93,7 +95,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           }
         });
         }
-      });
+      } //);
     });
   }
 
@@ -137,7 +139,9 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               .limit(1)
               .snapshots()
               .listen((data) {
-            data.documents.forEach((doc) {
+            // var doc = data.document;
+            // data.documents.forEach((doc) {
+            for (var doc in data.documents) {
               List<dynamic> friendpseudo = doc.data["amis"];
               if (friendpseudo != null) {
                 for (var map in friendpseudo) {
@@ -152,18 +156,22 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               }
               if (doc.data["invitation "].contains(currentName)) // amis*
                   {
-                setState(() {
+                if (mounted) {
+                  setState(() {
                   who = 'Annuler l\'invitaion';
                   size = responsivewidth(80);
-                });
+                  });
+                }
               } else if (!amipseudo &&
                   !doc.data["invitation "].contains(currentName)) {
-                setState(() {
+                if (mounted) {
+                  setState(() {
                   who = 'Ajouter';
                   size = responsivewidth(100);
-                });
+                  });
+                }
               }
-            });
+            }
           });
         }
       });
@@ -174,7 +182,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .limit(1)
         .snapshots()
         .listen((data) {
-      data.documentChanges.forEach((change) {
+      // data.documentChanges.forEach((change) {
+      for (var change in data.documentChanges) {
         if (change != null) {
           if (!change.document.data["invitation "].contains(pseudo)) {
             if (mounted) {
@@ -190,7 +199,7 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
             }
           }
         }
-      });
+      } //);
     });
     if (!invit) { //todo
       Firestore.instance
@@ -199,7 +208,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           .limit(1)
           .snapshots()
           .listen((data) {
-        data.documentChanges.forEach((change) {
+        //   data.documentChanges.forEach((change) {
+        for (var change in data.documentChanges) {
           ami = false;
           if (change != null) {
             List<dynamic> friendcurrent = change.document.data["amis"];
@@ -224,7 +234,8 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
               //  .limit(1)
                   .snapshots()
                   .listen((data) {
-                data.documentChanges.forEach((changes) {
+                //   data.documentChanges.forEach((changes) {
+                for (var changes in data.documentChanges) {
                   if (changes != null) {
                     amipseudo = false;
                     List<dynamic> friendpseudo = changes.document.data["amis"];
@@ -262,11 +273,11 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                       }
                     }
                   }
-                });
+                } //);
               });
             } //fin else
           }
-        });
+        } //);
       });
     }
   }
@@ -311,15 +322,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
             children: <Widget>[
               MaterialButton(
                 child: Center(
-                  child: FittedBox(fit: BoxFit.fitWidth,
-                    child: Text(
-                      '$pseudo vous a envoyé une invitation',
-                      style: TextStyle(
-                        fontFamily: 'montserrat',
-                        fontSize: responsivetext(18),
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff707070),
-                      ),
+                  child: Text(
+                    '$pseudo vous a envoyé une invitation',
+                    style: TextStyle(
+                      fontFamily: 'montserrat',
+                      fontSize: responsivetext(18),
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff707070),
                     ),
                   ),
                 ),),
@@ -331,15 +340,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                     width: responsivewidth(110.0),
                     child: MaterialButton(
                         child: Center(
-                          child: FittedBox(fit: BoxFit.fitWidth,
-                            child: Text(
-                              'Accepter',
-                              style: TextStyle(
-                                fontFamily: 'montserrat',
-                                fontSize: responsivetext(14),
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                              ),
+                          child: Text(
+                            'Accepter',
+                            style: TextStyle(
+                              fontFamily: 'montserrat',
+                              fontSize: responsivetext(14),
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
                             ),
                           ),),
                         onPressed: () async {
@@ -402,15 +409,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
                     width: responsivewidth(110.0),
                     child: MaterialButton(
                         child: Center(
-                          child: FittedBox(fit: BoxFit.fitWidth,
-                            child: Text(
-                              'Refuser',
-                              style: TextStyle(
-                                fontFamily: 'montserrat',
-                                fontSize: responsivetext(14),
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                              ),
+                          child: Text(
+                            'Refuser',
+                            style: TextStyle(
+                              fontFamily: 'montserrat',
+                              fontSize: responsivetext(14),
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
                             ),
                           ),),
                         onPressed: () async {
@@ -480,15 +485,13 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
           //Bouton ajouter
           child: MaterialButton(
             child: Center(
-              child: FittedBox(fit: BoxFit.fitWidth,
-                child: Text(
-                  who,
-                  style: TextStyle(
-                    fontFamily: 'montserrat',
-                    fontSize: responsivetext(17),
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                  ),
+              child: Text(
+                who,
+                style: TextStyle(
+                  fontFamily: 'montserrat',
+                  fontSize: responsivetext(17),
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
                 ),
               ),),
             onPressed: () async {
@@ -563,9 +566,10 @@ class _ProfileScreen2State extends State<ProfileScreen2> {
         .limit(1)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
+      //data.documents.forEach((doc) {
+      for (var doc in data.documents) {
         image = doc.data['photo'];
-      });
+      } //);
     });
     if (image != null) {
       return Center(
