@@ -9,6 +9,7 @@ import '../dataBaseSoum.dart';
 import 'dart:io';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class FriendRequestsList extends StatefulWidget {
   @override
   _FriendRequestsListState createState() => _FriendRequestsListState();
@@ -50,7 +51,6 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
 
   bool tap = true;
 
-
   _FriendRequestTileState({String invit}) {
     this.invit = invit;
     Firestore.instance
@@ -59,15 +59,14 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
         .limit(1)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+        //data.documents.forEach((doc) {
         setState(() {
           image = doc.data['photo'];
         });
       }
-      );
     });
   }
-
 
   @override
   void initState() {
@@ -81,13 +80,11 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
-    }
-    else {
+    } else {
       return Icon(
         Icons.people,
         color: Color(0xff3B466B),
         size: 32,
-
       );
     }
   }
@@ -105,12 +102,13 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -125,14 +123,16 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
             if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               String currentUser = await authService.connectedID();
               if (currentUser != null) {
-              String name = await Database().getPseudo(currentUser);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ProfileScreen2(pseudo: widget.invit,
-                          currentUser: currentUser,
-                          name: name,)),);
+                String name = await Database().getPseudo(currentUser);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfileScreen2(
+                            pseudo: widget.invit,
+                            currentUser: currentUser,
+                            name: name,
+                          )),
+                );
               }
             }
           } on SocketException catch (_) {
@@ -160,7 +160,8 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                   var result2 = await Connectivity().checkConnectivity();
                   var b = (result2 != ConnectivityResult.none);
 
-                  if (b && result.isNotEmpty &&
+                  if (b &&
+                      result.isNotEmpty &&
                       result[0].rawAddress.isNotEmpty) {
                     if (tap) {
                       setState(() {
@@ -168,23 +169,25 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                       });
                       String currentUser = await authService.connectedID();
                       if (currentUser != null) {
-                      await Database().getPseudo(currentUser).then((docSnap) {
-                        name = docSnap;
-                      });
+                        await Database().getPseudo(currentUser).then((docSnap) {
+                          name = docSnap;
+                        });
 
-                      Database d = await Database().init(currentid: currentUser,
-                          pseudo: widget.invit, subipseudo: name);
-                      await d.userUpdateData();
-                      Database c = await Database().init(
-                          id: currentUser,
-                          subipseudo: widget.invit,
-                          pseudo: name);
-                      await c.userUpdateData();
-                      await Database(pseudo: widget.invit).userDeleteData(
-                          currentUser);
+                        Database d = await Database().init(
+                            currentid: currentUser,
+                            pseudo: widget.invit,
+                            subipseudo: name);
+                        await d.userUpdateData();
+                        Database c = await Database().init(
+                            id: currentUser,
+                            subipseudo: widget.invit,
+                            pseudo: name);
+                        await c.userUpdateData();
+                        await Database(pseudo: widget.invit)
+                            .userDeleteData(currentUser);
 
-                      _showSnackBar(
-                          'vous et $invit êtes désormais amis!', context);
+                        _showSnackBar(
+                            'vous et $invit êtes désormais amis!', context);
                       }
                     }
                   }
@@ -203,7 +206,8 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                   var result2 = await Connectivity().checkConnectivity();
                   var b = (result2 != ConnectivityResult.none);
 
-                  if (b && result.isNotEmpty &&
+                  if (b &&
+                      result.isNotEmpty &&
                       result[0].rawAddress.isNotEmpty) {
                     if (tap) {
                       setState(() {
@@ -211,9 +215,9 @@ class _FriendRequestTileState extends State<FriendRequestTile> {
                       });
                       String currentUser = await authService.connectedID();
                       if (currentUser != null) {
-                      await Database(pseudo: widget.invit).userDeleteData(
-                          currentUser);
-                      _showSnackBar('Invitation supprimée !', context);
+                        await Database(pseudo: widget.invit)
+                            .userDeleteData(currentUser);
+                        _showSnackBar('Invitation supprimée !', context);
                       }
                     }
                   }

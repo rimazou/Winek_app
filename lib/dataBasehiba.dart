@@ -16,8 +16,9 @@ class Databasegrp {
     await Firestore.instance
         .collection('UserGrp')
         .getDocuments()
-        .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
+        .then((QuerySnapshot data) async {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc) {
         List<dynamic> list = doc.data['groupes'];
         if (list != null) {
           for (Map map in list) {
@@ -33,13 +34,14 @@ class Databasegrp {
             }
           }
         }
-      });
+      }
     });
     await Firestore.instance
         .collection('UserGrp')
         .getDocuments()
-        .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
+        .then((QuerySnapshot data) async {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc)  {
         List<dynamic> list = doc.data['invitations'];
         if (list != null) {
           for (Map map in list) {
@@ -55,7 +57,7 @@ class Databasegrp {
             }
           }
         }
-      });
+      }
     });
 
     try {
@@ -70,8 +72,9 @@ class Databasegrp {
     await Firestore.instance
         .collection('UserGrp')
         .getDocuments()
-        .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
+        .then((QuerySnapshot data) async {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc)  {
         List<dynamic> list = doc.data['groupes'];
         if (list != null) {
           for (Map map in list) {
@@ -83,13 +86,14 @@ class Databasegrp {
             }
           }
         }
-      });
+      }
     });
     await Firestore.instance
         .collection('UserGrp')
         .getDocuments()
-        .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
+        .then((QuerySnapshot data) async {
+      for (var doc in data.documents) {
+        //data.documents.forEach((doc)  {
         List<dynamic> list = doc.data['invitations'];
         if (list != null) {
           for (Map map in list) {
@@ -100,7 +104,7 @@ class Databasegrp {
             }
           }
         }
-      });
+      }
     });
     await Firestore.instance.document(ref).delete();
   }

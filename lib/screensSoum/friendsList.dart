@@ -60,18 +60,17 @@ class _FriendTileState extends State<FriendTile> {
         .snapshots()
         .listen((data) {
       if (data != null) {
-        data.documents.forEach((doc) {
+        for (var doc in data.documents) {
+          // data.documents.forEach((doc) {
           if (mounted) {
             setState(() {
               image = doc.data['photo'];
             });
           }
         }
-        );
       }
     });
   }
-
 
   @override
   void initState() {
@@ -79,21 +78,17 @@ class _FriendTileState extends State<FriendTile> {
   }
 
   Widget photo() {
-
     if (image != null) {
       return CircleAvatar(
         radius: 23.0,
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
-
-    }
-    else {
+    } else {
       return Icon(
         Icons.people,
         color: Color(0xff3B466B),
         size: 32,
-
       );
     }
   }
@@ -111,9 +106,11 @@ class _FriendTileState extends State<FriendTile> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
 
@@ -141,15 +138,17 @@ class _FriendTileState extends State<FriendTile> {
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                 String currentUser = await authService.connectedID();
                 if (currentUser != null) {
-            String name = await Database().getPseudo(currentUser);
-            //go to the profile screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ProfileScreen2(
-                        friend: id, currentUser: currentUser, name: name,)),
-            );
+                  String name = await Database().getPseudo(currentUser);
+                  //go to the profile screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileScreen2(
+                              friend: id,
+                              currentUser: currentUser,
+                              name: name,
+                            )),
+                  );
                 }
               }
             } on SocketException catch (_) {
@@ -177,10 +176,9 @@ class UsersList extends StatefulWidget {
 }
 
 class _UsersListState extends State<UsersList> {
-
   @override
   Widget build(BuildContext context) {
-    final users =Provider.of<List<String>>(context);
+    final users = Provider.of<List<String>>(context);
     int count;
     if (users != null) {
       count = users.length;
@@ -194,7 +192,7 @@ class _UsersListState extends State<UsersList> {
         return widget.filter == null || widget.filter == ""
             ? new UserTile(id: users[index])
             : users[index].toString().contains(widget.filter)
-            ? new UserTile(id: users[index])
+                ? new UserTile(id: users[index])
                 : new Container();
       },
     );
@@ -211,7 +209,6 @@ class UserTile extends StatefulWidget {
 }
 
 class _UserTileState extends State<UserTile> {
-
   String image;
 
   String id;
@@ -227,18 +224,16 @@ class _UserTileState extends State<UserTile> {
         .limit(1)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc) {
         if (mounted) {
           setState(() {
-          image = doc.data['photo'];
+            image = doc.data['photo'];
           });
         }
       }
-      );
-
     });
   }
-
 
   @override
   void initState() {
@@ -246,21 +241,17 @@ class _UserTileState extends State<UserTile> {
   }
 
   Widget photo() {
-
     if (image != null) {
       return CircleAvatar(
         radius: 23.0,
         backgroundImage: NetworkImage(image),
         backgroundColor: Colors.transparent,
       );
-
-    }
-    else {
+    } else {
       return Icon(
         Icons.people,
         color: Color(0xff3B466B),
         size: 32,
-
       );
     }
   }
@@ -278,11 +269,14 @@ class _UserTileState extends State<UserTile> {
       ),
       duration: new Duration(seconds: 2),
       //backgroundColor: Colors.green,
-      action: new SnackBarAction(label: 'Ok', onPressed: () {
-        print('press Ok on SnackBar');
-      }),
+      action: new SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            print('press Ok on SnackBar');
+          }),
     ));
   }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -307,15 +301,16 @@ class _UserTileState extends State<UserTile> {
               if (b && result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                 String currentUser = await authService.connectedID();
                 if (currentUser != null) {
-            String name = await Database().getPseudo(currentUser);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ProfileScreen2(pseudo: widget.id,
-                        currentUser: currentUser,
-                        name: name,)),
-            ); // call the class and passing arguments
+                  String name = await Database().getPseudo(currentUser);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileScreen2(
+                              pseudo: widget.id,
+                              currentUser: currentUser,
+                              name: name,
+                            )),
+                  ); // call the class and passing arguments
                 }
               }
             } on SocketException catch (_) {
@@ -330,4 +325,3 @@ class _UserTileState extends State<UserTile> {
     );
   }
 }
-

@@ -52,10 +52,11 @@ class Database {
     this.id = id != null ? id : await getID(pseudo);
 
     await userCollection.getDocuments().then((QuerySnapshot data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc) {
         if (doc.data['pseudo'] == this.subipseudo)
           this._modifiedUsersInterested = doc.data['amis'];
-      });
+      }
     });
 
     var d = Database(
@@ -211,9 +212,10 @@ class Database {
         .collection('Utilisateur')
         .getDocuments()
         .then((QuerySnapshot data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc) {
         userid.add(doc.documentID);
-      });
+      }
     });
     List<dynamic> pseudos = List();
 
@@ -221,9 +223,10 @@ class Database {
         .collection('Utilisateur')
         .getDocuments()
         .then((QuerySnapshot data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+//      data.documents.forEach((doc) {
         pseudos.add(doc.data['pseudo']);
-      });
+      }
     });
 
     List<Map<dynamic, dynamic>> friendlist = List();
@@ -255,9 +258,10 @@ class Database {
         .limit(1)
         .snapshots()
         .listen((data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+        //  data.documents.forEach((doc)
         image = doc.data['photo'];
-      });
+      }
     });
     return image.toString();
   }
@@ -265,9 +269,10 @@ class Database {
   Future<String> getID(String pseudo) async {
     String id;
     await userCollection.getDocuments().then((QuerySnapshot data) {
-      data.documents.forEach((doc) {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc) {
         if (doc.data['pseudo'] == pseudo) id = doc.documentID;
-      });
+      }
     });
     return id.toString();
   }
@@ -307,8 +312,9 @@ class Database {
   Future<Null> changePseudo(String oldp, String newp) async {
     String id = await getID(oldp);
     Map fellow = {'pseudo': oldp, 'id': id};
-    await userCollection.getDocuments().then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {
+    await userCollection.getDocuments().then((QuerySnapshot data) async {
+      for (var doc in data.documents) {
+        // data.documents.forEach((doc) async {
         if (doc.data['pseudo'] == oldp) {
           await userCollection
               .document(doc.documentID)
@@ -333,14 +339,9 @@ class Database {
             }
           }
         }
-      });
+      }
     });
-    await Firestore.instance
-        .collection('UserGrp')
-        .getDocuments()
-        .then((QuerySnapshot data) {
-      data.documents.forEach((doc) async {});
-    });
+
     await Firestore.instance
         .collection('UserGrp')
         .document(id)
@@ -380,15 +381,16 @@ class Database {
                 .document(grp)
                 .collection('receivedAlerts')
                 .getDocuments()
-                .then((QuerySnapshot data) {
+                .then((QuerySnapshot data) async {
               if (data != null)
-                data.documents.forEach((doc) async {
+                for (var doc in data.documents) {
+                  //data.documents.forEach((doc)  {
                   if (doc != null) {
                     if (doc.data['sender'] == oldp) {
                       await doc.reference.updateData({'sender': newp});
                     }
                   }
-                });
+                }
             });
           } catch (e) {
             print(e.toString());
