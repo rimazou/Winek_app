@@ -685,7 +685,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         borderRadius: BorderRadius.circular(17.0),
         child: Image.network(
           _uploadedFileURL,
-          height: 100.0,
+          height: 110.0,
           gaplessPlayback: true,
           fit: BoxFit.fill,
         ),
@@ -787,8 +787,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future _createUser() async {
     try {
-      if (email.isNotEmpty && pwd.isNotEmpty && tel.isNotEmpty &&
-          pseudo.isNotEmpty && pw.isNotEmpty) {
+      if (!email.isNotEmpty || !pwd.isNotEmpty || !tel.isNotEmpty ||
+          !pseudo.isNotEmpty || !pw.isNotEmpty) {
+        showSnackBar('Veuillez remplir tous les champs', context);
+      } else {
         setState(() {
           loading = true;
         });
@@ -824,8 +826,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             loading = false;
           });
         }
-      } else {
-        showSnackBar('Veuillez remplir tous les champs', context);
       }
 
     } catch (signUpError) {
@@ -880,8 +880,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           sourcePath: _image.path,
           aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
           compressQuality: 100,
-          maxHeight: 110,
-          maxWidth: 110,
+          maxHeight: responsivewidth(110).toInt(),
+          maxWidth: responsivewidth(110).toInt(),
           compressFormat: ImageCompressFormat.jpg,
           androidUiSettings: AndroidUiSettings(
               toolbarTitle: 'Rogner',
