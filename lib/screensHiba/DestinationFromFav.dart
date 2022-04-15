@@ -9,7 +9,7 @@ import 'package:winek/auth.dart';
 import 'package:geocoder/geocoder.dart' as coord;
 
 GoogleMapsPlaces _places =
-    GoogleMapsPlaces(apiKey: "AIzaSyBV4k4kXJRfG5RmCO3OF24EtzEzZcxaTrg");
+    GoogleMapsPlaces(apiKey: "");
 
 class GetDestination extends StatefulWidget {
   static const String id = 'GetDestination';
